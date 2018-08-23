@@ -1,0 +1,589 @@
+---
+title: "Introduction à R - Partie 1"
+date: "29 août 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Pourquoi R?
+
+## Qu'est-ce que R?
+
+- *R* désigne à la fois un langage de programmation et le logiciel qui interprète les commandes écrites dans ce langage.
+- Le langage a été développé à l'origine pour les analyses statistiques.
+- De nombreux modules (*packages*) s'ajoutent aux fonctionnalités de base. 
+- *R* est distribué comme logiciel libre (*open source*).
+
+## Pourquoi programmer ses analyses de données?
+
+Pourquoi écrire des programmes (ou scripts) pour réaliser ses analyses de données, plutôt que d'utiliser un logiciel à interface graphique (ex.: Excel)? Apprendre un language comme R demande plus de temps au départ, mais apporte plusieurs bénéfices.
+
+- Les scripts constituent un registre fidèle des analyses effectuées sur un jeu de données. Vous, vos collaborateurs ou d'autres chercheurs pourront facilement reproduire cette analyse à l'avenir (ex.: lorsque de nouvelles données sont disponibles).
+
+- Les scripts permettent d'automatiser des tâches répétitives (ex.: effectuer la même analyse sur 100 fichiers de données). 
+
+## Pourquoi programmer en R?
+
+- Les fonctions et types de données de base sont conçues pour les statistiques.
+
+- L'accès libre au logiciel facilite le partage de programmes entre chercheurs.
+
+- De nombreux modules existent pour des analyses spécialisées dans différents domaines, dont l'écologie.
+
+- Vu la grande communauté d'utilisateurs, il est facile de trouver de l'aide en ligne.
+
+## RStudio
+
+- Le logiciel RStudio est un environnement de programmation (*IDE*) avec plusieurs fonctionalités qui simplifient l'utilisation interactive du langage R.
+
+- Par défaut, la fenêtre RStudio est divisée en 4 sections. Nous utiliserons d'abord la *console* (coin inférieur gauche).
+
+
+# Objectifs pour cette partie
+
+- Découvrir les fonctions de base du langage R.
+
+- Se familiariser avec l'interface de RStudio.
+
+- Connaître les principaux types de données (nombre, texte, valeurs logiques) et structures de données (vecteur, liste, matrice, tableau de données) dans R.
+
+- Charger un tableau de données provenant d'un fichier externe.
+
+- Sélectionner des éléments dans une structure de données.
+
+- Écrire ses propres fonctions. 
+
+# Opérations de base dans R
+
+## R comme calculatrice
+
+Le symbole `>` dans la console indique que R est prêt à recevoir une commande. R comprend les opérations arithmétiques de base, comme le ferait une calculatrice. Ces opérations incluent `+`, `-`, `*`, `/` et `^` (puissance). 
+
+```{r op_math}
+(4 + 3) * 2
+5^3
+```
+
+**Question**: Pourquoi le résultat est-il précédé de `[1]`?
+
+**Réponse**: R indique ainsi qu'il s'agit du premier élément du résultat. Dans ce cas-ci, il ne comporte qu'un élément. 
+
+## Opérateurs de comparaison
+
+On utilise `==` pour vérifier si deux expressions sont égales et `!=` pour voir si elles sont différentes. R reconnaît aussi les comparaisons `<`, `<=`, `>` et `>=`.
+
+```{r op_comp}
+(4 + 3) * 2 != 4 + (3 * 2)
+```
+
+## Fonctions mathématiques
+
+Plusieurs fonctions mathématiques sont définies dans R, comme `exp`, `log`, `sqrt` (racine carrée), ainsi que les fonctions trigonométriques et des constantes comme `pi`.
+
+```{r cospi}
+cos(pi)
+```
+
+## Exercice 1 {#retour1}
+
+Choisissez un nombre $x$ et vérifiez dans R que la proposition suivante est vraie:
+
+$$sin(x)^2 + cos(x)^2 = 1$$ 
+
+[Solution](#sol1)
+
+## Appel de fonctions
+
+Notez que les parenthèses `()` jouent deux rôles en R:
+
+- Elles délimitent des parties d'une expression mathématique (ex.: `(4 + 3) * 2`). 
+- Elles suivent le nom d'une fonction et contiennent les *arguments* de cette fonction. S'il y a plusieurs arguments, ils sont séparés par des virgules.
+
+Par exemple, la fonction `seq(a, b)` crée une séquence de nombres entiers entre `a` et `b`:
+```{r}
+seq(1, 50)
+```
+
+## Créer une variable
+
+L'opérateur `<-` permet d'assigner la valeur d'une expression à une variable. Si la variable n'existe pas, elle est créée par R à ce moment.
+
+```{r creer_var}
+x <- 5:10
+```
+
+Notez que l'opérateur `:` est un raccourci pour l'instruction `seq(5, 10)`. 
+
+**Truc**: Pour sauver un peu de temps dans RStudio, le raccourci clavier `Alt`+`-` produit l'opérateur `<-`.
+
+Pour retrouver la valeur d'une variable, il suffit d'inscrire son nom:
+```{r}
+x
+```
+
+Remarquez aussi que la variable `x` est apparue dans l'onglet *Environment* (coin supérieur droit) dans RStudio. Cet onglet vous permet de consulter rapidement toutes les variables actuellement en mémoire.
+
+
+## Nommer des variables (ou autres objets)
+
+Dans R, le nom d'un objet reconnu par le logiciel (variable, fonction, etc.) doit commencer par une lettre et peut inclure des lettres, des chiffres ainsi que les caractères `_` ou `.`. Notez que R différencie les majuscules et minuscules.
+
+```{r majX, error=TRUE}
+X
+```
+
+**Conseils**:
+
+- Pour que le code soit plus lisible, les noms d'objets doivent (tout en restant brefs) offir de l'information sur leur contenu. Par exemple, `diametre` ou `diam` plutôt que `d` ou `x`. 
+
+- Il est préférable d'adopter un style uniforme pour les noms d'objets. Nous recommandons d'utiliser seulement des minuscules et de séparer les noms composés par `_`, ex.: `temp_min` pour température minimale.
+
+## Chaînes de caractère
+
+Pour représenter des données de type textuelles, on utilise des chaînes de caractères, qui doivent être entourées de guillemets pour les différencier des commandes et objets du code.
+
+```{r chaine}
+s <- "du texte"
+```
+
+**Note**: Des guillemets simples (') sont aussi acceptés par R, mais nous utiliserons seulement des guillemets doubles par souci de constance.
+
+## Obtenir de l'aide
+
+On peut consulter la documentation sur une fonction en précédant son nom d'un point d'interrogation, ex.: `?seq`. Dans RStudio, la page d'aide s'affiche sous l'onglet *Help* (coin inférieur droit). Si on ne connaît pas le nom exact de la fonction, on utilise deux points d'interrogation, ex.: `??logarithm`. Vous pouvez aussi écrire directement dans la fenêtre de recherche de l'onglet *Help*.
+
+De nombreux sites web offre de l'information sur R. Souvent, la façon la plus rapide d'obtenir de l'aide pour un problème spécifique est d'écrire sa question dans un moteur de recherche.
+
+
+# Vecteurs et types de données
+
+## Propriétés d'un vecteur
+
+La variable `x` que nous avons créée plus tôt est un vecteur comprenant 6 éléments (les nombres 5 à 10). Le vecteur est la structure de données la plus simple en R; une variable comprenant un seul élément est en fait un vecteur de longueur 1. Tous les éléments d'un vecteur doivent être du même type de données. On peut déterminer la longueur d'un vecteur avec la fonction `length`, et son type avec la fonction `class`.
+
+```{r class_vect}
+length(x)
+class(x)
+```
+
+## Éditeur dans RStudio
+
+Jusqu'à maintenant, nous avons entré des commandes directement dans la console. Pour sauvegarder une liste de commandes, qui deviendra éventuellement un script d'analyse, nous utiliserons l'éditeur dans RStudio (coin supérieur gauche).
+
+**Note**: Lorsque vous ouvrez une nouvelle session sur RStudio, un script vide devrait apparaître dans l'éditeur. Si ce n'est pas le cas, allez dans *File -> New File -> R Script* pour créer un nouveau script.
+
+## Créer un vecteur
+
+La fonction `c` combine plusieurs valeurs dans un vecteur. 
+
+Entrez les commandes suivantes dans l'éditeur, puis exécutez-les avec le bouton *Run* (en haut à droite de l'éditeur) ou avec le raccourci clavier `Ctrl`+`Enter`. Dans les deux cas, le curseur doit être placé sur la ligne à exécuter. Vous pouvez aussi sélectionner un bloc de lignes à exécuter d'un coup.
+
+```{r creer_vect}
+# Diamètre en cm et espèce de trois arbres
+diam <- c(7.5, 3, 1.4)
+espece <- c("sapin", "pin", "bouleau")
+```
+
+### Lignes de commentaires
+
+Les lignes commençant par `#` ne sont jamais exécutées par R. Il s'agit de commentaires qui permettent d'ajouter du contexte et de clarifier le but d'une section du code.
+
+## Exercice 2 {#retour2}
+
+1. Quel est le type de données du vecteur `espece`?
+
+2. Qu'arrive-t-il si vous essayez de créer un vecteur avec différents types de données, ex.: `c(1, 2, "pin")`?
+
+[Solution](#sol2)
+
+## Opérations sur des vecteurs
+
+Dans R, les opérations mathématiques de base sont vectorisées, c'est-à-dire qu'elles s'appliquent séparément à chaque élément d'un vecteur.
+
+```{r op_vect}
+v <- c(1, 4, 9)
+sqrt(v)
+v + c(10, 20, 30)
+```
+
+Si les deux vecteurs n'ont pas le même nombre d'éléments, le vecteur le plus court est "recyclé"; cela est surtout utile pour les opérations impliquant un vecteur et une valeur unique.
+
+```{r op_vect2}
+diam10 <- diam * 10
+diam
+esp_pin <- espece == "pin"
+esp_pin
+```
+
+Notez que la variable `esp_pin` est de type logique (vrai/faux). 
+
+## Résumé des types de données de base
+
+- `integer` (nombres entiers)
+- `numeric` (nombres réels, aussi appelé `double`)
+- `character` (chaînes de caractères)
+- `logical` (valeurs possibles `TRUE` ou `FALSE`, toujours en majuscules)
+
+
+# Tableaux de données (*data frames*)
+
+Un tableau de données est une structure de données en deux dimensions formée en combinant des vecteurs de même grandeur. Il est utilisé pour représenter une série d'observations (rangées) d'un même ensemble de variables (colonnes).
+
+```{r creer_df}
+arbres <- data.frame(espece, diam)
+arbres
+```
+
+La fonction `str()` permet d'obtenir plus de détails sur la structure d'un objet.
+```{r str}
+str(arbres)
+```
+
+Notez que l'espèce n'est plus une variable de type caractère, mais plutôt un facteur, c'est-à-dire une variable catégorielle codée par des nombres entiers (bouleau = 1, pin = 2, sapin = 3). Par défaut, R effectue automatiquement cette transformation lors de la création d'un tableau de données.
+
+## Charger un tableau de données à partir d'un fichier
+
+La plupart du temps, on souhaite charger des tableaux de données existants plutôt que de les créer dans R. Nous verrons ici comment importer des données enregistrées en format CSV (*comma-separated values*).
+
+Tout d'abord, il faut s'assurer que R pointe vers le bon répertoire de travail. Dans l'onglet *Files* (coin inférieur droit de RStudio), utilisez le bouton "..." à droite pour naviguer vers le répertoire contenant le fichier de données `cours1_kejimkujik.csv`, puis cliquez sur *More -> Set As Working Directory*. (On peut aussi appeler la fonction `setwd` dans R avec un chemin vers le répertoire.) Le répertoire de travail actuel s'affiche sur la ligne en haut de la console.
+
+Ensuite, appelons la fonction `read.csv` pour charger les données d'inventaire d'arbres dans des parcelles du Parc national de Kejimkujik (Nouvelle-Écosse):
+```{r lire_csv}
+kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+str(kejim)
+```
+
+La fonction `read.csv` requiert d'abord le nom du fichier CSV et accepte plusieurs arguments optionnels. Ici, nous spécifions `stringsAsFactors = FALSE` pour désactiver la conversion automatique des variables textuelles en facteurs.
+
+**Trucs**: 
+
+- La touche *Tab* donne accès à plusieurs types d'aide dans RStudio, dépendamment du contexte. Par exemple, on peut obtenir:
+    + une liste de fonctions commençant par une combinaison de lettres déjà entrée;
+    + les arguments possibles pour la fonction (si le curseur est entre les parenthèses);
+    + la liste des fichiers du répertoire de travail (si le curseur est entre guillemets).
+
+- La version française de logiciels comme Excel utilise la virgule comme signe décimal, et produit des fichiers CSV avec le point-virgule comme séparateur de champs. Pour ce type de fichier, il faut remplacer `read.csv` par `read.csv2`.
+
+La fonction `head` montre les premières rangées (par défaut, les 6 premières) d'un tableau de données.
+```{r head_df}
+head(kejim)
+```
+
+La fonction `dim` donne les dimensions (rangées, colonnes) du tableau de données. On peut aussi obtenir ces dimensions séparément avec `nrow` et `ncol`.
+```{r dim_df}
+dim(kejim)
+```
+
+
+# Sélectionner des éléments d'un vecteur ou d'un tableau de données
+
+## Extaire une variable d'un tableau de données
+
+Dans R, l'opérateur `$` permet d'extraire une partie d'un objet complexe, et en particulier, d'extraire une variable (colonne) d'un tableau de données.
+
+```{r extr_col}
+dhp <- kejim$DHP
+```
+
+Ici, le résultat `dhp` est un vecteur numérique. 
+
+## Extraire des éléments d'un vecteur
+
+Pour extraire certains éléments d'un vecteur selon leur position, on utilise les crochets (`[]`):
+```{r extr_pos}
+dhp[2]
+dhp5 <- dhp[1:5]
+dhp5
+```
+
+Dans le deuxième cas, nous avons donné un vecteur de positions pour extraire les 5 premières valeurs de `dhp`.
+
+Avec des nombres négatifs, on peut exclure les valeurs à certaines positions:
+```{r excl_pos}
+dhp5[-2]
+```
+
+Finalement, il est possible de sélectionner des valeurs selon une condition logique. Dans l'instruction ci-dessous, R détermine les positions des valeurs *TRUE* dans le vecteur logique `dhp5 > 20`, puis extrait les valeurs de `dhp5` correspondant à ses positions:
+```{r extr_log}
+dhp5[dhp5 > 20]
+```
+
+## Exercice 3 {#retour3}
+
+1. Que signifie la commande suivante?
+
+```{r esp_dhp50}
+esp_dhp50 <- kejim$espece[kejim$dhp > 50] 
+```
+
+2. Créez un vecteur comportant les mesures de DHP pour tous les arbres ayant plus d'une tige.
+
+[Solution](#sol3)
+
+## Extraire une section d'un tableau de données
+
+On peut aussi utiliser la notation `[]` pour extraire une partie d'un tableau de données. Dans ce cas, le choix des rangées et des colonnes est séparé par une virgule:
+
+```{r sub_df}
+kejim[1:5, 6:9]
+```
+
+On peut aussi choisir les colonnes avec un vecteur de noms:
+```{r sub_df_noms}
+kejim2 <- kejim[, c("Num_Arbre", "Espece", "DHP")]
+str(kejim2)
+```
+
+**Notes**: 
+
+- L'absence d'informations avant la virgule signifie qu'on souhaite conserver toutes les rangées.
+
+- Les noms de colonnes sont entre guillemets ici, contrairement au cas où on extrait une seule colonne avec `$`. 
+
+
+# Autres structures de données
+
+## Matrice
+
+Une matrice est une structure de données en deux dimensions où tous les éléments ont le même type. On peut la créer avec la fonction `matrix`.
+
+```{r creer_mat}
+mat1 <- matrix(1:12, nrow = 3)
+mat1
+```
+
+Comme pour un tableau de données, on extrait les éléments d'une matrice en spécifiant deux vecteurs d'indices:
+
+```{r sel_mat}
+mat1[2, 3]
+mat1[1:2, 2:3]
+```
+
+## Liste
+
+Contrairement à un vecteur, une liste peut contenir des objets de types différents. On crée une liste avec la fonction `list` et on en extrait des éléments individuels à l'aide de crochets doubles `[[ ]]`.
+
+```{r creer_liste}
+liste1 <- list(1, 2, "ab")
+liste1
+liste1[[3]]
+```
+
+Une liste peut même contenir des vecteurs d'autres listes:
+```{r liste_mult}
+liste2 <- list(c(10, 20), "cd", liste1)
+str(liste2)
+```
+
+Nous ne discuterons pas plus en détail de ces structures pour l'instant. En résumé, les quatre structures que nous avons vues sont différenciées selon qu'elles aient 1 ou 2 dimensions et qu'elles contiennent des éléments de même type ou de types différents.
+
+|    | Même type | Types différents   |
+|----|---------  |------------------  |
+| 1D | vecteur   | liste              |
+| 2D | matrice   | tableau de données |
+
+
+# Autres fonctions utiles
+
+- `sort`: Ordonne un vecteur en ordre croissant.
+```{r sort}
+sort(dhp5)
+```
+
+- `sum`: Calcule la somme des valeurs d'un vecteur.
+```{r sum}
+sum(kejim$Nb_Tiges)
+```
+
+- `summary`: Donne le minimum, maximum, la moyenne et les quartiles d'une variable numérique.
+```{r summary}
+summary(kejim$DHP)
+```
+
+- `table`: Compte le nombre d'occurrences de chaque valeur d'un vecteur (utile pour les valeurs catégorielles ou discrètes). 
+```{r table}
+table(kejim$Espece)
+```
+
+Avec deux ou plusieurs vecteurs, `table` crée un tableau de contingence:
+```{r}
+table(kejim$Espece, kejim$Site)
+```
+
+Il existe également plusieurs fonctions pour calculer différentes statistiques à partir d'un vecteur de données: `mean`, `median` `min`, `max`, `sd` (écart-type).
+
+## Exercice 4 {#retour4}
+
+Dans R, les valeurs logiques *TRUE* et *FALSE* correspondent à des valeurs numériques de 1 et 0, respectivement. 
+
+1. Comment interprétez vous le résultat de `sum(c(FALSE, TRUE, TRUE))`?
+
+2. Comment pouvez-vous utiliser la fonction `sum` pour déterminer le nombre d'érables rouges (code d'espèce "ACRU") dans le tableau `kejim`?
+
+[Solution](#sol4)
+
+# Écrire ses propres fonctions
+
+Tel que mentionné plus haut, un des avantages d'un langage de programmation comme R est la possibilité d'automatiser des opérations répétitives par le biais de fonctions. Ainsi, vous pouvez définir vos propres fonctions, afin de créer un "raccourci" vers une séquence d'opérations plus simples. 
+
+Voici la structure de base d'une fonction R:
+```{r func, eval = FALSE}
+nom_de_la_fonction <- function(argument1, argument2, ...) {
+    # entrer le code de la fonction ici
+}
+```
+
+Par défaut, le résultat de la fonction est celui obtenu par la dernière instruction du bloc de fonction (bloc délimité par les accolades `{}`).
+
+Comme exemple, nous créerons une fonction `type_arbre` qui indiquera si une espèce retrouvée dans le jeu de données `kejim` est un feuillu ou un conifère. 
+
+```{r func_type1, eval = FALSE}
+# Indique si l'espèce d'arbre est un conifère ou un feuillu
+type_arbre <- function(espece) {
+    # code à écrire...
+}
+```
+
+
+D'abord, nous avons besoin d'un vecteur des codes d'espèces correspondant à des conifères. Dans ce jeu de données, il y en a quatre: le sapin baumier (ABBA), l'épinette rouge (PIRU), le pin blanc (PIST) et la pruche du Canada (TSCA). 
+
+```{r codes_conif}
+codes_conif <- c("ABBA", "PIRU", "PIST", "TSCA") 
+```
+
+Ensuite, nous utiliserons la fonction `%in%` incluse dans R, qui teste si les éléments d'un vecteur se retrouvent dans un autre vecteur. Par exemple:
+```{r in_ex}
+"TSCA" %in% codes_conif
+```
+
+Finalement, il faut donner un résultat différent selon le résultat du test logique. On se sert pour cela du branchement `if .. else ...` qui prend la forme suivante:
+```{r if_else, eval = FALSE}
+if (condition) {
+    # code à exécuter si condition est vraie
+} else {
+    # code à exécuter si condition est fausse
+}
+```
+
+Voici donc notre fonction finalisée:
+```{r func_type2}
+# Indique si l'espèce d'arbre est un conifère ou un feuillu
+type_arbre <- function(espece) {
+    codes_conif <- c("ABBA", "PIRU", "PIST", "TSCA") 
+    if (espece %in% codes_conif) {
+        type <- "conifère"
+    } else {
+        type <- "feuillu"
+    }
+    type
+}
+```
+
+Remarquez que les instructions dans un bloc de code (celui de la fonction, ainsi que les blocs `if` et `else`) sont indentées (décalées). On recommande une indentation d'au moins 4 caractères pour faciliter la compréhension de la logique du code.
+
+Le résultat de la fonction correspond à celui de la dernière instruction, donc ici ce sera le contenu de la variable `type`.
+
+```{r func_type_ex}
+type_arbre("ACRU")
+type_arbre("PIST")
+```
+
+
+# Rappel
+
+## Fonctions et opérations essentielles
+
+|Opérateur           | Usage                                        |
+|------------------- | -----                                        |
+| `?`                | Obtenir de l'aide sur une fonction           |
+| `#`                | Ajouter un commentaire                       |
+| `:`                | Définir une séquence de nombre entiers       | 
+| `<-`               | Assigner une valeur à un objet               |
+| `$`, `[ ]`, `[[ ]]`| Sélectionner une partie d'un objet           |
+| `" "`              | Délimiter des chaînes de caractères          |
+| `{ }`              | Délimiter un bloc de code (ex.: fonction)    |
+| `+`, `-`, `*`, `/`, `^` | Opérateurs arithmétiques                |
+| `==`, `!=`, `<`, `>`, `<=`, `>=` | Opérateurs de comparaison      |
+| `%in%`             | Opérateur d'inclusion                        |
+
+|Fonction            | Usage                                        |
+|--------            |-------                                       |
+| `c( )`             | Créer un vecteur                             |
+| `class( )`         | Classe (type) d'un objet                     |
+| `str( )`           | Structure d'un objet                         |
+| `length( )`        | Longueur d'un objet à une dimension          |
+| `dim( )`           | Dimensions d'un objet                        |
+| `head( )`          | Voir les premières rangées d'un tableau      |
+| `summary( )`       | Sommaire d'un vecteur numérique              |
+| `table( )`         | Nombre d'occurrences des valeurs dans un vecteur |
+
+## Sélectionner des éléments d'un objet
+
+*Ici, i,j,k et l sont des nombres entiers positifs.*
+
+| Expression     | Résultat                                          |
+|-----------     |---------------------------------------------------|
+| `v[c(i, j)]`   | Les éléments du vecteur *v* en position *i* et *j* |
+| `v[-c(i, j)]`  | Les éléments de *v* sauf ceux en position *i* et *j* |
+| `v[condition]` | Les éléments de *v* pour lesquels *condition* est vraie. |
+| `df$nom`       | Le vecteur correspondant à la colonne *nom* du tableau *df* |
+| `df[c(i, j), c(k, l)]` | Les éléments se trouvant dans une des rangées *i* ou *j* et dans une des colonnes *k* ou *l* de *df* (fonctionne aussi pour une matrice). |
+| `df[condition, ]` | Les rangées de *df* pour lesquelles *condition* est vraie. |
+| `df[i:j, c("nom1", "nom2")]` | Les éléments des colonnes *nom1* et *nom2* se trouvant dans les rangées allant de *i* à *j*. |
+
+
+# Références
+
+Le contenu de cette partie est basé sur un cours d'introduction à R préparé par Marc Mazerolle (professeur à l'U. Laval, anciennement UQAT), ainsi qu'un atelier offert par le Socio-Environmental Synthesis Center (SESYNC) et disponible en ligne à: https://cyberhelp.sesync.org/basic-R-lesson/.
+
+
+# Solution des exercices
+
+## Exercice 1 {#sol1}
+
+Par exemple, avec $x$ = 1.5
+```{r ex1}
+sin(1.5)^2 + cos(1.5)^2 == 1
+```
+
+[Retour](#retour1)
+
+## Exercice 2 {#sol2}
+
+```{r ex2}
+class(espece)
+c(1, 2, "pin")
+```
+
+Le vecteur `c(1, 2, "pin")` est de type *character* parce que les nombres peuvent être représentés comme du texte, mais pas l'inverse.
+
+[Retour](#retour2)
+
+## Exercice 3 {#sol3}
+
+1. `esp_dhp50` est un vecteur des espèces correspondant aux arbres de `kejim` ayant un DHP supérieur à 50 cm.
+
+2. 
+```{r ex3}
+dhp_multi_tige <- kejim$DHP[kejim$Nb_Tiges > 1]
+```
+
+[Retour](#retour3)
+
+## Exercice 4 {#sol4}
+
+1. La somme d'un vecteur logique correspond au nombre de valeurs vraies.
+
+2. 
+```{r ex4}
+sum(kejim$Espece == "ACRU")
+```
+
+[Retour](#retour4)

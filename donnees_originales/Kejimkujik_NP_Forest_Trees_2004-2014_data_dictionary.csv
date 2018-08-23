@@ -1,0 +1,42 @@
+Data_Field_EN_Champ de_la_donnée,Data_Field_FR_Champ de_la_donnée,Data_Value_Valeur_de_la_donnée,Value_Description_EN_Description_de_la_valeur,Value_Description_FR_Description_de_la_valeur
+Site Identification,Identification du site,BD,Big Dam Lake,Big Dam Lake
+Site Identification,Identification du site,CFR,Canning Field Road,Canning Field Road
+Site Identification,Identification du site,CL,Cobrielle Lake,Cobrielle Lake
+Site Identification,Identification du site,CLT,Channel lake Trail,Channel lake Trail
+Site Identification,Identification du site,NCL,North Cranberry Lake,North Cranberry Lake
+Site Identification,Identification du site,PL,Pebbeloggitch Lake,Pebbeloggitch Lake
+Forest Stand Type  ,Type de peuplement forestier,Hemlock,Eastern Hemlock dominated forest stand,Peuplement dominé par la pruche du Canada
+Forest Stand Type  ,Type de peuplement forestier,Hardwood,Maple Oak Birch dominated forest stand,Peuplement dominé par l'association érable-chêne-bouleau
+Species,Espèce,ABBA,Balsam Fir,Sapin baumier
+Species,Espèce,ACPE,Striped Maple,Érable de Pennsylvanie
+Species,Espèce,ACRU,Red Maple,Érable rouge
+Species,Espèce,ACSA,Sugar Maple,Érable à sucre
+Species,Espèce,ACSP,Mountain Maple,Érable à épis
+Species,Espèce,AMLA,Indian Pear,Amélanchier 
+Species,Espèce,BELU,Yellow Birch,Bouleau jaune
+Species,Espèce,BEPA,White Birch,Bouleau blanc
+Species,Espèce,BEPO,Grey Birch,Bouleau gris
+Species,Espèce,FAGR,American Beech,Hêtre à grandes feuilles
+Species,Espèce,FRAM,White Ash,Frêne blanc
+Species,Espèce,HAVI,Witch Hazel,Hamamélis de Virginie
+Species,Espèce,OSVI,Ironwood,Ostryer de Virginie
+Species,Espèce,PIGL,White Spruce,Épinette blanche
+Species,Espèce,PIRU,Red Spruce,Épinette rouge
+Species,Espèce,PIRE,Red Pine,Pin rouge
+Species,Espèce,PIST,White Pine,Pin blanc
+Species,Espèce,POTR,Trembling Aspen,Peuplier faux-tremble
+Species,Espèce,POGR,Large Tooth Aspen,Peuplier à grandes dents
+Species,Espèce,QUBO,Red Oak,Chêne rouge
+Species,Espèce,SOAM,American Mountain Ash,Sorbier d'Amérique
+Species,Espèce,THOC,Eastern White Cedar,Thuya occidental
+Species,Espèce,TSCA,Eastern Hemlock,Pruche du Canada
+Species,Espèce,ULAM,White Elm,Orme d'Amérique
+Tree Condition,état de l'arbre,AS,Alive Standing,Vivant et debout
+Tree Condition,état de l'arbre,AL,Alive Leaning,Vivant et penchant
+Tree Condition,état de l'arbre,AF,Alive Fallen,Vivant et à terre
+Tree Condition,état de l'arbre,AB,Alive Broken,Vivant et cassé
+Tree Condition,état de l'arbre,DS,Dead Standing,Mort et debout
+Tree Condition,état de l'arbre,DL,Dead Leaning,Mort et penchant
+Tree Condition,état de l'arbre,DF,Dead Fallen,Mort et à terre
+Tree Condition,état de l'arbre,DB,Dead Broken,Mort et cassé
+Tree Condition,état de l'arbre,NF,Not Found,Introuvable
