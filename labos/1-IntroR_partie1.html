@@ -570,7 +570,7 @@ str(liste2)</code></pre>
 ##   ..$ : num 1
 ##   ..$ : num 2
 ##   ..$ : chr &quot;ab&quot;</code></pre>
-<p>Nous ne discuterons pas plus en détail de ces structures pour l’instant. En résumé, les quatre structures que nous avons vues sont différenciées selon qu’elles aient 1 ou 2 dimensions et qu’elles contiennent des objets de même type ou de types différents.</p>
+<p>Nous ne discuterons pas plus en détail de ces structures pour l’instant. En résumé, les quatre structures que nous avons vues sont différenciées selon qu’elles aient 1 ou 2 dimensions et qu’elles contiennent des éléments de même type ou de types différents.</p>
 <table>
 <thead>
 <tr class="header">
@@ -647,6 +647,15 @@ str(liste2)</code></pre>
 <p><a href="#sol4">Solution</a></p>
 </div>
 </div>
+<div id="valeurs-manquantes" class="section level1">
+<h1>Valeurs manquantes</h1>
+<p>Pour représenter une donnée manquante dans un tableau de données, R utilise le symbole <code>NA</code> (en majuscules et sans guillemets). Généralement, le résultat de tout calcul impliquant une valeur <code>NA</code> est aussi <code>NA</code>. Certaines fonctions comme <code>sum</code> et <code>mean</code> ont un argument <code>na.rm</code> permettant d’ignorer les valeurs manquantes.</p>
+<pre class="r"><code>v_na &lt;- c(1, 2, 9, NA)
+mean(v_na)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code>mean(v_na, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 4</code></pre>
+</div>
 <div id="ecrire-ses-propres-fonctions" class="section level1">
 <h1>Écrire ses propres fonctions</h1>
 <p>Tel que mentionné plus haut, un des avantages d’un langage de programmation comme R est la possibilité d’automatiser des opérations répétitives par le biais de fonctions. Ainsi, vous pouvez définir vos propres fonctions, afin de créer un “raccourci” vers une séquence d’opérations plus simples.</p>
@@ -683,7 +692,7 @@ type_arbre &lt;- function(espece) {
     type
 }</code></pre>
 <p>Remarquez que les instructions dans un bloc de code (celui de la fonction, ainsi que les blocs <code>if</code> et <code>else</code>) sont indentées (décalées). On recommande une indentation d’au moins 4 caractères pour faciliter la compréhension de la logique du code.</p>
-<p>Par défaut, le résultat de la dernière instruction d’une fonction constitue le résultat de la fonction elle-même; ici, ce sera le contenu de la variable <code>type</code>, tel que désiré.</p>
+<p>Le résultat de la fonction correspond à celui de la dernière instruction, donc ici ce sera le contenu de la variable <code>type</code>.</p>
 <pre class="r"><code>type_arbre(&quot;ACRU&quot;)</code></pre>
 <pre><code>## [1] &quot;feuillu&quot;</code></pre>
 <pre class="r"><code>type_arbre(&quot;PIST&quot;)</code></pre>

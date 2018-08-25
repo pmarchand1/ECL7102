@@ -429,6 +429,18 @@ Dans R, les valeurs logiques *TRUE* et *FALSE* correspondent à des valeurs num�
 
 [Solution](#sol4)
 
+
+# Valeurs manquantes
+
+Pour représenter une donnée manquante dans un tableau de données, R utilise le symbole `NA` (en majuscules et sans guillemets). Généralement, le résultat de tout calcul impliquant une valeur `NA` est aussi `NA`. Certaines fonctions comme `sum` et `mean` ont un argument `na.rm` permettant d'ignorer les valeurs manquantes.
+
+```{r sum_na}
+v_na <- c(1, 2, 9, NA)
+mean(v_na)
+mean(v_na, na.rm = TRUE)
+```
+
+
 # Écrire ses propres fonctions
 
 Tel que mentionné plus haut, un des avantages d'un langage de programmation comme R est la possibilité d'automatiser des opérations répétitives par le biais de fonctions. Ainsi, vous pouvez définir vos propres fonctions, afin de créer un "raccourci" vers une séquence d'opérations plus simples. 
