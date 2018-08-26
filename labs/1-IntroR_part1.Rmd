@@ -509,7 +509,7 @@ tree_type("PIST")
 ```
 
 
-# Recall
+# Review
 
 ## Functions and essential operations
 
