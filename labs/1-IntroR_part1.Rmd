@@ -1,0 +1,602 @@
+---
+title: "Introduction to R - Part 1"
+date: "August 29, 2018"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Why R?
+
+## What is R?
+
+- *R* refers both to a programming language and to the software that interprets commands written in that language.
+- The language was originally developed for statistical analysis.
+- A large number of packages add to the basic features of *R*.
+- *R* is distributed as free software (*open source*).
+
+## Why write programs for data analysis?
+
+Why should you write programs (or scripts) to perform data analyses, rather than using graphical interface software (such as Excel)? Learning a language like R requires more time initially, but brings several benefits.
+
+- The scripts are a faithful record of the analyses performed on a dataset. You, your collaborators or other researchers will easily be able to replicate this analysis in the future (e.g. when new data is available).
+
+- Scripts automate repetitive tasks (e.g. perform the same analysis on 100 data files).
+
+## Why program in R?
+
+- Functions and basic data types are designed for statistics.
+
+- Free access to the software facilitates the sharing of programs between researchers.
+
+- Many modules exist for specialized analyses in different fields, including ecology.
+
+- Given the large community of users, it is easy to find help online.
+
+## RStudio
+
+- The RStudio software is a programming environment (*IDE*) with several features that simplify the interactive use of the R language.
+
+- By default, the RStudio window is divided into 4 sections. We will first use the *console* (lower left corner).
+
+
+# Objectives for this part
+
+- Discover the basic functions of the R language.
+
+- Become familiar with the RStudio interface.
+
+- Know the main data types (numeric, character, and logical values) and data structures (vector, list, matrix, data frame) in R.
+
+- Load a data frame from an external file.
+
+- Subset a data structure.
+
+- Write your own functions.
+
+# Basic operations in R
+
+## R as a calculator
+
+The `>` symbol in the console indicates that R is ready to receive a command. R includes basic arithmetic operations: `+`, `-`,` * `,` / `and` ^ `(power).
+
+```{r op_math}
+(4 + 3) * 2
+5 ^ 3
+```
+
+>**Question**: Why is the result preceded by `[1]`?
+>
+>**Answer**: R indicates that this is the first element of the result. In this case, there is only one element.
+
+## Comparison operators
+
+We use `==` to check if two expressions are equal and `!=` to see if they are different. R also recognizes the comparisons `<`, `<=`, `>` and `>=`.
+
+```{r op_comp}
+(4 + 3) * 2 != 4 + (3 * 2)
+```
+
+## Mathematical functions
+
+Several mathematical functions are defined in R, such as `exp`,` log`, `sqrt` (square root), as well as trigonometric functions and constants like `pi`.
+
+```{r cospi}
+cos(pi)
+```
+
+## Exercise 1 {#return1}
+
+Choose a number $x$ and check using R that the following proposition is true:
+
+$$sin(x)^2 + cos(x)^2 = 1$$
+
+[Solution](#sol1)
+
+## Calling functions
+
+Note that parentheses `()` play two roles in R:
+
+- They delimit parts of a mathematical expression (e.g. `(4 + 3) * 2`).
+- They follow the name of a function and contain the *arguments* of that function. If there are multiple arguments, they are separated by commas.
+
+For example, the `seq(a, b)` function creates a sequence of integers between `a` and` b`:
+```{r}
+seq(1, 50)
+```
+
+## Create a variable
+
+The `<-` operator is used to assign the value of an expression to a variable. If the variable does not exist, it is created by R at this time.
+
+```{r create_var}
+x <- 5:10
+```
+
+Note that the `:` operator is a shortcut for the `seq(5, 10)` statement.
+
+>**Tip**: To save some time in RStudio, the keyboard shortcut `Alt` + `-` produces the `<-` operator.
+
+To find the value of a variable, just enter its name:
+```{r}
+x
+```
+
+Also note that the `x` variable appeared in the *Environment* tab (upper right corner) in RStudio. This tab allows you to quickly consult all variables currently in memory.
+
+
+## Names of variables (or other objects)
+
+In R, the name of an object recognized by the software (variable, function, etc.) must begin with a letter and may include letters, numbers, or the characters `_` and `.`. Note that R is case-sensitive.
+
+```{r majX, error = TRUE}
+X
+```
+
+>**Tips**:
+>
+>- To make the code more readable, object names must (while still being brief) provide information about their contents. For example, `diametre` or` diam` rather than `d` or` x`.
+>
+>- It is better to adopt a uniform style for object names. We recommend using only lowercase letters and separating compound names with `_`, e.g. `temp_min` for minimum temperature.
+
+## Character strings
+
+To represent textual data, we use strings of characters, which must be enclosed in quotation marks to differentiate them from the commands and objects of the code.
+
+```{r string}
+s <- "text"
+```
+
+>**Note**: Single quotation marks (') are also accepted by R, but we will only use double quotation marks for consistency.
+
+## Get help
+
+The documentation of a function can be found by preceding its name with a question mark, e.g. `?seq`. In RStudio, the help page appears on the *Help* tab (lower right corner). If you do not know the exact name of the function, use two question marks, e.g. `??logarithm`. You can also write directly in the search window of the *Help* tab.
+
+Many websites offer information about R. Often, the fastest way to get help for a specific problem is to write your question in a search engine.
+
+
+# Vectors and data types
+
+## Vector properties
+
+The variable `x` that we created earlier is a vector with 6 elements (the numbers 5 to 10). The vector is the simplest data structure in R; a variable comprising a single element is in fact a vector of length 1. All the elements of a vector must be of the same type of data. We can determine the length of a vector with the function `length`, and its type with the` class` function.
+
+```{r class_vect}
+length(x)
+class(x)
+```
+
+## Editor in RStudio
+
+Until now, we have entered commands directly into the console. To save a list of commands, which will eventually become an analysis script, we will use the editor in RStudio (upper left corner).
+
+>**Note**: When you open a new session on RStudio, an empty script should appear in the editor. If not, go to *File -> New File -> R Script* to create a new script.
+
+## Create a vector
+
+The `c` function combines several values into a vector.
+
+Enter the following commands in the editor, then execute them with the *Run* button (top right of the editor) or with the keyboard shortcut `Ctrl` + `Enter`. In both cases, the cursor must be placed on the line to be executed. You can also select a block of lines to execute at once.
+
+```{r create_vect}
+# Diameter in cm and species of three trees
+diam <- c (7.5, 3, 1.4)
+species <- c ("fir", "pine", "birch")
+```
+
+### Comment lines
+
+Lines starting with `#` are never executed by R. These are comments that add context and clarify the purpose of a section of the code.
+
+## Exercise 2 {#return2}
+
+1. What is the data type of the vector `species`?
+
+2. What happens if you try to create a vector with different types of data, e.g.: `c (1, 2, "pine")`?
+
+[Solution](#sol2)
+
+## Vector operations
+
+In R, basic mathematical operations are vectorized, that is, they apply separately to each element of a vector.
+
+```{r op_vect}
+v <- c(1, 4, 9)
+sqrt(v)
+v + c(10, 20, 30)
+```
+
+If the two vectors do not have the same number of elements, the shortest vector is "recycled"; this is especially useful for operations involving a vector and a single value.
+
+```{r op_vect2}
+diam10 <- diam * 10
+diam
+esp_pin <- species == "pine"
+esp_pin
+```
+
+Note that the `esp_pin` variable is of logical type (true / false).
+
+## Summary of basic data types
+
+- `integer`
+- `numeric` (real numbers, also called` double`)
+- `character` (strings)
+- `logical` (possible values` TRUE` or `FALSE`, always in uppercase letters)
+
+
+# Data frames
+
+A data frame is a two-dimensional data structure formed by combining vectors of the same size. It is used to represent a series of observations (rows) of the same set of variables (columns).
+
+```{r create_df}
+trees <- data.frame(species, diam)
+trees
+```
+
+The `str()` function provides more details about the structure of an object.
+```{r str}
+str(trees)
+```
+
+Note that the species is no longer a character variable, but rather a factor, that is, a categorical variable encoded by integers (birch = 1, pin = 2, fir = 3). By default, R automatically performs this transformation when creating a data frame.
+
+## Load a data frame from a file
+
+Most of the time, we want to load tables of existing data rather than create them in R. We will see here how to import data saved in CSV format (comma-separated values).
+
+First, make sure that R points to the right working directory. In the *Files* tab (lower right corner of RStudio), use the "..." button on the right to navigate to the directory containing the data file `cours1_kejimkujik.csv`, then click on *More -> Set As Working Directory*. (You can also call the `setwd` function in R with a path to the directory.) The current working directory is displayed on the line at the top of the console.
+
+Next, call the `read.csv` function to load tree inventory data from plots in the Kejimkujik National Park, Nova Scotia:
+```{r read_csv}
+kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+str(kejim)
+```
+
+The `read.csv` function first requires the name of the CSV file and accepts several optional arguments. Here, we specify `stringsAsFactors = FALSE` to disable the automatic conversion of character variables into factors.
+
+>**Tips**
+>
+>The *Tab* key gives access to several types of help in RStudio, depending on the context. For example, we can get:
+>
+>    - a list of functions beginning with a combination of letters already entered;
+>    - the possible arguments for the function (if the cursor is between the parentheses);
+>    - the list of files in the working directory (if the cursor is enclosed in quotation marks).
+>
+>The French version of software like Excel uses the comma as a decimal sign, and produces CSV files with the semicolon as a field separator. For this type of file, replace `read.csv` with` read.csv2`.
+
+The `head` function shows the first rows (by default, the first 6) of a data frame.
+```{r head_df}
+head(kejim)
+```
+
+The `dim` function gives the dimensions (rows, columns) of the data frame. These dimensions can also be obtained separately with `nrow` and` ncol`.
+```{r dim_df}
+dim(kejim)
+```
+
+
+# Select elements of a vector or a data frame
+
+## Extract a variable from a data frame
+
+In R, the `$` operator allows to extract a part of a complex object, and in particular, to extract a variable (column) from a data frame.
+
+```{r extr_col}
+dhp <- kejim$DHP
+```
+
+Here, the result `dhp` is a numeric vector.
+
+## Extract elements from a vector
+
+To extract certain elements of a vector according to their position, we use the brackets (`[]`):
+```{r extr_pos}
+dhp[2]
+dhp5 <- dhp[1:5]
+dhp5
+```
+
+In the second case, we gave a vector of indices to extract the first 5 values of `dhp`.
+
+With negative integers, we can exclude values based on their position:
+```{r excl_pos}
+dhp5[-2]
+```
+
+Finally, it is possible to select values according to a logical condition. In the statement below, R determines the positions of the *TRUE* values in the `dhp5 > 20` logical vector, and then extracts the values of `dhp5` corresponding to those positions:
+```{r extr_log}
+dhp5[dhp5 > 20]
+```
+
+## Exercise 3 {#return3}
+
+1. What does the following command mean?
+
+```{r esp_dhp50}
+esp_dhp50 <- kejim$Espece[kejim$DHP > 50]
+```
+
+2. Create a vector with DHP measurements for all trees with more than one stem (*Nb_Tiges* variable).
+
+[Solution](#sol3)
+
+## Extract a section from a data frame
+
+You can also use the `[]` notation to extract part of a data frame. In this case, the subsets of rows and columns are separated by a comma:
+
+```{r sub_df}
+kejim[1:5, 6:9]
+```
+
+You can also select columns with a vector of names:
+```{r sub_df_noms}
+kejim2 <- kejim[, c("Num_Arbre", "Espece", "DHP")]
+str(kejim2)
+```
+
+**Note**:
+
+- The absence of information before the comma means that we want to keep all the rows.
+
+- The names of columns are in quotation marks here, unlike when you extract a single column with `$`.
+
+
+# Other data structures
+
+## Matrix
+
+A matrix is a two-dimensional data structure where all elements have the same type. It can be created with the `matrix` function.
+
+```{r create_mat}
+mat1 <- matrix(1:12, nrow = 3)
+mat1
+```
+
+As for a data frame, we extract the elements of a matrix by specifying two vectors of indices:
+
+```{r sel_mat}
+mat1[2, 3]
+mat1[1:2, 2:3]
+```
+
+## List
+
+Unlike a vector, a list can contain objects of different types. We create a list with the `list` function and we extract individual elements using double brackets`[[ ]]`.
+
+```{r create_list}
+list1 <- list(1, 2, "ab")
+list1
+list1[[3]]
+```
+
+A list can even contain vectors from other lists:
+```{r list_mult}
+list2 <- list(c(10, 20), "cd", list1)
+str(list2)
+```
+
+We will not discuss these structures in more detail for the moment. In summary, the four data structures we have seen are differentiated according to whether they have 1 or 2 dimensions and whether they contain elements of the same type or of different types.
+
+| | Same type | Different types |
+| ---- | --------- | ------------------ |
+| 1D | vector | list |
+| 2D | matrix | data frame |
+
+
+# Other useful functions
+
+- `sort`: Orders a vector in ascending order.
+```{r spell}
+sort(dhp5)
+```
+
+- `sum`: Calculates the sum of the values of a vector.
+```{r sum}
+sum(kejim$Nb_Tiges)
+```
+
+- `summary`: Returns the minimum, maximum, average and quartiles of a numeric variable.
+```{r summary}
+summary(kejim$DHP)
+```
+
+- `table`: Counts the number of occurrences of each value of a vector (useful for categorical or discrete values).
+```{r table}
+table(kejim$Espece)
+```
+
+With two or more vectors, `table` creates a contingency table:
+```{r}
+table(kejim$Espece, kejim$Site)
+```
+
+There are also several functions for calculating different statistics from a data vector: `mean`,` median` `min`,` max`, `sd` (standard deviation).
+
+## Exercise 4 {#return4}
+
+In R, the logical values *TRUE* and *FALSE* correspond to numerical values 1 and 0, respectively.
+
+1. How do you interpret the result of `sum(c(FALSE, TRUE, TRUE))`?
+
+2. How can you use the `sum` function to determine the number of red maples (species code "ACRU") in the `kejim` data?
+
+[Solution](#sol4)
+
+
+# Missing values
+
+To represent missing data, R uses the `NA` symbol (in uppercase and without quotation marks). Generally, the result of any calculation involving a `NA` value is also `NA`. Some functions like `sum` and` mean` have a `na.rm` argument to ignore missing values.
+
+```{r sum_na}
+v_na <- c (1, 2, 9, NA)
+mean(v_na)
+mean(v_na, na.rm = TRUE)
+```
+
+
+# Write your own functions
+
+As mentioned above, one of the advantages of a programming language like R is the ability to automate repetitive operations through functions. Thus, you can define your own functions, in order to create a "shortcut" to a sequence of simpler operations.
+
+Here is the basic structure of an R function:
+```{r func, eval = FALSE}
+name_of_function <- function (argument1, argument2, ...) {
+    # enter the function code here
+}
+```
+
+By default, the result of the function is that obtained by the last instruction of the function block (block delimited by the braces `{}`).
+
+As an example, we will create a `tree_type` function that will indicate whether a species found in the `kejim` dataset is a conifer or a broadleaf tree.
+
+```{r func_type1, eval = FALSE}
+# Indicates whether the tree species is a conifer or broadleaf tree
+tree_type <- function (species) {
+    # code to write ...
+}
+```
+
+
+First, we need a vector of species codes corresponding to conifers. In this dataset, there are four: balsam fir (ABBA), red spruce (PIRU), white pine (PIST) and eastern hemlock (TSCA).
+
+```{r codes_conif}
+codes_conif <- c ("ABBA", "PIRU", "PIST", "TSCA")
+```
+
+Then we will use the `%in%` function included in R, which tests whether the elements of a vector are found in another vector. For example:
+```{r in_ex}
+"TSCA" %in% codes_conif
+```
+
+Finally, we need to output a different result depending on the result of the logical test. This is used for the `if .. else ...` branch, which takes the following form:
+```{r if_else, eval = FALSE}
+if (condition) {
+    # code to execute if condition is true
+} else {
+    # code to execute if condition is false
+}
+```
+
+Here is our finalized function:
+```{r func_type2}
+# Indicates whether the tree species is a conifer or broadleaf tree
+tree_type <- function (species) {
+    codes_conif <- c ("ABBA", "PIRU", "PIST", "TSCA")
+    if (species %in% codes_conif) {
+        type <- "conifer"
+    } else {
+        type <- "broadleaf"
+    }
+    type
+}
+```
+
+Note that the statements in a block of code (that of the function, as well as the blocks `if` and` else`) are indented (offset). An indentation of at least 4 characters is recommended to facilitate understanding of the logic of the code.
+
+The result of the function corresponds to that of the last instruction, so here it will be the content of the variable `type`.
+
+```{r func_type_ex}
+tree_type("ACRU")
+tree_type("PIST")
+```
+
+
+# Recall
+
+## Functions and essential operations
+
+Operator | Usage |
+| ------------------- | ----- |
+| `?` | Get help on a function |
+| `#` | Add a comment |
+| `:` | Define a sequence of integers |
+| `<-` | Assign a value to an object |
+| `$`, `[]`, `[[]]` | Select part of an object |
+| `" "` | Delimit strings |
+| `{}` | Delimit a block of code (e.g. function) |
+| `+`, `-`, `*`, `/`, `^`| Arithmetic operators |
+| `==`, `! =`, `<`, `>`, `<=`, `>=` | Comparison Operators |
+| `%in%` | Inclusion operator |
+
+| Function | Usage |
+| -------- | ------- |
+| `c()` | Create a vector |
+| `class()` | Class (type) of an object |
+| `str()` | Structure of an object |
+| `length()` | Length of a one-dimensional object |
+| `dim()` | Dimensions of an object |
+| `head()` | See the first rows of a table |
+| `summary()` | Summary of a numeric vector |
+| `table()` | Number of occurrences of values in a vector |
+
+## Select elements of an object
+
+*Here, i, j, k and l are positive integers.*
+
+| Expression | Result |
+| ----------- | --------------------------------------------------- |
+| `v[c(i, j)]` | The elements of the vector *v* in position *i* and *j*. |
+| `v[-c(i, j)]` | The elements of *v* except those in position *i* and *j*. |
+| `v[condition]` | The elements of *v* for which *condition* is true. |
+| `df$name` | The vector corresponding to the column *name* of the table *df*. |
+| `df[c(i, j), c(k, l)]` | The elements in one of the rows *i* or *j* and in one of the columns *k* or *l* of *df* (also works for a matrix). |
+| `df[condition, ]` | The rows of *df* for which *condition* is true. |
+| `df [i:j, c("name1", "name2")]` | The elements in columns *name1* and *name2* are in rows from *i* to *j*. |
+
+
+# References
+
+The content of this part is based on an introductory course in R prepared by Marc Mazerolle (professor at U. Laval, formerly UQAT), as well as a workshop offered by the Socio-Environmental Synthesis Center (SESYNC) and available online at: https://cyberhelp.sesync.org/basic-R-lesson/.
+
+
+# Exercise solutions
+
+## Exercise 1 {#sol1}
+
+For example, with $x$ = 1.5
+```{r ex1}
+sin(1.5)^2 + cos(1.5)^2 == 1
+```
+
+[Back](#return1)
+
+## Exercise 2 {#sol2}
+
+```{r ex2}
+class(species)
+c(1, 2, "pine")
+```
+
+The vector `c(1, 2,"pine")` is of type *character* because numbers can be represented as text, but text cannot be represented as numbers.
+
+[Back](#return2)
+
+## Exercise 3 {#sol3}
+
+1. `esp_dhp50` is a vector of species corresponding to trees in `kejim` with DHP greater than 50 cm.
+
+2.
+```{r ex3}
+dhp_multi_tige <- kejim$DHP[kejim$Nb_Tiges > 1]
+```
+
+[Back](#return3)
+
+## Exercise 4 {#sol4}
+
+1. The sum of a logical vector is the number of true values.
+
+2.
+```{r ex4}
+sum(kejim$Espece == "ACRU")
+```
+
+[Back](#return4)

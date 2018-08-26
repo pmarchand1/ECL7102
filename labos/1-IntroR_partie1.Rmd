@@ -71,9 +71,9 @@ Le symbole `>` dans la console indique que R est prêt à recevoir une commande.
 5^3
 ```
 
-**Question**: Pourquoi le résultat est-il précédé de `[1]`?
-
-**Réponse**: R indique ainsi qu'il s'agit du premier élément du résultat. Dans ce cas-ci, il ne comporte qu'un élément. 
+>**Question**: Pourquoi le résultat est-il précédé de `[1]`?
+>
+>**Réponse**: R indique ainsi qu'il s'agit du premier élément du résultat. Dans ce cas-ci, il ne comporte qu'un élément. 
 
 ## Opérateurs de comparaison
 
@@ -121,7 +121,7 @@ x <- 5:10
 
 Notez que l'opérateur `:` est un raccourci pour l'instruction `seq(5, 10)`. 
 
-**Truc**: Pour sauver un peu de temps dans RStudio, le raccourci clavier `Alt`+`-` produit l'opérateur `<-`.
+>**Truc**: Pour sauver un peu de temps dans RStudio, le raccourci clavier `Alt`+`-` produit l'opérateur `<-`.
 
 Pour retrouver la valeur d'une variable, il suffit d'inscrire son nom:
 ```{r}
@@ -139,11 +139,11 @@ Dans R, le nom d'un objet reconnu par le logiciel (variable, fonction, etc.) doi
 X
 ```
 
-**Conseils**:
-
-- Pour que le code soit plus lisible, les noms d'objets doivent (tout en restant brefs) offir de l'information sur leur contenu. Par exemple, `diametre` ou `diam` plutôt que `d` ou `x`. 
-
-- Il est préférable d'adopter un style uniforme pour les noms d'objets. Nous recommandons d'utiliser seulement des minuscules et de séparer les noms composés par `_`, ex.: `temp_min` pour température minimale.
+>**Conseils**:
+>
+>- Pour que le code soit plus lisible, les noms d'objets doivent (tout en restant brefs) offir de l'information sur leur contenu. Par exemple, `diametre` ou `diam` plutôt que `d` ou `x`. 
+>
+>- Il est préférable d'adopter un style uniforme pour les noms d'objets. Nous recommandons d'utiliser seulement des minuscules et de séparer les noms composés par `_`, ex.: `temp_min` pour température minimale.
 
 ## Chaînes de caractère
 
@@ -153,7 +153,7 @@ Pour représenter des données de type textuelles, on utilise des chaînes de ca
 s <- "du texte"
 ```
 
-**Note**: Des guillemets simples (') sont aussi acceptés par R, mais nous utiliserons seulement des guillemets doubles par souci de constance.
+>**Note**: Des guillemets simples (') sont aussi acceptés par R, mais nous utiliserons seulement des guillemets doubles par souci de constance.
 
 ## Obtenir de l'aide
 
@@ -262,14 +262,15 @@ str(kejim)
 
 La fonction `read.csv` requiert d'abord le nom du fichier CSV et accepte plusieurs arguments optionnels. Ici, nous spécifions `stringsAsFactors = FALSE` pour désactiver la conversion automatique des variables textuelles en facteurs.
 
-**Trucs**: 
-
-- La touche *Tab* donne accès à plusieurs types d'aide dans RStudio, dépendamment du contexte. Par exemple, on peut obtenir:
-    + une liste de fonctions commençant par une combinaison de lettres déjà entrée;
-    + les arguments possibles pour la fonction (si le curseur est entre les parenthèses);
-    + la liste des fichiers du répertoire de travail (si le curseur est entre guillemets).
-
-- La version française de logiciels comme Excel utilise la virgule comme signe décimal, et produit des fichiers CSV avec le point-virgule comme séparateur de champs. Pour ce type de fichier, il faut remplacer `read.csv` par `read.csv2`.
+>**Trucs** 
+>
+>La touche *Tab* donne accès à plusieurs types d'aide dans RStudio, dépendamment du contexte. Par exemple, on peut obtenir:
+>
+>    - une liste de fonctions commençant par une combinaison de lettres déjà entrée;
+>    - les arguments possibles pour la fonction (si le curseur est entre les parenthèses);
+>    - la liste des fichiers du répertoire de travail (si le curseur est entre guillemets).
+>
+>La version française de logiciels comme Excel utilise la virgule comme signe décimal, et produit des fichiers CSV avec le point-virgule comme séparateur de champs. Pour ce type de fichier, il faut remplacer `read.csv` par `read.csv2`.
 
 La fonction `head` montre les premières rangées (par défaut, les 6 premières) d'un tableau de données.
 ```{r head_df}
@@ -320,7 +321,7 @@ dhp5[dhp5 > 20]
 1. Que signifie la commande suivante?
 
 ```{r esp_dhp50}
-esp_dhp50 <- kejim$espece[kejim$dhp > 50] 
+esp_dhp50 <- kejim$Espece[kejim$DHP > 50] 
 ```
 
 2. Créez un vecteur comportant les mesures de DHP pour tous les arbres ayant plus d'une tige.
