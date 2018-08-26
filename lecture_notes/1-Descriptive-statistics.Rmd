@@ -1,0 +1,311 @@
+---
+title: "Descriptive statistics and graphics"
+date: "<br/>August 27, 2018"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+library(tidyverse)
+library(cowplot)
+```
+
+
+# Objectives
+
+- Know the types of data commonly used in statistics.
+
+- Choose appropriate summary statistics and graphical representations for different questions and types of data.
+
+
+# Types of data
+
+## Dataset
+
+For this lesson, we will use a tree inventory dataset from 20m x 20m plots at Kejimkujik National Park, Nova Scotia. These data are freely available on the Government of Canada Open Data Portal.
+
+Here is an overview of the data. Here, *Num_Arbre* is the tree identification number, *Nb_Tiges* is the number of stems and *DHP* is the diameter at breast height (in cm).
+
+```{r apercu_donnees}
+kejim <- read.csv("../donnees/cours1_kejimkujik.csv")
+head(kejim)
+```
+
+We will distinguish four types of data, divided into two groups: numerical variables and categorical variables (sometimes called qualitative):
+
+- *Continuous* numeric variables can take a (theoretically) infinite number of possible values in a given interval. Example: diameter.
+
+- *Discrete* numeric variables can only take certain values in an interval, usually integers. Example: year, number of stems.
+
+- *Nominal* categorical variables indicate category membership, but these categories are not ordered. Example: site, species.
+
+- *Ordinal* categorical variables indicate the position on an ordered scale. Example: drainage class (xeric, mesic, hydrous), stage of life (seedling, sapling, mature tree).
+
+Ordinal categorical variables are sometimes represented by numbers. However, the levels of a categorical variable are not quantities and the distance between two levels is not defined numerically.
+
+
+# Visualizing the distribution of a categorical variable
+
+A **bar graph** is often used to visualize the number of observations in each category; in our example, the number of trees per species.
+
+```{r bar_espece}
+compte_esp <- group_by(kejim, Espece) %>%
+    summarize(Compte = n()) %>%
+    mutate(Espece = reorder(Espece, Compte))
+ggplot(compte_esp, aes(x = Espece, y = Compte)) +
+    geom_col(fill = "darkblue") +
+    scale_y_continuous(expand = c(0, 0)) +
+    coord_flip()
+```
+
+To put emphasis on the proportion of observations per category, some use **pie charts**.
+
+```{r circ_espece}
+compte_esp5 <- kejim %>%
+    mutate(Espece = as.character(Espece)) %>%
+    mutate(Espece = ifelse(Espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
+                           Espece, "Autres")) %>%
+    group_by(Espece) %>%
+    summarize(Compte = n()) %>%
+    mutate(Espece = factor(Espece, 
+                  levels = c("TSCA", "ACRU", "PIST", "BEPA", "PIRU", "Autres")))
+
+ggplot(compte_esp5, aes(x = factor(1), y = Compte, fill = Espece)) +
+    geom_col(position = position_stack(), color = "white") +
+    coord_polar(theta = "y") +
+    theme(axis.line = element_blank(), axis.title = element_blank(), 
+          axis.text = element_blank())
+
+```
+    
+Generally, pie charts are not recommended. They become difficult to read when the number of categories increases. Also, it is easier visually to estimate a length than a surface; in other words, the magnitudes can be better compared when they are represented on one dimension (as in the bar graph) than on two dimensions.
+
+That said, the pie chart can be useful when you want to compare proportions to simple fractions like 1/2 or 1/4. For example, we see here that more than 50% of the trees belong to one of the two most common species, TSCA (hemlock) and ACRU (red maple).
+
+For a dummy variable, the categories have no fixed order. By ordering them according to their frequency, as we have done here, we simplify the reading of the graph. For an ordinal variable, it is of course necessary to respect the order of the values of the variable.
+
+
+# Visualizing the distribution of a continuous numeric variable
+
+A **histogram** is obtained by counting the number of observations in bins of equal size on the axis of the observed variable. Below, the histogram of the DBH clearly shows the asymmetry of the distribution (several small diameter trees and a few trees with very large diameters). We also note that the inventory has a minimum DHH around 10 cm.
+
+```{r histo_dhp}
+dhp_histo <- ggplot(kejim, aes(x = DHP)) +
+    geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
+    scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
+                       limits = c(0, 90)) +
+    scale_y_continuous(expand = c(0, 0))
+dhp_histo
+```
+
+The approximation of the distribution by a histogram depends on the choice of bin width, so it is useful to test several values. With too large bins, information on small-scale frequency variation is lost; with too small bins, the distribution appears irregular due to lack of data in each bin.
+
+The **density plot** uses a kernel density estimation method to approximate the continuous probability distribution from the observations. As with the histogram, the density plot includes a parameter that determines the resolution of the graph on the *x* axis, ranging from a smoother to a more irregular distribution.
+
+```{r dens_dhp}
+ggplot(kejim, aes(x = DHP)) +
+    geom_density(color = "orange", fill = "orange", alpha = 0.4) +
+    scale_x_continuous(breaks = seq(0, 90, 10)) +
+    scale_y_continuous(expand = c(0, 0))
+```
+
+
+# Summary statistics of a numeric variable
+
+## Mean, variance and standard deviation
+
+Consider a data series $x_1$, $x_2$, ..., $x_n$ from $n$ observations of a numeric variable $x$.
+
+The **mean** of $x$ is denoted $\bar{x}$ and defined as:
+
+$$\bar{x} = \frac{x_1 + x_2 + ... + x_n}{n} = \frac{\sum_{i = 1}^{n} x_i}{n}$$
+
+The average can be seen as the "balancing point" of a distribution: if each observation exerted a weight proportional to its distance from the average, these weights would be in equilibrium.
+
+![](../images/moyenne.PNG)
+
+By this definition, if we subtract $\bar{x}$ from each observation to obtain its deviation from the mean, the sum of these differences is equal to zero.
+
+![](../images/moyenne_ecart.PNG)
+
+To measure the degree of dispersion of the data around their mean, we take the square of deviations from the mean. The mean of these squared deviations is called the **variance**, denoted $\sigma_x^2$.
+
+$$\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}$$
+
+The unit of measure for the variance differs from that of the data (e.g. for a diameter in cm, the variance is in cm$^2$). For that reason, it is useful to report not the variance as such, but rather its square root, or **standard deviation** ($\sigma_x$).
+
+$$\sigma_x = \sqrt{\frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}}$$
+
+> **Note**: Here, we use the mean and the variance to describe a series of data, without reference to a statistical model or to a larger population. As we will see in the next class, when we want to estimate the variance or standard deviation of a population from a sample, the division by $n$ is replaced by a division by $n - 1$.
+
+Since the mean and the standard deviation have the same units, their ratio can be calculated to obtain a measure of the relative dispersion of the data. This ratio is called **coefficient of variation** (CV) and is usually expressed as a percentage.
+
+In our dataset, the trees have a mean DBH of 21.8 cm, with a standard deviation of 12.3 cm (CV of 56%). We add a point on the histogram to represent the mean and a line corresponding to a standard deviation on each side of the mean. Note that if the mean and standard deviation provide some information on the distribution of values, other information such as the asymmetry of the distribution is lost.
+
+```{r histo_moy_dhp}
+dhp_histo_moy <- ggplot(kejim, aes(x = DHP)) +
+    geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
+    geom_point(x = mean(kejim$DHP), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim$DHP) - sd(kejim$DHP), y = 100,
+         xend = mean(kejim$DHP) + sd(kejim$DHP), yend = 100, color = "orange", size = 2) +
+    scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
+                       limits = c(0, 90)) +
+    scale_y_continuous(expand = c(0, 0))
+dhp_histo_moy
+```
+
+
+## Rank Statistics
+
+Other common summary statistics are based on the position of observations when they are ranked in ascending order. These include:
+
+- the minimum and the maximum;
+
+- the **median**: defined as the central rank observation, or for an even number of data, the mean of the two central observations;
+
+- the **quantiles**.
+
+Quantiles can be seen as a generalization of the median. If the median divides the data into two groups containing the same number of observations, other types of quantiles divide the data into more than two groups. The most commonly used quantile types are quartiles (4 groups), quintiles (5 groups), deciles (10 groups) or percentiles (100 groups).
+
+In particular, quartiles are used to define a graph named the *boxplot*.
+
+## Boxplot
+
+Popularized by Tukey, this graph makes shows the position of the quartiles (including the median). The box between the 1st and 3rd quartile represents the region containing 50% of the observations. The distance between the 1st and 3rd quartile is called the interquartile range (or IQR). A whisker shows the range of the data on each side of the box.
+
+![](../images/boxplot.png)
+
+Often, the maximum length of the whiskers is based on the IQR (1.5x the IQR, according to Tukey's convention). Extreme values beyond those limits are represented by points.
+
+```{r boxplot_dhp}
+dhp_boxplot <- ggplot(kejim, aes(x = 0, y = DHP)) +
+    geom_boxplot(fill = "grey70", width = 0.1) +
+    labs(x = "") +
+    scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
+    coord_flip() +
+    theme(axis.text.y = element_blank(), axis.line.y = element_blank(),
+          axis.ticks.y = element_blank())
+dhp_boxplot + scale_x_continuous(limits = c(-0.1, 0.2))
+```
+
+By juxtaposing the histogram of the DBH and boxplot, we see that the latter represents the essential characteristics of the distribution, including the asymmetry, the minimum DBH and the presence of some very large trees.
+
+```{r histo_boxplot}
+plot_grid(dhp_histo_moy, dhp_boxplot + theme_nothing(), 
+          rel_heights = c(0.8, 0.2), align = "v", ncol = 1)
+```
+
+Compared to the mean and standard deviation, quantile-based statistics are less sensitive to extreme values. Let's see what happens if we remove the 18 trees (out of more than 1100) with a DBH greater than 65 cm.
+
+```{r val_extr}
+kejim_max65 <- filter(kejim, DHP <= 65)
+dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = DHP)) +
+    geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
+    geom_point(x = mean(kejim_max65$DHP), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim_max65$DHP) - sd(kejim_max65$DHP), y = 100,
+                 xend = mean(kejim_max65$DHP) + sd(kejim_max65$DHP), yend = 100, 
+                 color = "orange", size = 2) +
+    scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
+                       limits = c(0, 90)) +
+    scale_y_continuous(expand = c(0, 0))
+
+dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = DHP)) +
+    geom_boxplot(fill = "grey70", width = 0.1) +
+    labs(x = "") +
+    scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
+    coord_flip() +
+    theme(axis.text.y = element_blank(), axis.line.y = element_blank(),
+          axis.ticks.y = element_blank())
+
+plot_grid(dhp_nonextr_histo, dhp_nonextr_boxplot + theme_nothing(), 
+          rel_heights = c(0.8, 0.2), align = "v", ncol = 1)
+```
+
+The exclusion of these few large trees affects the average (4% decrease) and standard deviation (16% decrease) more than the median (1% decrease) or interquartile gap (2% decrease). Remember that the effect of an observation on the average depends on its distance to the latter. Comparatively, the median depends only on the number of smaller or larger observations, but not on the distance.
+
+While the boxplot represents a distribution in a very coarse way, this simplicity can be an advantage when it comes to visualizing numerous distributions side-by-side. For example, we illustrate below the distribution of DBH of the main tree species at Kejimkujik. We see immediately that the DBH of white birches is less variable and distributed more symmetrically than that of other species.
+
+```{r box_mult2}
+kejim_sub <- filter(kejim, Espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
+    mutate(Espece = reorder(Espece, DHP, FUN = function(x) -median(x)))
+
+ggplot(kejim_sub, aes(x = Espece, y = DHP)) +
+    labs(x = "", y = "Diameter at breast height (cm)") +
+    geom_boxplot(fill = "grey70") +
+    scale_x_discrete(labels = c("White birch", "White pine", "Eastern hemlock",
+                                "Red maple", "Red spruce")) +
+    coord_flip()
+```
+
+
+# Summary: Statistics of a single variable
+
+**Numerical variables**
+
+- Visualize distribution: box plot, histogram, density chart
+
+- Measures of central tendency: median, mean
+
+- Measures of dispersion: range (max - min), interquartile range, standard deviation
+
+- For data series at different scales, relative dispersion can be compared by calculating the coefficient of variation (ratio of the standard deviation to the mean, often expressed in %).
+
+**Categorical variables**
+
+- Visualize the distribution: bar graph.
+
+- Nominal variable: Only possible measure of central tendency is the **mode** (the most common value).
+
+- Ordinal variable: Since the categories are ordered, we can also define the median.
+
+
+# Relationship between two numeric variables
+
+Finally, we will discuss statistics describing the relationship between two numeric variables. This relationship can be viewed using a **scatter plot**.
+
+For example, here is a plot of the number of hours of sleep of 83 mammal species based on their body mass. The dataset comes from a study by Savage and West (2004) and is included with the *ggplot2* package in R.
+
+```{r nuage_point}
+data(msleep)
+
+nuage_pts <- ggplot(msleep, aes(x = log(bodywt), y = sleep_total)) +
+    geom_point() +
+    labs(x = "Logarithm of body mass", y = "Hours of sleep")
+nuage_pts
+```
+
+At first glance, there seems to be a trend where larger mammals sleep less.
+
+## Covariance and correlation
+
+Let us take two variables $x$ and $y$ measured on the same individuals. Remember that the variance is the mean of the squared deviations of a variable from its mean.
+
+$$\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}$$
+
+The **covariance** is the mean of the deviations of $x$ and $y$ from their respective means.
+
+$$\sigma_{xy} = \frac{\sum_{i = 1}^{n} (x_i - \bar{x}) (y_i - \bar{y})}{n}$$
+
+When the variables tend to both be above (or below) their average, the differences are more often of the same sign, so the covariance is positive. When the differences tend to be of opposite sign, the covariance is negative.
+
+It can be shown that the maximum absolute value of the covariance is equal to the product of the standard deviations of the two variables. Dividing the covariance by the product of the standard deviations gives a normalized value in the range -1 to 1. This value is Pearson's **correlation coefficient**, $\rho_{xy}$.
+
+$$\rho_{xy} = \frac{\sigma_{xy}}{\sigma_x \sigma_y}$$
+
+Pearson's correlation coefficient measures the *linear* association between two variables. A coefficient of 1 (respectively, -1) corresponds to a perfect positive correlation (resp., negative). A coefficient of 0 indicates no correlation. For our previous example (sleep hours vs. log body mass), $\rho_{xy}$ = -0.57.
+
+If two variables are **independent**, i.e. knowing one of them does not provide any information on the other, their correlation is necessarily equal to zero. However, as the picture below shows, the opposite is not necessarily true.
+
+![](../images/Correlation_examples.png)
+<small>Source: Wikipédia</small>
+
+This figure shows the correlation coefficients associated with different scatter plots. The first row shows the progression from two independent variables (in the middle) towards stronger positive and negative associations. The second row shows that the correlation coefficient does not depend on the slope of a linear relationship between two variables. The third row gives several examples where the linear correlation is zero, even if there are (non-linear) association patterns between the two variables.
+
+
+# References
+
+For a more in-depth discussion of the different methods and best practices for building graphics, I recommend Claus Wilke's eBook, *Fundamentals of Data Visualization*, available freely at: https://serialmentor.com/dataviz/.
