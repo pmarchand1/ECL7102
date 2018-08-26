@@ -1,0 +1,31 @@
+body {
+  background: #fff;
+  background-color: #fff; 
+}
+
+.reveal {
+    color: #000;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+    color: #000;
+}
+
+.reveal li {
+    margin-top: 8pt;
+    margin-bottom: 8pt;
+}
+
+.reveal p {
+    margin-top: 28pt;
+}
+
+.reveal img {
+    border: none;
+    max-height: 80%;
+}
