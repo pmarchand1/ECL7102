@@ -1,0 +1,528 @@
+---
+title: "Introduction à R - Partie 2"
+date: "5 septembre 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objectifs pour cette partie
+
+- Charger des *packages* pour ajouter des fonctions à R.
+
+- Remanier des tableaux de données avec le packge *dplyr*.
+
+    + Filtrer et trier les observations.
+    + Transformer les variables.
+    + Calculer des statistiques par groupe d'observations.
+    + Joindre deux tableaux selon leurs variables communes.
+
+- Produire des graphiques avec le package *ggplot2*.
+
+    + Créer différents types de graphiques: nuages de points, boîtes à moustaches, histogrammes et autres.
+    + Créer des graphiques composés.
+    + Personnaliser l'apparence des éléments du graphique.
+    
+
+# Les packages en R
+
+- Un *package* est une collection de fonctions développée par des utilisateurs de R qui permet d'accroître les capacités de base du langage R dans un certain domaine. Le dépôt de packages [CRAN](https://cran.r-project.org/web/packages/) en compte actuellement plus de 12 000! 
+
+- Pour **installer** un package sur votre ordinateur, utilisez la fonction `install.packages` avec le nom du package entre guillemets, ex.: `install.packages("dplyr")`. Dans RStudio, vous pouvez consulter la liste des packages déjà installés sous l'onglet *Packages* du quadrant inférieur droit.
+
+- Pour **charger** un package dans votre session R courante et ainsi avoir accès à ses fonctions, utilisez la fonction `library`, ex.: `library(dplyr)`. Notez que les guillemets ne sont pas requis cette fois.
+
+
+# Remaniement des données avec *dplyr*
+
+## Organisation des données
+
+Le package *dplyr* regroupe des fonctions qui simplifient plusieurs opérations couramment appliquées à des tableaux de données dans R. Ces fonctions sont adaptées à des tableaux de données suivant une forme normale:
+
+- chaque rangée correspond à une observation et
+- chaque colonne correspond à une variable.
+
+>Ces critères se rapprochent des principes d'organisation des données dans une base de données relationnelle (ex.: Access). De plus, les fonctions de *dplyr* correspondent assez bien aux opérations de base dans le langage de base de données SQL.  
+
+**Question**: Quelles sont les variables dans le tableau suivant, qui indique le nombre d'individus par site et espèce? Est-ce qu'il respecte la forme normale décrite ci-dessus?
+
+```{r echo = FALSE}
+arbre_df <- data.frame(site = c("A", "B", "C"), sapin = c(35, 24, 51), pin = c(10, 12, 19), bouleau = c(26, 45, 8))
+arbre_df
+```
+
+**Réponse**: Les trois dernières colonnes représentent la même variable (nombre d'individus) pour différentes valeurs de l'espèce. Donc, un tableau normalisé aurait trois colonnes: site, espèce et nombre.
+
+```{r echo = FALSE, warning = FALSE}
+library(tidyr)
+gather(arbre_df, key = "espece", value = "nombre", sapin:bouleau)
+```
+
+En adoptant cette forme pour la plupart de vos données, il sera également plus facile de les visualiser (comme nous verrons plus loin) et des les modéliser dans R.
+
+Le package *tidyr* contient des fonctions pour convertir automatiquement un tableau de données entre les deux formats ci-dessus. Nous n'avons pas le temps de couvrir ce package aujourd'hui, mais vous pourrez trouver plus d'informations dans les références en bas de page.
+
+Maintenant, chargeons le package *dplyr* ainsi que le jeu de données du Parc national de Kejimkujik, que nous avons déjà utilisé au premier laboratoire.
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr)
+
+kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+head(kejim)
+```
+
+Notez que ce tableau de données est déjà en forme normale.
+
+## Choisir des observations avec *filter*
+
+Au dernier cours, nous avons vu comment choisir des rangées d'un tableau de données selon une condition donnée. Par exemple, le code suivant extrait toutes les rangées correspondant à l'espèce *ACRU* (érable rouge).
+
+```{r}
+acru <- kejim[kejim$Espece == "ACRU", ]
+head(acru)
+```
+
+Voici la même opération réalisée avec la fonction `filter`.
+
+```{r}
+acru <- filter(kejim, Espece == "ACRU")
+head(acru)
+```
+
+Toutes les fonctions de *dplyr* ont la même structure: 
+
+- le nom de la fonction indique l'opération à réaliser;
+
+- le premier argument est le tableau de données de départ;
+
+- les autres arguments précisent l'opération (ici, les conditions du filtre);
+
+- la fonction renvoie une version transformée du tableau de données.
+
+Les avantages d'utiliser *dplyr* deviendront donc plus évidents après avoir vu plusieurs des fonctions.
+
+> **Note:** Après avoir indiqué le tableau de données comme premier argument, les arguments suivants peuvent mentionner simplement le nom des variables du tableau, sans guillemets et sans préciser de nouveau le nom du tableau (`Espece` au lieu de `kejim$Espece`). C'est une propriété particulière des fonctions du package *dplyr*, que nous retrouverons aussi avec le package *ggplot2* plus loin, ainsi qu'avec les fonctions de régression plus tard dans le cours.
+
+On peut appliquer plusieurs filtres à la fois, en séparant les conditions par des virgules. Par exemple, `acru30` contient les érables rouges avec un DHP supérieur à 30 cm.
+
+```{r}
+acru30 <- filter(kejim, Espece == "ACRU", DHP > 30)
+head(acru30)
+```
+
+## Exercice 1 {#retour1}
+
+Produisez un tableau des observations de l'année 2014, excluant les individu de l'espèce *TSCA* (pruche du Canada).
+
+[Solution](#sol1)
+
+## Trier les observations avec *arrange*
+
+La fonction `arrange` trie les rangées d'un tableau de données selon la valeur d'une ou plusieurs variables. 
+
+```{r}
+acru_tri_dhp <- arrange(acru, DHP)
+head(acru_tri_dhp)
+```
+
+Pour trier en ordre décroissant, il faut utiliser la fonction `desc()`. Le code suivant trie les données par ordre croissant d'année, puis par ordre décroissant de DHP.
+
+```{r}
+acru_tri_an_dhp <- arrange(acru, Annee, desc(DHP))
+head(acru_tri_an_dhp)
+```
+
+## Extraire des variables avec *select*
+
+La fonction `select` extrait d'un tableau de données les variables indiquées, séparées par des virgules.
+
+```{r}
+acru_select <- select(acru_tri_dhp, Site, Annee, DHP)
+head(acru_select)
+```
+
+## Séquencer des opérations avec `%>%`
+
+Il arrive souvent qu'on veuille appliquer une série d'opérations à un tableau de données, sans conserver les résultats intermédiaires. Pour ce faire, *dplyr* procure un raccourci grâce à l'opérateur `%>%`, nommé *pipe* (tuyau) en anglais.  
+
+L'opérateur `%>%` a pour effet de passer le résultat d'une fonction comme premier argument de la fonction suivante. Par exemple, trois des opérations que nous avons effectuées plus tôt (choisir les arbres d'espèce ACRU, trier par DHP et extraire le site, l'année et le DHP) peuvent être combinées dans la séquence suivante. 
+
+```{r}
+acru <- kejim %>%
+    filter(Espece == "ACRU") %>%
+    arrange(DHP) %>%
+    select(Site, Annee, DHP)
+    
+head(acru)
+```
+
+Le premier `%>%` passe le tableau initial `kejim` à la fonction `filter`, puis la chaîne continue jusqu'au dernier résultat, qui est assigné à la variable `acru`.
+
+## Exercice 2 {#retour2}
+
+En utilisant `%>%`, produisez un tableau des observations de sapin baumier (ABBA) de plus de 15 cm de DHP, triées en ordre chronologique.
+
+[Solution](#sol2)
+
+## Créer des variables dérivées avec *mutate*
+
+La fonction `mutate` permet de créer des variables dérivées de colonnes existantes du tableau de données. Par exemple, nous pouvons calculer le DHP en millimètres.
+
+```{r}
+kejim_dhp_mm <- mutate(kejim, DHP_mm = DHP * 10)
+head(kejim_dhp_mm)
+```
+
+## Calculer des statistiques par groupe: *group_by* et *summarize*
+
+Ces deux fonctions sont souvent utilisées ensemble: `group_by` divise un tableau de données en groupes selon la valeur d'une ou plusieurs variables et `summarize` calcule une ou plusieurs quantités sommaires pour chaque groupe. L'exemple suivant calcule la moyenne et l'écart-type du DHP par espèce.
+
+```{r}
+group_by(kejim, Espece) %>%
+    summarize(moyDHP = mean(DHP), etDHP = sd(DHP))
+```
+
+**Notes**:
+
+- Parmi les colonnes du tableau original, seules celles définissant les groupes sont retenues par `summarize`.
+
+- La fonction `summarize` est semblable à `mutate`: toutes deux créent de nouvelles colonnes. Toutefois, `mutate` définit une nouvelle valeur pour chaque rangée du tableau original, tandis que `summarize` définit une valeur par groupe. 
+
+En plus de `mean`, `summarize` accepte n'importe quelle fonction qui calcule une valeur à partir d'un groupe de valeurs, ex.: `sum`, `min`, `max`, `sd`, et plusieurs autres. Une fonction spéciale, `n()`, renvoie le nombre d'observations dans chaque groupe. L'exemple suivant montre comment compter le nombre d'arbres mesurées par site et par année.
+
+```{r}
+compte_site_annee <- kejim %>%
+    group_by(Site, Annee) %>%
+    summarize(compte = n())
+head(compte_site_annee)
+```
+
+## Exercice 3 {#retour3}
+
+Classez les espèces du jeu de données `kejim` en ordre décroissant de leur diamètre maximal.
+
+[Solution](#sol3)
+
+## Joindre deux tableaux de données
+
+Le fichier `codes_especes.csv` contient un tableau de correspondance entre les codes d'espèces du tableau `kejim` et les noms communs français et anglais de ces espèces. 
+
+```{r}
+codes_esp <- read.csv("codes_especes.csv", stringsAsFactors = FALSE,
+                      encoding = "UTF-8")
+head(codes_esp)
+```
+
+**Note**: L'argument `encoding = "UTF-8"` est nécessaire pour que les accents français soient lus correctement.
+
+Pour ajouter ces noms d'espèces au tableau `kejim`, il faut joindre les deux tableaux avec la fonction `inner_join`.
+
+```{r}
+kejim_esp <- inner_join(kejim, codes_esp)
+head(kejim_esp)
+```
+
+La jointure (*join*) est un concept provenant des bases de données relationnelles. Comme on peut voir ici, la fonction `inner_join` a rattaché à chaque rangée du premier tableau (`kejim`) les données d'une rangée du deuxième tableau (`codes_esp`) qui correspondait à la même valeur d'`Espece`. Par défaut, *dplyr* suppose que la correspondance doit être faite sur les colonnes de même nom, mais il est possible de spécifier autrement.
+
+Notez que le tableau `kejim_esp` compte 1070 rangées, 91 de moins que le tableau `kejim`. Cela est dû au fait que certains codes d'espèce de `kejim` sont absents du tableau `codes_esp`. Pour garder les rangées du premier tableau sans correspondance dans le deuxième (et ajouter des valeurs manquantes aux colonnes de nom d'espèce), il faut utiliser un type de jointure différente, `left_join`. Nous n'avons pas le temps de discuter des différents types de jointure, mais vous pouvez consulter l'aide-mémoire *dplyr* dans les références en bas de page pour plus d'information.
+
+## Résumé des fonctions de *dplyr*
+
+
+| Fonction    | Description                                            |
+|-------------+----------------------------------------------------|
+| `filter`    | extraire les rangées qui remplissent certaines conditions |
+| `arrange`   | trier les rangées d'après la valeur de certaines variables |
+| `select`    | extraire des colonnes spécifiques                  |
+| `mutate`    | créer des variables dérivées des colonnes existantes |
+| `group_by`  | diviser les observations en groupes d'après la valeur de certaines variables |
+| `summarize` | calculer des statistiques sommaires sur plusieurs observations (possiblement par groupe) | 
+| `inner_join` | joindre deux tableaux de données à partir de variables communes |
+
+
+# Visualisation des données avec *ggplot2*
+
+Il existe plusieurs façons de produire des graphiques dans R. Nous utiliserons dans ce cours le package *ggplot2*, qui permet de réaliser plusieurs types de graphiques avec la même structure de code et offre une grande gamme d'options pour personnaliser l'apparence des graphiques.
+
+```{r, warning = FALSE}
+library(ggplot2)
+```
+
+## Créer un nuage de points
+
+Le jeu de données `msleep` inclus avec *ggplot2* comporte des données sur le sommeil de 83 espèces de mammifères.
+
+```{r}
+msleep
+```
+
+Entrez le code suivant pour produire un nuage de points montrant le nombre d'heures de la phase REM (*sleep_rem*) en fonction du nombre total d'heures de sommeil.
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = sleep_total, y = sleep_rem)) +
+    geom_point()
+```
+
+Le graphique apparaît dans l'onglet *Plots* du quadrant inférieur droit dans RStudio. Vous pouvez l'exporter en format .PNG ou .PDF à l'aide du menu *Export*.
+
+Ce premier exemple illustre la structure de base pour la production d'un graphique avec *ggplot2*:
+
+- Un appel à la fonction `ggplot` avec deux arguments: 
+
+    + un tableau de données (`data`) et
+    + une association (`mapping`) spécifiée avec la fonction `aes`. À l'intérieur de cette fonction `aes`, on associe des éléments du graphique à des variables du jeu de données (ex. *sleep_total* sur l'axe des *x*).
+    
+- Le symbole `+` pour indiquer que nous ajouterons d'autres composantes au graphique.
+
+- Une fonction de type *geom* pour spécifier les éléments géométriques représentés (ici `geom_point`, pour un nuage de points).
+
+> Comme pour les fonctions de *dplyr*, une fois que le tableau de données est indiqué dans l'argument `data`, on peut utiliser le nom des variables dans la fonction `aes`, sans guillemets et sans répéter le nom du tableau de données. 
+
+
+## Exercice 4 {#retour4}
+
+À partir du tableau de données `kejim`, produisez un nuage de points du DHP (axe des *y*) selon l'espèce (axe des *x*).
+
+[Solution](#sol4)
+
+## Types de graphiques: les fonctions *geom*
+
+Ici, il y a trop d'arbres pour bien voir la distribution du DHP par espèce avec un nuage de points. Pour visualiser les mêmes données avec des boîtes à moustaches, il suffit de remplacer `geom_point` par `geom_boxplot` dans notre code précédent.
+
+```{r}
+ggplot(kejim, aes(x = Espece, y = DHP)) +
+    geom_boxplot()
+```
+
+On peut utiliser plusieurs fonctions `geom_...` pour superposer des éléments sur le même graphique. Ajoutons donc les points à la boîte à moustaches, en spécifiant une couleur différente pour `geom_point`.
+
+```{r}
+ggplot(kejim, aes(x = Espece, y = DHP)) +
+    geom_boxplot() +
+    geom_point(color = "red")
+```
+
+Nous pouvons aussi représenter des statistiques sommaires d'un ensemble de points, comme leur moyenne.
+
+```{r}
+ggplot(kejim, aes(x = Espece, y = DHP)) +
+    geom_boxplot() +
+    geom_point(color = "red", stat = "summary", fun.y = "mean")
+```
+
+Produisons maintenant un histogramme du DHP pour l'ensemble des arbres avec `geom_histogram`. L'histogramme représente une seule variable, donc nous n'avons pas besoin de spécifier *y* dans `aes`. 
+
+```{r}
+ggplot(kejim, aes(x = DHP)) +
+    geom_histogram(binwidth = 5, color = "white", fill = "blue")
+```
+
+Dans la fonction `geom_histogram`, nous avons spécifié plusieurs arguments afin de choisir la taille des intervalles (`binwidth`) la couleur de la bordure (`color`) et la couleur de remplissage des barres (`fill`).
+
+Plutôt que d'utiliser une couleur de remplissage constante, nous pourrions représenter les différentes espèces par des barres de différentes couleur sur l'histogramme. Dans ce cas, il faut associer `fill` à la variable `Espece` à l'intérieur de la fonction `aes`.
+
+
+```{r}
+ggplot(kejim, aes(x = DHP, fill = Espece)) +
+    geom_histogram(binwidth = 5, color = "white")
+```
+
+## Exercice 5 {#retour5}
+
+Avec `geom_bar`, créez un diagramme à barres du nombre d'individus par espèce (différentes espèces sur l'axe des x). Utilisez un code de couleur pour identifier les individus de différents sites. 
+
+[Solution](#sol5)
+
+## Diviser un graphique en facettes
+
+Dans l'exercice, nous avons produit un graphique du nombre d'individus par espèce. Si nous voulons visualiser séparément la distribution des espèces sur différents sites, nous pourrions diviser les données et produire plusieurs graphiques. Heureusement, *ggplot2* simplifie cette tâche avec le concept de facette.
+
+```{r}
+ggplot(kejim, aes(x = Espece)) +
+    geom_bar() +
+    facet_wrap(~ Site)
+```
+
+Notez qu'il faut placer un *tilde* (~) avant le nom de la variable dans `facet_wrap`.
+
+Dans le graphique précédent, les codes d'espèce ne sont pas visibles sur l'axe des *x*. Nous ajoutons donc la fonction `coord_flip` pour inverser les axes et produire des barres horizontales.
+
+```{r}
+ggplot(kejim, aes(x = Espece)) +
+    geom_bar() +
+    facet_wrap(~ Site) +
+    coord_flip()
+```
+
+On peut aussi créer une grille de facettes (`facet_grid`) avec deux variables. Par exemple, voici des histogrammes du DHP par site et par année.
+
+```{r}
+ggplot(kejim, aes(x = DHP)) +
+    geom_histogram(binwidth = 5) +
+    facet_grid(Annee ~ Site)
+```
+
+## Exercice 6 {#retour6}
+
+À partir du jeu de données `msleep`, créez un nuage de points représentant le nombre d'heures de sommeil totales (`sleep_total`) et en phase REM (`sleep_rem`) avec une facette pour chaque type de régime alimentaire (`vore`).
+
+[Solution](#sol6)
+
+## Personnaliser l'apparence des graphiques
+
+Tous les aspects visuels des graphiques de *ggplot2* peuvent être personnalisés: titre et échelle des axes, taille et police de caractères, couleurs, marges, etc. Si les valeurs par défaut de ces paramètres sont suffisants pour une exploration rapide des données, la production de figures pour des publications ou présentations requiert davantage d'ajustements.
+
+Commençons avec un graphique de densité pour le DHP de trois espèces (TSCA, ACRU et BEPA). Nous enregistrons ce graphique dans un objet (`dens`) afin de pouvoir le modifier sans ré-écrire le code du graphique de base.
+
+```{r}
+trois_esp <- filter(kejim, Espece %in% c("TSCA", "ACRU", "BEPA"))
+
+dens <- ggplot(trois_esp, aes(x = DHP, fill = Espece)) +
+    geom_density(alpha = 0.3)
+
+dens
+```
+
+À quoi sert le paramètre `alpha` ici? Tentez de changez sa valeur.
+
+Le titre du graphique, des axes et de la légende sont indiqués avec la fonction `labs` (pour *labels*).
+
+```{r}
+dens <- dens +
+    labs(title = "Distribution du diamètre de trois espèces au Parc national de Kejimkujik", 
+         x = "Diamètre à hauteur de poitrine (cm)", y = "Densité", fill = "Espèce")
+dens
+```
+
+Les fonctions débutant par `scale_...` permettent d'ajuster différents éléments des échelles représentées sur le graphique. Dans l'exemple suivant, nous modifions les valeurs indiqués sur l'axe des *x* avec l'argument `breaks` de `scale_x_continuous`. Avec la fonction `scale_fill_manual`, nous spécifions les couleurs pour le remplissage des courbes de densité (`values`), puis renommons les éléments de la légende (`labels`).
+
+```{r}
+dens <- dens +
+    scale_x_continuous(breaks = seq(10, 80, 10)) +
+    scale_fill_manual(values = c("orange", "purple", "green"),
+                      labels = c("Acer rubrum", "Betula papyrifera", "Tsuga canadensis"))
+dens
+```
+
+Finalement, *ggplot2* comporte des thèmes qui modifient l'apparence générale du graphique. Ici, nous remplaçons le thème par défaut (avec le fond gris) par `theme_bw`.
+
+```{r}
+dens + 
+    theme_bw()
+```
+
+En plus des fonctions pour changer le thème au complet, on peut modifier des paramètres de thème spécifiques avec la fonction `theme`. Par exemple, `legend.position` indique où placer la légende en *x* et *y* (0.7 et 0.5 signifient à 70% de la largeur et 50% de la hauteur).
+
+```{r}
+dens + 
+    theme_bw() +
+    theme(legend.position = c(0.7, 0.5))
+```
+
+Le but de cette partie était de donner un aperçu des possibilités de *ggplot2*. Des références plus complètes sur ce package sont indiquées au bas de la page.
+
+
+## Résumé
+
+- Le code d'un graphique est composé de plusieurs fonctions séparées par `+`.
+
+- On débute avec la fonction `ggplot`, qui requiert deux arguments: le tableau de données, et l'association entre variables et éléments du graphique (avec la fonction `aes`).
+
+- On ajoute ensuite une ou des couches géométriques (`geom_...`) indiquant le type de graphique (points, lignes, barres, histogramme, etc.). 
+
+- Si nécessaire, on peut ensuite modifier l'apparence du graphique avec des fonctions comme: `scale_...`, `facet_...`, `labs` et `theme`.
+
+
+# Références
+
+- *R for Data Science* (http://r4ds.had.co.nz), particulièrement les chapitres 3 (*Data Visualisation*) et 5 (*Data transformation*).
+
+- Aide-mémoire pour *dplyr* et *tidyr*: https://www.rstudio.com/wp-content/uploads/2016/01/data-wrangling-french.pdf
+
+- Aide-mémoire pour les différentes fonctions de *ggplot2*: https://thinkr.fr/pdf/ggplot2-french-cheatsheet.pdf.
+
+- Site de référence pour toutes les fonctions de *ggplot2*: https://ggplot2.tidyverse.org/reference/index.html.
+
+
+
+# Solutions des exercices
+
+## Exercice 1 {#sol1}
+
+Produisez un tableau des observations de l'année 2014, excluant les individu de l'espèce *TSCA* (pruche du Canada).
+
+```{r}
+kejim2014 <- filter(kejim, Annee == 2014, Espece != "TSCA")
+head(kejim2014)
+```
+
+[Retour](#retour1)
+
+
+## Exercice 2 {#sol2}
+
+En utilisant `%>%`, produisez un tableau des observations de sapin baumier (ABBA) de plus de 15 cm de DHP, triées en ordre chronologique.
+
+```{r}
+kejim %>%
+    filter(Espece == "ABBA", DHP > 15) %>%
+    arrange(Annee, Mois, Jour)
+```
+
+[Retour](#retour2)
+
+
+## Exercice 3 {#sol3}
+
+Classez les espèces du jeu de données `kejim` en ordre décroissant de leur diamètre maximal.
+
+```{r}
+group_by(kejim, Espece) %>%
+    summarize(maxDHP = max(DHP)) %>%
+    arrange(desc(maxDHP))
+```
+
+[Retour](#retour3)
+
+
+## Exercice 4 {#sol4}
+
+À partir du tableau de données `kejim`, produisez un nuage de points du DHP (axe des *y*) selon l'espèce (axe des *x*).
+
+```{r}
+ggplot(data = kejim, mapping = aes(x = Espece, y = DHP)) +
+    geom_point()
+```
+
+[Retour](#retour4)
+
+
+## Exercice 5 {#sol5}
+
+Avec `geom_bar`, créez un diagramme à barres du nombre d'individus par espèce (différentes espèces sur l'axe des x). Utilisez un code de couleur pour identifier les individus de différents sites. 
+
+```{r}
+ggplot(kejim, aes(x = Espece, fill = Site)) +
+    geom_bar()
+```
+
+[Retour](#retour5)
+
+
+## Exercice 6 {#sol6}
+
+À partir du jeu de données `msleep`, créez un nuage de points représentant le nombre d'heures de sommeil totales (`sleep_total`) et en phase REM (`sleep_rem`) avec une facette pour chaque type de régime alimentaire (`vore`).
+
+```{r}
+ggplot(msleep, aes(x = sleep_total, y = sleep_rem)) +
+    geom_point() +
+    facet_wrap(~ vore)
+```
+
+[Retour](#retour6)
