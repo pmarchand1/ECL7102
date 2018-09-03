@@ -4,6 +4,7 @@
 
 0. [Introduction](lecture_notes/0-Introduction.html)
 1. [Descriptive statistics and graphics](lecture_notes/1-Descriptive_statistics.html)
+2. [Statistical models, parameters and estimators](lecture_notes/2-Statistical_models.html)
 
 ## Labs
 
