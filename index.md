@@ -4,7 +4,7 @@
 
 0. [Introduction](notes_cours/0-Introduction.html)
 1. [Statistiques descriptives et graphiques](notes_cours/1-Statistiques_descriptives.html)
-2. [Modèles statistiques, paramètres et estimateurs](notes_cours/1-Modèles_statistiques.html)
+2. [Modèles statistiques, paramètres et estimateurs](notes_cours/2-Modèles_statistiques.html)
 
 ## Laboratoires
 
