@@ -610,7 +610,7 @@ $$ \left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alph
 
 The only problem with this equation is that we do not know the parameter $\sigma$. And if we replace $\sigma$ with its estimator $s$, the probability associated with the interval becomes less than (100% - $\alpha$). In practice, we need to widen the interval to take into account our imperfect knowledge of the standard deviation of the data.
 
-The solution to this problem was discovered by William Gosset, who published it under the pseudonym Student. When using an estimate of the standard deviation, $\bar{x} - s / \sqrt{n}$ no longer exactly follows a standard normal distribution, but rather the Student $t$ distribution.
+The solution to this problem was discovered by William Gosset, who published it under the pseudonym Student. When using an estimate of the standard deviation, the confidence interval is no longer based on the standard normal distribution $z$, but on the Student $t$ distribution.
 
 The $t$ distribution has a parameter, the number of degrees of freedom, which in this case corresponds to $n$ - 1. Thus, the corrected version of the (100% - $\alpha$) confidence interval for $\bar{x}$ is:
 
@@ -628,6 +628,6 @@ where the $n-1$ in parentheses indicates the number of degrees of freedom of the
 
 # Reference
 
-The website [Seeing Theory] (https://students.brown.edu/seeing-theory/) presents several statistical concepts in a visual and interactive way. For example, chapters 3 (*Probability Distributions*) and 4 (*Frequentist Inference*) relate to the concepts seen in this class.
+The website [Seeing Theory](https://students.brown.edu/seeing-theory/) presents several statistical concepts in a visual and interactive way. For example, chapters 3 (*Probability Distributions*) and 4 (*Frequentist Inference*) relate to the concepts seen in this class.
 
 

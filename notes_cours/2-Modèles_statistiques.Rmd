@@ -614,7 +614,7 @@ $$ \left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alph
 
 Le seul problème avec cette équation est que nous ne connaissons pas le paramètre $\sigma$. De plus, si nous remplaçons $\sigma$ par son estimé $s$, la probabilité associée à l'intervalle devient inférieure à (100% - $\alpha$). En pratique, il faut donc élargir l'intervalle pour prendre en compte notre connaissance imparfaite de l'écart-type des données. 
 
-La solution de ce problème a été découverte par William Gosset, qui l'a publié sous le pseudonyme de Student. Lorsqu'on utilise un estimé de l'écart-type, $\bar{x} - s / \sqrt{n}$ ne suit plus exactement une distribution normale centrée réduite, mais plutôt la distribution $t$ de Student.
+La solution de ce problème a été découverte par William Gosset, qui l'a publié sous le pseudonyme de Student. Lorsqu'on utilise un estimé de l'écart-type, l'intervalle de confiance n'est plus basé sur la distribution normale centrée réduite $z$, mais plutôt la distribution $t$ de Student.
 
 La distribution comporte un paramètre, le nombre de degrés de liberté, qui correspond dans ce cas-ci à $n$ - 1. Ainsi, la version corrigée de l'intervalle de confiance à (100% - $\alpha$) pour $\bar{x}$ est:
 
