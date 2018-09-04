@@ -9,6 +9,7 @@
 ## Labs
 
 1. [Introduction to R - Part 1](labs/1-IntroR_part1.html)
+2. [Introduction to R - Part 2](labs/2-IntroR_part2.html)
 
 
 
