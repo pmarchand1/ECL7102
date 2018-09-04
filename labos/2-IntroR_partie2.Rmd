@@ -234,7 +234,6 @@ Notez que le tableau `kejim_esp` compte 1070 rangées, 91 de moins que le tablea
 
 ## Résumé des fonctions de *dplyr*
 
-
 | Fonction    | Description                                            |
 |-------------+----------------------------------------------------|
 | `filter`    | extraire les rangées qui remplissent certaines conditions |

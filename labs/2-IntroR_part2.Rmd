@@ -1,0 +1,524 @@
+---
+title: "Introduction to R - Part 2"
+date: "September 5, 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objectives for this part
+
+- Load *packages* to add functions to R.
+
+- Manipulate data frames with the *dplyr* package.
+
+    + Filter and sort observations.
+    + Transform the variables.
+    + Calculate statistics by groups of observations.
+    + Join two tables according to common variables.
+
+- Produce graphics with the *ggplot2* package.
+
+    + Create different types of graphics: point clouds, boxplots, histograms and more.
+    + Create composite graphics.
+    + Customize the appearance of graphical elements.
+    
+
+# R packages
+
+- A package is a collection of functions developed by R users that increases the basic capabilities of the R language in a certain domain. The CRAN (https://cran.r-project.org/web/packages/) package repository currently has more than 12,000!
+
+- To **install** a package on your computer, use the `install.packages` function with the package name in quotation marks, e.g.`install.packages ("dplyr")`. In RStudio, you can view the list of packages already installed under the *Packages* tab in the lower right quadrant.
+
+- To **load** a package into your current R session and have access to its functions, use the `library` function, e.g. `library(dplyr)`. Note that quotation marks are not required this time.
+
+
+# Data manipulation with *dplyr*
+
+## Data organization
+
+The *dplyr* package contains functions that simplify several common operations on data frames in R. These functions are best suited for data frames in a normal form:
+
+- each row corresponds to an observation and
+- each column corresponds to a variable.
+
+> These criteria are close to the principles of data organization in a relational database (e.g. Access). In addition, the *dplyr* functions correspond fairly well to basic operations in the SQL database language.
+
+**Question**: What are the variables in the following table, which indicates the number of individuals per site and species? Does it follow the normal form described above?
+
+```{r echo = FALSE}
+arbre_df <- data.frame(site = c("A", "B", "C"), fir = c(35, 24, 51), pine = c(10, 12, 19), birch = c(26, 45, 8))
+arbre_df
+```
+
+**Answer**: The last three columns represent the same variable (number of individuals) for different values of the species. A normalized table would then have three columns: site, species, and number.
+
+```{r echo = FALSE, warning = FALSE}
+library(tidyr)
+gather(arbre_df, key = "species", value = "number", fir:birch)
+```
+
+By formatting your data in this way, it will also be easier to visualize (as we will see later) and to model in R.
+
+The *tidyr* package contains functions to automatically convert an array of data between the two formats above. We do not have time to cover this package today, but you can find more information in the references at the bottom of the page.
+
+Now let's load the *dplyr* package as well as the Kejimkujik National Park dataset, which we already used at the first lab.
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr)
+
+kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+head(kejim)
+```
+
+Note that this data frame is already in normal form.
+
+## Select observations with *filter*
+
+At the last class, we saw how to choose rows from a data frame according to a given condition. For example, the following code retrieves all rows corresponding to the species *ACRU* (red maple).
+
+```{r}
+acru <- kejim[kejim$Espece == "ACRU", ]
+head(acru)
+```
+
+Here is the same operation with the function `filter`.
+
+```{r}
+acru <- filter(kejim, Espece == "ACRU")
+head(acru)
+```
+
+All *dplyr* functions have the same structure:
+
+- the name of the function indicates the operation to be performed;
+
+- the first argument is the input data frame;
+
+- the other arguments specify the operation (here, the conditions of the filter);
+
+- the function outputs a transformed data frame.
+
+The benefits of using *dplyr* will become more clear after seeing many of the functions.
+
+> **Note:** After specifying the data frame as the first argument, the following arguments can use the variables names from the data, without quotation marks and without repeating the name of the data frame (e.g. `Espece` instead of `kejim$Espece`). This is a specific feature of the *dplyr* package, which we will also find with the *ggplot2* package later, as well as with the regression functions later in the lesson.
+
+Multiple filters can be applied at a time by separating the conditions with commas. For example, `acru30` contains red maple trees with a DBH (*DHP*) greater than 30 cm.
+
+```{r}
+acru30 <- filter(kejim, Espece == "ACRU", DHP > 30)
+head(acru30)
+```
+
+## Exercise 1 {#retour1}
+
+Produce a table of observations for the year 2014, excluding the individuals of the species *TSCA* (eastern hemlock).
+
+[Solution](#sol1)
+
+## Sort observations with *arrange*
+
+The `arrange` function sorts the rows of a data frame according to the value of one or more variables.
+
+```{r}
+acru_tri_dhp <- arrange(acru, DHP)
+head(acru_tri_dhp)
+```
+
+To sort in descending order, use the `desc()` function. The following code sorts the data in ascending order of year, then in descending order of DBH.
+
+```{r}
+acru_tri_an_dhp <- arrange(acru, Annee, desc(DHP))
+head(acru_tri_an_dhp)
+```
+
+## Pick variables with *select*
+
+The `select` function selects columns from a data frame based on a comma-separated list of variable names.
+
+```{r}
+acru_select <- select(acru_tri_dhp, Site, Annee, DHP)
+head(acru_select)
+```
+
+## Chain operations with `%>%`
+
+We often want to apply a series of operations to a data frame, without keeping the intermediate results. *dplyr* provides a useful shortcut for this purpose with the `%>%` (called *pipe*) operator.
+
+The `%>%` operator has the effect of passing the result of a function as the first argument of the following function. For example, three of the operations we did earlier (select ACRU trees, sort by DBH and extract site, year, and DBH) can be combined in the following sequence.
+
+```{r}
+acru <- kejim %>%
+    filter(Espece == "ACRU") %>%
+    arrange(DHP) %>%
+    select(Site, Annee, DHP)
+    
+head(acru)
+```
+
+The first `%>%` passes the initial data frame `kejim` to the `filter` function, then the chain continues up to the last output, which is assigned to `acru`.
+
+## Exercise 2 {#retour2}
+
+Using `%>%`, produce a table of balsam fir (ABBA) observations with DBH > 15 cm, sorted in chronological order.
+
+[Solution](#sol2)
+
+## Derive new variables with *mutate*
+
+The `mutate` function creates variables derived from existing columns in the data frame. In this example, we calculate the DBH in millimeters.
+
+```{r}
+kejim_dhp_mm <- mutate(kejim, DHP_mm = DHP * 10)
+head(kejim_dhp_mm)
+```
+
+## Compte summary statistics per group: *group_by* and *summarize*
+
+These two functions are often used together: `group_by` divides a data frame into groups according to the value of one or more variables and `summarize` calculates one or more summary variables for each group. The following example calculates the mean and standard deviation of the DBH by species.
+
+```{r}
+group_by(kejim, Espece) %>%
+    summarize(moyDHP = mean(DHP), etDHP = sd(DHP))
+```
+
+**Notes**:
+
+- Among the columns in the input data frame, only those defining the groups are retained by `summarize`.
+
+- The `summarize` function is similar to `mutate`: both create new columns. However, `mutate` outputs a new value for each row of the input data frame, while `summarize` outputs a single value per group.
+
+In addition to `mean`,` summarize` accepts any function that calculates a value from a group of values, e.g. `sum`, `min`, `max`, `sd`, and many others. A special function, `n()`, returns the number of observations in each group. The following example shows how to count the number of trees by site and year.
+
+```{r}
+compte_site_annee <- kejim %>%
+    group_by(Site, Annee) %>%
+    summarize(compte = n())
+head(compte_site_annee)
+```
+
+## Exercise 3 {#retour3}
+
+Sort the species in `kejim` in descending order of maximum diameter.
+
+[Solution](#sol3)
+
+## Join two data frames
+
+The file `codes_especes.csv` contains a data frame matching species codes from `kejim` to the species common names in French and English.
+
+```{r}
+codes_esp <- read.csv("codes_especes.csv", stringsAsFactors = FALSE,
+                      encoding = "UTF-8")
+head(codes_esp)
+```
+
+**Note**: The `encoding = "UTF-8"` argument is required to properly read diacritic marks in French.
+
+To add these species names to the `kejim` data frame, we must join the two data frames with `inner_join`.
+
+```{r}
+kejim_esp <- inner_join(kejim, codes_esp)
+head(kejim_esp)
+```
+
+The concept of a join originates in relational databases. As we can see here, the `inner_join` function has attached to each row of the first data frame (`kejim`) the data from a row in the second data frame (`codes_esp`) that has a matching value in `Espece`. By default, *dplyr* assumes that the match must be made on columns of the same name, but it is possible to specify otherwise.
+
+Note that the `kejim_esp` data frame has 1070 rows, 91 fewer than `kejim`. This is because species codes in `kejim` are missing from `codes_esp`. To keep the rows from the first data frame with no match in the second (and add missing values to the species name columns), you must use a different join type, `left_join`. We do not have time to discuss the different join types, but you can read the *dplyr* cheatsheet in the footnotes for more information.
+
+## Summary of *dplyr* functions
+
+| Fonction    | Description                                            |
+|-------------+----------------------------------------------------|
+| `filter`    | select rows matching certain conditions |
+| `arrange`   | sort rows based on the values of specific variables |
+| `select`    | select columns by name                |
+| `mutate`    | create new variables derived from existing columns |
+| `group_by`  | divide observations into groups based on grouping variables |
+| `summarize` | calculate summaries of multiple observations (often by group) | 
+| `inner_join` | join two data frames based on common variables |
+
+
+# Data visualization with *ggplot2*
+
+There are several ways to produce graphs in R. We will use in this course the *ggplot2* package, which provides a consistent code structure for multiple types of graphs and offers a wide range of options to customize the appearance of the graphics.
+
+```{r, warning = FALSE}
+library(ggplot2)
+```
+
+## Create a scatter plot
+
+The `msleep` dataset included with *ggplot2* contains data on sleep of 83 mammal species.
+
+```{r}
+msleep
+```
+
+Enter the following code to produce a scatter plot showing the number of hours of the REM phase (*sleep_rem*) based on the total number of hours of sleep.
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = sleep_total, y = sleep_rem)) +
+    geom_point()
+```
+
+The graph appears in the *Plots* tab of the lower right quadrant in RStudio. You can export it in .PNG or .PDF format using the *Export* menu.
+
+This first example illustrates the basic structure for producing a graph with *ggplot2*:
+
+- A call to the `ggplot` function with two arguments:
+
+    + a data frame (`data`) and
+    + a mapping specified with the `aes` function. Within this function, we associate elements of the graph with variables in the dataset (eg *sleep_total* on the *x* axis).
+    
+- The `+` symbol to indicate that we will add other components to the graph.
+
+- A *geom* function to specify the geometric elements represented (here `geom_point`, for a scatter plot).
+
+> Just as for the *dplyr* functions, once the data frame is specified in the `data` argument, you can use the variable names in the` aes` function without quotation marks and without repeating the name of the data frame.
+
+## Exercise 4 {#retour4}
+
+From the `kejim` data frame, produce a scatter plot of the DBH (`DHP`, on the y axis) according to the species (`Espece`, on the x axis).
+
+[Solution](#sol4)
+
+## Types de graphiques: les fonctions *geom*
+
+Here, there are too many trees to see the distribution of DBH by species with a scatter plot. To view the same data with boxplots, just replace `geom_point` with` geom_boxplot` in our previous code.
+
+```{r}
+ggplot(kejim, aes(x = Espece, y = DHP)) +
+    geom_boxplot()
+```
+
+Multiple `geom _...` functions can be used to overlay elements on the same graph. So we add the dots to the boxplot, specifying a different color for `geom_point`.
+
+```{r}
+ggplot(kejim, aes(x = Espece, y = DHP)) +
+    geom_boxplot() +
+    geom_point(color = "red")
+```
+
+We can also represent summary statistics of a set of points, such as their mean.
+
+```{r}
+ggplot(kejim, aes(x = Espece, y = DHP)) +
+    geom_boxplot() +
+    geom_point(color = "red", stat = "summary", fun.y = "mean")
+```
+
+Now, we produce a histogram of the DBH for all trees with `geom_histogram`. The histogram represents a single variable, so we do not need to specify *y* in `aes`.
+
+```{r}
+ggplot(kejim, aes(x = DHP)) +
+    geom_histogram(binwidth = 5, color = "white", fill = "blue")
+```
+
+In the `geom_histogram` function, we specified several arguments in order to choose the size of the bins (`binwith`), the color of the border (`color`) and the fill color of the bars (`fill`).
+
+Rather than using one fill color for all bars, we could represent different species by bars of different colors on the histogram. In this case, we must associate `fill` to the variable `Espece` inside the `aes` function.
+
+```{r}
+ggplot(kejim, aes(x = DHP, fill = Espece)) +
+    geom_histogram(binwidth = 5, color = "white")
+```
+
+## Exercise 5 {#retour5}
+
+With `geom_bar`, create a bar graph of the number of individuals per species (different species on the x-axis). Use a color code to identify individuals from different sites.
+
+[Solution](#sol5)
+
+## Divide a graph in facets
+
+In the exercise, we produced a graph of the number of individuals per species. If we want to visualize separately the distribution of species on different sites, we could divide the data by site and produce several graphs. Fortunately, *ggplot2* simplifies this task with the facet concept.
+
+```{r}
+ggplot(kejim, aes(x = Espece)) +
+    geom_bar() +
+    facet_wrap(~ Site)
+```
+
+Note that you must put a *tilde* (~) before the name of the variable in `facet_wrap`.
+
+In the previous graph, species codes are not visible on the *x* axis. So we add the `coord_flip` function to invert the axes and produce horizontal bars.
+
+```{r}
+ggplot(kejim, aes(x = Espece)) +
+    geom_bar() +
+    facet_wrap(~ Site) +
+    coord_flip()
+```
+
+We can also create a grid of facets (`facet_grid`) with two variables. For example, here are histograms of the DBH by site and by year.
+
+```{r}
+ggplot(kejim, aes(x = DHP)) +
+    geom_histogram(binwidth = 5) +
+    facet_grid(Annee ~ Site)
+```
+
+## Exercise 6 {#retour6}
+
+From the `msleep` dataset, create a scatter plot of total sleep (`sleep_total`) and REM sleep (`sleep_rem`) with one facet for each type of diet (`vore`).
+
+[Solution](#sol6)
+
+## Customize the appearance of graphs
+
+All visual aspects of *ggplot2* graphics can be customized: title and scale of axes, size and font, colors, margins, etc. If the default values of these parameters are sufficient for a quick exploration of the data, the production of figures for publications or presentations requires further adjustments.
+
+Let's start with a density chart for the DHP of three species (TSCA, ACRU and BEPA). We save this graph in an object (`dens`) so that we can modify it without rewriting the code of the basic graph.
+
+```{r}
+trois_esp <- filter(kejim, Espece %in% c("TSCA", "ACRU", "BEPA"))
+
+dens <- ggplot(trois_esp, aes(x = DHP, fill = Espece)) +
+    geom_density(alpha = 0.3)
+
+dens
+```
+
+What does the `alpha` parameter means? Try changing its value.
+
+The title of the chart, axes, and legend are specified with the `labs` function (for *labels*).
+
+```{r}
+dens <- dens +
+    labs(title = "Distribution of the diameter of three species at Kejimkujik National Park", 
+         x = "Diameter at breast height (cm)", y = "Density", fill = "Species")
+dens
+```
+
+Functions starting with `scale _...` let us adjust different elements of the scales represented on the graph. In the following example, we change the values shown on the *x* axis with the `breaks` argument of `scale_x_continuous`. With the `scale_fill_manual` function, we specify the fill colors for the density curves (`values`), and then rename the legend elements (`labels`).
+
+```{r}
+dens <- dens +
+    scale_x_continuous(breaks = seq(10, 80, 10)) +
+    scale_fill_manual(values = c("orange", "purple", "green"),
+                      labels = c("Acer rubrum", "Betula papyrifera", "Tsuga canadensis"))
+dens
+```
+
+Finally, *ggplot2* has themes that change the overall appearance of the chart. Here we replace the default theme (with the gray background) with `theme_bw`.
+
+```{r}
+dens + 
+    theme_bw()
+```
+
+In addition to changing the entire theme, you can edit specific theme parameters with the `theme` function. For example, `legend.position` indicates where to put the legend relative to *x* and *y* (0.7 and 0.5 mean 70% of the way along *x* and 50% along *y*).
+
+```{r}
+dens + 
+    theme_bw() +
+    theme(legend.position = c(0.7, 0.5))
+```
+
+The purpose of this part was to give an overview of the possibilities of *ggplot2*. More complete references on this package are indicated at the bottom of the page.
+
+## Summary
+
+- The code of a graph is composed of several functions separated by `+`.
+
+- We start with the `ggplot` function, which requires two arguments: the data frame, and the association between variables and elements of the graph (with the` aes` function).
+
+- We then add one or more geometric layers (`geom _...`) indicating the type of graph (points, lines, bars, histogram, etc.).
+
+- If necessary, we can then modify the appearance of the graph with functions like `scale _...`, `facet _...`, `labs` and` theme`.
+
+
+# References
+
+- *R for Data Science* (http://r4ds.had.co.nz), specifically Chapters 3 (*Data Visualisation*) and 5 (*Data transformation*).
+
+- Cheat sheet for *dplyr* and *tidyr*:
+https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+- Cheat sheet for *ggplot2*: https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf.
+
+- Reference website for all *ggplot2* functions: https://ggplot2.tidyverse.org/reference/index.html.
+
+
+# Solutions to the exercises
+
+## Exercise 1 {#sol1}
+
+Produce a table of observations for the year 2014, excluding the individuals of the species *TSCA* (eastern hemlock).
+
+```{r}
+kejim2014 <- filter(kejim, Annee == 2014, Espece != "TSCA")
+head(kejim2014)
+```
+
+[Return](#retour1)
+
+
+## Exercise 2 {#sol2}
+
+Using `%>%`, produce a table of balsam fir (ABBA) observations with DBH > 15 cm, sorted in chronological order.
+
+```{r}
+kejim %>%
+    filter(Espece == "ABBA", DHP > 15) %>%
+    arrange(Annee, Mois, Jour)
+```
+
+[Return](#retour2)
+
+
+## Exercise 3 {#sol3}
+
+Sort the species in `kejim` in descending order of maximum diameter.
+
+```{r}
+group_by(kejim, Espece) %>%
+    summarize(maxDHP = max(DHP)) %>%
+    arrange(desc(maxDHP))
+```
+
+[Return](#retour3)
+
+
+## Exercise 4 {#sol4}
+
+From the `kejim` data frame, produce a scatter plot of the DBH (`DHP`, on the y axis) according to the species (`Espece`, on the x axis).
+
+```{r}
+ggplot(data = kejim, mapping = aes(x = Espece, y = DHP)) +
+    geom_point()
+```
+
+[Return](#retour4)
+
+
+## Exercise 5 {#sol5}
+
+With `geom_bar`, create a bar graph of the number of individuals per species (different species on the x-axis). Use a color code to identify individuals from different sites.
+
+```{r}
+ggplot(kejim, aes(x = Espece, fill = Site)) +
+    geom_bar()
+```
+
+[Return](#retour5)
+
+
+## Exercise 6 {#sol6}
+
+From the `msleep` dataset, create a scatter plot of total sleep (`sleep_total`) and REM sleep (`sleep_rem`) with one facet for each type of diet (`vore`)
+
+```{r}
+ggplot(msleep, aes(x = sleep_total, y = sleep_rem)) +
+    geom_point() +
+    facet_wrap(~ vore)
+```
+
+[Return](#retour6)
