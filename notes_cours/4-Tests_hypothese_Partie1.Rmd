@@ -329,10 +329,10 @@ La fonction `t.test` choisit `var.equal = FALSE` par défaut et dans le doute, i
 Si on s'intéresse seulement au cas où l'insecticide B est plus efficace que A, quelle est l'hypothèse nulle et l'hypothèse alternative sur la valeur de $\bar{x}_A - \bar{x}_B$?
 
 
-Pour faire un test unilatéral, il faut définir l'argument `alternative` de `t.test` comme étant `less` ou `greater`. Dans le cas où notre hypothèse alternative est $\bar{x}_A - \bar{x}_B < 0$, on spécifie `alternative = "less"`.
+Pour faire un test unilatéral, il faut définir l'argument `alternative` de `t.test` comme étant `less` ou `greater`. Dans le cas où notre hypothèse alternative est $\bar{x}_A - \bar{x}_B > 0$, on spécifie `alternative = "greater"`.
 
 ```{r}
-t.test(count ~ spray, data = insectesAB, alternative = "less")
+t.test(count ~ spray, data = insectesAB, alternative = "greater")
 ```
 
 ## Comparaison de la moyenne de deux groupes appariés

@@ -327,10 +327,10 @@ The `t.test` function chooses `var.equal = FALSE` by default and when in doubt, 
 
 If we are interested only in the case where spray B is more effective than A, what is the null hypothesis and the alternative hypothesis on the value of $\bar{x}_A - \bar{x}_B$?
 
-To do a one-sided test, you need to set the `alternative` argument of `t.test` to `less` or` greater`. In the case where our alternative hypothesis is $\bar{x}_A - \bar{x}_B < 0$, we specify `alternative = "less"`.
+To do a one-sided test, you need to set the `alternative` argument of `t.test` to `less` or` greater`. In the case where our alternative hypothesis is $\bar{x}_A - \bar{x}_B > 0$, we specify `alternative = "greater"`.
 
 ```{r}
-t.test(count ~ spray, data = insectesAB, alternative = "less")
+t.test(count ~ spray, data = insectesAB, alternative = "greater")
 ```
 
 ## Comparing the mean of two paired samples
