@@ -466,7 +466,7 @@ In summary, at least three results of a statistical test must be reported:
 - the estimated effect size with its confidence interval; and
 - the effect size compared to the variance of the individual data points.
 
-## (statistically) significant does not equal important
+## (Statistically) significant does not equal important
 
 It is rare that the effect of a treatment is exactly zero. For this reason, with a large enough sample and a constant $\alpha$ threshold, we can always detect a significant effect.
 
