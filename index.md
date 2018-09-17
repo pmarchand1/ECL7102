@@ -6,6 +6,7 @@
 1. [Statistiques descriptives et graphiques](notes_cours/1-Statistiques_descriptives.html)
 2. [Modèles statistiques, paramètres et estimateurs](notes_cours/2-Modèles_statistiques.html)
 3. [Méthodes d'échantillonnage et plans d'expérience](notes_cours/3-Échantillonnage_expériences.html)
+4. [Tests d'hypothèses - Partie 1](notes_cours/4-Tests_hypothese_Partie1.html)
 
 ## Laboratoires
 
