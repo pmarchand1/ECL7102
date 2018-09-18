@@ -1,0 +1,80 @@
+---
+title: "Hypothesis tests on the mean"
+date: "September 19, 2018"
+output: 
+    html_document:
+        theme: spacelab
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(dplyr)
+```
+
+## 1. Hypothesis tests
+
+Which of the following statements are true?
+
+a) The $p$ value is the probability that the null hypothesis is true.
+
+(b) The higher the significance threshold $\alpha$, the more difficult it is to reject the null hypothesis.
+
+c) For a one-sample $t$-test, if we reject the null hypothesis $\mu = 10$ with a threshold $\alpha = 0.01$, then the 99% confidence interval of the sample mean $\bar{x}$ does not contain the value 10.
+
+d) For the $t$-test comparing two samples with the null hypothesis $\mu_A = \mu_B$, a smaller value $p$ means that there is a greater difference between the means.
+
+e) In experimental design, random assignment of treatments is intended to ensure that the differences measured between groups are due to the treatment.
+
+
+## 2. Ozone concentration in three gardens
+
+For this exercise, we will use the `gardens.csv` dataset, which comes from Michael Crawley's book *Statistics: An Introduction Using R*. These data represent ozone concentrations (in parts per 100 million or pphm) measured in three gardens (A, B and C) on different days.
+
+```{r}
+gardens <- read.csv("gardens.csv")
+```
+
+a) Observe the distribution of ozone measurements in each garden. What type of graph could you use?
+
+b) What is the mean and standard deviation of the ozone concentration in each garden? Is the mean a good indicator of the "typical" value in each garden?
+
+c) From these data, test the null hypothesis that gardens A and B receive the same mean ozone concentration. What is your estimate of the difference between the mean and its 99% confidence interval? Does this test give a good idea of the difference between the two gardens? Explain your answer.
+
+d) Repeat the previous exercise for the null hypothesis that gardens A and C receive the same average ozone concentration. Comment on the difference between this result and the previous result.
+
+
+## 3. Display the estimate of a *t*-test
+
+We can save the result of a $t$-test in a variable, for example:
+
+```{r}
+res_t <- t.test(Ozone ~ Garden, data = filter(gardens, Garden != "C"),
+       conf.level = 0.99)
+```
+
+Then, we can access different parts of that result with the `$` operator.
+
+```{r}
+res_t$p.value
+res_t$estimate
+```
+
+Create a function that takes one argument, which is the result of a $t$-test (performed on 2 samples), and that displays the estimate of the difference between the means with its confidence interval. Round the numbers to one decimal place. For example, for the result `res_t` above, the function should produce the text: "-2 (-3.5, -0.5)".
+
+**Hint**
+
+- Use the `round` function to round a numeric variable.
+
+- The `paste0` function allows you to paste numbers and character strings together. For example:
+
+```{r}
+t <- 6
+paste0("It is ", t, " o'clock.")
+```
+
+*Note*: The function `paste` works in the same way, but adds a space between each element.
+
+
+## 4. Experiment with paired samples
+
+Give one example of an experiment where the results could be analyzed with a paired sample $t$-test.

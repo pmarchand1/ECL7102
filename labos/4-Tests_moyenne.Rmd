@@ -1,0 +1,80 @@
+---
+title: "Tests d'hypothèse sur la moyenne"
+date: "19 septembre 2018"
+output: 
+    html_document:
+        theme: spacelab
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(dplyr)
+```
+
+## 1. Tests d'hypothèse
+
+Lesquelles des affirmations suivantes sont exactes?
+
+a) La valeur $p$ est la probabilité que l'hypothèse nulle soit vraie.
+
+b) Plus le seuil de signification $\alpha$ est élevé, plus il est difficile de rejeter l'hypothèse nulle.
+
+c) Pour un test $t$ à un échantillon, si on rejette l'hypothèse nulle $\mu = 10$ avec un seuil $\alpha = 0.01$, alors l'intervalle de confiance à 99% de la moyenne de l'échantillon $\bar{x}$ ne contient pas la valeur 10.
+
+d) Pour le test $t$ comparant deux échantillons avec l'hypothèse nulle $\mu_A = \mu_B$, une valeur $p$ plus petite signifie que la différence entre les moyennes est plus élevée.
+
+e) Dans un plan d'expérience, l'assignation aléatoire des traitements vise à assurer que les différences mesurées entre les groupes soient bien dues au traitement.
+
+
+## 2. Concentration d'ozone dans trois jardins
+
+Pour cet exercice, nous utiliserons le tableau de données `gardens.csv`, qui provient du manuel *Statistics: An Introduction Using R* de Michael Crawley. Ces données représentent les concentrations d'ozone (en parties par 100 millions ou pphm) mesurées dans trois jardins (A, B et C) lors de différentes journées.
+
+```{r}
+gardens <- read.csv("gardens.csv")
+```
+
+a) Observez la distribution des mesures d'ozone dans chaque jardin. Quel type de graphique pourriez-vous utiliser? 
+
+b) Quelle est la moyenne et l'écart-type de la concentration d'ozone dans chaque jardin? Est-ce que la moyenne est une bonne indicatrice de la valeur "typique" dans chaque jardin?
+
+c) À partir de ces données, testez l'hypothèse nulle selon laquelle les jardins A et B reçoivent la même concentration d'ozone en moyenne. Quel est votre estimé de la différence entre les moyennes et son intervalle de confiance à 99%? Est-ce que ce test donne une bonne idée de la différence entre les deux jardins? Expliquez votre réponse.
+
+d) Répétez l'exercice précédent pour l'hypothèse nulle selon laquelle les jardins A et C reçoivent la même concentration d'ozone en moyenne. Commentez sur la différence entre ce résultat et le résultat précédent.
+
+
+## 3. Afficher l'estimé d'un test *t*
+
+On peut sauvegarder le résultat d'un test $t$ dans une variable, par exemple:
+
+```{r}
+res_t <- t.test(Ozone ~ Garden, data = filter(gardens, Garden != "C"),
+       conf.level = 0.99)
+```
+
+Ensuite, on peut accéder aux différentes parties du résultat avec l'opérateur `$`.
+
+```{r}
+res_t$p.value
+res_t$estimate
+```
+
+Créez une fonction qui accepte comme argument une variable de résultat d'un test $t$ (réalisé sur 2 échantillons) et qui affiche l'estimé de la différence avec son intervalle de confiance. Arrondissez les nombres à une décimale. Par exemple, pour le résultat `res_t` ci-dessus, la fonction devrait produire le texte: "-2 (-3.5, -0.5)".
+
+**Indices**
+
+- Utilisez la fonction `round` pour arrondir une variable numérique.
+
+- La fonction `paste0` permet de coller ensemble des nombres et des chaînes de caractère. Par exemple:
+
+```{r}
+t <- 6
+paste0("Il est ", t, " heures.")
+```
+
+*Note*: La fonction `paste` fonctionne de la même façon mais place des espaces entre les éléments.
+
+
+## 4. Expérience avec groupes appariés
+
+Donnez un exemple d'expérience dont les résultats pourraient être analysés avec un test $t$ pour deux groupes appariés.
