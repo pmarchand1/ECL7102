@@ -6,13 +6,14 @@
 1. [Statistiques descriptives et graphiques](notes_cours/1-Statistiques_descriptives.html)
 2. [Modèles statistiques, paramètres et estimateurs](notes_cours/2-Modèles_statistiques.html)
 3. [Méthodes d'échantillonnage et plans d'expérience](notes_cours/3-Échantillonnage_expériences.html)
-4. [Tests d'hypothèses - Partie 1](notes_cours/4-Tests_hypothese_Partie1.html)
+4. [Tests d'hypothèse - Partie 1](notes_cours/4-Tests_hypothese_Partie1.html)
 
 ## Laboratoires
 
 1. [Introduction à R - Partie 1](labos/1-IntroR_partie1.html)
 2. [Introduction à R - Partie 2](labos/2-IntroR_partie2.html)
 3. [Estimation et échantillonnage](labos/3-Estimation_échantillonnage.html)
+4. [Tests d'hypothèse sur la moyenne](labos/4-Tests_moyenne.html)
 
 
 
