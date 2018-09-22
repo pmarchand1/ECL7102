@@ -130,7 +130,7 @@ Quel serait un exemple d'hypothèse nulle et d'hypothèse alternative dans votre
     * la distribution de cette statistique sous l'hypothèse nulle; et
     * un seuil de signification.
 
-- La valeur $p$ est la probabilité d'obtenir un écart plus élevé que celui observé si l'hypothèse nulle était vraie. 
+- La valeur $p$ est la probabilité d'obtenir un écart égal ou supérieur à celui observé, si l'hypothèse nulle était vraie. 
 
 - Le seuil de signification ($\alpha$) est la probabilité qu'on considère assez petite pour rejeter l'hypothèse nulle si $p \leq \alpha$. 
 

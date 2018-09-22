@@ -121,7 +121,7 @@ From a given null hypothesis, the construction of a statistical test requires th
 - the distribution of that statistic under the null hypothesis; and
 - a significance threshold.
 
-In the example we saw at the beginning of this class, we calculated the $t$ statistic for which we know the theoretical distribution, which allowed us to determine a $p$ value, which is the probability of getting a higher deviation than the one observed if the null hypothesis was true.
+In the example we saw at the beginning of this class, we calculated the $t$ statistic for which we know the theoretical distribution, which allowed us to determine a $p$ value, which is the probability of getting a deviation as large or greater than the one observed, if the null hypothesis was true.
 
 The significance threshold ($\alpha$) is a probability that is considered small enough to reject the null hypothesis if $p \leq \alpha$. For historical reasons, the threshold most often used in is $\alpha = 0.05$. This corresponds to a 5% probability of erroneous rejection of the null hypothesis.
 

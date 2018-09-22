@@ -121,7 +121,7 @@ Dans d'autres contextes, l'hypothèse nulle est basée sur les prédictions d'un
 - la distribution de cette statistique sous l'hypothèse nulle; et
 - un seuil de signification.
 
-Dans l'exemple vu au début de ce cours, nous avons calculé la statistique $t$ dont nous connaissons la distribution théorique, ce qui nous a permis de déterminer une valeur $p$, soit la probabilité d'obtenir un écart plus élevé que celui observé si l'hypothèse nulle était vraie. 
+Dans l'exemple vu au début de ce cours, nous avons calculé la statistique $t$ dont nous connaissons la distribution théorique, ce qui nous a permis de déterminer une valeur $p$, soit la probabilité d'obtenir un écart égal ou supérieur à celui observé, si l'hypothèse nulle était vraie. 
 
 Le seuil de signification ($\alpha$) correspond à une probabilité qu'on considère assez petite pour rejeter l'hypothèse nulle si $p \leq \alpha$. Pour des raisons historiques, le seuil le plus souvent utilisé dans est $\alpha = 0.05$. Cela correspond à une probabilité de 5% de rejet erroné de l'hypothèse nulle. 
 
