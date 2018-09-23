@@ -14,8 +14,8 @@
 
 1. [Introduction to R - Part 1](labs/1-IntroR_part1.html)
 2. [Introduction to R - Part 2](labs/2-IntroR_part2.html)
-3. [Estimation and sampling methods](labs/3-Estimation_sampling.html)
-4. [Hypothesis tests on the mean](labs/4-Tests_mean.html)
+3. [Estimation and sampling methods](labs/3R-Estimation_sampling.html)
+4. [Hypothesis tests on the mean](labs/4R-Tests_mean.html)
 
 
 

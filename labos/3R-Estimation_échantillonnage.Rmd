@@ -1,0 +1,235 @@
+---
+title: "Estimation de paramètres et techniques d'échantillonnage"
+date: "12 septembre 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Dans ce laboratoire, vous appliquerez les concepts vus lors des deux derniers cours.
+
+
+## 1. Caractéristiques des fleurs de trois espèces d'iris
+
+Pour cet exercice, nous utiliserons le célèbre jeu de données des iris d'Edgar Anderson, qui contient différentes mesures prises sur 50 fleurs de 3 espèces d'iris. Ce tableau de données est déjà chargé dans R sous le nom `iris`.
+
+```{r}
+head(iris)
+```
+
+a) Nous allons d'abord visualiser une partie des données. À l'aide de *ggplot2*, produisez un nuage de points reliant la longueur et la largeur des sépales (`Sepal.Length` et `Sepal.Width`), en différenciant les points de chaque espèce par couleur.
+
+```{r, message = FALSE, warning = FALSE}
+library(ggplot2)
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+    geom_point()
+```
+
+Comment procéderiez-vous pour calculer la moyenne de `Sepal.Width` et son intervalle de confiance à 95% par espèce?
+
+b) De quelles quantités avez-vous besoin pour ce calcul?
+
+**La moyenne, l'erreur-type (qui dépend de l'écart-type et du nombre de points) et les probabilités de la distribution $t$ à $p$ = 0.025 et $p$ = 0.975.**
+
+c) En utlisant le package *dplyr*, calculez la moyenne, le taille de l'échantillon, l'écart-type et l'erreur-type de la moyenne de `Sepal.Width` pour chaque espèce (`Species`). Sauvegardez le résultat dans un tableau de données `iris_stat`.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+
+iris_stat <- group_by(iris, Species) %>%
+    summarize(moy = mean(Sepal.Width), ec_type = sd(Sepal.Width), n = n())
+
+iris_stat <- mutate(iris_stat, err_type = ec_type / sqrt(n))
+```
+
+Si vous n'êtes pas certains si la fonction de calcul de l'écart-type dans R (`sd`) utilise le dénominateur $n$ ou $n - 1$, comment pouvez-vous le vérifier? (*Comment trouver de l'aide pour une fonction?*)
+
+**Utiliser l'instruction `?sd` dans R.**
+
+d) Durant le cours sur les distributions statistiques, nous avons vu les fonctions `rnorm`, `dnorm`, `pnorm` et `qnorm` qui permettent de calculer des valeurs à partir de la distribution normale. Des fonctions similaires existent pour la distribution $t$ (`rt`, `dt`, `pt`, `qt`). 
+
+Quelle fonction nous permet d'obtenir la valeur de la variable $t$ pour une probabilité cumulative $p$ donnée?  
+
+Utilisons la fonction `qt(p, df)` pour déterminer l'intervalle correspondant à 95% de la probabilité. Quelles valeurs de $p$ (la probabilité cumulative) utiliser? Quel nombre de degrés de liberté ($df$) en fonction de la taille de l'échantillon $n$?
+
+**$p =$ 0.025 et 0.975, $df = n - 1$.**
+
+e) Créez deux nouvelles colonnes dans `iris_stat` contenant le minimum `ic_min` et le maximum `ic_max` de l'intervalle de confiance. Définissez ces colonnes en fonction de `moy`, `err_type` et `n`.
+
+```{r}
+iris_stat <- mutate(iris_stat, ic_min = moy + qt(0.025, df = n - 1) * err_type, 
+                               ic_max = moy + qt(0.975, df = n - 1) * err_type)
+```
+
+f) Finalement, utilisez le type de graphique `geom_pointrange` (intervalle de points) de *ggplot2* pour visualiser l'intervalle de confiance pour chaque espèce. Ce type de graphique demande la spécification de `y` (point central), `ymin` (minimum de l'intervalle) et `ymax` (maximum de l'intervalle) dans la fonction `aes`.
+
+```{r}
+ggplot(iris_stat, aes(x = Species, y = moy, ymin = ic_min, ymax = ic_max)) +
+    geom_pointrange()
+```
+
+## 2. DHP moyen des espèces échantillonnées au Parc national de Kejimkujik
+
+En vous basant sur le code écrit au dernier exercice, produisez un graphique du DHP moyen avec l'intervalle de confiance à 95% pour toutes les espèces dans le tableau de données du fichier `cours1_kejimkujik.csv`. Ensuite, à partir des données et du graphique, répondez aux questions suivantes.
+
+```{r}
+kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+
+kejim_stats <- group_by(kejim, Espece) %>%
+    summarize(moy = mean(DHP), ec_type = sd(DHP), n = n()) %>%
+    mutate(err_type = ec_type / sqrt(n),
+           ic_min = moy + qt(0.025, df = n - 1) * err_type, 
+           ic_max = moy + qt(0.975, df = n - 1) * err_type)
+
+ggplot(kejim_stats, aes(x = Espece, y = moy, ymin = ic_min, ymax = ic_max)) +
+    geom_pointrange()
+```
+
+a) Quel est l'intervalle de confiance du DHP moyen pour le pin blanc (*PIST*)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?
+
+**IC: 20.1 à 25.3 cm. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l'intervalle de confiance autour de la moyenne de l'échantillon contiendrait la moyenne du DHP de la population.**
+
+b) Si l'échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?
+
+**Il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu'il faudrait plus de données pour départager les deux espèces.**
+
+
+## 3. Distribution *t*
+
+Nous alons comparer graphiquement les propriétés de la distribution *t* et de la distribution normale centrée réduite.
+
+a) Créez un tableau de données `tab1` avec une seule colonne, `x` qui contient toutes les valeurs entre -3 et 3, à intervalles de 0.1. (Quelle fonction R utiliserez-vous?)
+
+```{r}
+tab1 <- data.frame(x = seq(-3, 3, 0.1))
+```
+
+b) Ajoutez une colonne `z` qui contient la valeur de la densité d'une distribution normale centrée réduite pour chaque valeur de `x`. Si vous n'êtes pas certain de la fonction R permettant d'obtenir la densité d'une variable normale, utiliser la commande d'aide `?Normal`.
+
+```{r}
+tab1 <- mutate(tab1, z = dnorm(x))
+```
+
+c) Ajoutez une deuxième colonne `t9` qui contient la valeur de densité pour la distribution *t* avec 9 degrés de liberté.
+
+```{r}
+tab1 <- mutate(tab1, t9 = dt(x, df = 9))
+```
+
+d) Créez un graphique de `z` vs. `x` avec `geom_line`, et assignez-le à un objet dans R.
+
+```{r}
+graph_zx <- ggplot(tab1, aes(x =  x, y = z)) +
+    geom_line()
+graph_zx
+```
+
+e) Ajoutez au graphique déjà produit une courbe de couleur différente pour `t9`.
+Vous pouvez ajouter une ligne où `y` est associée à une variable différente de la façon suivante:
+`[nom du graphique sauvegardé] + geom_line(aes(y = t9), color = "blue")`
+
+```{r}
+graph_zx +
+    geom_line(aes(y = t9), color = "blue")
+```
+
+f) Utilisez `rt` pour produire un échantillon de 100 valeurs de la distribution *t* à 9 degrés de liberté, puis comparez ce vecteur à une distribution normale avec un graphique quantile-quantile.
+
+```{r}
+val_t <- rt(100, df = 9)
+
+qqnorm(val_t)
+qqline(val_t)
+```
+
+g) Si l'on prenait un intervalle contenant 80% de la probabilité pour chacune des deux distributions (`z` et `t9`), lequel des intervalles serait le plus large? Tentez de déduire la réponse à partir des graphiques obtenus en e) et f), puis vérifiez en calculant les quantiles correspondants à l'intervalle de 80%.
+
+**La distribution *t* a un écart-type plus grand et des quantiles plus éloignés de la moyenne pour la même probabilité, donc l'intervalle de 80% est plus large pour la distrbution *t* avec 9 degrés de liberté (-1.38, 1.38) que pour *z* (-1.28, 1.28).**
+
+
+## 4. Choix des méthodes d'échantillonnage
+
+Vous souhaitez déterminer la moyenne et l'écart-type du taux de croissance des semis de bouleau jaune dans une région donnée. Votre unité d'échantillonnage est un quadrat de 1 m$^2$ où la croissance annuelle des semis est mesurée. Quelle méthode d'échantilonnage préconiserez-vous pour le placement de ces quadrats selon les différents scénarios présentés, et pourquoi? Vous pouvez choisir un échantilonnage stratifié, par grappe, systématique, ou adaptatif.
+
+a) Les peuplements de cette espèce dans la région sont relativement semblables mais très éloignés l'un de l'autre.
+
+**Par grappe, pour réduire le temps de déplacement et échantillonner davantage dans un petit nombre de peuplements.**
+
+b) La croissance pourrait être fortement influencée par le gradient de température nord-sud à l'échelle considérée.
+
+**Systématique, pour répartir les unités d'échantilonnage le long du gradient.**
+
+c) L'espèce se retrouve dans plusieurs types de peuplement distincts couvrant des proportions différentes du territoire (ex.: 70% type A, 25% type B, 5% type C).
+
+**Stratifié, pour assurer que tous les types de peuplement soient adéquatement échantillonnés.**
+
+d) C'est une espèce rare dans la région et sa distibution est peu connue.
+
+**Adaptatif, pour concentrer l'effort autour des points où l'espèce est déjà détectée.**
+
+
+## 5. Simulation d'échantillonnage stratifié
+
+Pour cet exercice, nous comparerons l'échantillonnage simple et stratifié à partir d'échantillons simulés du tableau de données `iris`. Voici la distribution des 50 longueurs de pétales pour chaque espèce dans le tableau de données original.
+
+```{r}
+ggplot(iris, aes(x = Species, y = Petal.Length)) + 
+    geom_boxplot()
+```
+
+Dans *dplyr*, la fonction `sample_n(tab, n)` retourne un tableau de données contenant `n` observations choisies au hasard du tableau. On peut aussi l'utiliser avec `group_by` pour choisir `n` observations par groupe. 
+
+
+a) Créez deux fonctions `iris_alea` et `iris_strat`. La première fonction choisit 30 observations au hasard d'`iris`, puis retourne la moyenne de `Petal.Length` pour ces observations. La deuxième choisit 10 observations au hasard de chacune des trois espèces, plus retourne la moyenne de `Petal.Length` (globale, pas par espèce). Assurez-vous que chacune des deux fonctions retourne un vecteur de longueur 1.
+
+*Note*: Vous pouvez écrire ces fonctions sans arguments (parenthèses vides après `function`), comme dans l'exemple ci-dessous.
+
+```{r results = FALSE}
+iris_alea <- function() {
+    # Insérer code de la fonction ici
+}
+
+```
+
+
+```{r}
+iris_alea <- function() {
+    samp <- sample_n(iris, 30)
+    mean(samp$Petal.Length)
+}
+
+iris_strat <- function() {
+    samp <- group_by(iris, Species) %>%
+        sample_n(10)
+    mean(samp$Petal.Length)
+}
+
+iris_alea()
+iris_strat()
+```
+
+b) Générez un vecteur 1000 résultats de chaque fonction avec `replicate`, comme suit:
+
+```{r}
+rep_alea <- replicate(1000, iris_alea())
+rep_strat <- replicate(1000, iris_strat())
+```
+
+Notez qu'il est important d'inclure les parenthèses vides pour appeler la fonction.
+
+c) Calculez l'erreur-type de chaque moyenne (à partir des écarts-type de `rep_alea` et `rep_strat`). Avant de faire le calcul, pouvez-vous deviner quelle méthode sera la plus précise? Pour quelle raison? 
+
+```{r}
+sd(rep_alea)
+sd(rep_strat)
+```
+
+**L'erreur-type de la moyenne stratifiée (écart-type de rep_strat) est environ 4 fois plus faible que celle de la moyenne aléatoire (écart-type de rep_alea), soit 0.07 contre 0.29. Cela est dû au fait que la longueur des pétales est plus variable entre les espèces qu'à l'intérieur d'une espèce.**
+

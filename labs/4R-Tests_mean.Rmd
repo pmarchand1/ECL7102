@@ -1,0 +1,144 @@
+---
+title: "Hypothesis tests on the mean"
+date: "September 19, 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(dplyr)
+```
+
+## 1. Hypothesis tests
+
+Which of the following statements are true?
+
+a) The $p$ value is the probability that the null hypothesis is true.
+
+(b) The higher the significance threshold $\alpha$, the more difficult it is to reject the null hypothesis.
+
+c) For a one-sample $t$-test, if we reject the null hypothesis $\mu = 10$ with a threshold $\alpha = 0.01$, then the 99% confidence interval of the sample mean $\bar{x}$ does not contain the value 10.
+
+d) For the $t$-test comparing two samples with the null hypothesis $\mu_A = \mu_B$, a smaller value $p$ means that there is a greater difference between the means.
+
+e) In experimental design, random assignment of treatments is intended to ensure that the differences measured between groups are due to the treatment.
+
+**(b), (c) and (e). Statement (a) is false, since the $p$-value is the probability to get a value of the test statistic equal or more extreme than the one observed *if* the null hypothesis is true. Statement (d) is false, since the $p$-value depends not only on the effect size, but also the variance of the data and the sample size.**
+
+
+## 2. Ozone concentration in three gardens
+
+For this exercise, we will use the `gardens.csv` dataset, which comes from Michael Crawley's book *Statistics: An Introduction Using R*. These data represent ozone concentrations (in parts per 100 million or pphm) measured in three gardens (A, B and C) on different days.
+
+```{r}
+gardens <- read.csv("gardens.csv")
+```
+
+a) Observe the distribution of ozone measurements in each garden. What type of graph could you use?
+
+
+**Here's one option using boxplots:**
+
+```{r}
+library(ggplot2)
+ggplot(gardens, aes(x = Garden, y = Ozone)) +
+    geom_boxplot()
+    
+```
+
+**Here is a graph of individual points with `geom_jitter`. This is like a `geom_point`, but it moves points by a small random amount on the *x* axis to differentiate points with the same *y*:**
+
+```{r}
+ggplot(gardens, aes(x = Garden, y = Ozone)) +
+    geom_jitter(width = 0.2)
+```
+
+
+b) What is the mean and standard deviation of the ozone concentration in each garden? Is the mean a good indicator of the "typical" value in each garden?
+
+```{r}
+library(dplyr)
+group_by(gardens, Garden) %>%
+    summarize(mean(Ozone), sd(Ozone))
+```
+
+**Garden C has a much greater standard deviation. But more importantly, the mean of 5 is not a typical value, since we have seven points between 1 and 4, and three between 10 and 11.**
+
+
+c) From these data, test the null hypothesis that gardens A and B receive the same mean ozone concentration. What is your estimate of the difference between the mean and its 99% confidence interval? Does this test give a good idea of the difference between the two gardens? Explain your answer.
+
+```{r}
+t.test(Ozone ~ Garden, data = filter(gardens, Garden != "C"),
+       conf.level = 0.99)
+```
+
+**The estimate of $\mu_A - \mu_B$ is -2 with a confidence interval (-3.5, -0.5). The null hypothesis is rejected.**
+
+**As we saw above, the two gardens have a similar distribution in ozone concentration, except that the mean of garden B is higher. Therefore, the $t$-test comparing the means is a good description of the difference between the two.**
+
+
+d) Repeat the previous exercise for the null hypothesis that gardens A and C receive the same average ozone concentration. Comment on the difference between this result and the previous result.
+
+```{r}
+t.test(Ozone ~ Garden, data = filter(gardens, Garden != "B"),
+       conf.level = 0.99)
+```
+
+**The estimate of $\mu_A - \mu_C$ is -2 with a confidence interval of (-5.9, 1.9). The null hypothesis is not rejected.**
+
+**The difference between the means of A and C is the same as the means of A and B, but garden C has a greater variance, which explains why the difference is not significant. However, as we saw above, the mean is not a good description of the data in garden C and the distribution of ozone concentration is far from normal. Therefore, the $t$-test is probably not a good description of the difference between the two groups.**
+
+
+## 3. Display the estimate of a *t*-test
+
+We can save the result of a $t$-test in a variable, for example:
+
+```{r}
+res_t <- t.test(Ozone ~ Garden, data = filter(gardens, Garden != "C"),
+       conf.level = 0.99)
+```
+
+Then, we can access different parts of that result with the `$` operator.
+
+```{r}
+res_t$p.value
+res_t$estimate
+```
+
+Create a function that takes one argument, which is the result of a $t$-test (performed on 2 samples), and that displays the estimate of the difference between the means with its confidence interval. Round the numbers to one decimal place. For example, for the result `res_t` above, the function should produce the text: "-2 (-3.5, -0.5)".
+
+**Hint**
+
+- Use the `round` function to round a numeric variable.
+
+- The `paste0` function allows you to paste numbers and character strings together. For example:
+
+```{r}
+t <- 6
+paste0("It is ", t, " o'clock.")
+```
+
+*Note*: The function `paste` works in the same way, but adds a space between each element.
+
+**Here's one possible function:**
+
+```{r}
+show_confint <- function(result) {
+    estime <- round(result$estimate[1] - result$estimate[2], 1)
+    conf_min <- round(result$conf.int[1], 1)
+    conf_max <- round(result$conf.int[2], 1)
+    
+    paste0(estime, " (", conf_min, ", ", conf_max, ")")
+}
+
+show_confint(res_t)
+```
+
+
+## 4. Experiment with paired samples
+
+Give one example of an experiment where the results could be analyzed with a paired sample $t$-test.

@@ -13,8 +13,8 @@
 
 1. [Introduction à R - Partie 1](labos/1-IntroR_partie1.html)
 2. [Introduction à R - Partie 2](labos/2-IntroR_partie2.html)
-3. [Estimation et échantillonnage](labos/3-Estimation_échantillonnage.html)
-4. [Tests d'hypothèse sur la moyenne](labos/4-Tests_moyenne.html)
+3. [Estimation et échantillonnage](labos/3R-Estimation_échantillonnage.html)
+4. [Tests d'hypothèse sur la moyenne](labos/4R-Tests_moyenne.html)
 
 
 
