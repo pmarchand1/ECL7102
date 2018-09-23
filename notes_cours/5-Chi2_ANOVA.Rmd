@@ -239,7 +239,7 @@ Puisque le dernier terme ne dépend pas de $k$, on peut ré-écrire l'équation:
 
 $$ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2 $$
 
-Le terme à gauche est la somme des carrés de l'écart total (*SST*, pour *total sum of squares*), le premier terme à droite est la somme des carrés de l'écart résiduelle ou erreur (*SSE*, pour *error sum of squares*) et le deuxième terme à droite est la somme des carrés de l'écart entre les groupes associés au facteur A (*SSA*, le seul facteur dans ce cas-ci). 
+Le terme à gauche est la somme des carrés de l'écart total (*SST*, pour *total sum of squares*), le premier terme à droite est la somme des carrés de l'écart résiduel ou erreur (*SSE*, pour *error sum of squares*) et le deuxième terme à droite est la somme des carrés de l'écart entre les groupes associés au facteur A (*SSA*, le seul facteur dans ce cas-ci). 
 
 On obtient donc l'équation  *SST = SSE + SSA*, qui décompose l'écart total en deux composantes: l'une due aux écarts observés à l'intérieur de chaque groupe (SSE) et l'autre due aux écarts observés entre les groupes (SSA).
 

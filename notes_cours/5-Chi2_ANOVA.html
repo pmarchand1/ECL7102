@@ -540,7 +540,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p><span class="math display">\[ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l \sum_{k = i}^n (\bar{y_i} - \bar{y})^2 \]</span></p>
 <p>Puisque le dernier terme ne dépend pas de <span class="math inline">\(k\)</span>, on peut ré-écrire l’équation:</p>
 <p><span class="math display">\[ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2 \]</span></p>
-<p>Le terme à gauche est la somme des carrés de l’écart total (<em>SST</em>, pour <em>total sum of squares</em>), le premier terme à droite est la somme des carrés de l’écart résiduelle ou erreur (<em>SSE</em>, pour <em>error sum of squares</em>) et le deuxième terme à droite est la somme des carrés de l’écart entre les groupes associés au facteur A (<em>SSA</em>, le seul facteur dans ce cas-ci).</p>
+<p>Le terme à gauche est la somme des carrés de l’écart total (<em>SST</em>, pour <em>total sum of squares</em>), le premier terme à droite est la somme des carrés de l’écart résiduel ou erreur (<em>SSE</em>, pour <em>error sum of squares</em>) et le deuxième terme à droite est la somme des carrés de l’écart entre les groupes associés au facteur A (<em>SSA</em>, le seul facteur dans ce cas-ci).</p>
 <p>On obtient donc l’équation <em>SST = SSE + SSA</em>, qui décompose l’écart total en deux composantes: l’une due aux écarts observés à l’intérieur de chaque groupe (SSE) et l’autre due aux écarts observés entre les groupes (SSA).</p>
 </div>
 <div id="tableau-danalyse-de-la-variance" class="section level2">
