@@ -15,6 +15,7 @@
 2. [Introduction à R - Partie 2](labos/2-IntroR_partie2.html)
 3. [Estimation et échantillonnage](labos/3R-Estimation_échantillonnage.html)
 4. [Tests d'hypothèse sur la moyenne](labos/4R-Tests_moyenne.html)
+5. [Tableaux de contingence](labos/5-Tableaux_contingence.pdf)
 
 
 
