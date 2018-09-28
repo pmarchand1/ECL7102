@@ -1,0 +1,426 @@
+---
+title: "ANOVA à deux facteurs et blocs complets aléatoires"
+date: "<br/>3 octobre 2018"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+```
+
+# Objectifs
+
+Lors du dernier cours, nous avons vu des exemples d'analyse de la variance (ANOVA) à un facteur. Dans ce cours, nous utiliserons l'ANOVA pour estimer l'effet additif de deux facteurs (deux variables catégorielles) ainsi que leur interaction. Nous étudierons aussi l'analyse des plans expérimentaux en blocs (blocs complets aléatoires). 
+
+Finalement, nous reformulerons le modèle d'ANOVA comme modèle de régression linéaire et nous verrons différentes options de codage des variables catégorielles (facteurs).
+
+# Rappel: ANOVA à un facteur
+
+Dans le modèle d'ANOVA à un facteur, la réponse $y_{ik}$ de l'individu $k$ du groupe $i$ est la somme de trois effets: la réponse moyenne de la population en général ($\mu$), la différence entre la moyenne du groupe $i$ et la moyenne générale ($\alpha_i$) et le résidu ($\epsilon_{ik}$) ou "erreur" qui constitue la partie de la réponse non-expliquée par le modèle).
+
+$$ y_{ik} = \mu + \alpha_i + \epsilon_{ik} $$
+Le modèle suppose aussi que les résidus sont indépendants et suivent la même distribution normale.
+
+$$ \epsilon_{ik} \sim N(0, \sigma) $$
+
+# ANOVA à deux facteurs sans interaction
+
+Pour illustrer l'ANOVA à deux facteurs, nous utiliserons d'abord le jeu de données [growth.csv](../donnees/growth.csv) provenant du manuel *Statistics: An Introduction Using R*. L'expérience compare le gain de poids (*gain*) de 48 animaux suivant trois types de régime alimentaire (*diet*) avec quatre types de suppléments (*supplement*). Il y a donc 12 groupes (toutes les combinaisons des 3 régimes et 4 suppléments) de 4 individus chacun.
+
+```{r}
+growth <- read.csv("../donnees/growth.csv")
+str(growth)
+```
+
+
+```{r}
+ggplot(growth, aes(x = supplement, y = gain, color = diet)) +
+    # position_dodge décale les points de différentes couleurs
+    geom_point(position = position_dodge(width = 0.3)) + 
+    scale_color_brewer(palette = "Dark2")
+```
+
+Nous pourrions représenter cette expérience par le modèle suivant, où $y_{ijk}$ est le gain de poids pour l'individu $k$ suivant le régime $i$ avec un supplément $j$:
+
+$$ y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk} $$
+
+Dans cette équation, $\mu$ est la moyenne générale, $\alpha_i$ représente l'effet du traitement $i$ du premier facteur (facteur A) et $\beta_j$ représente l'effet du traitrement $j$ du deuxième facteur (facteur B).  
+
+Remarquez que ce modèle est **additif**. Dans notre exemple, l'effet combiné d'un régime et d'un supplément est la somme des deux effets pris séparément. Nous verrons plus loin comment modéliser les effets non-additifs.
+
+Les différents coefficients du modèle sont estimés ainsi (l'accent circonflexe représente l'estimation):
+
+- Moyenne générale: $\hat{\mu} = \bar{y}$.
+- Effet du traitement $i$ du facteur A: $\hat{\alpha_i} = \bar{y_i} - \bar{y}$ (différence entre la moyenne des individus obtenant le traitement $i$ et la moyenne générale). 
+- Effet du traitement $j$ du facteur B: $\hat{\beta_j} = \bar{y_j} - \bar{y}$.
+
+Les résidus sont sont égaux à $y_{ijk} - \bar{y} - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y})$, ou en simplifiant: $y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y}$.
+
+## Tableau d'ANOVA à deux facteurs sans interaction
+
+Voici le tableau d'ANOVA correspondant à ce modèle si on a $l$ traitements du facteur A, $m$ traitements du facteur B et $n$ réplicats pour chaque combinaison des traitements (donc $lmn$ observations totales).
+
+| Composante | Somme des carrés (SS) | Degrés de liberté (df) | Carré moyen (MS) |
+|-+------+------+------|
+| Facteur A | $SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2$ | $l - 1$ | $MSA = \frac{SSA}{l - 1}$ |
+| Facteur B | $SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2$ | $m - 1$ | $MSB = \frac{SSB}{m - 1}$ |
+| Résidu | $SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y})^2$ | $lmn - l - m + 1$ | $MSE = \frac{SSE}{lmn - l - m + 1}$  |
+| Total | $SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2$ | $lmn - 1$ | |
+
+Le nombre de degrés de liberté pour la moyenne des écarts résiduels (MSE) correspond toujours au nombre total d'observations, moins 1 degré de liberté par moyenne estimée (1 pour la moyenne générale, $l - 1$ pour les effets du facteur A et $m - 1$ pour les effets du facteur B).
+
+Dans l'ANOVA à un facteur, le ratio $MSA/MSE$ était comparé à la distribution $F$ pour déterminer si le facteur A avait un effet significatif. Ici, deux tests $F$ indépendants sont réalisés à partir des ratios $MSA/MSE$ et $MSB/MSE$, donc on obtient une valeur $p$ pour chacun des deux facteurs.
+
+## Exemple
+
+Dans R, un modèle à deux facteurs additifs est représenté par l'équation `reponse ~ facteurA + facteurB`.
+
+```{r}
+aov_growth_add <- aov(gain ~ diet + supplement, data = growth)
+```
+
+Vérifions d'abord les graphiques de diagnostic, puis les résultats sommaires de l'ANOVA.
+
+```{r, echo = FALSE}
+par(mfrow = c(1, 2))
+plot(aov_growth_add, which = 1:2)
+```
+
+```{r}
+summary(aov_growth_add)
+```
+
+Les deux facteurs ont un effet très significatif. En regardant le résultat du test des étendues de Tukey, nous constatons que les trois régimes ont un effet différent (blé < avoine < orge). Pour les suppléments, *agrimore* et *supersupp* ont un effet plus grand que *supergain* et *control*.
+
+```{r}
+TukeyHSD(aov_growth_add)
+```
+
+## Coefficient de détermination
+
+Comme nous avons vu au dernier cours, la somme des écarts carrés entre chaque observation et la moyenne générale peut être décomposée en somme des écarts dûs aux traitements et aux effets résiduels. Pour l'ANOVA à deux facteurs, on a la relation: $SST = SSA + SSB + SSE$. On peut donc interpréter les ratios $SSA/SST$ et $SSB/SST$ comme les fractions de la variance totale de la réponse expliquées par le facteur A et le facteur B, respectivement. Le ratio $SSE/SST$ est la fraction de la variance inexpliquée par le modèle (erreur résiduelle).
+
+Dans notre exemple précédent, $SST = 287.17 + 91.88 + 65.30 = 444.35$.
+
+```{r}
+summary(aov_growth_add)
+```
+
+En calculant les ratios, on obtient 0.646 pour le facteur A, 0.207 pour le facteur B et 0.147 pour les résidus. Dans cette expérience, la plus grande partie de la variation en gain de poids est donc associée au changement de régime.
+
+Puisque $SSE/SST$ est la fraction de la variance inexpliquée par le modèle, la fraction de la variance expliquée par les facteurs inclus dans le modèle est égale à:
+
+$$ R^2 = 1 - \frac{SSE}{SST}$$
+
+La valeur de $R^2$ se nomme **coefficient de détermination**. Dans l'exemple précédent, $R^2 = 0.853$. 
+
+Dans le cours sur les tests d'hypothèse, il était recommandé de présenter trois types de résultats suite à un test:
+ 
+ - la probabilité que l'effet mesuré soit dû au hasard (valeur $p$);
+ - l'estimé et l'intervalle de confiance de l'effet mesuré; et
+ - la magnitude de l'effet comparée à la variance des données individuelles.
+
+Le coefficient de détermination $R^2$ répond à la troisième question: Quelle partie de la variation observée est due à l'effet des traitements ou prédicteurs mesurés?
+
+Finalement, un rappel: quand on parle de l'*effet* d'un prédicteur ou de la fraction de la variance *expliquée*, cela ne signifie pas toujours qu'il existe une relation de cause à effet entre le prédicteur et la réponse. Notre capacité à interpréter une association statistique (ou une corrélation) comme représentant un lien de cause à effet ne dépend pas de la magnitude de l'effet, mais plutôt des contrôles établis lors du plan expérimental: variation indépendante des facteurs, utilisation d'un groupe témoin, assignation aléatoire des traitements, etc.
+
+
+# ANOVA à deux facteurs avec interactions
+
+## Exemple
+
+Le jeu de données [antibiot.csv](../donnees/antibiot.csv) contient des mesures de prolifération bactérienne (surface couverte en mm$^2$) en fonction de l'humidité (sec, humide) et de la concentration d'antibiotique (faible, modérée, élevée).
+
+```{r}
+# fileEncoding = "UTF-8" permet de lire les accents correctement
+antibiot <- read.csv("../donnees/antibiot.csv", fileEncoding = "UTF-8")
+str(antibiot)
+```
+
+Quand R importe un jeu de données avec `read.csv`, les colonnes non-numériques sont importées comme facteurs avec un ordre de catégories (ou de niveaux, `levels`) déterminé par l'ordre alphabétique.
+
+```{r}
+levels(antibiot$Concentration)
+```
+
+On peut spécifier un autre ordre avec la fonction `factor`.
+
+```{r}
+antibiot$Concentration <- factor(antibiot$Concentration, 
+                                 levels = c("faible", "modérée", "élevée"))
+levels(antibiot$Concentration)
+```
+
+Voici le graphique de ces données. Est-ce qu'un modèle avec des effets additifs de la concentration d'antibiotique et de l'humidité serait approprié ici?
+
+```{r}
+ggplot(antibiot, aes(x = Concentration, y = Surface, color = Humidité)) +
+    geom_point(position = position_dodge(width = 0.3)) + 
+    scale_color_brewer(palette = "Dark2")
+```
+
+Ici, il y a une *interaction* claire entre les deux facteurs. Notamment, les conditions humides sont associées à une plus grande surface bactérienne pour les concentrations faible et modérée d'antibiotiques, mais les conditions sèches ont une plus grande surface bactérienne lorsque la concentration est élevée. 
+
+## Estimation de l'interaction
+
+Pour représenter les interactions entre les deux facteurs, on ajoute un terme $\gamma_ij$ au modèle d'ANOVA.
+
+$$ y_{ijk} = \mu + \alpha_i + \beta_j + \gamma_{ij} + \epsilon_{ijk} $$
+
+L'effet de l'interaction $\gamma_ij$ est la différence entre l'effet moyen des traitements $i$ et $j$ appliqués ensemble, et la somme des effet moyens de ces deux traitements pris séparément. Cet effet est estimé comme suit à partir des moyennes.
+
+$$ \hat{\gamma_{ij}} = (\bar{y_{ij}} - \bar{y}) - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y}) $$
+En simplifiant:
+$$ \hat{\gamma_{ij}} = \bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y} $$
+
+Dans cette équation, $\bar{y_{ij}}$ est la moyenne des observations qui font partie à la fois du groupe $i$ du facteur A et du groupe $j$ du facteur B. Les résidu du modèle pour une observation $y_{ijk}$ est égal à $y_{ijk} - \bar{y_{ij}}$.
+
+En incluant les interactions, le tableau d'ANOVA à deux facteurs prend la forme suivante:
+
+| Composante | Somme des carrés (SS) | Degrés de liberté (df) | Carré moyen (MS) |
+|-+------+------+------|
+| Facteur A | $SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2$ | $l - 1$ | $MSA = \frac{SSA}{l - 1}$ |
+| Facteur B | $SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2$ | $m - 1$ | $MSB = \frac{SSB}{m - 1}$ |
+| Interaction AB | $SSI = \sum_{i = 1}^l \sum_{j = 1}^m n (\bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y})^2$ | $(l - 1)(m - 1)$ | $MSI = \frac{SSI}{(l-1)(m-1)}$  |
+| Résidu | $SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_{ij}})^2$ | $lm(n - 1)$ | $MSE = \frac{SSE}{lm(n-1)}$  |
+| Total | $SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2$ | $lmn - 1$ | |
+
+Le nombre de degrés de liberté pour l'interaction est le produit du nombre de degrés de liberté de chaque facteur. L'interaction a sa propre statistique $F$ égale au ratio $MSI/MSE$. L'hypothèse nulle correspond à l'absence d'interactions, c'est-à-dire que les effets des deux facteurs sont additifs et que tous les $\gamma_{ij}$ sont de 0.
+
+## Application
+
+En R, pour spécifier une interaction dans la formule du modèle, on place un symbole de multiplication `*` entre les deux variables au lieu du `+`.
+
+```{r}
+aov_antibio <- aov(Surface ~ Concentration * Humidité, antibiot)
+```
+
+Voici les graphiques et le tableau sommaire de ce modèle:
+
+```{r, echo = FALSE}
+par(mfrow = c(1, 2))
+plot(aov_antibio, which = 1:2)
+```
+
+
+```{r}
+summary(aov_antibio)
+```
+
+L'interaction entre les 3 catégories de concentration et les 2 catégories d'humidité définit 6 groupes, donc il y a 15 comparaisons possibles pour l'interaction, comme le montre le résultat de `TukeyHSD`. 
+
+```{r}
+TukeyHSD(aov_antibio)
+```
+
+Dans le cas du jeu de données sur la croissance animale `growth`, l'interaction n'est pas significative:
+
+```{r}
+aov_growth_inter <- aov(gain ~ diet * supplement, growth)
+summary(aov_growth_inter)
+```
+
+Doit-on toujours estimer l'interaction dans un modèle d'ANOVA à deux facteurs? Le principal désavantage du modèle avec interactions est qu'il faut estimer plus de paramètres. En particulier, puisqu'on estime la moyenne de chaque combinaison des deux facteurs, il faut un nombre suffisant d'observations avec la même valeur des deux facteurs (réplicats). Les jeux de données montrés en exemple comptent 4 ou 5 réplicats par combinaison des deux facteurs, ce qui un peu faible comme taille d'échantillon dans ce cas. Notez qu'il est impossible d'estimer les interactions s'il n'y a qu'une observation pour chaque combinaison de facteurs.
+
+
+# Expérience par blocs
+
+Lors du cours sur les plans expérimentaux, nous avons discuté de l'utilité des expériences par blocs complets aléatoires. Dans ce type de plan, les unités d'observation sont divisées en blocs où les conditions dans chaque bloc sont plus homogènes, puis les traitements sont assignés aléatoirement dans chaque bloc. Il s'agit de l'équivalent d'une expérience à échantillons appariés pour plus de deux traitements.
+
+Le fichier [pigs.csv](../donnees/pigs.csv) contient les résultats d'une expérience mesurant le poids (*Weight*) de cobayes selon quatre régimes alimentaires (*Diet*). Les vingt individus sont divisés en cinq blocs (*Block*) qui pourraient représenter par exemple des cobayes provenant de la même portée.
+
+```{r}
+pigs <- read.csv("../donnees/pigs.csv")
+str(pigs)
+```
+
+Dans ce jeu de données, *Block* et *Diet* sont des variables catégorielles même si elles sont représentées par des nombres. Il faut donc convertir ces variables en facteurs dans R avec l'instruction `as.factor`.
+
+```{r}
+pigs <- mutate(pigs, Block = as.factor(Block), Diet = as.factor(Diet))
+```
+
+Le modèle mathématique que nous utiliserons ici est le même que pour l'ANOVA à deux facteurs, sans interaction. On ne pourrait pas estimer l'interaction ici, vu qu'il n'y a qu'une observation par combinaison de bloc et de régime. Nous devons donc supposer que les effets sont additifs: chaque bloc a un poids moyen différent, mais l'effet de chaque régime est le même pour tous les blocs.
+
+```{r}
+aov_pigs <- aov(Weight ~ Diet + Block, data = pigs)
+```
+
+```{r, echo = FALSE}
+par(mfrow = c(1, 2))
+plot(aov_pigs, which = 1:2)
+```
+
+```{r}
+summary(aov_pigs)
+```
+
+Même si le modèle est identique à celui de l'ANOVA à deux facteurs, l'interprétation est différente. Dans ce cas-ci, nous ne nous intéressons pas à estimer l'effet des blocs. La structure de blocs vise à réduire la variabilité à l'intérieur des blocs, donc la portion résiduelle de la variance, et ainsi faciliter la détection de l'effet des traitements (régimes).
+
+## Effets fixes ou aléatoires
+
+Dans le modèle ci-dessus, les effets des blocs sont des **effets fixes**, c'est-à-dire qu'ils sont estimés séparément pour chaque bloc. (Les effets de traitement sont aussi fixes.) Dans certains problèmes d'observations groupées, il est préférable de considérer les moyennes de chaque bloc comme provenant elles-mêmes d'une distribution, et d'estimer les paramètres de cette distribution plutôt que la moyenne de chaque bloc individuellement. Nous inclurons ce type d'**effets aléatoires** dans la partie du cours sur les modèles mixtes, plus tard dans la session.
+
+
+# Régression linéaire et contrastes
+
+Le modèle d'ANOVA est un exemple de régression linéaire, donc la même forme de modèle peut être analysée avec la fonction `lm` dans R. Par exemple, considérons l'effet du supplément sur le gain de poids (un seul facteur) dans le jeu de données `growth`.
+
+```{r}
+lm_growth_supp <- lm(gain ~ supplement, data = growth)
+```
+
+Le tableau de résultats pour `lm` met davantage l'accent sur l'estimation des effets (dans la section *Coefficients*).
+
+```{r}
+summary(lm_growth_supp)
+```
+
+Avant de discuter des coefficients, regardons les valeurs au bas du tableau. L'erreur-type résiduelle est la racine carré de la *MSE* (la moyenne des écarts carrés résiduels) du tableau d'ANOVA. La valeur `Mutipled R-squared` correspond au coefficient de détermination $R^2$ définit plus tôt. La valeur `Adjusted R-squared` correspond à une définition légèrement différente; elle est basée sur la ratio entre la *MSE* et la variance totale, plutôt que le ratio des sommes des carrés *SSE* et *SST*. Finalement, le test $F$ de la dernière ligne (avec sa valeur $p$) correspond à celui de l'ANOVA à un facteur. On peut retrouver le tableau d'ANOVA en appliquant la fonction `anova` au résultat de `lm`.
+
+```{r}
+anova(lm_growth_supp)
+```
+
+L'ajustement du modèle linéaire avec `lm` produit ici quatre coefficients: `(Intercept)`, `supplementcontrol`, `supplementsupergain` et `supplementsupersupp`. Comme nous avons brièvement mentionné au dernier cours, la valeur `(Intercept)`correspond à la moyenne de la réponse pour la première catégorie du facteur `supplement`, soit `agrimore`, et les autres coefficients correspondent à la différence de moyenne entre chacune des trois autres catégories et `agrimore`. Dans les prochaines sections, nous verrons pourquoi les facteurs sont codés ainsi et comment modifier ce codage.
+
+## Codage d'une variable catégorielle
+
+L'équation suivante décrit un modèle linéaire représentant la relation entre un prédicteur numérique $x$ et une réponse numérique $y$. La valeur de $y$ dépend d'un terme constant ($\beta_0$), d'un terme proportionnel à $x$ ($\beta_1 x$) et d'un résidu aléatoire pour chaque observation ($\epsilon$).
+
+$$ y = \beta_0 + \beta_1 x + \epsilon $$ 
+
+Dans ce cas, $\beta_0$ est l'ordonnée à l'origine (en anglais, *intercept*) du graphique de $y$ vs. $x$, la valeur moyenne de $y$ lorsque $x = 0$. 
+
+Imaginons une expérience avec un groupe témoin et deux traitements ($T_1$ et $T_2$). Pour représenter ces données dans un modèle de régression, nous créons deux variables: 
+
+- $T_1$ = 1 pour les observations qui ont reçu le traitement 1, 0 pour les autres.
+- $T_2$ = 1 pour les observations qui ont reçu le traitement 2, 0 pour les autres.
+
+Nous obtenons donc le modèle: $y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon$
+
+En remplaçant les valeurs de $T_1$ et $T_2$, nous pouvons déterminer la moyenne de $y$ pour chacun des groupes selon les coefficients $\beta$:
+
+- Groupe témoin ($T_1 = 0, T_2 = 0$): $\mu_{tém} = \beta_0$
+- Traitement 1 ($T_1 = 1, T_2 = 0$): $\mu_{tr1} = \beta_0 + \beta_1$
+- Traitement 2 ($T_1 = 0, T_2 = 1$): $\mu_{tr2} = \beta_0 + \beta_2$
+
+L'ordonnée à l'origine correspond à la moyenne du groupe témoin tandis que les deux autres coefficients représentent la différence entre la moyenne de chaque traitement et celle du groupe témoin. Ce type de codage d'une variable catégorielle permet de comparer facilement chaque traitement à un traitement de référence. C'est le type de codage utilisé par défaut dans R, comme nous avons vu dans les résultats ci-dessus.
+
+## Contrastes
+
+En statistiques, un *contraste* est une variable numérique définie à partir d'un variable catégorielle (ou facteur) qui représente une comparaison entre catégories. 
+
+Pour un facteur avec $k$ catégories, on peut définir $k - 1$ contrastes indépendants. Dans l'exemple précédent, les contrastes $T_1$ et $T_2$ servaient à comparer le traitement 1 au groupe témoin et le traitement 2 au groupe témoin. En connaissant ces deux différences, on connait aussi la différence entre les traitements 1 et 2, donc il serait redondant d'ajouter un troisième contraste.
+
+Dans R, la fonction `contrasts` affiche la matrice des contrastes associés à un facteur.
+
+```{r}
+contrasts(growth$supplement)
+```
+
+Les colonnes de cette matrice correspondent aux contrastes (`control`, `supergain` et `supersupp` qui prennent une valeur de 1 pour un des traitements et 0 pour les autres). Le premier traitement `agrimore` est associé à un valeur 0 pour chacun des contrastes. Dans ce cas-ci, il serait préférable d'utiliser le groupe témoin (`control`) comme référence. Nous pouvons changer le niveau de référence avec la fonction `relevel`.
+
+```{r}
+growth$supplement <- relevel(growth$supplement, ref = "control")
+contrasts(growth$supplement)
+```
+
+En ré-estimant le modèle linéaire avec ces nouveaux contrastes, on obtient des coefficients indiquant la différence entre chaque supplément et le groupe témoin.
+
+```{r}
+lm_growth_supp <- lm(gain ~ supplement, data = growth)
+summary(lm_growth_supp)
+```
+
+Notez que le changement de contrastes n'affecte que l'estimation des coefficients. La valeur du $R^2$ et du test $F$ sont les mêmes.
+
+Pour chaque coefficient, le tableau inclut le résultat d'un test $t$ qui indique si chaque coefficient est significativement différent de 0. Ici, un seul des trois suppléments (agrimore) a un effet significatif si on choisit un seuil de 0.05. Cependant, ces résultats sont basés sur des tests $t$ indépendants qui ne tiennent pas compte des comparaisons multiples. Ils ne sont donc pas aussi fiables que le test des étendues de Tukey vu au cours précédent.
+
+## Interprétation des coefficients pour deux facteurs
+
+Ajoutons maintenant la variable `diet` à notre régression.
+
+```{r}
+lm_growth <- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth)
+```
+
+Avant de discuter des contrastes pour le facteur `diet`, remarquez les différences entre ce tableau et celui de la régression précédente. Les coefficients associés aux différents suppléments sont les mêmes, mais les valeur $p$ sont beaucoup plus faibles. Pourquoi l'effet est-il plus significatif dans ce cas? 
+
+En ajoutant la variable `diet`, nous sommes capables d'expliquer une plus grande partie de la réponse (le $R^2$ est passé de 0.2 à 0.8 environ) et la variation résiduelle est plus petite. C'est pourquoi l'erreur-type des coefficients est plus faible et leur valeur est donc plus significativement différente de zéro.
+
+Voici les contrastes pour le facteur `diet`:
+
+```{r}
+contrasts(growth$diet)
+```
+
+Si les coefficients des différents suppléments sont les mêmes, la valeur de l'ordonnée à l'origine `Intercept` a changé entre les deux tableaux (23.4 au lieu de 20.4). L'ordonnée à l'origine correspond au cas où tous les contrastes sont 0. Dans le modèle à un facteur, ce coefficient représentait la moyenne du groupe témoin, indépendamment du régime. Maintenant, il représente la moyenne des observations du groupe témoin (valeur de référence de `supplement`) qui ont le régime `barley` (valeur de référence pour `diet`).
+
+## Modifier le type de contrastes
+
+Le type de contrastes utilisé par défaut dans R compare chaque catégorie à une catégorie de référence. On dit qu'il s'agit d'un codage de traitement (`contr.treatment` dans R) car il est utile pour comparer des traitements à un groupe témoin. Puisque nous n'avons pas de groupe de référence pour le facteur `diet`, nous pourrions utiliser un autre type de contraste. Voici des contrastes de type `contr.sum` (codage d'effet) pour la même variable.
+
+```{r}
+contrasts(growth$diet) <- "contr.sum"
+contrasts(growth$diet)
+```
+
+Pour plus facilement interpréter les résultats, nous pouvons assigner un nom aux variables de contraste.
+
+```{r}
+colnames(contrasts(growth$diet)) <- c("barley", "oats")
+```
+
+Dans ce type de codage, chaque contraste prend la valeur de 1 pour une des catégories, sauf la dernière catégorie qui prend une valeur de -1 pour tous les contrastes. Une propriété importante de ces contrastes est que la somme de chaque colonne est zéro, ce qui signifie que la moyenne de chaque contraste sur l'ensemble des catégories est zéro.
+
+> Au sens strict utilisé en statistiques, une variable de contraste doit avoir une somme de zéro sur l'ensemble des catégories. Le codage de traitement utilisé par défaut dans R ne forme donc pas des vrais contrastes.
+
+Reprenons le modèle de régression: $y = \beta_0 + \beta_1 T_1 + \beta_2 T_2$ avec le codage d'effet défini ci-dessus.
+
+- Catégorie 1 ($T_1 = 1, T_2 = 0$): $\mu_1 = \beta_0 + \beta_1$
+- Catégorie 2 ($T_1 = 0, T_2 = 1$): $\mu_2 = \beta_0 + \beta_2$
+- Catégorie 3 ($T_1 = -1, T_2 = -1$): $\mu_3 = \beta_0 - \beta_1 - \beta_2$
+- Moyenne générale: $\mu = (\mu_1 + \mu2 + \mu_3)/3 = \beta_0$
+
+L'ordonnée à l'origine correspond donc à la moyenne générale tandis que les coefficients correspondent à la différence entre la moyenne de chaque catégorie et la moyenne générale. L'effet de la dernière catégorie peut être déterminé en prenant l'opposé de la somme des autres effets, donc $-(\beta_1 + \beta_2)$ ici.
+
+Voici le résultat de la régression linéaire avec ces nouveaux contrastes.
+
+```{r}
+lm_growth <- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth)
+```
+
+**Question**: Quelle est la signification des coefficients dans ce tableau? Quel est l'effet du troisième régime (`wheat`)?
+
+**Réponse**:
+
+- Les coefficients `dietbarley` et `dietoats` donnent l'effet de ce régime par rapport à la moyenne des régimes.
+- Les trois coefficients de supplément donnent l'effet de ce supplément par rapport au groupe témoin (`control`).
+- L'ordonnée à l'origine est la moyenne du gain de poids du groupe témoin (moyenne des trois régimes).
+- L'effet du régime `wheat` par rapport à la moyenne est d'environ -2.96 (-(3.028 - 0.065)).
+
+Remarquez qu'il est possible d'utiliser différents codages pour différents facteurs dans la même régression. Le codage de traitement (défaut) est utile pour comparer les catégories à une catégorie de référence, tandis que le codage d'effet (`contr.sum`) est utile pour comparer le catégories à la réponse moyenne.
+
+Si les deux facteurs avaient un codage d'effet, l'ordonnée à l'origine serait égale à la moyenne générale (tous les régimes et suppléments).
+
+
+# Résumé
+
+- L'ANOVA à deux facteurs permet d'évaluer l'effet de deux variables catégorielles (ex.: deux types de traitement) et de déterminer si ces effets sont additifs ou s'il y a une interaction.
+
+- Une expérience à blocs complets aléatoires s'analyse comme une ANOVA à deux facteurs sans interaction. La division en blocs permet de contrôler une partie de la variation pour mieux estimer l'effet des traitements.
+
+- Le modèle d'ANOVA est un exemple de régression linéaire. Les variables catégorielles sont représentées dans un modèle de régression au moyen de contrastes. 
+
+- Nous avons vu deux des types de contrastes possibles dans R: le codage de traitement (option par défaut) compare l'effet de chaque catégorie à une catégorie de référence, tandis que le codage d'effet compare l'effet de chaque catégorie à la moyenne de toutes les catégories.
+
