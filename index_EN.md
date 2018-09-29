@@ -8,6 +8,7 @@
 3. [Sampling methods and experiment design](lecture_notes/3-Sampling_experiment_design.html)
 4. [Hypothesis testing - Part 1](lecture_notes/4-Hypothesis_testing_Part1.html)
 5. [Chi-squared test and ANOVA](lecture_notes/5-Chi2_ANOVA.html)
+6. [Two-way ANOVA and randomized complete blocks](lecture_notes/6-Two_way_ANOVA.html)
 
 
 ## Labs

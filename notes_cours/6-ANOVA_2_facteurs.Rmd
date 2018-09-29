@@ -23,7 +23,7 @@ Finalement, nous reformulerons le modèle d'ANOVA comme modèle de régression l
 
 # Rappel: ANOVA à un facteur
 
-Dans le modèle d'ANOVA à un facteur, la réponse $y_{ik}$ de l'individu $k$ du groupe $i$ est la somme de trois effets: la réponse moyenne de la population en général ($\mu$), la différence entre la moyenne du groupe $i$ et la moyenne générale ($\alpha_i$) et le résidu ($\epsilon_{ik}$) ou "erreur" qui constitue la partie de la réponse non-expliquée par le modèle).
+Dans le modèle d'ANOVA à un facteur, la réponse $y_{ik}$ de l'individu $k$ du groupe $i$ est la somme de trois effets: la réponse moyenne de la population en général ($\mu$), la différence entre la moyenne du groupe $i$ et la moyenne générale ($\alpha_i$) et le résidu ($\epsilon_{ik}$) ou "erreur" qui constitue la partie de la réponse non-expliquée par le modèle.
 
 $$ y_{ik} = \mu + \alpha_i + \epsilon_{ik} $$
 Le modèle suppose aussi que les résidus sont indépendants et suivent la même distribution normale.
@@ -132,7 +132,7 @@ Le coefficient de détermination $R^2$ répond à la troisième question: Quelle
 Finalement, un rappel: quand on parle de l'*effet* d'un prédicteur ou de la fraction de la variance *expliquée*, cela ne signifie pas toujours qu'il existe une relation de cause à effet entre le prédicteur et la réponse. Notre capacité à interpréter une association statistique (ou une corrélation) comme représentant un lien de cause à effet ne dépend pas de la magnitude de l'effet, mais plutôt des contrôles établis lors du plan expérimental: variation indépendante des facteurs, utilisation d'un groupe témoin, assignation aléatoire des traitements, etc.
 
 
-# ANOVA à deux facteurs avec interactions
+# ANOVA à deux facteurs avec interaction
 
 ## Exemple
 
@@ -170,7 +170,7 @@ Ici, il y a une *interaction* claire entre les deux facteurs. Notamment, les con
 
 ## Estimation de l'interaction
 
-Pour représenter les interactions entre les deux facteurs, on ajoute un terme $\gamma_ij$ au modèle d'ANOVA.
+Pour représenter l'interaction entre les deux facteurs, on ajoute un terme $\gamma_ij$ au modèle d'ANOVA.
 
 $$ y_{ijk} = \mu + \alpha_i + \beta_j + \gamma_{ij} + \epsilon_{ijk} $$
 
@@ -180,9 +180,9 @@ $$ \hat{\gamma_{ij}} = (\bar{y_{ij}} - \bar{y}) - (\bar{y_i} - \bar{y}) - (\bar{
 En simplifiant:
 $$ \hat{\gamma_{ij}} = \bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y} $$
 
-Dans cette équation, $\bar{y_{ij}}$ est la moyenne des observations qui font partie à la fois du groupe $i$ du facteur A et du groupe $j$ du facteur B. Les résidu du modèle pour une observation $y_{ijk}$ est égal à $y_{ijk} - \bar{y_{ij}}$.
+Dans cette équation, $\bar{y_{ij}}$ est la moyenne des observations qui font partie à la fois du groupe $i$ du facteur A et du groupe $j$ du facteur B. Le résidu du modèle pour une observation $y_{ijk}$ est égal à $y_{ijk} - \bar{y_{ij}}$.
 
-En incluant les interactions, le tableau d'ANOVA à deux facteurs prend la forme suivante:
+En incluant l'interaction, le tableau d'ANOVA à deux facteurs prend la forme suivante:
 
 | Composante | Somme des carrés (SS) | Degrés de liberté (df) | Carré moyen (MS) |
 |-+------+------+------|
@@ -192,7 +192,7 @@ En incluant les interactions, le tableau d'ANOVA à deux facteurs prend la forme
 | Résidu | $SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_{ij}})^2$ | $lm(n - 1)$ | $MSE = \frac{SSE}{lm(n-1)}$  |
 | Total | $SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2$ | $lmn - 1$ | |
 
-Le nombre de degrés de liberté pour l'interaction est le produit du nombre de degrés de liberté de chaque facteur. L'interaction a sa propre statistique $F$ égale au ratio $MSI/MSE$. L'hypothèse nulle correspond à l'absence d'interactions, c'est-à-dire que les effets des deux facteurs sont additifs et que tous les $\gamma_{ij}$ sont de 0.
+Le nombre de degrés de liberté pour l'interaction est le produit du nombre de degrés de liberté de chaque facteur. L'interaction a sa propre statistique $F$ égale au ratio $MSI/MSE$. L'hypothèse nulle correspond à l'absence d'interaction, c'est-à-dire que les effets des deux facteurs sont additifs et que tous les $\gamma_{ij}$ sont de 0.
 
 ## Application
 
@@ -227,7 +227,7 @@ aov_growth_inter <- aov(gain ~ diet * supplement, growth)
 summary(aov_growth_inter)
 ```
 
-Doit-on toujours estimer l'interaction dans un modèle d'ANOVA à deux facteurs? Le principal désavantage du modèle avec interactions est qu'il faut estimer plus de paramètres. En particulier, puisqu'on estime la moyenne de chaque combinaison des deux facteurs, il faut un nombre suffisant d'observations avec la même valeur des deux facteurs (réplicats). Les jeux de données montrés en exemple comptent 4 ou 5 réplicats par combinaison des deux facteurs, ce qui un peu faible comme taille d'échantillon dans ce cas. Notez qu'il est impossible d'estimer les interactions s'il n'y a qu'une observation pour chaque combinaison de facteurs.
+Doit-on toujours estimer l'interaction dans un modèle d'ANOVA à deux facteurs? Le principal désavantage du modèle avec interaction est qu'il faut estimer plus de paramètres. En particulier, puisqu'on estime la moyenne de chaque combinaison des deux facteurs, il faut un nombre suffisant d'observations avec la même valeur des deux facteurs (réplicats). Les jeux de données montrés en exemple comptent 4 ou 5 réplicats par combinaison des deux facteurs, ce qui un peu faible comme taille d'échantillon dans ce cas. Notez qu'il est impossible d'estimer l'interaction s'il n'y a qu'une observation pour chaque combinaison de facteurs.
 
 
 # Expérience par blocs
@@ -283,7 +283,7 @@ Le tableau de résultats pour `lm` met davantage l'accent sur l'estimation des e
 summary(lm_growth_supp)
 ```
 
-Avant de discuter des coefficients, regardons les valeurs au bas du tableau. L'erreur-type résiduelle est la racine carré de la *MSE* (la moyenne des écarts carrés résiduels) du tableau d'ANOVA. La valeur `Mutipled R-squared` correspond au coefficient de détermination $R^2$ définit plus tôt. La valeur `Adjusted R-squared` correspond à une définition légèrement différente; elle est basée sur la ratio entre la *MSE* et la variance totale, plutôt que le ratio des sommes des carrés *SSE* et *SST*. Finalement, le test $F$ de la dernière ligne (avec sa valeur $p$) correspond à celui de l'ANOVA à un facteur. On peut retrouver le tableau d'ANOVA en appliquant la fonction `anova` au résultat de `lm`.
+Avant de discuter des coefficients, regardons les valeurs au bas du tableau. L'erreur-type résiduelle est la racine carré de la *MSE* (la moyenne des écarts carrés résiduels) du tableau d'ANOVA. La valeur `Mutipled R-squared` correspond au coefficient de détermination $R^2$ définit plus tôt. La valeur `Adjusted R-squared` a une définition légèrement différente; elle est basée sur la ratio entre la *MSE* et la variance totale, plutôt que le ratio des sommes des carrés *SSE* et *SST*. Finalement, le test $F$ de la dernière ligne (avec sa valeur $p$) correspond à celui de l'ANOVA à un facteur. On peut retrouver le tableau d'ANOVA en appliquant la fonction `anova` au résultat de `lm`.
 
 ```{r}
 anova(lm_growth_supp)
@@ -293,7 +293,7 @@ L'ajustement du modèle linéaire avec `lm` produit ici quatre coefficients: `(I
 
 ## Codage d'une variable catégorielle
 
-L'équation suivante décrit un modèle linéaire représentant la relation entre un prédicteur numérique $x$ et une réponse numérique $y$. La valeur de $y$ dépend d'un terme constant ($\beta_0$), d'un terme proportionnel à $x$ ($\beta_1 x$) et d'un résidu aléatoire pour chaque observation ($\epsilon$).
+L'équation suivante décrit un modèle linéaire pour la relation entre un prédicteur numérique $x$ et une réponse numérique $y$. La valeur de $y$ dépend d'un terme constant ($\beta_0$), d'un terme proportionnel à $x$ ($\beta_1 x$) et d'un résidu aléatoire pour chaque observation ($\epsilon$).
 
 $$ y = \beta_0 + \beta_1 x + \epsilon $$ 
 
@@ -326,7 +326,7 @@ Dans R, la fonction `contrasts` affiche la matrice des contrastes associés à u
 contrasts(growth$supplement)
 ```
 
-Les colonnes de cette matrice correspondent aux contrastes (`control`, `supergain` et `supersupp` qui prennent une valeur de 1 pour un des traitements et 0 pour les autres). Le premier traitement `agrimore` est associé à un valeur 0 pour chacun des contrastes. Dans ce cas-ci, il serait préférable d'utiliser le groupe témoin (`control`) comme référence. Nous pouvons changer le niveau de référence avec la fonction `relevel`.
+Les colonnes de cette matrice correspondent aux contrastes (`control`, `supergain` et `supersupp`) qui prennent une valeur de 1 pour un des traitements et 0 pour les autres. Le premier traitement `agrimore` est associé à un valeur 0 pour chacun des contrastes. Dans ce cas-ci, il serait préférable d'utiliser le groupe témoin (`control`) comme référence. Nous pouvons changer le niveau de référence avec la fonction `relevel`.
 
 ```{r}
 growth$supplement <- relevel(growth$supplement, ref = "control")
@@ -400,7 +400,7 @@ lm_growth <- lm(gain ~ diet + supplement, data = growth)
 summary(lm_growth)
 ```
 
-**Question**: Quelle est la signification des coefficients dans ce tableau? Quel est l'effet du troisième régime (`wheat`)?
+**Question**: Que signifient les coefficients dans ce tableau? Quel est l'effet du troisième régime (`wheat`)?
 
 **Réponse**:
 
