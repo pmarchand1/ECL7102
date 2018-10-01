@@ -52,7 +52,7 @@ str(growth)
 
 ### Exemple
 
-```{r}
+```{r, echo = FALSE}
 ggplot(growth, aes(x = supplement, y = gain, color = diet)) +
     # position_dodge décale les points de différentes couleurs
     geom_point(position = position_dodge(width = 0.3)) + 
@@ -106,7 +106,7 @@ On a $l$ traitements du facteur A, $m$ traitements du facteur B et $n$ réplicat
 | Résidu | $SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y})^2$ | $lmn - l - m + 1$ | $MSE = \frac{SSE}{lmn - l - m + 1}$  |
 | Total | $SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2$ | $lmn - 1$ | |
 
-- Un test $F$ séparé pour chaque facteur, basé sur $MSA/MSE$ ou $MSB/MSE$.
+>- Un test $F$ séparé pour chaque facteur, basé sur $MSA/MSE$ ou $MSB/MSE$.
 
 
 ## Exemple - Croissance animale
@@ -222,7 +222,7 @@ levels(antibiot$Concentration)
 
 Est-ce qu'un modèle avec des effets additifs de la concentration d'antibiotique et de l'humidité serait approprié ici?
 
-```{r, fig.dim = c(6, 3)}
+```{r, echo = FALSE}
 ggplot(antibiot, aes(x = Concentration, y = Surface, color = Humidité)) +
     geom_point(position = position_dodge(width = 0.3)) + 
     scale_color_brewer(palette = "Dark2")
