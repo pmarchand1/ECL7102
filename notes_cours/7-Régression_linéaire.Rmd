@@ -305,7 +305,7 @@ On peut maintenant intepréter les coefficients comme suit:
 - $\beta_1$ (`GrazingUngrazed`) est l'effet de l'absence de pâturage sur l'ordonnée à l'origine de *Fruit vs. Root*.
 - $\beta_2$ (`Root`) est la pente de la droite *Fruit vs. Root* avec ou sans pâturage.
 
-Puisque la pente est la même avec ou sans pâturage, le coefficient $\beta_1$ correspond à une translation sur l'axe des $y$ de la droite de régression. Ce modèle des effets *additifs* d'un traitement et d'une variable numérique correspond donc à deux droites parallèles, ce qui correspond assez bien à notre visualisation des données. En outre, la valeur du $R^2$ (0.93) indique que le modèle explique une grande partie de la variation observée dans les données. 
+Puisque la pente est la même avec ou sans pâturage, le coefficient $\beta_1$ correspond à une translation sur l'axe des $y$ de la droite de régression. Ce modèle des effets *additifs* d'un traitement et d'une variable numérique est donc représenté par deux droites parallèles, ce qui correspond assez bien à notre visualisation des données. En outre, la valeur du $R^2$ (0.93) indique que le modèle explique une grande partie de la variation observée dans les données. 
 
 Même une grande valeur de $R^2$ ne signifie pas nécessairement que le modèle est approprié. Il faut toujours observer les graphiques de diagnostic.
 

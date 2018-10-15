@@ -9,6 +9,7 @@
 4. [Hypothesis testing - Part 1](lecture_notes/4-Hypothesis_testing_Part1.html)
 5. [Chi-squared test and ANOVA](lecture_notes/5-Chi2_ANOVA.html)
 6. [Two-way ANOVA and randomized complete blocks](lecture_notes/6-Two_way_ANOVA.html)
+7. [Linear regression](lecture_notes/7-Linear_regression.html)
 
 
 ## Labs
