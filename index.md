@@ -9,6 +9,7 @@
 4. [Tests d'hypothèse - Partie 1](notes_cours/4-Tests_hypothese_Partie1.html)
 5. [Tableaux de contingence et ANOVA](notes_cours/5-Chi2_ANOVA.html)
 6. [ANOVA à deux facteurs et blocs complets aléatoires](notes_cours/6-ANOVA_2_facteurs.html)
+7. [Régression linéaire](notes_cours/7-Régression_linéaire.html)
 
 ## Laboratoires
 
@@ -18,6 +19,5 @@
 4. [Tests d'hypothèse sur la moyenne](labos/4R-Tests_moyenne.html)
 5. [Tableaux de contingence](labos/5-Tableaux_contingence.pdf)
 6. [Analyse de la variance](labos/6-ANOVA.pdf) ([Données 1](labos/sablefish.csv) - [Données 2](labos/woodstain.csv))
-
 
 
