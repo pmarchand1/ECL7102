@@ -238,7 +238,7 @@ div.tocify {
 <p>Les six prochains cours porteront sur les modèles de régression. Ces modèles représentent la relation mathématique entre une variable <em>réponse</em> et une ou plusieurs variables nommées <em>prédicteurs</em>.</p>
 <p>L’analyse de régression est notamment utile dans les cas suivants:</p>
 <ul>
-<li><p>Analyser les résultats d’une expérience lorsqu’un ou plusieurs variables de traitement sont numériques (ex.: température, dose).</p></li>
+<li><p>Analyser les résultats d’une expérience lorsqu’une ou plusieurs variables de traitement sont numériques (ex.: température, dose).</p></li>
 <li><p>Séparer l’effet de traitements discrets (variables catégorielles) de celui d’autres conditions expérimentales représentées par des variables numériques. Dans ce contexte, on parle souvent d’<strong>analyse de la covariance</strong>.</p></li>
 <li><p>Déterminer l’importance des associations entre des variables mesurées dans la nature (sans supposer de lien de causalité).</p></li>
 <li><p>Utiliser les associations entre prédicteurs et réponse afin de prédire la valeur de cette dernière pour de nouvelles observations.</p></li>
@@ -549,13 +549,8 @@ summary(mod_comp_inter)</code></pre>
 <div id="regression-avec-plusieurs-predicteurs-numeriques" class="section level1">
 <h1>Régression avec plusieurs prédicteurs numériques</h1>
 <p>Le tableau de données <code>hills</code> du package <em>MASS</em> (inclus par défaut avec R) contient les records de temps (<em>time</em>, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (<em>dist</em>, en milles) et le dénivelé total du parcours (<em>climb</em>, en pieds).</p>
-<pre class="r"><code>library(MASS)</code></pre>
-<pre><code>## 
-## Attaching package: 'MASS'</code></pre>
-<pre><code>## The following object is masked from 'package:dplyr':
-## 
-##     select</code></pre>
-<pre class="r"><code>str(hills)</code></pre>
+<pre class="r"><code>library(MASS)
+str(hills)</code></pre>
 <pre><code>## 'data.frame':    35 obs. of  3 variables:
 ##  $ dist : num  2.5 6 6 7.5 8 8 16 6 5 6 ...
 ##  $ climb: int  650 2500 900 800 3070 2866 7500 800 800 650 ...

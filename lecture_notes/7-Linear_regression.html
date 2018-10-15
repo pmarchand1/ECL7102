@@ -548,13 +548,8 @@ summary(mod_comp_inter)</code></pre>
 <div id="regression-with-multiple-numerical-predictors" class="section level1">
 <h1>Regression with multiple numerical predictors</h1>
 <p>The <code>hills</code> data frame in the <em>MASS</em> package (included by default with R) contains the record times (<em>time</em>, in minutes) for Scottish bike races based on the horizontal distance (<em>dist</em>, in miles) and the total change in altitude (<em>climb</em>, in feet).</p>
-<pre class="r"><code>library(MASS)</code></pre>
-<pre><code>## 
-## Attaching package: 'MASS'</code></pre>
-<pre><code>## The following object is masked from 'package:dplyr':
-## 
-##     select</code></pre>
-<pre class="r"><code>str(hills)</code></pre>
+<pre class="r"><code>library(MASS)
+str(hills)</code></pre>
 <pre><code>## 'data.frame':    35 obs. of  3 variables:
 ##  $ dist : num  2.5 6 6 7.5 8 8 16 6 5 6 ...
 ##  $ climb: int  650 2500 900 800 3070 2866 7500 800 800 650 ...

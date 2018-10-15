@@ -31,7 +31,7 @@ Les six prochains cours porteront sur les modèles de régression. Ces modèles 
 
 L'analyse de régression est notamment utile dans les cas suivants:
 
-- Analyser les résultats d'une expérience lorsqu'un ou plusieurs variables de traitement sont numériques (ex.: température, dose).
+- Analyser les résultats d'une expérience lorsqu'une ou plusieurs variables de traitement sont numériques (ex.: température, dose).
 
 - Séparer l'effet de traitements discrets (variables catégorielles) de celui d'autres conditions expérimentales représentées par des variables numériques. Dans ce contexte, on parle souvent d'**analyse de la covariance**.
 
@@ -378,7 +378,7 @@ Pourquoi l'effet du pâturage (*Grazing*) est-il significatif ici? Dans le table
 
 Le tableau de données `hills` du package *MASS* (inclus par défaut avec R) contient les records de temps (*time*, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (*dist*, en milles) et le dénivelé total du parcours (*climb*, en pieds).
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(MASS)
 str(hills)
 ```

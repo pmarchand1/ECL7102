@@ -376,7 +376,7 @@ Why is the effect of grazing significant here? In the ANOVA table, we test wheth
 
 The `hills` data frame in the *MASS* package (included by default with R) contains the record times (*time*, in minutes) for Scottish bike races based on the horizontal distance (*dist*, in miles) and the total change in altitude (*climb*, in feet).
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(MASS)
 str(hills)
 ```
