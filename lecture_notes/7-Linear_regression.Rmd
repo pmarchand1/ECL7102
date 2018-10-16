@@ -198,7 +198,7 @@ $$ y = a x^b $$
 
 then by applying a logarithm to each side, we obtain a linear model:
 
-$$ \log(y) = a + b \log(x) $$
+$$ \log(y) = \log(a) + b \log(x) $$
 
 In general, the equation linking $x$ and $y$ can contain nonlinear functions of $x$, as long as it is a linear function of the *coefficients*. For example, the quadratric equation:
 

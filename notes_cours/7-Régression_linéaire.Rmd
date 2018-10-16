@@ -198,7 +198,7 @@ $$ y = a x^b $$
 
 alors en prenant le logarithme de chaque côté de l'équation, on obtient une relation linéaire:
 
-$$ \log(y) = a + b \log(x) $$
+$$ \log(y) = \log(a) + b \log(x) $$
 
 En général, l'équation reliant $x$ et $y$ peut contenir des fonctions non-linéaires de $x$, en autant qu'elle soit une fonction linéaire des *coefficients*. Par exemple, l'équation quadratrique:
 
