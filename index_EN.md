@@ -20,6 +20,7 @@
 4. [Hypothesis tests on the mean](labs/4R-Tests_mean.html)
 5. [Contingency tables](labs/5-Contingency_tables.pdf)
 6. [Analysis of variance](labs/6-ANOVA.pdf) ([Data 1](labs/sablefish.csv) - [Data 2](labs/woodstain.csv))
+7. [Linear regression](labs/7-Linear_regression.html)
 
 
 
