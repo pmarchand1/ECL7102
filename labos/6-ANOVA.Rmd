@@ -4,7 +4,7 @@ date: "10 octobre 2018"
 output: pdf_document
 ---
 
-Ce laboratoire doit être remis le **17 octobre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **24 octobre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Prises de charbonnier en Alaska

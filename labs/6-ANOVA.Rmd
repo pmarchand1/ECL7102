@@ -4,7 +4,7 @@ date: "October 10, 2018"
 output: pdf_document
 ---
 
-Answers for this lab must be submitted before **October 17th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **October 24th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Sablefish catches in Alaska
