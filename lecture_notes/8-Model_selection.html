@@ -360,9 +360,9 @@ div.tocify {
 <p><span class="math display">\[ AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right) \]</span> The fraction <span class="math inline">\(n/(n-K-1)\)</span> is greater than 1, so the second term of the AICc is slightly larger than <span class="math inline">\(2K\)</span>, but the difference between the two decreases as <span class="math inline">\(n\)</span> increases.</p>
 <p>When comparing several models, the same metric must be used for each one. The AICc is therefore used for all models as soon as one of the models has a small <span class="math inline">\(n/K\)</span> ratio.</p>
 </div>
-<div id="classification-of-models-with-aic" class="section level2">
-<h2>Classification of models with AIC</h2>
-<p>As mentioned above, the absolute value of the AIC is not important, only differences in AIC between models matter. After calculating the AIC for different models, we classify them according to the difference between their AIC and the minimum AIC (which corresponds to the best model): <span class="math inline">\(\Delta AIC = AIC - \min AIC\)</span>. The best model has a <span class="math inline">\(\Delta AIC = 0\)</span>.</p>
+<div id="ranking-models-with-aic" class="section level2">
+<h2>Ranking models with AIC</h2>
+<p>As mentioned above, the absolute value of the AIC is not important, only differences in AIC between models matter. After calculating the AIC for different models, we rank them according to the difference between their AIC and the minimum AIC (which corresponds to the best model): <span class="math inline">\(\Delta AIC = AIC - \min AIC\)</span>. The best model has a <span class="math inline">\(\Delta AIC = 0\)</span>.</p>
 <p>Of course, since our data are based on random sampling, it is not certain that the best model identified by the AIC would still be the same with a different sample.</p>
 <p>The expression:</p>
 <p><span class="math display">\[ e^{-\frac{\Delta AIC}{2} } \]</span></p>

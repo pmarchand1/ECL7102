@@ -198,9 +198,9 @@ The fraction $n/(n-K-1)$ is greater than 1, so the second term of the AICc is sl
 
 When comparing several models, the same metric must be used for each one. The AICc is therefore used for all models as soon as one of the models has a small $n/K$ ratio.
 
-## Classification of models with AIC
+## Ranking models with AIC
 
-As mentioned above, the absolute value of the AIC is not important, only differences in AIC between models matter. After calculating the AIC for different models, we classify them according to the difference between their AIC and the minimum AIC (which corresponds to the best model): $\Delta AIC = AIC - \min AIC$. The best model has a $\Delta AIC = 0$.
+As mentioned above, the absolute value of the AIC is not important, only differences in AIC between models matter. After calculating the AIC for different models, we rank them according to the difference between their AIC and the minimum AIC (which corresponds to the best model): $\Delta AIC = AIC - \min AIC$. The best model has a $\Delta AIC = 0$.
 
 Of course, since our data are based on random sampling, it is not certain that the best model identified by the AIC would still be the same with a different sample.
 
