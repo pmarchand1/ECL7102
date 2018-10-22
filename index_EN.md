@@ -10,6 +10,7 @@
 5. [Chi-squared test and ANOVA](lecture_notes/5-Chi2_ANOVA.html)
 6. [Two-way ANOVA and randomized complete blocks](lecture_notes/6-Two_way_ANOVA.html)
 7. [Linear regression](lecture_notes/7-Linear_regression.html)
+8. [Model evaluation and selection](lecture_notes/8-Model_selection.html)
 
 
 ## Labs

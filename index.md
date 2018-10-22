@@ -10,6 +10,7 @@
 5. [Tableaux de contingence et ANOVA](notes_cours/5-Chi2_ANOVA.html)
 6. [ANOVA à deux facteurs et blocs complets aléatoires](notes_cours/6-ANOVA_2_facteurs.html)
 7. [Régression linéaire](notes_cours/7-Régression_linéaire.html)
+8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html)
 
 ## Laboratoires
 
