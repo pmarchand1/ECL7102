@@ -21,6 +21,7 @@
 5. [Tableaux de contingence](labos/5-Tableaux_contingence.pdf)
 6. [Analyse de la variance](labos/6-ANOVA.pdf) ([Données 1](labos/sablefish.csv) - [Données 2](labos/woodstain.csv))
 7. [Régression linéaire](labos/7R-Régression_linéaire.html)
+8. [Sélection de modèles](labos/8-Sélection_modèles.pdf) ([Données 1](labos/environment.csv) - [Données 2(a)](labos/migration.csv) - [Données 2(c)](labos/migr_test.csv))
 
 [Tutoriel R Markdown](labos/Tutoriel_RMarkdown.html)
 

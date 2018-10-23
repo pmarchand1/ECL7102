@@ -1,0 +1,70 @@
+---
+title: "Sélection de modèles"
+date: "24 octobre 2018"
+output: pdf_document
+---
+
+Ce laboratoire doit être remis le **7 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+
+
+## 1. Biomasse racinaire en fonction de l'environnement
+
+Le jeu de données `environment.csv` (tiré du manuel de Beckerman et Petchey, *Getting started with R: An introduction for biologists*) inclut des mesures de biomasse racinaire (*biomass*, en g/m$^2$) pour 10 sites en fonction de l'altitude (en m), de la température (en degrés C) et de la précipitation annuelle (*rainfall*, en m).
+
+```{r}
+enviro <- read.csv("environment.csv")
+str(enviro)
+```
+
+a) Estimez les paramètres du modèle incluant les trois prédicteurs: `biomass ~ altitude + temperature + rainfall`. L'inclusion des trois prédicteurs dans le même modèle cause-t-elle des problèmes? Justifiez votre réponse.
+
+b) En tenant compte de votre résultat en (a), proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Créez un tableau comparant ces modèles selon leur AICc.
+
+c) Quel est le meilleur modèle pour prédire la biomasse racinaire à un nouveau site semblable à ceux échantillonnés? Serait-ce utile de faire des prédictions moyennes à partir de plusieurs modèles ici? Justifiez votre réponse.
+
+
+## 2. Prédictions de la migration d'espèces d'oiseaux
+
+Le fichier `migration.csv` contient les données de Rubolini et al. (2005) sur 28 espèces d'oiseaux qui migrent entre l'Europe et l'Afrique. 
+
+```{r}
+migr <- read.csv("migration.csv")
+str(migr)
+```
+
+
+Nous cherchons à prédire la date d'arrivée en Europe (*migDate*, mesurée en jours à partir du 1er avril) en fonction des prédicteurs suivants:
+
+- Latitude du site de reproduction en Europe (*latBreed*)
+- Latitude du site d'hivernage en Afrique (*latWntr*). *Note*: La latitude est positive au nord de l'équateur.
+- Si l'espèce niche dans des cavités existantes (*nestSite*, 0=non, 1=oui)
+- Si l'espèce mue au site d'hivernage (*moult*, 0=non, 1=oui)
+
+En théorie, on s'attend à ce que les oiseaux arrivent plus tard si leur site de reproduction est plus nordique (dû au climat et à la distance à parcourir) et s'ils muent au site d'hivernage. On s'attend à ce que les oiseaux arrivent plus tôt si leur site d'hivernage est plus nordique (moins de distance à parcourir) et s'ils nichent dans des cavités existantes.
+
+a) Vérifiez l'ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l'ordonnée à l'origine). Ces résultats sont-ils conforment à ceux attendus en théorie? 
+
+b) Comparez avec l'AICc les modèles incluant les combinaisons suivantes des 4 prédicteurs:
+
+- latBreed
+- latWntr
+- latBreed + latWntr
+- latBreed + nestSite
+- latWntr + nestSite 
+- latBreed + latWntr + nestSite
+- latBreed + nestSite + moult
+- latWntr + nestSite + moult
+- latBreed + latWntr + nestSite + moult (modèle complet)
+
+Combien de modèles ont un $\Delta AIC \le 2$? Selon les poids d'Akaike, quelle est la probabilité qu'un de ces modèles soit le meilleur modèle?
+
+c) Chargez le jeu de données `migr_test.csv` qui contient les données de 10 autres espèces de l'étude de Rubolini et al.
+
+```{r}
+migr_test <- read.csv("migr_test.csv")
+str(migr_test)
+```
+
+Calculez la moyenne de l'erreur carrée de prédiction *(observation - prédiction)*$^2$ pour ces 10 nouvelles observations selon (i) le meilleur modèle identifié en (b) et (ii) la prédiction moyenne pondérée de tous les modèles.
+
+*Indice*: Pour obtenir un vecteur des prédictions moyennes, choisissez la composante `mod.avg.pred` de l'objet produit par la fonction `modavgPred`.

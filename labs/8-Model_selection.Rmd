@@ -1,0 +1,70 @@
+---
+title: "Model selection"
+date: "October 24, 2018"
+output: pdf_document
+---
+
+Answers for this lab must be submitted before **November 7th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+
+
+## 1. Root biomass as a function of the environment
+
+The `environment.csv` dataset (from Beckerman and Petchey's textbook, *Getting started with R: An introduction for biologists*) includes measures of root biomass (in g/m$^2$) for 10 sites as a function of altitude (in m), temperature (in degrees C) and rainfall (in m).
+
+```{r}
+enviro <- read.csv("environment.csv")
+str(enviro)
+```
+
+a) Estimate the parameters of the model including the three predictors: `biomass ~ altitude + temperature + rainfall`. Does the inclusion of the three predictors in the same model cause problems? Justify your answer.
+
+b) Taking into account your result in (a), propose several alternative models for this dataset, including the null model (0 predictor) and models with 1 or 2 predictors (without interactions). Create a table comparing these models according to their AICc.
+
+c) What is the best model for predicting root biomass at a new site similar to those sampled? Would it be useful to make average predictions from several models here? Justify your answer.
+
+
+## 2. Predictions of the migration of bird species
+
+The file `migration.csv` contains data from Rubolini et al. (2005) on 28 bird species that migrate between Europe and Africa.
+
+```{r}
+migr <- read.csv("migration.csv")
+str(migr)
+```
+
+We are looking to predict the date of arrival in Europe (*migDate*, measured in days from April 1st) based on the following predictors:
+
+- Latitude of the breeding site in Europe (*latBreed*)
+- Latitude of the wintering site in Africa (*latWntr*). *Note*: Latitude is positive north of the equator.
+- Whether the species nests in existing cavities (*nestSite*, 0 = no, 1 = yes)
+- Whether the species moults at the wintering site (*moult*, 0 = no, 1 = yes)
+
+In theory, birds are expected to arrive later if their breeding site is further north (due to climate and distance) and if they moult at the wintering site. Birds are expected to arrive earlier if their wintering grounds are more northerly (less distance to travel) and if they nest in existing cavities.
+
+a) Check the fit of the complete linear model including the 4 predictors. Interpret the values obtained for each of the coefficients of these predictors (but not the intercept). Are these results consistent with those expected in theory?
+
+b) Using AICc, compare models including each of the following combinations of the 4 predictors:
+
+- latBreed
+- latWntr
+- latBreed + latWntr
+- latBreed + nestSite
+- latWntr + nestSite
+- latBreed + latWntr + nestSite
+- latBreed + nestSite + moult
+- latWntr + nestSite + moult
+- latBreed + latWntr + nestSite + moult (complete model)
+
+How many models have a $\Delta AIC \le 2$? According to the Akaike weights, what is the probability that one of these models is the best model?
+
+c) Load the dataset `migr_test.csv` which contains the data of 10 other species from the Rubolini et al.
+
+```{r}
+migr_test <- read.csv("migr_test.csv")
+str(migr_test)
+```
+
+Calculate the mean of the square prediction error *(observation - prediction)*$^2$ for these 10 new observations according to (i) the best model identified in (b) and (ii) the weighted average prediction of all models.
+
+*Tip*: To obtain a vector of the average predictions, choose the `mod.avg.pred` component of the object produced by the `modavgPred` function.
+
