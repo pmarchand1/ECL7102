@@ -20,5 +20,7 @@
 4. [Tests d'hypothèse sur la moyenne](labos/4R-Tests_moyenne.html)
 5. [Tableaux de contingence](labos/5-Tableaux_contingence.pdf)
 6. [Analyse de la variance](labos/6-ANOVA.pdf) ([Données 1](labos/sablefish.csv) - [Données 2](labos/woodstain.csv))
-7. [Régression linéaire](labos/7-Régression_linéaire.html)
+7. [Régression linéaire](labos/7R-Régression_linéaire.html)
+
+[Tutoriel R Markdown](labos/Tutoriel_RMarkdown.html)
 
