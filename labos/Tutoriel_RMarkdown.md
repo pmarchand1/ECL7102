@@ -10,13 +10,15 @@ Le format R Markdown permettent de combiner du texte, des bouts de code R et leu
 - <https://rmarkdown.rstudio.com/lesson-1.html> (site officiel, en anglais)
 - <http://larmarange.github.io/analyse-R/rmarkdown-les-rapports-automatises.html> (en français)
 
-À partir de RStudio, créez un nouveau document R Markdown avec le menu *File -> New File -> R Markdown...*. Choisissez le format de sortie PDF.
+À partir de RStudio, créez un nouveau document R Markdown avec le menu *File -> New File -> R Markdown...*. Choisissez le format de sortie Word (.docx). 
 
-Le fichier créé contient déjà un exemple de texte R Markdown. Sauvegardez le fichier (donnons-lui le nom `exemple.Rmd`) et appuyez sur le bouton **Knit** pour produire le document PDF. 
+Vous pouvez aussi choisir PDF ou HTML, mais la création de PDF nécessite d'installer un logiciel externe (tel qu'indiqué par RStudio). Le format Word a aussi l'avantage que vous êtes libre d'éditer le fichier résultant dans Word.
+
+Le fichier créé contient déjà un exemple de texte R Markdown. Sauvegardez le fichier (donnons-lui le nom `exemple.Rmd`) et appuyez sur le bouton **Knit** pour produire le document Word. 
 
 <img src="../images/knit_cap.png" width=300>
 
-En lisant la description des différentes parties du document, comparez le fichier .Rmd et le résultat en PDF.
+En lisant la description des différentes parties du document, comparez le fichier .Rmd et le résultat .docx.
 
 ## En-tête
 
@@ -32,9 +34,9 @@ Le premier bloc de code (qui contient `knitr::opts_chunk$set(echo = TRUE)`) sert
 
 Regardez le deuxième bloc qui contient `summary(cars)`. À droite des trois accents graves sur la première ligne, vous trouvez l'en-tête du bloc entre accolades: `{r cars}`. Elle commence avec `r` pour indiquer qu'il s'agit de code R, tandis que `cars` est le nom du bloc. (Il est optionnel de nommer les blocs.) La flèche verte tout à fait à droite permet d'exécuter le code et d'afficher le résultat. 
 
-Regardez maintenant le fichier PDF. Vous y trouverez le bloc de code suivi du résultat.
+Regardez maintenant le fichier Word. Vous y trouverez le bloc de code suivi du résultat.
 
-Le deuxième bloc de code `plot(pressure)` produit le graphique que vous voyez dans le document PDF. L'en-tête du bloc contient l'option `echo = FALSE` ce qui signifie que le code est invisible, seul le résultat apparaît dans le PDF.
+Le deuxième bloc de code `plot(pressure)` produit le graphique que vous voyez dans le document Word. L'en-tête du bloc contient l'option `echo = FALSE` ce qui signifie que le code est invisible, seul le résultat apparaît dans Word.
 
 ## Texte Markdown
 

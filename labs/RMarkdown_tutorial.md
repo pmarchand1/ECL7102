@@ -5,15 +5,15 @@ output: html_document
 
 ## Create a R Markdown document
 
-The R Markdown format allows you to combine text, chunks of R code, and results in one document. This tutorial is a very brief introduction to R Markdown. A more complete tutorials can be found at <https://rmarkdown.rstudio.com/lesson-1.html>.
+The R Markdown format allows you to combine text, chunks of R code, and results in one document. This tutorial is a very brief introduction to R Markdown. A more complete tutorial can be found at <https://rmarkdown.rstudio.com/lesson-1.html>.
 
-In RStudio, create a new R Markdown document with the menu commands *File -> New File -> R Markdown...*. Choose the PDF output format.
+In RStudio, create a new R Markdown document with the menu commands *File -> New File -> R Markdown...*. Choose the Word (.docx) output format. You can also choose PDF or HTML, but PDF creation requires installing additional software, as noted in RStudio. Also, thee Word format has the advantage that you can edit the document in Word later.
 
-The file created already contains sample R Markdown text. Save the file (give it the name `example.Rmd`) and press the **Knit** button to produce the PDF document.
+The file created already contains sample R Markdown text. Save the file (give it the name `example.Rmd`) and press the **Knit** button to produce the .docx file.
 
 <img src = "../images/knit_cap.png" width=300>
 
-When reading the description of the different parts of the document, compare the .Rmd file and the result in the PDF.
+When reading the description of the different parts of the document, compare the .Rmd file and the result in Word.
 
 ## Header
 
@@ -29,9 +29,9 @@ The first code chunk (which contains `knitr::opts_chunk$set(echo = TRUE)`) is us
 
 Look at the second chunk that contains `summary(cars)`. To the right of the three backticks on the first line, you find the chunk header surrounded by braces: `{r cars}`. It starts with `r` to indicate that it is code R, while` cars` is the name of the chunk. (It is optional to name the chunks.) The green arrow on the far right is used to execute the code and display the result.
 
-Now look at the PDF file. There you will find the code chunk followed by the result.
+Now look at the Word file. There you will find the code chunk followed by the result.
 
-The second code chunk `plot(pressure)` produces the graph that you see in the PDF document. The chunk header contains the option `echo = FALSE` which means that the code is invisible, only the result appears in the PDF.
+The second code chunk `plot(pressure)` produces the graph that you see in the Word document. The chunk header contains the option `echo = FALSE` which means that the code is invisible, only the result appears in Word.
 
 ## Markdown text
 
