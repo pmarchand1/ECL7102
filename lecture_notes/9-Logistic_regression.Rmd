@@ -1,0 +1,406 @@
+---
+title: "Logistic regression"
+date: "<br/>November 5, 2018"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+```
+
+# Objectives
+
+- Know the components of a generalized linear model.
+
+- Use logistic regression to model a binary response, a binomial response (number of successes and failures) or proportions.
+
+- Interpret the results of a logistic regression and visualize the effects of the predictors.
+
+# Motivation
+
+Suppose we are interested in modeling a binary categorical response, for example:
+
+- survival or death of individuals within a given time interval;
+- presence or absence of a species on different sites;
+- the decision of an animal to stay at the same site or migrate to another site.
+
+Numerically, this response is coded by values of 0 or 1. In a regression context, what interests us is the mean of this response, i.e. the proportion of cases where it is equal to 1 (we could also say "the probability that the response is 1 ").
+
+We could model the relationship between this mean response and different predictors with a linear regression model, as seen during in the previous classes:
+
+$$ \hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i $$
+
+However, this approach poses some problems:
+
+- For some predictor values, we get a predicted response $\hat{y}$ less than 0 or greater than 1, which makes no sense in this context.
+- This type of response does not satisfy the homogeneity of variance criterion of the linear regression model. The variance of individual responses is much greater when the probability is close to 0.5 than when it approaches 0 or 1.
+
+The **generalized linear models** (GLM) solve these two problems, allowing us to choose different transformations of the linear prediction and different distributions for the individual responses according to the mean response.
+
+To better explain the principle of these models, we reformulate the multiple linear regression model, dividing this model into three components:
+
+- a linear predictor (a linear combination of the explanatory variables): $\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$;
+- a link between the mean response and the predictor value (here, simply the equality): $\hat{y} = \eta$; and
+- a distribution of the individual responses according to the mean response (here, the normal distribution): $y \sim N(\hat{y}, \sigma)$.
+
+Generalized linear models retain the first element (the prediction depends on a linear combination of the $x_i$ variables), but use different link functions and different distributions for the response. The logistic regression we will see today is designed to model binary response variables, while the Poisson regression covered in the next class is designed for count data (integers $\ge$ 0).
+
+# Logistic regression model
+
+Logistic regression is an example of a generalized linear model where the response corresponds to one or more observations of a binary result (0 or 1). In this model:
+
+- the response follows a binomial distribution and
+- the logit function links the probability of a positive result ($y = 1$) to the value of the linear predictor.
+
+## Binomial distribution
+
+Consider $n$ independent repetitions of an experiment that can end in a success (1) or a failure (0), with a probability of success $p$ for each repetition. In this case, the number of successes $y$ follows a binomial distribution: $y \sim B(n, p)$. According to this distribution, the probability of obtaining $y$ success and $n-y$ failures is:
+
+$$ \frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y} $$
+
+To understand this formula, take for example the sequence of successes and failures 01001 ($n = 5$ and $y = 2$). The probability of getting 0 on the first try is $1-p$, the probability of getting 1 on the second try is $p$, and so on. The probability of a sequence of independent tries is the product of the probabilities of each try, therefore $p^2 (1-p)^3$, which corresponds to the $p^y (1-p)^{n-y} $ of the binomial distribution formula. However, this is the probability of a single sequence of 2 successes and 3 failures. Each of the other possible sequences (11000, 00110, etc.) has the same probability. This number of possible sequences is equal to $n! / y! (n-y)!$, where $!$ represents the factorial operation.
+
+The mean *number* of successes is $np$, with a variance equal to $np(1-p)$. The mean *proportion* of successes is $p$ with a variance of $p(1-p)/n$.
+
+The binomial distribution with a single trial ($n = 1$) is called the Bernoulli distribution, with a mean of $p$ and a variance equal to $p(1-p)$.
+
+In R, the functions for calculating quantities from the binomial distribution have the `binom` suffix. For example, the probability of obtaining 2 successes over 5 trials, with a probability of success of 0.3, is equal to:
+
+```{r}
+dbinom(2, 5, 0.3)
+```
+
+Check the help topic `?Binomial` for more details.
+
+## Logit link
+
+To link the probability of success $p$ of the binomial distribution to a linear predictor $\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$, the most commonly used link is the logit function.
+
+$$ \eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right) $$
+
+By inverting this equation, we obtain an expression for $p$ as a function of $\eta$.
+
+$$ p = \frac{1}{1 + e^{-\eta}} $$
+
+This last equation is often called the *logistic function*. Here is its graphical representation:
+
+```{r, echo = FALSE, fig.dim = c(4, 3)}
+ggplot(data.frame(x = seq(-5,5,0.1)), aes(x = x)) +
+    labs(x = expression(eta), y = "p") +
+    stat_function(fun = function(x) 1/(1+exp(-x))) +
+    geom_segment(x = -5, xend = 0, y = 0.5, yend = 0.5, linetype = "dotted") +
+    geom_segment(x = 0, xend = 0, y = 0, yend = 0.5, linetype = "dotted") +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+```
+
+Note some important properties of this function:
+
+- If $\eta = 0$, $p = 0.5$ (50% probability).
+- The function is symmetrical about its central point: $p(-\eta) = 1 - p(\eta)$.
+- The probability approaches 0 when $\eta$ takes very negative values and approaches 1 when $\eta$ takes very positive values, without ever reaching those extremes.
+- The slope of the curve is more pronounced in the center and flatter (tending towards 0) at the ends. From a regression point of view, this means that the effect of the explanatory variables (contained in $\eta$) on the probability of success is greater when the probability is close to 50%.
+
+In summary, the logistic regression is based on the following model:
+
+- $y \sim B(n, p)$ (binomial distribution of the response)
+- $\text{logit}(p) = \beta_0 + \sum_{i = 1}^m \beta_i x_i$ or equivalently:
+
+$$p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}}$$
+
+Unlike linear regression, the $\beta$ coefficients of a generalized linear model are not estimated by the least squares method, but rather by the more general *maximum likelihood* method. In short, this method chooses the values of the $\beta$ coefficients that maximize the joint probability of all the observations of $y$.
+
+## Interpreting the coefficients
+
+The graph below shows the probability $p$ for a logistic regression model with one predictor $x$, with coefficients $\beta_0 = -1$ and $\beta_1$ = 0.4, i.e. $\text{logit}(p) = -1 + 0.4x$.
+
+```{r, echo = FALSE, fig.dim = c(4, 3)}
+ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
+    labs(y = "p") +
+    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+    geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
+    geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted") +
+    geom_segment(x = -10, xend = 0, y = 0.27, yend = 0.27, linetype = "dotted") +
+    geom_segment(x = 0, xend = 0, y = 0, yend = 0.27, linetype = "dotted") +
+    geom_segment(x = 0.5, xend = 4.5, y = 0.3, yend = 0.7, color = "blue", size = 1) +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+```
+
+The intercept $\beta_0$ is equal to logit($p$) when $x = 0$. To calculate the corresponding value of $p$, we can define an inverse logit (`invlogit`) function.
+
+```{r}
+invlogit <- function(x) 1/(1+exp(-x))
+invlogit(-1)
+```
+
+The value of $x$ for which the linear predictor is zero (here, $-1 + 0.4x = 0$ gives $x = 2.5$) is associated with a probability $p = 0.5$. It is at this point of the curve that the slope of $p$ vs. $x$ is maximal: this maximum slope, indicated by a blue line in the graph, is equal to $\beta_1 / 4$, where $\beta_1$ is the coefficient of $x$ in the linear predictor. Here, since $\beta_1 = 0.4$, we can say that when $x$ increases by 1, the probability $p$ increases by a maximum of 0.1 (or 10%).
+
+
+# Logistic regression with R
+
+In R, logistic regression can be used for three types of responses:
+
+- a binary variable encoded by logical values (FALSE, TRUE), numerical values (0, 1) or a factor (the first level of the factor corresponds to 0, the others to 1);
+- a binomial variable described by two columns (number of successes, number of failures);
+- a variable indicating a proportion between 0 and 1.
+
+We will see examples of the three cases in this class.
+
+## Example: Arsenic concentrations in wells in Bangladesh
+
+The `Wells` data frame from the **carData** package contains data from a survey of 3020 households in Bangladesh. The wells used by these households had an arsenic concentration (`arsenic`, in multiples of 100 $\mu g / L$) higher than the level considered safe. The `switch` binary response indicates whether the household has changed wells. In addition to the arsenic concentration, the table contains other predictors, including the distance to the nearest safe well (`distance` in meters).
+
+This example is from the textbook by Gelman and Hill, *Data Analysis Using Regression and Multilevel / Hierarchical Models*.
+
+```{r}
+library(carData)
+str(Wells)
+```
+
+When exploring that type of dataset, it can be useful to compare the distribution of potential explanatory variables for positive and negative values of the response.
+
+```{r, echo = FALSE, fig.dim = c(5, 3)}
+p1 <- ggplot(Wells, aes(x = switch, y = arsenic)) +
+    geom_boxplot()
+p2 <- ggplot(Wells, aes(x = switch, y = distance)) +
+    geom_boxplot()
+
+plot_grid(p1, p2)
+```
+
+On average, households that change wells have higher arsenic concentrations in their original wells and are closer to a safe well. However, neither variable seems to be strongly associated with the response.
+
+**Note**: Given the asymmetric distribution of the arsenic and distance variables, a logarithmic transformation of these variables would be justifiable. For this particular problem, this transformation does not really improve the fit of the model, so we keep the original scale of variables, which is easier to interpret.
+
+The `glm` function is used to estimate generalized linear model parameters. As for linear models, we first specify a formula and a data frame. Then, we must indicate the distribution of the response with the argument `family`, as well as the link function (`link`). For logistic regression, it is a binomial distribution with a logit link. Note that since the logit is the default link function for a binomial response, specifying it is optional (`family = binomial` would be sufficient).
+
+```{r}
+mod <- glm(switch ~ arsenic + distance, data = Wells,
+           family = binomial(link = "logit"))
+summary(mod)
+```
+
+The intercept is the logit of the probability of changing wells for an arsenic concentration and a distance both equal to zero. This probability is given by `invlogit (0.0027)` which is about 50%. However, since the model has been fitted to data where the arsenic concentration is always greater than 0.5, the intercept does not really have a meaning.
+
+The predictor coefficients indicate that an increase in arsenic concentration of one unit (100 $\mu g / L$) results in an increase of ~0.12 in the probability of changing wells (0.46 / 4), while an increase of 1 m in the distance results in a maximum decrease of 0.0022 (0.0087 / 4) for this probability (equivalent to a decrease of ~0.22 per 100m of distance).
+
+
+## Visualize model predictions
+
+To better understand the non-linear effect of predictors, we can visualize model predictions for different combinations of arsenic concentration and distance.
+
+Let's first create a new prediction data frame, containing combinations of 10 arsenic concentrations (distributed between 0.5 and 5) and 3 distances to the nearest safe well (50 m, 100 m and 200 m). We use the `expand.grid` function to do this.
+
+```{r}
+wells_nouv <- expand.grid(arsenic = seq(0.5, 5, 0.5), distance = c(50, 100, 200))
+```
+
+Let's see what happens if we apply the `predict` function to the model with these new data. 
+
+```{r}
+wells_nouv$pred <- predict(mod, wells_nouv)
+summary(wells_nouv$pred)
+```
+
+These values are not between 0 and 1 because by default, `predict` returns the values of the linear predictor $\eta$ (corresponding to the `type = "link"` argument). To obtain the predictions on the scale of the response (here, probabilities), we must specify `type = "response"`.
+
+```{r}
+wells_nouv$prob_pred <- predict(mod, wells_nouv, type = "response")
+
+ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance))) +
+    geom_line() +
+    geom_hline(yintercept = 0.5, linetype = "dotted") +
+    scale_color_brewer(palette = "Dark2")
+```
+
+We could note, for example, that the more the distance to a safe well increases, the higher the concentration must be for a household to change wells a majority of the time (dashed line at $p =  0.5$).
+
+To visualize the confidence interval of these probabilities, we must choose the `se.fit = TRUE` option of` predict` to obtain the standard errors, then add a ribbon corresponding to a region of 1.96 standard error on each side of the mean value, for a 95% confidence interval.
+
+```{r}
+prob_pred <- predict(mod, wells_nouv, type = "response", se.fit = TRUE)
+wells_nouv$prob_se <- prob_pred$se.fit
+
+ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
+                       fill = as.factor(distance))) +
+    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
+                alpha = 0.3) +
+    geom_line() +
+    scale_color_brewer(palette = "Dark2") +
+    scale_fill_brewer(palette = "Dark2")
+
+```
+
+Note that a prediction interval for individual observations would be less interesting here, since these observations are always 0 or 1.
+
+
+## Checking the model fit
+
+Diagnostic graphs based on individual residuals are not very useful when the response is binary, as you can see by calling the `plot(mod)` function.
+
+```{r, echo = FALSE}
+plot(mod, which = 1)
+```
+
+For each predicted value (here, the predictions are represented on the scale of the linear predictor, not that of $p$), there are only two possible values for the residual: one is positive for points with $y = 1$, the other is negative if $y = 0$. This is why we see two lines of points on the graph above.
+
+A better strategy would be to group the points with similar predicted probabilities, then calculate the residual corresponding to the difference between (1) the proportion of positive responses observed among the points of a group and (2) the mean predicted value for those points. For example, for a group of 20 points with 11 positive responses and a mean prediction of 0.6, the residual would be -0.05 (11/20 - 0.6). The `binnedplot` function of the **arm** package is used to create such a binned residual plot.
+
+```{r, message = FALSE, warning = FALSE}
+library(arm)
+binnedplot(fitted(mod), residuals(mod, type = "response"))
+```
+
+**Note**: There are different definitions of residuals for a generalized linear model, so you need to specify which type to use in the `residuals` function. For this graph, we use the residuals on the response scale (`type = "response"`), which are the differences between observed and predicted responses ($y - \hat{y}$).
+
+By default, `binnedplot` chooses the number of groups based on a compromise to have enough points per group (so that the mean response is precise) and enough groups (to see the trend if there is one). When the number of cases $n > 100$, the number of groups chosen is about $\sqrt{n}$.
+
+The graph produced by `binnedplot` also indicates a 95% prediction interval (gray lines) for the averaged residuals. Thus, if the binomial model is good, about 95% of the residuals should be within this range. Here, this is the case of 52 residuals out of 54, or 96%.
+
+## Coefficient of determination
+
+The estimation of generalized linear model parameters is not based on the least squares method. For this reason, the $R^2$ based on the sum of the square deviations is not a good measure of fit for this type of model.
+
+The **deviance** is a measure of the deviation of observed values from the expected values, which is calculated from the likelihood $L$ of the fitted model.
+
+$$ D = -2 \log L $$
+
+This expression is also equal to the first term in the AIC. The higher the probability of the model, the larger $L$ and the smaller the deviance. As with AIC, the absolute value of the deviance is meaningless, but this metric is useful for comparing the fit of different models.
+
+In the summary result of `glm`, the deviance of the fitted model is indicated as `Residual Deviance`. The summary also includes another value, `Null Deviance`, which corresponds to the deviance of the null model with no predictor. These two values play a role similar to the sum of the residual square deviations and the sum of the total square deviations in the linear model. We can therefore define the *pseudo-R$^2$* (or McFadden's $R^2$) as the fraction of the deviance of the null model explained by the fitted model.
+
+```{r}
+pseudo_R2 <- 1 - mod$deviance/mod$null.deviance
+pseudo_R2
+```
+
+Arsenic concentration and distance, despite their significant effect, therefore do not explain much of the decision to change wells or not. This is consistent with our initial exploration of the data.
+
+The deviance-based $R^2$ applies to all models fitted with maximum likelihood. For logistic regression specifically, another version of the coefficient of determination was proposed by Tjur:
+
+$$ {R^2}_{\text{Tjur}} = \bar{\hat{y}}_{(y=1)} - \bar{\hat{y}}_{(y=0)} $$
+
+In other words, Tjur's $R^2$ measures the difference between the predicted mean response for the cases where the observed response is 1 and the predicted mean response for the cases where the observed response is 0. It therefore indicates how the model can "separate" the two groups $y = 1$ and $y = 0$. In the extreme cases, a coefficient of 0 indicates that the model predicts the same mean response for both groups, while a coefficient of 1 indicates that the model predicts with certainty the correct response for all observations.
+
+For our example, Tjur's $R^2$ is about 0.06.
+
+```{r}
+r2_tjur <- mean(mod$fitted.values[mod$y == 1]) - mean(mod$fitted.values[mod$y == 0])
+r2_tjur
+```
+
+
+# Binomial logistic regression
+
+In the previous example, each row in the table corresponded to a single binary response (0 or 1) and the associated values of the predictors. In an experimental context, it is possible to have several independent replicates with the same values of the predictors; the number of responses equal to 1 ("success") among these $N$ replicates can be modeled directly as a binomial variable.
+
+## Example: Mortality of snails depending on the environment
+
+The `snails` data table in the **MASS** package presents the results of an experiment where snails of 2 species (`Species`) were exposed to 3 different temperature values (`Temp`) and 4 relative humidity values (`Rel.Hum`) for 1 to 4 weeks (`Exposure`). Twenty snails (`N`) were followed for each of the 96 possible combinations of these four variables; the `Deaths` variable indicates how many of them died during the experiment.
+
+```{r, message = FALSE, warning = FALSE}
+library(MASS)
+str(snails)
+```
+
+In this example, we will code mortality as the "positive" result (1). To apply a binomial logistic regression to these data, the response in the formula (to the left of the `~`) must be composed of two columns (number of 1 and number of 0) grouped with `cbind`. Here, the variable representing the number of 0 (the survivors) is obtained by subtracting `Deaths` from `N`.
+
+```{r}
+mod_snails <- glm(cbind(Deaths, N - Deaths) ~ Species + Exposure + Rel.Hum + Temp,
+           data = snails, family = binomial)
+summary(mod_snails)
+```
+
+We first note that the model accounts for much of the variation in the mortality rate between groups (McFadden's pseudo-R$^2$ equals 0.9). Since each "observation" (row) is a summary of 20 individuals, the random variation of the response is less than when considering individual observations; it is thus not surprising that the pseudo-R$^2$ is higher in this case.
+
+According to the sign of the coefficients, mortality is greater for species B than species A. This mortality also increases with time of exposure and temperature, but decreases with a rise in relative humidity (in the range of values considered).
+
+With several observations per row, individual residuals contain more information, so conventional diagnostic charts are more useful than in the previous example. However, almost half of the rows have no dead snail (`Deaths` = 0) and these zeros are the cause of the "line" of residuals in some graphs.
+
+```{r, echo = FALSE}
+par(mfrow = c(2, 2))
+plot(mod_snails)
+par(mfrow = c(1, 1))
+```
+
+Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. Note that the residuals used in that plot are not the response residuals ($y - \hat{y}$), but rather the deviance residuals `residuals(mod_snails, type = "deviance")`, which are are closer to normality. These are calculated from the contribution of each observation to the total deviance, $-2 \log L_k$, where $L_k$ is the likelihood of observation $k$ taken individually.
+
+
+# Perfect separation problem
+
+Using the same `snails` data set, let's now try to estimate the effect of exposure time as a categorical variable. This amounts to separately estimating the mortality rate after 1, 2, 3 and 4 weeks.
+
+```{r}
+mod_snails2 <- glm(cbind(Deaths, N - Deaths) ~ as.factor(Exposure), data = snails,
+                   family = binomial)
+summary(mod_snails2)
+```
+
+Why do we have such high coefficients and standard errors? Let's look at the average number of dead snails for each of the values of the `Exposure` variable.
+
+```{r}
+group_by(snails, Exposure) %>%
+    summarize(mean(Deaths))
+```
+
+In the model above, the intercept corresponds to the logit of the mortality rate for the reference factor value (`Exposure` = 1). However, there are no deaths for this treatment in the data. Since the logistic function can never reach $p = 0$, the result is a very negative value for this coefficient, with a very high uncertainty: concretely, this means that the mortality rate is very low, too low to be well estimated with data.
+
+The other coefficients have such large but positive values, simply because these effects are estimated relative to the reference treatment. The problem no longer occurs if you remove the data with `Exposure` = 1.
+
+```{r}
+mod_snails3 <- glm(cbind(Deaths, N - Deaths) ~ as.factor(Exposure), 
+                   data = filter(snails, Exposure > 1), family = binomial)
+summary(mod_snails3)
+```
+
+This example illustrates the so-called "perfect separation" problem. Due to the logit link, the logistic regression model represents the effect of parameters that change the probability of a response gradually between 0 and 1. This model cannot estimate the effects of a predictor if there is a perfect separation between the cases where $y = 0$ and $y = 1$. For a categorical predictor, the problem occurs if a category contains entirely positive or negative responses, as in the previous example. For a numeric variable, the problem occurs if $y$ is always 0 below a certain value of $x$ and always 1 above, or vice versa.
+
+There are so-called bias reduction methods that penalize coefficients that are too high in order to obtain realistic estimates even in the case of perfect separation. We will not discuss these further in this course, but you can find these methods in the **brglm** package.
+
+
+# Logistic regression for proportions
+
+In the previous example, the response was based on numbers of individuals (snails dead and alive at the end of the experiment), so the binomial distribution could apply exactly.
+
+In other cases, the response is directly expressed as continuous proportions, rather than a set of discrete measures of presence / absence. For example, it could be the proportion of a quadrat covered by a moss, the fraction of a region burned by fire, or another variable between 0 and 1.
+
+For this type of response, we can still use the logit to link the mean proportion to a linear predictor. However, the variance of this proportion will not necessarily correspond to that of a binomial distribution. We must therefore use the *quasibinomial* family option in `glm`.
+
+The quasibinomial model is not a statistical distribution per se. In fact, this model estimates the coefficients as if it were a usual logistic regression, but separately estimates a dispersion parameter $\phi$, so that the variance of the observed proportions is $\phi p(1-p)$.
+
+To illustrate the application of the quasibinomial model, let's create a new `prop` variable representing the mortality rate for each combination of predictors in the snails data frame.
+
+```{r}
+snails <- mutate(snails, prop = Deaths / N)
+mod_prop <- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
+                data = snails, family = quasibinomial)
+summary(mod_prop)
+```
+
+The estimated coefficients are the same as for the previous binomial logistic regression. The standard errors changed slightly, since the variance of the binomial model was fixed and based on the number of individuals tested.
+
+The dispersion parameter does not affect the values of the coefficients, only their standard errors. We'll talk more about it in the next class in the context of Poisson regression.
+
+A continuous variable between 0 and 1 can also be modeled with the *beta* distribution. The beta regression (*betareg* package in R) is not seen in this course, however.
+
+
+# Summary
+
+- A generalized linear model consists of a linear predictor (linear combination of explanatory variables), a link function for the mean response, and a statistical distribution of the response as a function of its mean.
+
+- Logistic regression is used to model binary responses or proportions. It uses a logit link and a binomial distribution of the response.
+
+- The logit function transforms a probability between 0 and 1 into a real number between $-\infty$ and $+\infty$. A negative logit corresponds to a probability below 0.5, a positive logit corresponds to a probability above 0.5.
+
+- In a logistic regression, the effect of a predictor on the response is non-linear and depends on the value of the other predictors. It is therefore useful to visualize model predictions for different combinations of variables.
+
+- For a binary response (0 or 1), individual residuals give little information, but we can check model fit with a binned residual plot.
+

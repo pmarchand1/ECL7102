@@ -11,6 +11,7 @@
 6. [ANOVA à deux facteurs et blocs complets aléatoires](notes_cours/6-ANOVA_2_facteurs.html)
 7. [Régression linéaire](notes_cours/7-Régression_linéaire.html)
 8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html)
+9. [Régression logistique](notes_cours/9-Régression_logistique.html)
 
 ## Laboratoires
 
