@@ -24,6 +24,7 @@
 6. [Analysis of variance](labs/6-ANOVA.pdf) ([Data 1](labs/sablefish.csv) - [Data 2](labs/woodstain.csv))
 7. [Linear regression](labs/7R-Linear_regression.html)
 8. [Model selection](labs/8-Model_selection.pdf) ([Data 1](labs/environment.csv) - [Data 2(a)](labs/migration.csv) - [Data 2(c)](labs/migr_test.csv))
+9. [Logistic regression](labs/9-Logistic_regression.pdf)
 
 [R Markdown tutorial](labs/RMarkdown_tutorial.html)
 
