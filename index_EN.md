@@ -12,6 +12,7 @@
 7. [Linear regression](lecture_notes/7-Linear_regression.html)
 8. [Model evaluation and selection](lecture_notes/8-Model_selection.html)
 9. [Logistic regression](lecture_notes/9-Logistic_regression.html)
+10. [Poisson regression](lecture_notes/10-Poisson_regression.html)
 
 
 ## Labs
