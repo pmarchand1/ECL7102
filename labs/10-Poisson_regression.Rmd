@@ -1,0 +1,59 @@
+---
+title: "Poisson regression"
+date: "Novembre 14, 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 1. Insect communities in streams
+
+The [stream_composition.csv](stream_composition.csv) dataset shows the number of species of five insect orders in 20 streams, as a function of temperature and pH.
+
+```{r}
+stream <- read.csv("stream_composition.csv")
+str(stream)
+```
+
+a) Estimate the effect of temperature and pH on the number of stonefly species, with a Poisson regression using the formula `stonefly ~ temperature + pH`. Check if the data is overdispersed and correct your estimates if necessary.
+
+b) What portion of the variance in the number of species is explained by the model?
+
+c) If one of the two variables has a significant effect, interpret the value of the coefficient.
+
+d) Display the observed number of species and the fitted value curves for pH values ranging from 5.5 to 7.5 and for three temperature values: 15, 17 and 19 degrees C.
+
+e) Repeat steps (a) - (d) for a model of the number of mayfly species.
+
+f) What is the average number of mayfly species predicted by the model in (e) for a stream with a temperature of 17 degrees and a pH of 8.5? Is this prediction reliable?
+
+
+## 2. Salamanders in different forest landscapes
+
+![](../images/Plethodon_elongatus.jpg)
+<small>*Photo: Bill Bouton*</small>
+
+The [salamander.csv](salamander.csv) file contains data from Welsh and Lind (1995) on the number of salamanders (`salaman`) of species *Plethodon elongatus* in 47 plots (`site`), as a function of percentage forest cover (`pct_cover`) and forest age.
+
+```{r}
+sal <- read.csv("salamander.csv")
+str(sal)
+```
+
+a) From a Poisson regression, estimate the effect of forest cover on the number of salamanders per plot.
+
+b) Does the `forest_age` predictor improve the predictive power of the model?
+
+c) Produce a graph of the number of salamanders according to forest age and superimpose points representing the fitted values for the model based solely on forest cover. What do you observe?
+
+d) Based on these results, do you think that the forest age directly influences the salamander population? Does it indirectly influence this population?
+
+
+
+

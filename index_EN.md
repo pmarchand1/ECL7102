@@ -26,6 +26,7 @@
 7. [Linear regression](labs/7R-Linear_regression.html)
 8. [Model selection](labs/8-Model_selection.pdf) ([Data 1](labs/environment.csv) - [Data 2(a)](labs/migration.csv) - [Data 2(c)](labs/migr_test.csv))
 9. [Logistic regression](labs/9-Logistic_regression.pdf)
+10. [Poisson regression](labs/10-Poisson_regression.html)
 
 [R Markdown tutorial](labs/RMarkdown_tutorial.html)
 

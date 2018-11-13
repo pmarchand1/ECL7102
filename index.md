@@ -25,6 +25,7 @@
 7. [Régression linéaire](labos/7R-Régression_linéaire.html)
 8. [Sélection de modèles](labos/8-Sélection_modèles.pdf) ([Données 1](labos/environment.csv) - [Données 2(a)](labos/migration.csv) - [Données 2(c)](labos/migr_test.csv))
 9. [Régression logistique](labos/9-Régression_logistique.pdf)
+10. [Régression de Poisson](labos/10-Régression_Poisson.html)
 
 [Tutoriel R Markdown](labos/Tutoriel_RMarkdown.html)
 
