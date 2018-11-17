@@ -29,6 +29,8 @@ c) Si l'une des deux variables a un effet significatif, interprétez la valeur d
 
 d) Affichez le nombre d'espèces observées et les courbes de prédiction du modèle pour des valeurs du pH allant de 5.5 à 7.5 et pour trois valeurs de la température: 15, 17 et 19 degrés C.
 
+**Truc**: Avec *ggplot*, pour que les courbes de prédiction relient les points ayant la même valeur d'une variable numérique (ex.: température), vous devez définir un groupe (ex.: `group = temperature`) dans la fonction `aes`.
+
 e) Répétez les étapes (a)-(d) pour un modèle du nombre d'espèces d'éphémères (`mayfly`).
 
 f) Quel est le nombre moyen d'espèces d'éphémères prédit par le modèle en (e) pour un cours d'eau avec une température de 17 degrés et un pH de 8.5? Cette prédiction est-elle fiable?

@@ -243,6 +243,9 @@ str(stream)</code></pre>
 <li><p>Quelle portion de la variance du nombre d’espèces est expliquée par le modèle?</p></li>
 <li><p>Si l’une des deux variables a un effet significatif, interprétez la valeur du coefficient.</p></li>
 <li><p>Affichez le nombre d’espèces observées et les courbes de prédiction du modèle pour des valeurs du pH allant de 5.5 à 7.5 et pour trois valeurs de la température: 15, 17 et 19 degrés C.</p></li>
+</ol>
+<p><strong>Truc</strong>: Avec <em>ggplot</em>, pour que les courbes de prédiction relient les points ayant la même valeur d’une variable numérique (ex.: température), vous devez définir un groupe (ex.: <code>group = temperature</code>) dans la fonction <code>aes</code>.</p>
+<ol start="5" style="list-style-type: lower-alpha">
 <li><p>Répétez les étapes (a)-(d) pour un modèle du nombre d’espèces d’éphémères (<code>mayfly</code>).</p></li>
 <li><p>Quel est le nombre moyen d’espèces d’éphémères prédit par le modèle en (e) pour un cours d’eau avec une température de 17 degrés et un pH de 8.5? Cette prédiction est-elle fiable?</p></li>
 </ol>

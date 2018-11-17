@@ -1,0 +1,211 @@
+---
+title: "Poisson regression"
+date: "November 14, 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 1. Insect communities in streams
+
+The [stream_composition.csv](stream_composition.csv) dataset shows the number of species of five insect orders in 20 streams, as a function of temperature and pH.
+
+```{r}
+stream <- read.csv("stream_composition.csv")
+str(stream)
+```
+
+a) Estimate the effect of temperature and pH on the number of stonefly species, with a Poisson regression using the formula `stonefly ~ temperature + pH`. Check if the data is overdispersed and correct your estimates if necessary.
+
+**Answer**
+
+The $\chi^2$ value does not deviate significantly from the Poisson model, thus the data are not overdispersed.
+
+```{r}
+mod_plec <- glm(stonefly ~ temperature + pH, data = stream, family = poisson)
+
+chi2 <- sum((stream$stonefly - fitted(mod_plec))^2 / fitted(mod_plec))
+1 - pchisq(chi2, mod_plec$df.residual)
+```
+
+The pH has a significant effect.
+
+```{r}
+summary(mod_plec)
+```
+
+
+b) What portion of the variance in the number of species is explained by the model?
+
+**Answer**: About 23% according to the pseudo-$R^2$.
+
+```{r}
+1 - mod_plec$deviance / mod_plec$null.deviance
+```
+
+
+c) If one of the two variables has a significant effect, interpret the value of the coefficient.
+
+**Answer**
+
+When the pH increases by one unit, the mean number of stoneflies increases by 57%.
+
+```{r}
+exp(0.45)
+```
+
+
+d) Display the observed number of species and the fitted value curves for pH values ranging from 5.5 to 7.5 and for three temperature values: 15, 17 and 19 degrees C.
+
+**Hint**: With *ggplot*, to ensure that prediction curves link points with the same value of a numeric variable (e.g. temperature), you must define a group (e.g. `group = temperature`) in the `aes` function.
+
+**Answer**
+
+```{r}
+stream_nouv <- expand.grid(pH = seq(5.5, 7.5, 0.2), temperature = c(15, 17, 19))
+stream_nouv$pred <- predict(mod_plec, newdata = stream_nouv, type = "response")
+
+library(ggplot2)
+ggplot(stream, aes(x = pH, y = stonefly, color = temperature, group = temperature)) +
+    geom_point() +
+    geom_line(data = stream_nouv, aes(y = pred))
+```
+
+
+e) Repeat steps (a) - (d) for a model of the number of mayfly species.
+
+**Answer**
+
+The $\chi^2$ value indicates significant overdispersion. 
+
+```{r}
+mod_may <- glm(mayfly ~ temperature + pH, data = stream, family = poisson)
+
+chi2 <- sum((stream$mayfly - fitted(mod_may))^2 / fitted(mod_may))
+1 - pchisq(chi2, mod_may$df.residual)
+c_hat <- chi2/mod_may$df.residual
+c_hat
+```
+
+Since the dispersion parameter is less than 4, we can still use the model if we correct the standard errors.
+
+```{r}
+summary(mod_may, dispersion = c_hat)
+```
+
+The effect of pH is significant. An increase of one unit of pH amounts to a doubling of the mean number of species ($e^{0.71} = 2.0$).
+
+The pseudo-$R^2$ for that model equals $1 - 58.4 / 111 = 0.47$.
+
+Here are the prediction curves for that model:
+
+```{r}
+stream_nouv$pred_may <- predict(mod_may, newdata = stream_nouv, type = "response")
+
+ggplot(stream, aes(x = pH, y = mayfly, color = temperature, group = temperature)) +
+    geom_point() +
+    geom_line(data = stream_nouv, aes(y = pred_may))
+```
+
+
+f) What is the mean number of mayfly species predicted by the model in (e) for a stream with a temperature of 17 degrees and a pH of 8.5? Is this prediction reliable?
+
+**Answer**
+
+```{r}
+predict(mod_may, data.frame(pH = 8.5, temperature = 17), type = "response")
+```
+
+The prediction conditions are outside the pH range observed in the data (5.5 to 7.5) and the prediction itself is above all observed values for `mayfly` (maximum of 28 in the data). From a biological point of view, organisms have a certain pH tolerance zone, so we do not expect a doubling of the number of species for each increase of one pH unit to continue outside the observed values.
+
+
+## 2. Salamanders in different forest landscapes
+
+![](../images/Plethodon_elongatus.jpg)
+<small>*Photo: Bill Bouton*</small>
+
+The [salamander.csv](salamander.csv) file contains data from Welsh and Lind (1995) on the number of salamanders (`salaman`) of species *Plethodon elongatus* in 47 plots (`site`), as a function of percentage forest cover (`pct_cover`) and forest age.
+
+```{r}
+sal <- read.csv("salamander.csv")
+str(sal)
+```
+
+a) From a Poisson regression, estimate the effect of forest cover on the number of salamanders per plot.
+
+**Answer**
+
+After fitting the model, we check the dispersion of residuals.
+
+```{r}
+mod_sal <- glm(salaman ~ pct_cover, data = sal, family = poisson)
+
+chi2 <- sum((sal$salaman - fitted(mod_sal))^2 / fitted(mod_sal))
+1 - pchisq(chi2, mod_sal$df.residual)
+```
+
+The data are overdispersed, so we must adjust the coefficient standard errors.
+
+```{r}
+disp <- chi2 / mod_sal$df.residual
+summary(mod_sal, dispersion = disp)
+```
+
+According to these results, every increase of 1% in forest cover increases the mean number of salamanders by about 3% ($e^{0.032} = 1.032$).
+
+
+b) Does the `forest_age` predictor improve the predictive power of the model?
+
+**Answer**
+
+New model with both predictors:
+
+```{r}
+mod_sal2 <- glm(salaman ~ pct_cover + forest_age, data = sal, family = poisson)
+summary(mod_sal2)
+```
+
+The effect of forest age is almost zero and not significant. Let's compare both models with QAIC.
+
+```{r}
+library(AICcmodavg)
+disp <- c_hat(mod_sal2)
+aictab(list(cover = mod_sal, cover_age = mod_sal2), c.hat = disp)
+```
+
+The model with only forest cover is better.
+
+
+c) Produce a graph of the number of salamanders according to forest age and superimpose points representing the fitted values for the model based solely on forest cover. What do you observe?
+
+**Answer**
+
+Even if `forest_age` is not in the model, the fitted number of salamanders is greater in old forests.
+
+```{r}
+# Observed values in black, predicted in blue
+ggplot(sal, aes(x = forest_age, y = salaman)) +
+    geom_point() +
+    geom_point(aes(y = fitted(mod_sal)), color = "blue") 
+```
+
+
+d) Based on these results, do you think that the forest age directly influences the salamander population? Does it indirectly influence this population?
+
+**Answer**
+
+Based on our regression in (b), the forest age has no effect once the percentage of forest cover has been taken into account. However, old-growth forests have a higher percentage of forest cover, as seen in the graph below. If we assume that age partly explains the percentage of cover, this variable has an indirect effect on the salamander population. 
+
+```{r}
+ggplot(sal, aes(x = forest_age, y = pct_cover)) + 
+    geom_point()
+```
+
+
+

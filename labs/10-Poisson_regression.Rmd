@@ -1,6 +1,6 @@
 ---
 title: "Poisson regression"
-date: "Novembre 14, 2018"
+date: "November 14, 2018"
 output: 
     html_document:
         theme: spacelab
@@ -29,9 +29,11 @@ c) If one of the two variables has a significant effect, interpret the value of 
 
 d) Display the observed number of species and the fitted value curves for pH values ranging from 5.5 to 7.5 and for three temperature values: 15, 17 and 19 degrees C.
 
+**Hint**: With *ggplot*, to ensure that prediction curves link points with the same value of a numeric variable (e.g. temperature), you must define a group (e.g. `group = temperature`) in the `aes` function.
+
 e) Repeat steps (a) - (d) for a model of the number of mayfly species.
 
-f) What is the average number of mayfly species predicted by the model in (e) for a stream with a temperature of 17 degrees and a pH of 8.5? Is this prediction reliable?
+f) What is the mean number of mayfly species predicted by the model in (e) for a stream with a temperature of 17 degrees and a pH of 8.5? Is this prediction reliable?
 
 
 ## 2. Salamanders in different forest landscapes
