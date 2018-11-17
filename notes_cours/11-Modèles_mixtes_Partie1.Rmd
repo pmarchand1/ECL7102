@@ -260,11 +260,11 @@ Comme pour le modèle de régression linéaire, l'observation $y_k$ suit une dis
 
 $$ y_k \sim N(\hat{y_k}, \sigma_y) $$
 
-Jusqu'à maintenant, ce modèle est identique à celui d'une régression linéaire avec une variable catégorielle, si $\alpha_j$ était l'ordonnée à l'origine pour la catégorie $j$. La particularité du modèle mixte est que les $\alpha_j$ sont des valeurs aléatoires tirées d'une distribution normale avec une moyenne $\mu_\alpha$ et un écart-type $\sigma_\alpha$. Autrement dit, les groupes observés font partie d'une "popualtion" de groupes possibles et nous souhaitons estimer la moyenne et la variance de $\alpha$ dans cette population.
+Jusqu'à maintenant, ce modèle est identique à celui d'une régression linéaire avec une variable catégorielle, si $\alpha_j$ était l'ordonnée à l'origine pour la catégorie $j$. La particularité du modèle mixte est que les $\alpha_j$ sont des valeurs aléatoires tirées d'une distribution normale avec une moyenne $\mu_\alpha$ et un écart-type $\sigma_\alpha$. Autrement dit, les groupes observés font partie d'une "population" de groupes possibles et nous souhaitons estimer la moyenne et la variance de $\alpha$ dans cette population.
 
 $$ \alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha) $$
 
-L'effet de groupe est désigné comme un effet *aléatoire*, en opposition aux effets *fixes* qui sont estimés de façon indépendante sans faire partie d'une distribution commune (par exemple, les $m - 1$ coefficients d'un facteur à $m$ catégories dans une régression linéaire classique). Ce modèle est appelé *mixte* car il contient à la fois des effets fixes (les $\beta$ associés aux prédicteurs $x_1$, $x_2$, etc.) et des effets aléatoires.
+L'effet de groupe $\alpha_j$ est désigné comme un effet *aléatoire*, en opposition aux effets *fixes* qui sont estimés de façon indépendante sans faire partie d'une distribution commune (par exemple, les $m - 1$ coefficients d'un facteur à $m$ catégories dans une régression linéaire classique). Ce modèle est appelé *mixte* car il contient à la fois des effets fixes (les $\beta$ associés aux prédicteurs $x_1$, $x_2$, etc.) et des effets aléatoires.
 
 Il n'y a pas de raison particulière d'avoir choisi une distribution normale pour les $\alpha_j$. Cependant, si tout ce qu'on sait d'une variable est sa moyenne et son écart-type, la distribution normale est dans un certain sens la plus probable, c'est-à-dire celle qui amène le moins de suppositions supplémentaires.
 
@@ -340,6 +340,8 @@ Que se passe-t-il ici? En supposant que les effets de chaque plage proviennent d
 
 Autrement dit, les différences entre les valeurs moyennes mesurées par plage peuvent être dues soit à des différences réelles de richesse spécifique entre les plages, soit au hasard de l'échantillonnage. L'ANOVA que nous avons vue plus tôt cette session visait à déterminer si ces différences entre groupes d'observations sont trop grandes pour être dues au hasard. Le modèle mixte tente plutôt d'estimer la portion des différences observées qui est due à un réel effet de groupe et la portion qui est due au hasard de l'échantillonnage dans chaque groupe.
 
+## Graphiques de diagnostic
+
 La fonction `plot` appliquée à un modèle mixte ne produit qu'un graphique, celui des résidus en fonction des valeurs attendues.
 
 ```{r}
@@ -377,7 +379,7 @@ Dans ce cas-ci, $\mu_\alpha$ n'est plus une constante, mais varie de façon lin�
 
 $$ \mu_\alpha = \gamma_0 + \gamma_1 u_1 $$
 
-Il s'agit donc d'un modèle de régression à deux niveaux, où $u_1$ est un prédicteur au niveau du groupe et $\gamma_1$ est le coefficient de ce prédicteur. D'un point de vue conceptuel, il est utile de différencier les prédicteurs définis par groupe et ceux définis par observation individuelle. Toutefois, nous pourrions aussi ré-écrire de modèle pour séparer les effets fixes (aux deux niveaux) et les effets aléatoires (qui ont une moyenne de 0), par exemple:
+Il s'agit donc d'un modèle de régression à deux niveaux, où $u_1$ est un prédicteur au niveau du groupe et $\gamma_1$ est le coefficient de ce prédicteur. D'un point de vue conceptuel, il est utile de différencier les prédicteurs définis par groupe et ceux définis par observation individuelle. Toutefois, nous pourrions aussi ré-écrire le modèle pour séparer les effets fixes (aux deux niveaux) et les effets aléatoires (qui ont une moyenne de 0), par exemple:
 
 $$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \epsilon_k $$
 
@@ -470,11 +472,11 @@ ggplot(comtes, aes(x = log_uranium, y = mm_pred)) +
 
 Ces prédictions dévient de la tendance linéaire moyenne en fonction des ordonnées à l'origine estimées pour chaque comté (effets aléatoires).
 
-Comparons maintenant ces prédictions à ceux de deux régressions linéaires classiques, avec aucun effet de comté ou un effet fixe par comté.
+Comparons maintenant ces prédictions à ceux de deux régressions linéaires classiques, avec aucun effet de comté (mais avec l'effet de l'uranium) ou un effet fixe par comté.
 
 ```{r, warning = FALSE, message = FALSE}
 lm_radon1 <- lm(log_radon ~ floor + log_uranium, radon)
-lm_radon2 <- lm(log_radon ~ floor + log_uranium + county, radon)
+lm_radon2 <- lm(log_radon ~ floor + county, radon)
 
 comtes <- mutate(comtes, pred1 = predict(lm_radon1, comtes), 
                  pred2 = predict(lm_radon2, comtes))
