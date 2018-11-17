@@ -13,6 +13,7 @@
 8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html)
 9. [Régression logistique](notes_cours/9-Régression_logistique.html)
 10. [Régression de Poisson](notes_cours/10-Régression_Poisson.html)
+11. [Modèles mixtes - Partie 1](notes_cours/11-Modèles_mixtes_Partie1.html)
 
 ## Laboratoires
 
