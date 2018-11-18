@@ -1,0 +1,65 @@
+---
+title: "Mixed models"
+date: "November 21, 2018"
+output: 
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+## 1. Effect of nitrogen on the yield of oat varieties
+
+The `Oats` data frame included in the *nlme* package shows the results of a split-plot agricultural experiment. The experiment is done in six blocks (`Block`). Each block is divided into three sections where a different variety of oats is sown (`Variety`), then each section is divided into four quadrants, each receiving a different concentration of nitrogen (`nitro`): 0, 0.2, 0.4 or 0.6. The response variable is the oat yield of each of the 72 quadrants (6 blocks x 3 varieties x 4 nitrogen concentrations).
+
+```{r}
+library(nlme)
+data(Oats)
+# Changer le bloc en facteur non-ordonné
+Oats$Block <- factor(Oats$Block, ordered = FALSE)
+str(Oats)
+```
+
+(a) For the `Block` and` Variety` factors, which kind of contrasts should you use to compare the effect of each category to the mean, rather than to a reference category? Specify this type of contrast and name the contrast variables to facilitate the interpretation.
+
+(b) Estimate the parameters of a linear model of yield as a function of nitrogen concentration, oat variety and a *fixed* effect of the block. Check if it is useful to include the interaction between nitrogen and variety. What would such an interaction mean?
+
+(c) Choose the model with or without interaction according to your result in (b), check the diagnostic graphs and interpret the value of the coefficients.
+
+(d) Now estimate the parameters of a mixed model identical to the linear model in (c), except that the effect of the blocks is random rather than fixed. Compare the fixed effects common to both models, as well as the block fixed effects of the previous model to the random effects of this new model. Explain the differences you observe, if any.
+
+(e) Calculate the intra-class correlation for the mixed model in (d). What is the mathematical significance of this coefficient? How do you interpret the result from a biological point of view?
+
+
+## 2. Indicators of disease in bees
+
+American foulbrood is an infectious disease affecting bee colonies. The [bees.csv](bees.csv) dataset, from the Zuur et al. textbook *Mixed Effects Models and Extensions in Ecology with R*, contains measurements of bacterial spore density (`Spobee`) found on 72 bees from 24 hives (`Hive`, 3 bees per hive).
+
+We want to determine the relationship between this density of spores and two variables defined for each hive: the level of infection observed in the hive (`Infection`) and an estimate of the size of the colony (`BeesN`).
+
+```{r}
+bees <- read.csv("bees.csv")
+str(bees)
+```
+
+(a) Before modeling these data, perform the following transformations.
+
+- The level of infection is on a qualitative scale (0 = no symptoms, 1 = mild infection, 2 = moderate and 3 = severe). Since we have very few hives for the different levels of infection (1 level 1, 1 level 2, and 2 level 3), create a new `pres_inf` binary variable that indicates presence (levels 1 to 3) or absence (level 0) of infection.
+
+- The distribution of the `Spobee` response is very asymmetrical. As suggested by Zuur et al., create a new variable by applying the `log1p` function, equivalent to *log(Spobee + 1)*. This is a logarithmic transformation where 1 has been added to the response beforehand to avoid taking the logarithm of 0.
+
+- Express the size of the colony in units of 10,000 bees.
+
+(b) Estimate the parameters of a mixed model to determine the effect of presence of infection and colony size on the (transformed) spore density observed on bees. Which random effect would be appropriate for this problem?
+
+(c) Use diagnostic graphs to verify model assumptions, including the normality of random effects.
+
+(d) What is the intra-class correlation coefficient of this model? To more accurately estimate the fixed effects of this model, would it be better to sample more hives, or more bees per hive?
+
+(e) What are the 95% confidence intervals for fixed effects in the mixed model? If we replace this model with a linear regression completely ignoring the `Hive` variable, would these intervals be narrower or wider, and why?
+
