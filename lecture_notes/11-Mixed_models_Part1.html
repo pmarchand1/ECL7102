@@ -283,7 +283,7 @@ head(rikz)</code></pre>
 ## 4      4       11       10  0.616     1
 ## 5      5       10       10 -0.684     1
 ## 6      6        8        8  1.190     2</code></pre>
-<p>Since the response is a number of species, a Poisson regression might be more appropriate; a model based on the Poisson distribution will be presented at the next class. For now, we apply a square root transformation to the response to use linear regression. This transformation generally improves the homogeneity of variance for count data.</p>
+<p>Since the response is a number of species, a Poisson regression might be more appropriate. However, we will not cover generalized linear mixed models in this class. Therefore, we apply a square root transformation to the response to use linear regression. This transformation generally improves the homogeneity of variance for count data.</p>
 <pre class="r"><code>rikz &lt;- mutate(rikz, srich = sqrt(Richness))</code></pre>
 <p>From these data, we will illustrate different strategies to account for the grouped nature of the data (9 beaches) and the group-level predictor (exposure index).</p>
 <div id="model-1-ignore-groups" class="section level3">

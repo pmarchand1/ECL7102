@@ -282,7 +282,7 @@ head(rikz)</code></pre>
 ## 4      4       11       10  0.616     1
 ## 5      5       10       10 -0.684     1
 ## 6      6        8        8  1.190     2</code></pre>
-<p>Puisque la réponse est un nombre d’espèces, une régression de Poisson pourrait être plus appropriée; un modèle basé sur la distribution de Poisson sera présenté au prochain cours. Pour l’instant, nous appliquons une transformation racine carrée à la réponse afin d’utiliser la régression linéaire. Cette transformation améliore généralement l’homogénéité des variances pour les données de comptage.</p>
+<p>Puisque la réponse est un nombre d’espèces, une régression de Poisson pourrait être plus appropriée. Toutefois, les modèles linéaires mixtes généralisés ne font pas partie de ce cours. Nous appliquons donc une transformation racine carrée à la réponse afin d’utiliser la régression linéaire. Cette transformation améliore généralement l’homogénéité des variances pour les données de comptage.</p>
 <pre class="r"><code>rikz &lt;- mutate(rikz, srich = sqrt(Richness))</code></pre>
 <p>À partir de ces données, nous illustrerons différentes stratégies pour tenir compte de la nature groupée des données (9 plages) et du prédicteur défini au niveau du groupe (indice d’exposition).</p>
 <div id="modele-1-ignorer-les-groupes" class="section level3">

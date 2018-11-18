@@ -77,7 +77,7 @@ rikz <- mutate(rikz, Beach = as.factor(Beach),
 head(rikz)
 ```
 
-Since the response is a number of species, a Poisson regression might be more appropriate; a model based on the Poisson distribution will be presented at the next class. For now, we apply a square root transformation to the response to use linear regression. This transformation generally improves the homogeneity of variance for count data.
+Since the response is a number of species, a Poisson regression might be more appropriate. However, we will not cover generalized linear mixed models in this class. Therefore, we apply a square root transformation to the response to use linear regression. This transformation generally improves the homogeneity of variance for count data.
 
 ```{r}
 rikz <- mutate(rikz, srich = sqrt(Richness))

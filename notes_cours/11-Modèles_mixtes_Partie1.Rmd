@@ -77,7 +77,7 @@ rikz <- mutate(rikz, Beach = as.factor(Beach),
 head(rikz)
 ```
 
-Puisque la réponse est un nombre d'espèces, une régression de Poisson pourrait être plus appropriée; un modèle basé sur la distribution de Poisson sera présenté au prochain cours. Pour l'instant, nous appliquons une transformation racine carrée à la réponse afin d'utiliser la régression linéaire. Cette transformation améliore généralement l'homogénéité des variances pour les données de comptage.
+Puisque la réponse est un nombre d'espèces, une régression de Poisson pourrait être plus appropriée. Toutefois, les modèles linéaires mixtes généralisés ne font pas partie de ce cours. Nous appliquons donc une transformation racine carrée à la réponse afin d'utiliser la régression linéaire. Cette transformation améliore généralement l'homogénéité des variances pour les données de comptage.
 
 ```{r}
 rikz <- mutate(rikz, srich = sqrt(Richness))
