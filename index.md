@@ -27,7 +27,7 @@
 8. [Sélection de modèles](labos/8-Sélection_modèles.pdf) ([Données 1](labos/environment.csv) - [Données 2(a)](labos/migration.csv) - [Données 2(c)](labos/migr_test.csv))
 9. [Régression logistique](labos/9-Régression_logistique.pdf)
 10. [Régression de Poisson](labos/10R-Régression_Poisson.html)
-11. [Modèles mixtes](labos/11-Modèles_mixtes.html)
+11. [Modèles mixtes](labos/11R-Modèles_mixtes.html)
 
 [Tutoriel R Markdown](labos/Tutoriel_RMarkdown.html)
 
