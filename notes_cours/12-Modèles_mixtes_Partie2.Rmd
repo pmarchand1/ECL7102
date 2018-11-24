@@ -161,7 +161,7 @@ nouv_comte <- data.frame(county = "NOUVEAU", log_uranium = 0.5, floor = 0)
 predict(mm_radon, nouv_comte)
 ```
 
-Par défaut, la fonction `predict` appliquée au résultat de `lmer` tente d'utiliser l'ensemble des effets aléatoires. Pour effectuer une prédiction basée seulement sur les effets fixes, nous devons spécifier l'argument `re.form = ~0`
+Par défaut, la fonction `predict` appliquée au résultat de `lmer` tente d'utiliser l'ensemble des effets aléatoires. Pour effectuer une prédiction basée seulement sur les effets fixes, nous devons spécifier l'argument `re.form = ~0`.
 
 ```{r}
 predict(mm_radon, nouv_comte, re.form = ~0)
