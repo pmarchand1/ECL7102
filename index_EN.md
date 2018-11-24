@@ -14,6 +14,7 @@
 9. [Logistic regression](lecture_notes/9-Logistic_regression.html)
 10. [Poisson regression](lecture_notes/10-Poisson_regression.html)
 11. [Mixed models - Part 1](lecture_notes/11-Mixed_models_Part1.html)
+12. [Mixed models - Part 2](lecture_notes/12-Mixed_models_Part2.html)
 
 
 ## Labs
