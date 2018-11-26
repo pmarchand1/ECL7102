@@ -188,7 +188,7 @@ Pour choisir les effets aléatoires du modèle, nous pouvons poser la question s
 
 - les observations prises sur le même arbre d'une année à l'autre;
 - les observations de deux arbres prises la même année; et
-- les observations prisent sur des arbres de la même espèce
+- les observations prises sur des arbres de la même espèce
 
 risquent d'être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, espèce et année).
 

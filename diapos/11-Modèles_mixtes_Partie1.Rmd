@@ -1,0 +1,522 @@
+---
+title: "Modèles linéaires mixtes, partie 1"
+date: "<br/>19 novembre 2018"
+output: 
+    revealjs::revealjs_presentation:
+        theme: night
+        transition: none
+        css: styles.css
+        incremental: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.dim = c(6, 4))
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+```
+
+## Objectifs
+
+- Appliquer un modèle linéaire mixte à des données groupées.
+
+- Expliquer comment un modèle mixte constitue un compromis entre un modèle ignorant l'effet de groupe et un modèle à effets fixes par groupe.
+
+- Déterminer les situations où il est le plus bénéfique d'utiliser un modèle mixte.
+
+
+# Pourquoi les modèles mixtes?
+
+## Exercice
+
+- Objectif: Modéliser la croissance des arbres à partir d'un échantillon de 100 arbres de différentes espèces dans une parcelle de recherche, pour lesquels on a mesuré:
+
+    + la croissance annuelle (variable réponse);
+    + le diamètre (DHP) ;
+    + l'âge;
+    + l'indice de compétition (IC, basé sur le nombre et la taille des arbres voisins).
+
+- Vous pouvez supposer que les variables ont été transformées pour obtenir des effets linéaires et que la portion aléatoire de la réponse suit une distribution normale.
+
+## Exercice - Partie 1
+
+| Croissance | DHP | Âge | IC  | Espèce |
+|------------+-----+-----+-----+--------|
+| ...        | ... | ... | ... | ...    |
+
+
+<div style="font-size:16pt">
+
+1. Quel type de modèle utiliseriez-vous pour relier la croissance au DHP, à l'âge et à l'IC?
+
+2. Si la croissance moyenne dépend de l'espèce, comment inclure cet effet dans votre modèle?
+
+3. Et si l'effet des prédicteurs numériques sur la croissance varie d'une espèce à l'autre?
+
+4. Est-ce que ces modèles fonctionnent mieux si peu d'espèces (ex.: 2) ou beaucoup d'espèces (ex.: 20) sont représentées parmi les 100 arbres? Fonctionnent-ils mieux si le nombre d'arbres échantillonné est semblable d'une espèce à l'autre?
+
+5. Avec ce modèle, pouvez-vous prédire la croissance d'une espèce non présente dans l'échantillon?
+
+</div>
+
+## Exercice - Partie 2
+
+- Supposons que vous connaissez certaines caractéristiques de chaque espèce qui pourraient expliquer les différences entre espèces, par exemple:
+
+    + le degré de tolérance à l'ombre (variable catégorielle);
+    + la surface foliaire spécifique (SFS, variable numérique).
+
+## Exercice - Partie 2
+
+| Croissance | DHP | Âge | IC  | Espèce | Ombre | SFS |
+|------------+-----+-----+-----+--------+-------+-----|
+| ...        | ... | ... | ... | ...    | ...   | ... |
+
+1. Comment pouvez-vous inclure ces caractéristiques dans votre modèle?
+
+2. Est-ce que le modèle proposé fonctionne mieux avec peu d'espèces ou beaucoup d'espèces?
+
+3. Avec ce modèle, pouvez-vous prédire la croissance d'une espèce non présente dans l'échantillon?
+
+## Exercice - Partie 3
+
+Finalement, supposons que vous avez mesuré la croissance et les autres prédicteurs individuels sur les mêmes 100 arbres pour trois années consécutives. 
+
+| ID Arbre | Année | Croissance | DHP | Âge | IC  | Espèce | Ombre | SFS |
+|----------+-------+------------+-----+-----+-----+--------+-------+-----|
+| ...      | ...   | ...        | ... | ... | ... | ...    | ...   | ... |
+
+1. Comment pourriez-vous ajouter la variation de croissance d'une année à l'autre dans votre modèle? 
+
+2. Serait-il utile d'ajouter des variables météorologiques du site pour expliquer cette variation?
+
+3. Est-ce que le fait de mesurer les mêmes arbres à chaque année influence l'exactitude du modèle?
+
+
+## Exemple
+
+Richesse spécifique de la communauté benthique sur 45 sites intertidaux de 9 plages aux Pays-Bas.
+
+```{r, echo = FALSE}
+rikz <- read.csv("../donnees/rikz.csv")
+# Corriger la représentation des variables catégorielles
+rikz <- mutate(rikz, Beach = as.factor(Beach), 
+               Exposure = as.factor(Exposure))
+head(rikz)
+```
+
+- *NAP*: Position du site par rapport au niveau moyen de la mer.
+- *Exposure*: Indice d'exposition de la plage.
+
+
+## Exemple
+
+>- Pour pouvoir utiliser un modèle linéaire (plutôt que Poisson), on applique une transformation racine carrée au nombre d'espèces.
+
+>- Cette transformation permet généralement d'homogénéiser la variance des données de comptage.
+
+```{r}
+rikz <- mutate(rikz, srich = sqrt(Richness))
+```
+
+
+## Modèle 1: Ignorer les groupes
+
+>- Ce modèle inclut seulement le prédicteur mesuré au niveau du site (*NAP*).
+
+```{r}
+mod1 <- lm(srich ~ NAP, rikz)
+summary(mod1)
+```
+
+
+## Modèle 1: Ignorer les groupes
+
+>- Prédictions du modèle en fonction du NAP.
+
+```{r}
+rikz$fit1 <- fitted(mod1)
+
+ggplot(rikz, aes(x = NAP, y = srich)) +
+    geom_point() +
+    geom_line(aes(y = fit1))
+```
+
+
+## Modèle 1: Ignorer les groupes
+
+>- Les résidus ne sont pas indépendants: les observations d'une même plage sont plus semblables.
+
+```{r}
+ggplot(rikz, aes(x = Beach, y = residuals(mod1))) +
+    geom_point()
+```
+
+
+## Modèle 2: Effet de chaque groupe
+
+>- L'ajout du facteur `Beach` au modèle permet d'estimer les différences systématiques de richesse entre les plages.
+
+```{r}
+mod2 <- lm(srich ~ NAP + Beach, rikz)
+summary(mod2)
+```
+
+## Modèle 2: Effet de chaque groupe
+
+```{r}
+rikz$fit2 <- fitted(mod2)
+
+ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
+    geom_point() +
+    geom_line(aes(y = fit2))
+```
+
+## Modèle 2: Effet de chaque groupe
+
+>- Modèle plus flexible: l'effet du NAP (la pente de la droite) peut varier d'une plage à l'autre.
+
+```{r}
+mod2_inter <- lm(srich ~ NAP * Beach, rikz)
+summary(mod2_inter)
+```
+
+## Modèle 2: Effet de chaque groupe
+
+>- Le modèle avec interaction entre le NAP et la plage est surajusté.
+
+```{r}
+library(AICcmodavg)
+aictab(list(mod1 = mod1, mod2 = mod2, mod2_inter = mod2_inter))
+```
+
+## Modèle 2: Effet de chaque groupe
+
+```{r}
+rikz$fit2i <- fitted(mod2_inter)
+
+ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
+    geom_point() +
+    geom_line(aes(y = fit2i))
+```
+
+## Modèle 3: Prédicteur lié aux groupes
+
+>- Plutôt que d'estimer un effet par plage, utiliser une variable pouvant expliquer cette différence entre plages (indice d'exposition).
+
+```{r}
+mod3 <- lm(srich ~ NAP * Exposure, rikz)
+summary(mod3)
+```
+
+## Modèle 3: Prédicteur lié aux groupes
+
+>- Utilisons l'ANOVA pour vérifier si l'interaction est significative.
+
+```{r}
+anova(mod3)
+```
+
+## Modèle 3: Prédicteur lié aux groupes
+
+```{r}
+rikz$fit3 <- fitted(mod3)
+
+ggplot(rikz, aes(x = NAP, y = srich, color = Exposure)) +
+    geom_point() +
+    geom_line(aes(y = fit3))
+```
+
+## Modèle 3: Prédicteur lié aux groupes
+
+- Par rapport au modèle précédent, cette approche est plus parcimonieuse (moins de paramètres à ajuster) et permet d'expliquer les différences entre plages en fonction de paramètres environnementaux. 
+- On peut donc appliquer les prédictions du modèle à d'autres plages en autant qu'on connaisse leur indice d'exposition.
+
+- Une régression linéaire classique ne peut inclure à la fois une variable catégorielle indiquant le groupe et un prédicteur défini pour chaque groupe. 
+
+## Combiner les modèles 2 et 3
+
+>- Le facteur Beach contient les différences entre plages, il ne reste rien à expliquer avec Exposure.
+
+```{r}
+mod_exp_beach <- lm(srich ~ NAP + Beach + Exposure, rikz)
+summary(mod_exp_beach)
+```
+
+## Combiner les modèles 2 et 3
+
+>- Si on essayait de modéliser une variation de la pente de `srich ~ NAP` en fonction de l'indice d'exposition et de la plage, ce modèle serait équivalent au modèle 2 avec interaction.
+
+```{r}
+mod_exp_beach <- lm(srich ~ NAP * Exposure + NAP * Beach , rikz)
+all.equal(fitted(mod_exp_beach), fitted(mod2_inter)) 
+```
+
+## Modèle 4: Modèle linéaire en deux étapes
+
+D'abord estimer les différences de richesse entre plages à partir des données des sites, puis modéliser l'effet des plages en fonction de l'indice d'exposition.
+
+>- Étape 1: Observation $k$ de la plage $j$
+
+$$ y_k \sim N(\alpha_{j[k]} + \beta x_{1k}, \sigma_y) $$ 
+
+>- Étape 2: Ordonnée à l'origine de la plage $j$ 
+
+$$ \alpha_j \sim N(\gamma_0 + \gamma_1 u_{1j}, \sigma_\alpha) $$
+
+## Modèle 4 - Étape 1
+
+>- On ajoute `- 1` à la formule pour fixer l'ordonnée à l'origine à 0. 
+
+```{r}
+mod4_1 <- lm(srich ~ NAP + Beach - 1, rikz)
+summary(mod4_1)
+```
+
+
+## Modèle 4 - Étape 2
+
+>- On crée un jeu de données avec une rangée par plage et on ajoute les effets de plage estimés à l'étape 1.
+
+```{r}
+rikz_beach <- distinct(rikz, Beach, Exposure)
+rikz_beach$coef <- coef(mod4_1)[-1] # Le coefficient 1 est NAP
+rikz_beach
+```
+
+## Modèle 4 - Étape 2
+
+>- Modèle de l'effet de plage (coefficient de l'étape 1) en fonction de l'indice d'exposition.
+
+```{r}
+
+mod4_2 <- lm(coef ~ Exposure, rikz_beach)
+summary(mod4_2)
+```
+
+## Modèle 4
+
+- Cette approche traite chaque plage comme une seule observation à la deuxième étape. 
+
+- Si le nombre d'échantillons différait d'une plage à l'autre, ce modèle sous-représenterait les plages mieux échantillonnés.
+
+
+# Modèles linéaires mixtes
+
+## Modèles linéaires mixtes
+
+- Ces modèles sont semblables à la régression en deux étapes que nous avons effectuée, mais les deux étapes sont réalisées simultanément.
+
+- Ces modèles sont surtout utiles pour les cas suivants:
+
+    + données groupées ou hiérarchisées (ex.: région, site, placette);
+    + variables explicatives définies à plusieurs niveaux (individu et groupe);
+    + beaucoup de groupes et/ou peu d'observations par groupe;
+    + besoin d'estimer la variation entre groupes;
+    + besoin de généraliser les résultats à des groupes non observés.
+
+## Modèles linéaires mixtes
+
+- Un modèle linéaire mixte est une régression linéaire dont un ou plusieurs des coefficients varient d'un groupe d'observations à une autre, *et où cette variation est modélisée par une distribution statistique*. 
+
+- Ils sont aussi connus sous le nom de modèles *hiérarchiques* ou *multi-niveaux*, car ils modélisent la variation à au moins deux niveaux (observation individuelle et groupe).
+
+- Dans ce cours-ci, nous traiterons des modèles mixtes où seule l'ordonnée à l'origine varie par groupe. 
+
+## Représentation mathématique
+
+>- $\hat{y_k}$ dépend des prédicteurs $x_1$, $x_2$, etc., avec une ordonnée à l'origine spécifique au groupe $j$ qui contient l'observation $k$.
+
+$$ \hat{y_k} = \alpha_{j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + ...$$
+
+>- Comme pour le modèle de régression linéaire, $y_k$ suit une distribution normale.
+
+$$ y_k \sim N(\hat{y_k}, \sigma_y) $$
+
+>- $\alpha_j$ est considérée comme une variable aléatoire normalement distribuée parmi une "population" de groupes:
+
+$$ \alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha) $$
+
+## Représentation mathématique
+
+- L'effet de groupe $\alpha_j$ est un effet *aléatoire*, en opposition aux effets *fixes* qui sont estimés de façon indépendante sans faire partie d'une distribution. 
+
+- Le modèle est dit mixte car il contient à la fois des effets fixes (les $\beta$ associés aux prédicteurs $x_1$, $x_2$, etc.) et des effets aléatoires.
+
+- On suppose une distribution normale pour $\alpha_j$ car c'est la distribution la plus "naturelle" à supposer si on ne connaît que la moyenne et l'écart-type.
+
+
+## Modèle linéaire mixte avec R
+
+- Nous utilisons la fonction `lmer` du package *lme4* pour ajuster des modèles linéaires mixtes.
+
+- Cette fonction accepte une formule du même type que `lm`. Les effets aléatoires ont une syntaxe particulière dans la formule: 
+
+    + Par exemple, le terme `(1 | Beach)` indique que l'ordonnée à l'origine (symbolisée par la "variable" `1`) varie de façon aléatoire entre les groupes définis par `Beach`.
+
+
+## Modèle linéaire mixte avec R
+
+```{r, warning = FALSE, message = FALSE}
+library(lme4)
+
+mmod <- lmer(srich ~ NAP + (1 | Beach), rikz)
+summary(mmod)
+```
+
+
+## Intervalles de confiance
+
+>- `lmer` ne fournit pas de valeur $p$ pour les effets estimés, car leur distribution exacte n'est pas connnue.
+
+>- La fonction `confint` permet d'estimer les intervalles de confiance.
+
+```{r}
+confint(mmod)
+```
+
+
+## Effets fixes et aléatoires
+
+>- Les fonctions `fixef` et `ranef` permettent d'extraire les effets fixes et aléatoires du modèle, respectivement.
+
+```{r}
+fixef(mmod)
+ranef(mmod)
+```
+
+## Effets fixes et aléatoires
+
+>- La fonction `coef` retourne les effets estimés par groupe.
+
+```{r}
+coef(mmod)
+```
+
+## Effets de groupe fixes ou aléatoires
+
+```{r}
+rikz$fitmm <- fitted(mmod)
+
+ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
+    geom_point() + 
+    geom_line(aes(y = fit1), color = "black", linetype = "dashed") +
+    geom_line(aes(y = fit2), linetype = "dotted") +
+    geom_line(aes(y = fitmm))
+```
+
+## Contraction des estimés
+
+- Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu'on s'éloigne de la moyenne (voir par exemple la plage 2 en haut du graphique). 
+
+- En statistique, on parle d'une contraction (*shrinkage*) des estimés des effets de groupe.
+
+## Compromis entre sous-ajustement et surajustement
+
+- Puisque les ordonnées à l'origine sont supposées provenir d'une distribution commune, le modèle mixte estime l'ordonnée à l'origine de chaque plage en tenant compte non seulement des valeurs mesurées à cette plage, mais aussi de celles des autres plages.
+
+- Les différences entre les valeurs moyennes mesurées par plage peuvent être dues soit à des différences réelles de richesse spécifique entre les plages, soit au hasard de l'échantillonnage.
+
+- Le modèle mixte est donc un compromis entre (1) ignorer totalement les différences entre plages et (2) estimer indépendamment la moyenne de chaque plage à partir de ses 5 points. 
+
+## Graphiques de diagnostic
+
+>- Un seul graphique produit par `plot` (résidus vs. valeurs attendues)
+
+```{r}
+plot(mmod)
+```
+
+## Diagramme quantile-quantile des résidus
+
+```{r}
+qqnorm(residuals(mmod))
+qqline(residuals(mmod))
+```
+
+## Diagramme quantile-quantile des effets de groupe
+
+```{r}
+beach_coef <- ranef(mmod)$Beach
+qqnorm(beach_coef$`(Intercept)`)
+qqline(beach_coef$`(Intercept)`)
+```
+
+# Modèle mixte avec prédicteur lié aux groupes
+
+## Modèle mixte avec prédicteur lié aux groupes
+
+>- Modèle pour l'ordonnée à l'origine du groupe $j$:
+
+$$ \alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha) $$
+
+>- Si $\mu_\alpha$ n'est pas constante, reliée linéairement à un prédicteur $u_1$:
+
+$$ \mu_\alpha = \gamma_0 + \gamma_1 u_1 $$
+
+## Modèle mixte avec prédicteur lié aux groupes
+
+>- Ré-écrivons le modèle en 1 équation:
+
+$$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \epsilon_k $$
+
+>- Les deux derniers termes représentent la variation aléatoire par groupe et par observation individuelle:
+
+$$ \nu_j \sim N(0, \sigma_\alpha) $$
+$$ \epsilon_k \sim N(0, \sigma_y) $$
+
+## Modèle mixte avec prédicteur lié aux groupes
+
+>- Il suffit d'ajouter le prédicteur de groupe à la formule dans `lmer`:
+
+```{r}
+mmod_exp <- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz)
+summary(mmod_exp)
+```
+
+## Diagramme quantile-quantile des effets aléatoires
+
+```{r}
+beach_coef <- ranef(mmod_exp)$`Beach`
+qqnorm(beach_coef$`(Intercept)`)
+qqline(beach_coef$`(Intercept)`)
+```
+
+
+## Corrélation intra-classe
+
+$$ \frac{\sigma_\alpha^2}{\sigma_\alpha^2 + \sigma_y^2} $$
+
+>- $\sigma_\alpha$ représente l'écart-type de la réponse moyenne entre les groupes et $\sigma_y$ représente l'écart-type de la réponse entre observations d'un même groupe.
+
+>- Rapport tend vers 0 si $\sigma_y \gg \sigma_\alpha$ et vers 1 si $\sigma_\alpha \gg \sigma_y$.
+
+## Corrélation intra-classe
+
+- La corrélation intra-classe est d'environ 0.45 pour le premier modèle (`mmod`) et diminue à 0.06 en tenant compte de l'indice d'exposition (modèle `mmod_exp`).
+
+- D'un point de vue pratique, ce rapport nous indique quelle échelle contribue davantage à la variation de la réponse, donc à quelle échelle nous pourrions échantillonner davantage pour réduire l'incertitude du modèle.
+
+## Résumé
+
+- Un modèle linéaire mixte (aussi appelé modèle multi-niveaux) est une extension de la régression linéaire pour des données groupées, où certains des coefficients varient de façon aléatoire d'un groupe à l'autre.
+
+- Dans ce cours, nous avons vu des exemples où l'ordonnée à l'origine inclut un effet aléatoire. Dans le prochain cours, nous verrons comment ajouter des effets aléatoires à d'autres coefficients.
+
+- Un modèle mixte constitue un compromis entre une régression linéaire qui ignore la structure groupée et une régression qui estime un effet fixe séparé pour chaque groupe. 
+
+## Résumé
+
+- Le modèle mixte corrige l'estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction). Plus l'échantillon d'un groupe est faible, plus cette correction est importante. Pour cette raison, les modèles mixtes sont particulièrement utiles lorsqu'on a un grand nombre de groupes et peu d'observations dans certains groupes.
+
+- Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l'échelle du groupe. Un modèle mixte peut inclure à la fois l'effet aléatoire des groupes et une variable explicative définie à l'échelle du groupe. 
+
+
+## Références
+
+- Gelman, A. and Hill, J. (2006) *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge, Cambridge University Press.
+
+- Zuur, A.F., Ieno, E.N., Walker, N.J., Saveliev, A.A., Smith, G.M. (2009) *Mixed Effects Models and Extensions in Ecology with R*. New York, Springer-Verlag.
+
+
+
