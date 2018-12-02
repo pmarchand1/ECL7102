@@ -18,7 +18,7 @@
 13. [Multivariate analysis - Part 1](notes_cours/13E-Multivariate_analysis_Part1.html)
 
 
-## labos
+## Labs
 
 1. [Introduction to R - Part 1](labos/1E-IntroR_part1.html)
 2. [Introduction to R - Part 2](labos/2E-IntroR_part2.html)
