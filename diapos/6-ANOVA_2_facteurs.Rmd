@@ -3,6 +3,8 @@ title: "ANOVA à deux facteurs et blocs complets aléatoires"
 date: "<br/>3 octobre 2018"
 output: 
     revealjs::revealjs_presentation:
+        self_contained: false
+        lib_dir: libs
         theme: night
         transition: none
         css: styles.css

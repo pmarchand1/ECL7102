@@ -7,6 +7,8 @@ output:
         transition: none
         css: styles.css
         incremental: true
+        self_contained: false
+        lib_dir: libs
 ---
 
 ```{r setup, include=FALSE}

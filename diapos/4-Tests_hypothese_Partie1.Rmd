@@ -3,6 +3,8 @@ title: "Tests d'hypothèse, partie 1"
 date: "<br/>17 septembre 2018"
 output: 
     revealjs::revealjs_presentation:
+        self_contained: false
+        lib_dir: libs
         theme: night
         transition: none
         css: styles.css

@@ -3,6 +3,8 @@ title: "Hypothesis tests on the mean"
 date: "September 19, 2018"
 output: 
     html_document:
+        self_contained: false
+        lib_dir: libs
         theme: spacelab
         toc: true
         toc_float: true

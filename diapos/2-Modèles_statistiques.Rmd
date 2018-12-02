@@ -3,6 +3,8 @@ title: "Modèles statistiques, paramètres et estimateurs"
 date: "<br/>4 septembre 2018"
 output: 
     revealjs::revealjs_presentation:
+        self_contained: false
+        lib_dir: libs
         theme: night
         transition: none
         css: styles.css

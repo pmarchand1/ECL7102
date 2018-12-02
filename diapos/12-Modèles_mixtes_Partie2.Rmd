@@ -3,6 +3,8 @@ title: "Modèles linéaires mixtes, partie 2"
 date: "<br/>26 novembre 2018"
 output: 
     revealjs::revealjs_presentation:
+        self_contained: false
+        lib_dir: libs
         theme: night
         transition: none
         css: styles.css

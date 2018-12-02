@@ -4,6 +4,8 @@ subtitle: "Pourquoi les statistiques?"
 date: "<br/>27 août 2018"
 output: 
     revealjs::revealjs_presentation:
+        self_contained: false
+        lib_dir: libs
         theme: night
         transition: slide
         css: styles.css

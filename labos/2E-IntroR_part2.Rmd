@@ -3,6 +3,8 @@ title: "Introduction to R - Part 2"
 date: "September 5, 2018"
 output: 
     html_document:
+        self_contained: false
+        lib_dir: libs
         theme: spacelab
         toc: true
         toc_float: true
