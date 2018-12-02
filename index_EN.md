@@ -15,6 +15,7 @@
 10. [Poisson regression](lecture_notes/10-Poisson_regression.html)
 11. [Mixed models - Part 1](lecture_notes/11-Mixed_models_Part1.html)
 12. [Mixed models - Part 2](lecture_notes/12-Mixed_models_Part2.html)
+13. [Multivariate analysis - Part 1](lecture_notes/13-Multivariate_analysis_Part1.html)
 
 
 ## Labs

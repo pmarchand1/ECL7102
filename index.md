@@ -15,6 +15,7 @@
 10. [Régression de Poisson](notes_cours/10-Régression_Poisson.html)
 11. [Modèles mixtes - Partie 1](notes_cours/11-Modèles_mixtes_Partie1.html)
 12. [Modèles mixtes - Partie 2](notes_cours/12-Modèles_mixtes_Partie2.html)
+13. [Analyses multivariées - Partie 1](notes_cours/13-Analyses_multivariées_Partie1.html)
 
 ## Laboratoires
 
