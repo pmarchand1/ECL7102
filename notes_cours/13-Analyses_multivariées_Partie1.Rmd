@@ -3,6 +3,8 @@ title: "Analyses multivariées, Partie 1"
 date: "<br/>3 décembre 2018"
 output:
     html_document:
+        self_contained: false
+        lib_dir: libs
         theme: spacelab
         toc: true
         toc_float: true
@@ -132,7 +134,7 @@ La position des points sur l'écran représente la projection du nuage en trois 
 
 Considérons le cas extrême où l'on a trois variables $x$, $y$ et $z$ et qu'une d'entre elles est parfaitement prédite par les deux autres (collinéarité parfaite), par exemple $z = 2x - 5y$. L'ensemble des points est situé sur un seul plan, mais les axes de ce plan correspondent à une combinaison linéaire des variables originales. Une rotation permettrait d'aligner ce plan avec les deux premières dimensions de la visualisation (largeur et hauteur). Dans ce cas, puisque les données ne varient pas dans la troisième dimension, la projection représente parfaitement la variation des données originales.
 
-```{r}
+```{r, echo = FALSE}
 df <- data.frame(x = rnorm(100, 0, 1), y = rnorm(100, 0, 1))
 df <- mutate(df, z = 2*x - 5*y)
 plot_ly(df, x = ~x, y = ~y, z = ~z) %>%

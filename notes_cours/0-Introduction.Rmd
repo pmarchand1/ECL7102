@@ -4,6 +4,8 @@ subtitle: "Pourquoi les statistiques?"
 date: "<br/>27 août 2018"
 output: 
     html_document:
+        self_contained: false
+        lib_dir: libs
         theme: spacelab
         toc: true
         toc_float: true

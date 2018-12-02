@@ -3,6 +3,8 @@ title: "Modèles statistiques, paramètres et estimateurs"
 date: "<br/>4 septembre 2018"
 output:
     html_document:
+        self_contained: false
+        lib_dir: libs
         theme: spacelab
         toc: true
         toc_float: true
