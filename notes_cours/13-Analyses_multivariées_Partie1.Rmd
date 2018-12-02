@@ -114,7 +114,7 @@ Il n'est pas possible de visualiser un nuage de points en 9 dimensions. D'un poi
 
 - Les méthodes d'**ordination** effectuent une transformation des $p$ variables originales en un nombre plus restreint de nouvelles variables, de façon à ce que la représentation des points dans l'espace réduit (souvent, en 2 dimensions) reproduise le plus fidèlement possible les distances entre les points dans l'espace original en $p$ dimensions. Ces méthodes ordonnent les observations selon les axes de variation les plus importants, d'où leur nom. L'**analyse en composantes principales** présentée ci-dessous est un exemple de méthode d'ordination.
 
-- Si l'ordination vise à représenter les variables numériques originales par un nombre réduit de variables numériques transformées, les méthodes de **regroupement** (*clustering*) tentent plutôt de diviser les observations en un nombre discret de groupes (ou catégories) en fonction de leur proximité dans l'espàce à $p$ dimensions. La méthode de regroupement vue dans ce cours est la **classification hiérarchique ascendante** (*agglomerative hierarchical clustering*).
+- Si l'ordination vise à représenter les variables numériques originales par un nombre réduit de variables numériques transformées, les méthodes de **regroupement** (*clustering*) tentent plutôt de diviser les observations en un nombre discret de groupes (ou catégories) en fonction de leur proximité dans l'espace à $p$ dimensions. La méthode de regroupement vue dans ce cours est la **classification hiérarchique ascendante** (*agglomerative hierarchical clustering*).
 
 
 # Analyse en composantes principales
@@ -233,7 +233,7 @@ Puisque les deux premières composantes n'expliquent que 70% de la variance tota
 L'argument `choices` de `biplot` permet de visualiser d'autres composantes que les deux premières.
 
 ```{r, eval = FALSE}
-biplot(clim_acp)
+biplot(clim_acp, choices = c(1, 3))
 ```
 
 ```{r, echo = FALSE, fig.dim = c(6, 6)}
