@@ -70,7 +70,7 @@ En adoptant cette forme pour la plupart de vos données, il sera également plus
 
 Le package *tidyr* contient des fonctions pour convertir automatiquement un tableau de données entre les deux formats ci-dessus. Nous n'avons pas le temps de couvrir ce package aujourd'hui, mais vous pourrez trouver plus d'informations dans les références en bas de page.
 
-Maintenant, chargeons le package *dplyr* ainsi que le jeu de données du Parc national de Kejimkujik, que nous avons déjà utilisé au premier laboratoire.
+Maintenant, chargeons le package *dplyr* ainsi que le [jeu de données du Parc national de Kejimkujik](cours1_kejimkujik.csv), que nous avons déjà utilisé au premier laboratoire.
 
 ```{r, warning = FALSE, message = FALSE}
 library(dplyr)
@@ -213,7 +213,7 @@ Classez les espèces du jeu de données `kejim` en ordre décroissant de leur di
 
 ## Joindre deux tableaux de données
 
-Le fichier `codes_especes.csv` contient un tableau de correspondance entre les codes d'espèces du tableau `kejim` et les noms communs français et anglais de ces espèces. 
+Le fichier [codes_especes.csv](codes_especes.csv) contient un tableau de correspondance entre les codes d'espèces du tableau `kejim` et les noms communs français et anglais de ces espèces. 
 
 ```{r}
 codes_esp <- read.csv("codes_especes.csv", stringsAsFactors = FALSE,

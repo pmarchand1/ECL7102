@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Analyses multivariées, Partie 1</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
+
+<style type="text/css">
+.reveal section img {
+  background: rgba(255, 255, 255, 0.85);
+}
+</style>
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="styles.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding-4.8.0/plotly.js"></script>
+    <script src="libs/typedarray-0.1/typedarray.min.js"></script>
+    <script src="libs/jquery-1.11.3/jquery.min.js"></script>
+    <link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css-1.39.2/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main-1.39.2/plotly-latest.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Analyses multivariées, Partie 1</h1>
+    <h3 class="date"><br/>3 décembre 2018</h3>
+</section>
+
+<section id="objectifs" class="slide level2">
+<h2>Objectifs</h2>
+<ul>
+<li class="fragment"><p>Décrire différents rôles des techniques d’analyse multivariées.</p></li>
+<li class="fragment"><p>Décrire l’utilité des méthodes d’ordination et de regroupement pour réduire la dimensionalité d’un jeu de données.</p></li>
+<li class="fragment"><p>Exécuter une analyse en composantes principales et pouvoir interpréter les résultats.</p></li>
+<li class="fragment"><p>Diviser les observations en classes à partir des méthodes de regroupement hiérarchique.</p></li>
+</ul>
+</section>
+<section id="pourquoi-les-analyses-multivariees" class="slide level2">
+<h2>Pourquoi les analyses multivariées?</h2>
+<ul>
+<li class="fragment"><p>Les analyses multivariées servent à modéliser la <em>distribution conjointe</em> de plusieurs variables (distribution des variables individuelles et corrélations). Par exemple:</p>
+<ul>
+<li class="fragment"><p>expliquer une réponse multivariée;</p></li>
+<li class="fragment"><p>expliquer une réponse univariée en fonction d’un grand nombre de prédicteurs partiellement corrélés;</p></li>
+<li class="fragment"><p>visualiser les différences entre observations en fonction de plusieurs variables.</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="structure-des-donnees-multivariees" class="slide level2">
+<h2>Structure des données multivariées</h2>
+<ul>
+<li class="fragment">Matrice <span class="math inline">\(X\)</span> représentant <span class="math inline">\(n\)</span> observations de <span class="math inline">\(p\)</span> variables.</li>
+</ul>
+<p><span class="math display">\[  
+\begin{bmatrix}
+x_{11} &amp; x_{12} &amp; ... &amp; x_{1p} \\
+x_{21} &amp; x_{22} &amp; ... &amp; x_{2p} \\
+... &amp; ... &amp; ... &amp; ... \\
+x_{n1} &amp; ... &amp; ... &amp; x_{np}
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="exemple" class="slide level2">
+<h2>Exemple</h2>
+<ul>
+<li class="fragment">Données climatiques pour 49 grandes villes (source: WorldClim).</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">villes &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/cities_climate.csv&quot;</span>)
+<span class="kw">head</span>(villes)</code></pre></div>
+<pre><code>##       city    long    lat t_mean t_diu  t_sd t_max t_min p_ann p_max p_min
+## 1    Tokyo 139.751 35.685   15.6   7.9 7.492  30.7   0.7  1428   185    47
+## 2 Shanghai 121.400 31.046   16.2   7.4 8.339  31.6   0.8  1050   167    41
+## 3   Mumbai  72.826 18.975   26.8   7.3 1.767  32.7  18.9  2370   827     0
+## 4  Karachi  67.082 24.906   25.9   9.9 4.035  34.2  12.0   194    82     0
+## 5    Delhi  77.217 28.667   25.1  13.1 6.715  40.5   7.3   734   274     3
+## 6   Manila 120.982 14.604   27.3   8.0 1.078  33.8  21.4  2150   466     8
+##   p_cv
+## 1   40
+## 2   46
+## 3  143
+## 4  134
+## 5  142
+## 6   90</code></pre>
+</section>
+<section id="normalisation-des-donnees" class="slide level2">
+<h2>Normalisation des données</h2>
+<ul>
+<li class="fragment"><p>Les méthodes d’ordination et de regroupement sont basées sur le concept de <em>distance</em> entre les points dans l’espace à <span class="math inline">\(p\)</span> dimensions.</p></li>
+<li class="fragment"><p>On ne peut pas comparer cette distance selon plusieurs variables avec des unités différentes.</p></li>
+<li class="fragment"><p>C’est pourquoi on commence par normaliser les variables: soustraire de chaque colonne sa moyenne et diviser par son écart-type (fonction <code>scale</code> dans R). Le résultat est une matrice où chaque colonne a une moyenne de 0 et un écart-type de 1.</p></li>
+</ul>
+</section>
+<section id="normalisation-des-donnees-1" class="slide level2">
+<h2>Normalisation des données</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">climat &lt;-<span class="st"> </span>villes[, <span class="dv">4</span><span class="op">:</span><span class="dv">12</span>]
+<span class="kw">rownames</span>(climat) &lt;-<span class="st"> </span>villes<span class="op">$</span>city
+clim_norm &lt;-<span class="st"> </span><span class="kw">scale</span>(climat)
+<span class="kw">round</span>(<span class="kw">head</span>(clim_norm), <span class="dv">2</span>) <span class="co"># Afficher seulement 2 décimales</span></code></pre></div>
+<pre><code>##          t_mean t_diu  t_sd t_max t_min p_ann p_max p_min  p_cv
+## Tokyo     -0.44 -0.77  0.91  0.07 -0.62  0.66 -0.06  0.78 -0.74
+## Shanghai  -0.36 -0.96  1.17  0.24 -0.61  0.08 -0.17  0.58 -0.59
+## Mumbai     1.17 -1.00 -0.86  0.46  1.14  2.12  3.86 -0.81  1.84
+## Karachi    1.04  0.01 -0.16  0.74  0.47 -1.24 -0.69 -0.81  1.62
+## Delhi      0.93  1.24  0.67  1.95  0.02 -0.41  0.48 -0.71  1.82
+## Manila     1.25 -0.73 -1.07  0.67  1.39  1.78  1.66 -0.54  0.52</code></pre>
+</section>
+<section id="reduction-de-la-dimensionnalite" class="slide level2">
+<h2>Réduction de la dimensionnalité</h2>
+<ul>
+<li class="fragment"><p>Comme on ne peut pas visualiser un nuage de points en 9 dimensions, il serait utile de réduire la dimensionnalité des données tout en conservant le maximum d’information sur la variation entre les villes.</p></li>
+<li class="fragment"><p>Les méthodes d’<strong>ordination</strong> effectuent une transformation des <span class="math inline">\(p\)</span> variables originales en un nombre plus restreint de nouvelles variables, en reproduisant le plus fidèlement possible les distances entre les points dans l’espace original en <span class="math inline">\(p\)</span> dimensions. Ex.: analyse en composantes principales.</p></li>
+<li class="fragment"><p>Les méthodes de <strong>regroupement</strong> (<em>clustering</em>) divisent les observations en un nombre discret de groupes (ou catégories) en fonction de leur proximité dans l’espace à <span class="math inline">\(p\)</span> dimensions. Ex.: classification hiérarchique ascendante.</p></li>
+</ul>
+</section>
+<section><section id="analyse-en-composantes-principales-acp" class="titleslide slide level1"><h1>Analyse en composantes principales (ACP)</h1></section><section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+<ul>
+<li class="fragment">Nuage de points de 3 variables climatiques pour les 49 villes:</li>
+</ul>
+<div id="htmlwidget-9e4fd31c88eea275fac7" style="width:576px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9e4fd31c88eea275fac7">{"x":{"visdat":{"a306e30538b":["function () ","plotlyVisDat"]},"cur_data":"a306e30538b","attrs":{"a306e30538b":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","size":1,"inherit":true},"a306e30538b.1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"text":{},"type":"scatter3d","mode":"text","size":0.5,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"t_mean"},"yaxis":{"title":"t_sd"},"zaxis":{"title":"p_ann"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[15.6,16.2,26.8,25.9,25.1,27.3,4.9,10.9,18.2,14,27,15.8,27.5,12,25.6,21.4,18.8,12.1,11,11.4,25.9,24,23.1,22.7,28,14.7,7.9,27.3,17.6,4.9,18.3,14.8,26.7,17.7,26.8,25.4,27.4,16.6,9,6.5,14.1,12.1,24.4,15.2,18.4,24.7,15.7,25.7,11.3],"y":[7.492,8.339,1.767,4.035,6.715,1.078,9.803,10.167,2.137,6.292,1.09,2.039,0.43,8.775,1.333,5.242,2.659,10.686,4.943,0.324,3.667,7.331,1.969,8.704,1.329,4.373,9.543,1.485,3.668,8.937,3.509,3.768,1.055,3.705,0.446,7.128,0.999,2.941,6.918,10.737,6.672,8.676,2.336,1.139,1.205,2.499,5.805,1.086,5.687],"z":[1428,1050,2370,194,734,2150,679,1420,1388,759,1672,641,1949,1150,1370,20,15,608,627,994,1979,608,1255,159,1457,355,793,2465,1275,636,394,656,1790,411,2363,111,1822,885,574,965,437,330,440,1156,935,461,788,1506,633],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[100],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":100},"error_y":{"color":"rgba(31,119,180,1)","width":100},"error_x":{"color":"rgba(31,119,180,1)","width":100},"line":{"color":"rgba(31,119,180,1)","width":100},"frame":null},{"x":[15.6,16.2,26.8,25.9,25.1,27.3,4.9,10.9,18.2,14,27,15.8,27.5,12,25.6,21.4,18.8,12.1,11,11.4,25.9,24,23.1,22.7,28,14.7,7.9,27.3,17.6,4.9,18.3,14.8,26.7,17.7,26.8,25.4,27.4,16.6,9,6.5,14.1,12.1,24.4,15.2,18.4,24.7,15.7,25.7,11.3],"y":[7.492,8.339,1.767,4.035,6.715,1.078,9.803,10.167,2.137,6.292,1.09,2.039,0.43,8.775,1.333,5.242,2.659,10.686,4.943,0.324,3.667,7.331,1.969,8.704,1.329,4.373,9.543,1.485,3.668,8.937,3.509,3.768,1.055,3.705,0.446,7.128,0.999,2.941,6.918,10.737,6.672,8.676,2.336,1.139,1.205,2.499,5.805,1.086,5.687],"z":[1428,1050,2370,194,734,2150,679,1420,1388,759,1672,641,1949,1150,1370,20,15,608,627,994,1979,608,1255,159,1457,355,793,2465,1275,636,394,656,1790,411,2363,111,1822,885,574,965,437,330,440,1156,935,461,788,1506,633],"text":["Tokyo","Shanghai","Mumbai","Karachi","Delhi","Manila","Moscow","Seoul","Sao Paulo","Istanbul","Lagos","Mexico","Jakarta","New York","Kinshasa","Cairo","Lima","Beijing","London","Bogota","Dhaka","Lahore","Rio de Janeiro","Baghdad","Bangkok","Santiago","Toronto","Rangoon","Sydney","Saint Petersburg","Los Angeles","Melbourne","Abidjan","Casablanca","Singapore","Riyadh","Ho Chi Minh City","Cape Town","Berlin","Montreal","Madrid","Kabul","Luanda","Addis Abeba","Nairobi","Dakar","Rome","Santo Domingo","Paris"],"type":"scatter3d","mode":"text","marker":{"color":"rgba(255,127,14,1)","size":[10],"sizemode":"area","line":{"color":"rgba(255,127,14,1)"}},"textfont":{"size":10},"error_y":{"color":"rgba(255,127,14,1)","width":10},"error_x":{"color":"rgba(255,127,14,1)","width":10},"line":{"color":"rgba(255,127,14,1)","width":10},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":[]}</script>
+</section><section id="introduction-1" class="slide level2">
+<h2>Introduction</h2>
+<ul>
+<li class="fragment">Considérons le cas extrême où une des trois variables est parfaitement prédite par les deux autres (collinéarité parfaite), par exemple <span class="math inline">\(z = 2x - 5y\)</span>.</li>
+</ul>
+<div id="htmlwidget-ed3b2132475a4e0a2761" style="width:576px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ed3b2132475a4e0a2761">{"x":{"visdat":{"a30322550d":["function () ","plotlyVisDat"]},"cur_data":"a30322550d","attrs":{"a30322550d":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","size":1,"inherit":true},"a30322550d.1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"x"},"yaxis":{"title":"y"},"zaxis":{"title":"z"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[0.299522355861674,0.946736735871506,0.0844186460267165,0.346137400745898,2.04278272451151,1.45269223729755,-1.12553772078426,-0.588249495500357,-0.508087038193948,-1.01688830817595,-1.03804614430038,-2.13960095984528,-0.511448183683974,-0.468551590852448,0.5455092036448,0.124787492588289,2.08207874689697,-0.387118502717667,-0.293061327739133,-0.990510534024916,1.24923711621283,-0.369482856478996,-0.38744283462927,-0.0752809608035682,-0.658347510230441,-0.89413134163301,-0.212170717770511,0.379487994567123,0.92455593657738,0.932687282759449,1.62214037260346,0.047953396179579,0.0241211443879673,1.35143003144102,-0.188302799855353,0.262095291328033,0.518430973472914,1.35326287069865,0.860226098733896,-0.424116002927658,-0.577264386124973,-0.475933831589453,-0.336846799291007,1.29629595415112,0.479464058047824,-1.11409518147737,-1.10347686948038,-0.806375169975539,-0.194502906078527,0.155634030124997,1.19412838657886,-1.30021099729373,1.57735615638702,1.04089908147568,0.658968648311951,-0.993130446468753,-1.07912342017257,-0.105756273624628,1.22817134101089,0.178702598675368,1.69959736973428,-0.125889611158579,0.483279335482218,1.39994070791805,0.836806030915711,-1.54322408084501,-0.451225862523352,-0.503789394068691,0.559975327791688,-0.46752547741972,0.375833494225953,-1.055054594464,-0.00766905026183218,-1.72610284130189,-0.246110907115993,0.637577299211841,-0.784286858286672,-1.48178686004839,1.32189646092246,-1.19925894753269,0.442813240928748,-0.304104735729809,-0.440899453565128,-1.29291047532114,-1.11888532560358,0.637076215547108,-1.48714405973836,2.3249441852692,-1.61680232079052,-0.330868795973726,-0.532390241422878,1.031207590833,-1.76019356623342,1.89802443369157,-0.44125627756398,0.019578094990956,1.6823534711544,-0.154017592142134,-0.340374236616164,-1.53445250721496],"y":[-0.0703901149714523,1.28525472833997,-0.749911191498185,1.12723307639614,0.903399714828403,1.64410934705295,0.0132097023567333,1.05286655175584,-0.649488328040406,0.258401658531783,0.474531634594755,0.997577693451866,-0.343037103314004,0.3780786866849,1.84443326936267,0.519253321966576,-0.898117314066772,1.18886554558554,0.253118791630365,-0.904273838200849,0.40331598295212,-1.30812617701259,-2.22898117002704,-1.97381343538629,-1.20112524497536,1.10729009690547,1.83721084250677,-0.522420123154924,-0.0406365293746938,2.14741340697123,-0.357455761532907,-0.228969119428934,0.428291162102755,-1.25732404145656,0.338075980147345,0.88094605420872,-2.2148958402813,0.459223822054364,1.27138179671773,-0.0634576920428859,-0.154666860384089,0.218605642986031,-0.108142516911,-1.97208271849715,2.23509421850301,0.515568404223373,-0.0697100377288571,-0.17699480431344,1.61903421200123,0.0812944836793252,0.781215901889978,1.41925842876178,0.718707176833007,0.373498133965051,0.181277819243109,-0.483046639420766,-1.27746612864092,-0.344705042880733,-0.701571721925492,-0.140618319510583,-1.11619457787376,-0.919370445084076,0.490816230880132,-0.262396601759994,0.36439599225174,-0.220543988801818,-1.24683401008642,-0.531298285946322,-1.28579839944788,0.640735376329513,1.59166676970621,1.28396265413553,1.53047903745183,-0.210634721311766,0.263576234107003,-1.79461028691699,0.359771212892394,1.05760496323005,-0.2728118274049,-0.153006550045364,-0.996629382954606,-0.247859995628146,1.23022059637366,1.14502654594065,-0.442700428700388,-0.608257736140887,-1.28490240381364,-0.941856710169343,-1.36398253591497,0.040989743000425,0.356754637071307,-0.693724072126323,0.598722461402862,-0.0759158626898267,-1.08783402468884,0.740307486983671,1.28850110314431,-1.40480028768391,-0.279876899318095,-0.427819651944989],"z":[0.95099528658061,-4.53280016995682,3.91839324954436,-4.94389058048892,-0.431433125118994,-5.31516226066967,-2.31712395335219,-6.44083174977991,2.23126756381413,-3.32578490901082,-4.44875046157452,-9.2670903869499,0.692289149202074,-2.8274966151294,-8.13114793952377,-2.3466916246563,8.6547440641278,-6.71856473336302,-1.85171661363009,2.54034812295441,0.48189431766506,5.80166517210493,10.3700201808767,9.71850525532434,4.68893120441589,-7.32471316779337,-9.61039564807488,3.37107660490887,2.05229452002823,-8.87169246933725,5.03155955287145,1.24075238950383,-2.09321352173784,8.98948027016484,-2.06698550044743,-3.88053968838753,12.1113411483524,0.410406631125487,-4.63645678612084,-0.530943545640886,-0.381194470329499,-2.04489587810906,-0.132981014027016,12.453005500788,-10.2165429764194,-4.8060323840716,-1.85840355031647,-0.727776318383877,-8.48417687216318,-0.0952043581466326,-1.51782273629216,-9.69671413839634,-0.43882357139099,0.214307493126097,0.411548200408357,0.428972304166323,4.22908380285948,1.51201266715441,5.96420129164924,1.06049679490365,8.98016762883738,4.34507300310322,-1.48752248343622,4.11186442463608,-0.148367899427275,-1.98372821768093,5.33171832538542,1.64891264159423,7.54894265282277,-4.13872783648701,-7.20666686007914,-8.52992245960564,-7.66773328778281,-2.39903207604495,-1.810102984767,10.2482060330086,-3.36742978103531,-8.25159853624704,4.00785205886942,-1.63348514483856,5.86877339663053,0.631090506681113,-7.03290188899855,-8.31095368034552,-0.0242685077052256,4.31544111179865,3.45022389959146,9.35917192138512,3.58630803799382,-0.866686306949576,-2.84855366820229,5.53103554229761,-6.51399943948115,4.17562818083227,4.55665756831625,-3.66238124493645,-3.07779857341274,6.7159662541353,0.718636023358149,-0.929806754704981],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[55],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":55},"error_y":{"color":"rgba(31,119,180,1)","width":55},"error_x":{"color":"rgba(31,119,180,1)","width":55},"line":{"color":"rgba(31,119,180,1)","width":55},"frame":null},{"colorbar":{"title":"z<br />z","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0612086191171267","rgba(71,25,104,1)"],["0.0880060355573065","rgba(72,33,112,1)"],["0.135646194435113","rgba(71,48,124,1)"],["0.19138210783319","rgba(66,65,132,1)"],["0.249006793455838","rgba(60,81,138,1)"],["0.286711582595264","rgba(56,92,140,1)"],["0.323752972073748","rgba(51,101,142,1)"],["0.348459477744319","rgba(48,108,142,1)"],["0.363857284164803","rgba(47,111,142,1)"],["0.37989170549101","rgba(46,115,142,1)"],["0.414739090398512","rgba(42,123,142,1)"],["0.432749209299808","rgba(40,127,142,1)"],["0.448428584054928","rgba(38,131,142,1)"],["0.469403228976755","rgba(38,136,141,1)"],["0.482227762564361","rgba(37,139,140,1)"],["0.517370500579932","rgba(35,148,139,1)"],["0.567313114883989","rgba(35,161,135,1)"],["0.624507406600055","rgba(47,173,127,1)"],["0.638654571558303","rgba(49,177,125,1)"],["0.665067871564434","rgba(53,183,121,1)"],["0.708445993311255","rgba(79,191,110,1)"],["0.820256155803752","rgba(139,212,75,1)"],["0.877394253573221","rgba(173,220,50,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[0.299522355861674,0.946736735871506,0.0844186460267165,0.346137400745898,2.04278272451151,1.45269223729755,-1.12553772078426,-0.588249495500357,-0.508087038193948,-1.01688830817595,-1.03804614430038,-2.13960095984528,-0.511448183683974,-0.468551590852448,0.5455092036448,0.124787492588289,2.08207874689697,-0.387118502717667,-0.293061327739133,-0.990510534024916,1.24923711621283,-0.369482856478996,-0.38744283462927,-0.0752809608035682,-0.658347510230441,-0.89413134163301,-0.212170717770511,0.379487994567123,0.92455593657738,0.932687282759449,1.62214037260346,0.047953396179579,0.0241211443879673,1.35143003144102,-0.188302799855353,0.262095291328033,0.518430973472914,1.35326287069865,0.860226098733896,-0.424116002927658,-0.577264386124973,-0.475933831589453,-0.336846799291007,1.29629595415112,0.479464058047824,-1.11409518147737,-1.10347686948038,-0.806375169975539,-0.194502906078527,0.155634030124997,1.19412838657886,-1.30021099729373,1.57735615638702,1.04089908147568,0.658968648311951,-0.993130446468753,-1.07912342017257,-0.105756273624628,1.22817134101089,0.178702598675368,1.69959736973428,-0.125889611158579,0.483279335482218,1.39994070791805,0.836806030915711,-1.54322408084501,-0.451225862523352,-0.503789394068691,0.559975327791688,-0.46752547741972,0.375833494225953,-1.055054594464,-0.00766905026183218,-1.72610284130189,-0.246110907115993,0.637577299211841,-0.784286858286672,-1.48178686004839,1.32189646092246,-1.19925894753269,0.442813240928748,-0.304104735729809,-0.440899453565128,-1.29291047532114,-1.11888532560358,0.637076215547108,-1.48714405973836,2.3249441852692,-1.61680232079052,-0.330868795973726,-0.532390241422878,1.031207590833,-1.76019356623342,1.89802443369157,-0.44125627756398,0.019578094990956,1.6823534711544,-0.154017592142134,-0.340374236616164,-1.53445250721496],"y":[-0.0703901149714523,1.28525472833997,-0.749911191498185,1.12723307639614,0.903399714828403,1.64410934705295,0.0132097023567333,1.05286655175584,-0.649488328040406,0.258401658531783,0.474531634594755,0.997577693451866,-0.343037103314004,0.3780786866849,1.84443326936267,0.519253321966576,-0.898117314066772,1.18886554558554,0.253118791630365,-0.904273838200849,0.40331598295212,-1.30812617701259,-2.22898117002704,-1.97381343538629,-1.20112524497536,1.10729009690547,1.83721084250677,-0.522420123154924,-0.0406365293746938,2.14741340697123,-0.357455761532907,-0.228969119428934,0.428291162102755,-1.25732404145656,0.338075980147345,0.88094605420872,-2.2148958402813,0.459223822054364,1.27138179671773,-0.0634576920428859,-0.154666860384089,0.218605642986031,-0.108142516911,-1.97208271849715,2.23509421850301,0.515568404223373,-0.0697100377288571,-0.17699480431344,1.61903421200123,0.0812944836793252,0.781215901889978,1.41925842876178,0.718707176833007,0.373498133965051,0.181277819243109,-0.483046639420766,-1.27746612864092,-0.344705042880733,-0.701571721925492,-0.140618319510583,-1.11619457787376,-0.919370445084076,0.490816230880132,-0.262396601759994,0.36439599225174,-0.220543988801818,-1.24683401008642,-0.531298285946322,-1.28579839944788,0.640735376329513,1.59166676970621,1.28396265413553,1.53047903745183,-0.210634721311766,0.263576234107003,-1.79461028691699,0.359771212892394,1.05760496323005,-0.2728118274049,-0.153006550045364,-0.996629382954606,-0.247859995628146,1.23022059637366,1.14502654594065,-0.442700428700388,-0.608257736140887,-1.28490240381364,-0.941856710169343,-1.36398253591497,0.040989743000425,0.356754637071307,-0.693724072126323,0.598722461402862,-0.0759158626898267,-1.08783402468884,0.740307486983671,1.28850110314431,-1.40480028768391,-0.279876899318095,-0.427819651944989],"z":[0.95099528658061,-4.53280016995682,3.91839324954436,-4.94389058048892,-0.431433125118994,-5.31516226066967,-2.31712395335219,-6.44083174977991,2.23126756381413,-3.32578490901082,-4.44875046157452,-9.2670903869499,0.692289149202074,-2.8274966151294,-8.13114793952377,-2.3466916246563,8.6547440641278,-6.71856473336302,-1.85171661363009,2.54034812295441,0.48189431766506,5.80166517210493,10.3700201808767,9.71850525532434,4.68893120441589,-7.32471316779337,-9.61039564807488,3.37107660490887,2.05229452002823,-8.87169246933725,5.03155955287145,1.24075238950383,-2.09321352173784,8.98948027016484,-2.06698550044743,-3.88053968838753,12.1113411483524,0.410406631125487,-4.63645678612084,-0.530943545640886,-0.381194470329499,-2.04489587810906,-0.132981014027016,12.453005500788,-10.2165429764194,-4.8060323840716,-1.85840355031647,-0.727776318383877,-8.48417687216318,-0.0952043581466326,-1.51782273629216,-9.69671413839634,-0.43882357139099,0.214307493126097,0.411548200408357,0.428972304166323,4.22908380285948,1.51201266715441,5.96420129164924,1.06049679490365,8.98016762883738,4.34507300310322,-1.48752248343622,4.11186442463608,-0.148367899427275,-1.98372821768093,5.33171832538542,1.64891264159423,7.54894265282277,-4.13872783648701,-7.20666686007914,-8.52992245960564,-7.66773328778281,-2.39903207604495,-1.810102984767,10.2482060330086,-3.36742978103531,-8.25159853624704,4.00785205886942,-1.63348514483856,5.86877339663053,0.631090506681113,-7.03290188899855,-8.31095368034552,-0.0242685077052256,4.31544111179865,3.45022389959146,9.35917192138512,3.58630803799382,-0.866686306949576,-2.84855366820229,5.53103554229761,-6.51399943948115,4.17562818083227,4.55665756831625,-3.66238124493645,-3.07779857341274,6.7159662541353,0.718636023358149,-0.929806754704981],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":[]}</script>
+</section><section id="fonctionnement-de-lacp" class="slide level2">
+<h2>Fonctionnement de l’ACP</h2>
+<ul>
+<li class="fragment"><p>L’ACP est une transformation de la matrice <span class="math inline">\(X\)</span> (<span class="math inline">\(n\)</span> observations <span class="math inline">\(\times ~ p\)</span> variables, préalablement normalisées) choisie pour que:</p>
+<ul>
+<li class="fragment">le premier axe dans la direction de variation maximale des données;</li>
+<li class="fragment">le deuxième axe dans la direction de variation maximale qui est orthogonale (perpendiculaire) au premier;</li>
+<li class="fragment">le troisième axe dans la direction de variation maximale qui est orthogonale aux deux premiers; et ainsi de suite.</li>
+</ul></li>
+<li class="fragment"><p>Ces axes (composantes principales) sont donc orthogonaux (non-corrélés) et classés en ordre décroissant de variance expliquée.</p></li>
+</ul>
+</section><section id="fonctionnement-de-lacp-1" class="slide level2">
+<h2>Fonctionnement de l’ACP</h2>
+<ul>
+<li class="fragment"><p>Mathématiquement, l’ACP requiert le calcul des valeurs propres et vecteurs propres de la matrice des covariances entre paires de variables dans <span class="math inline">\(X\)</span>. Les vecteurs propres indiquent la direction des composantes principales et les valeurs propres indiquent la variance des données sur chaque axe.</p></li>
+<li class="fragment"><p>L’ACP est basée sur la théorie des distributions normales multivariées, donc fonctionne mieux lorsque les variables s’approchent de la normalité.</p></li>
+<li class="fragment"><p>Nous verrons au prochain cours des méthodes d’ordination adaptées aux données de présence-absence et d’abondance communes en écologie.</p></li>
+</ul>
+</section><section id="acp-avec-r" class="slide level2">
+<h2>ACP avec R</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clim_acp &lt;-<span class="st"> </span><span class="kw">prcomp</span>(clim_norm)
+<span class="kw">summary</span>(clim_acp)</code></pre></div>
+<pre><code>## Importance of components:
+##                           PC1    PC2    PC3     PC4     PC5     PC6
+## Standard deviation     1.9785 1.5741 0.9774 0.90767 0.75003 0.46655
+## Proportion of Variance 0.4349 0.2753 0.1061 0.09154 0.06251 0.02418
+## Cumulative Proportion  0.4349 0.7102 0.8164 0.90792 0.97042 0.99461
+##                            PC7     PC8     PC9
+## Standard deviation     0.20003 0.08141 0.04355
+## Proportion of Variance 0.00445 0.00074 0.00021
+## Cumulative Proportion  0.99905 0.99979 1.00000</code></pre>
+<ul>
+<li class="fragment">Le sommaire du résultat de l’ACP indique
+<ul>
+<li class="fragment">l’écart-type de chacune des 9 composantes principales;</li>
+<li class="fragment">le rapport entre la variance d’une composante et la variance totale; et</li>
+<li class="fragment">la proportion cumulative de la variance en fonction du nombre de composantes.</li>
+</ul></li>
+</ul>
+</section><section id="acp-avec-r-1" class="slide level2">
+<h2>ACP avec R</h2>
+<p>Diagramme à barres des variances: <code>screeplot</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">screeplot</span>(clim_acp)</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-6-1.png" width="576" /></p>
+</section><section id="acp-avec-r-2" class="slide level2">
+<h2>ACP avec R</h2>
+<ul>
+<li>Élément <code>rotation</code>: transformation entre les variables originales (normalisées) et les composantes principales.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(clim_acp<span class="op">$</span>rotation, <span class="dv">2</span>)</code></pre></div>
+<pre><code>##          PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9
+## t_mean  0.47 -0.11  0.11 -0.27  0.19 -0.01  0.08  0.80  0.03
+## t_diu  -0.09 -0.46  0.05 -0.35 -0.78  0.06 -0.06  0.07 -0.19
+## t_sd   -0.38 -0.16 -0.58 -0.08  0.30  0.00 -0.01  0.20 -0.60
+## t_max   0.27 -0.37 -0.33 -0.51  0.30  0.21 -0.06 -0.41  0.34
+## t_min   0.46  0.07  0.36 -0.12  0.13  0.03 -0.18 -0.34 -0.69
+## p_ann   0.33  0.37 -0.39 -0.01 -0.29  0.24  0.66 -0.08 -0.11
+## p_max   0.39  0.15 -0.48  0.30 -0.25  0.00 -0.66  0.08  0.06
+## p_min  -0.09  0.49 -0.09 -0.57 -0.08 -0.63 -0.10 -0.04  0.04
+## p_cv    0.27 -0.45 -0.13  0.33  0.00 -0.71  0.29 -0.14 -0.02</code></pre>
+<ul>
+<li class="fragment">Par exemple, pour la première composante principale: PC1 = 0.47 <em>t_mean</em> - 0.09 <em>t_diu</em> - 0.38 <em>t_sd</em> + 0.27 <em>t_max</em> + 0.46 <em>t_min</em> + 0.33 <em>p_ann</em> + 0.39 <em>p_max</em> - 0.09 <em>p_min</em> + 0.27 <em>p_cv</em>.</li>
+</ul>
+</section><section id="acp-avec-r-3" class="slide level2">
+<h2>ACP avec R</h2>
+<ul>
+<li>Élément <code>x</code>: coordonnées de chaque observation sur les axes des composantes principales.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">head</span>(clim_acp<span class="op">$</span>x), <span class="dv">2</span>)</code></pre></div>
+<pre><code>##            PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9
+## Tokyo    -0.83  1.14 -1.07 -0.37  0.48  0.15  0.29 -0.03  0.01
+## Shanghai -1.00  0.71 -1.00 -0.30  0.99  0.05  0.04  0.03 -0.01
+## Mumbai    4.39  0.53 -2.00  1.97 -0.49 -0.24 -0.58  0.04  0.00
+## Karachi   0.80 -2.03  0.81  0.09  1.04 -0.78  0.14  0.20  0.08
+## Delhi     1.22 -2.75 -1.11 -0.58  0.05 -0.48 -0.12  0.01  0.06
+## Manila    3.30  0.64 -0.51  0.48 -0.02  0.52  0.17 -0.08 -0.06</code></pre>
+</section><section id="visualisation-de-lacp" class="slide level2">
+<h2>Visualisation de l’ACP</h2>
+<ul>
+<li>Diagramme de double projection (<em>biplot</em>)</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">biplot</span>(clim_acp)</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-10-1.png" width="576" /></p>
+</section><section id="visualisation-de-lacp-1" class="slide level2">
+<h2>Visualisation de l’ACP</h2>
+<ul>
+<li>Inspecter autres composantes avec l’argument <code>choices</code>.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">biplot</span>(clim_acp, <span class="dt">choices =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-12-1.png" width="576" /></p>
+</section><section id="acp-et-regression" class="slide level2">
+<h2>ACP et régression</h2>
+<ul>
+<li class="fragment"><p>L’ACP peut transformer un grand nombre de prédicteurs corrélés en un plus petit nombre de variables non-corrélées.</p></li>
+<li class="fragment"><p>Principal inconvénient: les effets sont plus difficiles à interpéter.</p></li>
+<li class="fragment"><p>Tout de même utile dans les cas où on s’intéresse d’abord à prédire la réponse et que l’effet d’un prédicteur individuel est moins important.</p>
+<ul>
+<li class="fragment">Exemple: Prédire la composition de végétation à partir d’images de télédétection hyperspectrale (réflectance pour des centaines de longueurs d’onde).</li>
+</ul></li>
+</ul>
+</section><section id="combien-de-composantes-principales-choisir" class="slide level2">
+<h2>Combien de composantes principales choisir?</h2>
+<ul>
+<li>Variances associées aux composantes principales; leur moyenne est 1 pour des données normalisées.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clim_acp<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span></code></pre></div>
+<pre><code>## [1] 3.914417064 2.477765395 0.955214474 0.823859308 0.562545790 0.217664459
+## [7] 0.040010038 0.006626862 0.001896610</code></pre>
+<ul>
+<li class="fragment">Critère simple: conserver les composantes avec une variance supérieure à 1.</li>
+<li class="fragment">D’autres critères basés sur des tests statistiques formels, voir Peres-Neto et al. (2005) pour une comparaison.</li>
+<li class="fragment">Dans une analyse exploratoire, le choix du nombre de composantes n’est pas critique. Pour une ACP suivie d’une régression, on peut procéder par sélection de modèles.</li>
+</ul>
+</section></section>
+<section><section id="classification-hierarchique-ascendante" class="titleslide slide level1"><h1>Classification hiérarchique ascendante</h1></section><section id="classification-hierarchique-ascendante-1" class="slide level2">
+<h2>Classification hiérarchique ascendante</h2>
+<ul>
+<li class="fragment"><p>La classification hiérarchique ascendante vise à créer des groupes d’observations semblables selon une série de variables.</p></li>
+<li class="fragment"><p>Le nom vient du fait qu’on commence avec les observations individuelles, qui sont regroupées progressivement jusqu’à ce qu’on obtienne un seul groupe.</p></li>
+<li class="fragment"><p>La structure résultante est un arbre ou <em>dendrogramme</em> montrant les relations de proximité pour l’ensemble des observations.</p></li>
+</ul>
+</section><section id="matrice-de-distance" class="slide level2">
+<h2>Matrice de distance</h2>
+<ul>
+<li>L’algorithme de classification hiérarchique requiert une matrice de la distance <span class="math inline">\(d_{ij}\)</span> pour chaque paire d’observations <span class="math inline">\(i\)</span> et <span class="math inline">\(j\)</span>.</li>
+</ul>
+<p><span class="math display">\[  
+\begin{bmatrix}
+0 \\
+d_{21} &amp; 0  \\
+d_{31} &amp; d_{32} &amp; 0 \\
+... \\
+d_{n1} &amp; d_{n2} &amp; ... &amp; d_{n(n-1)} &amp; 0
+\end{bmatrix}
+\]</span></p>
+<ul>
+<li class="fragment"><p>La fonction <code>dist</code> dans R calcule la matrice de distance entre les rangées d’une matrice.</p></li>
+<li class="fragment"><p>Comme pour l’ACP, les différentes variables doivent être normalisées au préalable.</p></li>
+</ul>
+</section><section id="matrice-de-distance-1" class="slide level2">
+<h2>Matrice de distance</h2>
+<ul>
+<li>Pour des variables numériques, la distance la plus couramment utilisée est la <em>distance euclidienne</em>:</li>
+</ul>
+<p><span class="math display">\[ d_{ij} = \sqrt{\sum_{k = 1}^p (x_{ik} - x_{jk})^2} \]</span></p>
+<ul>
+<li>En deux dimensions, cela correspond à la distance en ligne droite calculée par le théorème de Pythagore:</li>
+</ul>
+<p><span class="math display">\[  d_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2} \]</span></p>
+</section><section id="algorithme-de-classification-hierarchique-ascendante" class="slide level2">
+<h2>Algorithme de classification hiérarchique ascendante</h2>
+<ul>
+<li>Supposons qu’on ait la matrice de distance suivante entre 4 observations.</li>
+</ul>
+<p><span class="math display">\[
+\begin{array}
+&amp;&amp; A &amp; B &amp; C \\
+B &amp; 11 \\
+C &amp; 13 &amp; 6 \\ 
+D &amp; 7 &amp; 11 &amp; 9 
+\end{array}
+\]</span></p>
+<ul>
+<li class="fragment"><p>L’algorithme regroupe d’abord les deux observations les plus rapprochées, soit B et C (distance de 6).</p></li>
+<li class="fragment"><p>Ensuite, il remplace B et C par une observation BC et calcule la distance entre ce groupe et chacune des autres observations existantes.</p></li>
+</ul>
+</section><section id="algorithme-de-classification-hierarchique-ascendante-1" class="slide level2">
+<h2>Algorithme de classification hiérarchique ascendante</h2>
+<ul>
+<li>Différents critères possibles pour la distance entre un groupe et une observation.</li>
+</ul>
+<ul>
+<li>Utilisons une règle ou la distance à partir d’un groupe est la moyenne des distances des éléments de ce groupe.</li>
+</ul>
+<p><span class="math display">\[
+\begin{array}
+&amp;&amp; A &amp; B &amp; C \\
+B &amp; 11 \\
+C &amp; 13 &amp; 6 \\ 
+D &amp; 7 &amp; 11 &amp; 9 
+\end{array}
+\]</span></p>
+</section><section id="algorithme-de-classification-hierarchique-ascendante-2" class="slide level2">
+<h2>Algorithme de classification hiérarchique ascendante</h2>
+<ul>
+<li>Différents critères possibles pour la distance entre un groupe et une observation.</li>
+</ul>
+<ul>
+<li>Utilisons une règle ou la distance à partir d’un groupe est la moyenne des distances des éléments de ce groupe.</li>
+</ul>
+<p><span class="math display">\[
+\begin{array}
+&amp; &amp; A &amp; BC \\
+BC &amp; 12 &amp; \\
+D &amp; 7 &amp; 10 
+\end{array}
+\]</span></p>
+</section><section id="algorithme-de-classification-hierarchique-ascendante-3" class="slide level2">
+<h2>Algorithme de classification hiérarchique ascendante</h2>
+<ul>
+<li>Le nouveau groupe (BC) est traité comme une observation et on répète le processus jusqu’à ce qu’il n’y ait que deux groupes, joints à la dernière étape.</li>
+</ul>
+<p><span class="math display">\[
+\begin{array}
+&amp; &amp; A &amp; BC \\
+BC &amp; 12 &amp; \\
+D &amp; 7 &amp; 10 
+\end{array}
+\]</span></p>
+</section><section id="algorithme-de-classification-hierarchique-ascendante-4" class="slide level2">
+<h2>Algorithme de classification hiérarchique ascendante</h2>
+<ul>
+<li>Le nouveau groupe (BC) est traité comme une observation et on répète le processus jusqu’à ce qu’il n’y ait que deux groupes, joints à la dernière étape.</li>
+</ul>
+<p><span class="math display">\[
+\begin{array}
+&amp;  &amp;AD  \\
+BC &amp; 11
+\end{array}
+\]</span></p>
+</section><section id="classification-hierarchique-avec-r" class="slide level2">
+<h2>Classification hiérarchique avec R</h2>
+<ul>
+<li>Fonction <code>hclust</code> appliquée à la matrice de distance.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clim_dist &lt;-<span class="st"> </span><span class="kw">dist</span>(clim_norm)
+clim_ch &lt;-<span class="st"> </span><span class="kw">hclust</span>(clim_dist, <span class="dt">method =</span> <span class="st">&quot;average&quot;</span>)
+<span class="kw">plot</span>(clim_ch)</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-14-1.png" width="576" /></p>
+</section><section id="criteres-de-regroupement" class="slide level2">
+<h2>Critères de regroupement</h2>
+<p>L’argument <code>method</code> indique comment calculer la distance entre groupes A et B:</p>
+<ul>
+<li class="fragment"><p>saut minimum (<code>method = &quot;single&quot;</code>): distance minimale entre une observation dans A et une observation dans B.</p></li>
+<li class="fragment"><p>saut maximum (<code>method = &quot;complete&quot;</code>): distance maximale entre une observation dans A et une observation dans B.</p></li>
+<li class="fragment"><p>lien moyen (<code>method = &quot;average&quot;</code>): moyenne des distances sur l’ensemble des paires d’observations dont une est dans A et une dans B.</p></li>
+<li class="fragment"><p>la critère de Ward (<code>method = &quot;ward.D2&quot;</code>): regroupement qui minimise l’augmentation de la variance totale intra-groupe.</p></li>
+</ul>
+</section><section id="saut-minimum" class="slide level2">
+<h2>Saut minimum</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clim_ch_min &lt;-<span class="st"> </span><span class="kw">hclust</span>(clim_dist, <span class="dt">method =</span> <span class="st">&quot;single&quot;</span>)
+<span class="kw">plot</span>(clim_ch_min)</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-15-1.png" width="672" /></p>
+</section><section id="saut-maximum" class="slide level2">
+<h2>Saut maximum</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clim_ch_max &lt;-<span class="st"> </span><span class="kw">hclust</span>(clim_dist, <span class="dt">method =</span> <span class="st">&quot;complete&quot;</span>)
+<span class="kw">plot</span>(clim_ch_max)</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-16-1.png" width="672" /></p>
+</section><section id="critere-de-ward" class="slide level2">
+<h2>Critère de Ward</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clim_ch_ward &lt;-<span class="st"> </span><span class="kw">hclust</span>(clim_dist, <span class="dt">method =</span> <span class="st">&quot;ward.D2&quot;</span>)
+<span class="kw">plot</span>(clim_ch_ward)</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-17-1.png" width="672" /></p>
+</section><section id="extraire-des-groupes-dune-classification-hierarchique" class="slide level2">
+<h2>Extraire des groupes d’une classification hiérarchique</h2>
+<ul>
+<li>La fonction <code>cutree</code> permet de “couper” le dendrogramme à une certaine hauteur (argument <em>h</em>) ou pour obtenir un certain nombre de groupes (argument <em>k</em>).</li>
+</ul>
+<ul>
+<li>La fonction renvoie un vecteur des indices de groupes.</li>
+</ul>
+<ul>
+<li>Exemple: Trois grands groupes du dendrogramme produit par la méthode de Ward:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">groupes &lt;-<span class="st"> </span><span class="kw">cutree</span>(clim_ch_ward, <span class="dt">k =</span> <span class="dv">3</span>)
+<span class="kw">head</span>(groupes)</code></pre></div>
+<pre><code>##    Tokyo Shanghai   Mumbai  Karachi    Delhi   Manila 
+##        1        1        2        3        3        2</code></pre>
+</section><section id="comparer-les-groupes-a-lordination" class="slide level2">
+<h2>Comparer les groupes à l’ordination</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ord_groupes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(clim_acp<span class="op">$</span>x[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], <span class="dt">groupe_ward =</span> <span class="kw">as.factor</span>(groupes))
+<span class="kw">head</span>(ord_groupes)</code></pre></div>
+<pre><code>##                 PC1        PC2 groupe_ward
+## Tokyo    -0.8292567  1.1390831           1
+## Shanghai -0.9964678  0.7094018           1
+## Mumbai    4.3904533  0.5328498           2
+## Karachi   0.8027417 -2.0305728           3
+## Delhi     1.2169313 -2.7525580           3
+## Manila    3.2953893  0.6395510           2</code></pre>
+</section><section id="groupes-selon-la-methode-de-ward" class="slide level2">
+<h2>Groupes selon la méthode de Ward</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ord_groupes, <span class="kw">aes</span>(<span class="dt">x =</span> PC1, <span class="dt">y =</span> PC2, <span class="dt">color =</span> groupe_ward)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label =</span> <span class="kw">rownames</span>(ord_groupes)))</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-20-1.png" width="576" /></p>
+</section><section id="groupes-selon-le-saut-maximum" class="slide level2">
+<h2>Groupes selon le saut maximum</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ord_groupes<span class="op">$</span>groupe_max &lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="kw">cutree</span>(clim_ch_max, <span class="dt">k =</span> <span class="dv">4</span>))
+<span class="kw">ggplot</span>(ord_groupes, <span class="kw">aes</span>(<span class="dt">x =</span> PC1, <span class="dt">y =</span> PC2, <span class="dt">color =</span> groupe_max)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label =</span> <span class="kw">rownames</span>(ord_groupes)))</code></pre></div>
+<p><img src="13-Analyses_multivariées_Partie1_files/figure-revealjs/unnamed-chunk-21-1.png" width="576" /></p>
+</section><section id="resume" class="slide level2">
+<h2>Résumé</h2>
+<ul>
+<li class="fragment"><p>Les analyses multivariées servent à décrire et expliquer la distribution conjointe de plusieurs variables.</p></li>
+<li class="fragment"><p>Lorsque les variables représentent différentes unités, il est important de les normaliser afin d’obtenir des échelles comparables.</p></li>
+<li class="fragment"><p>L’ordination vise à produire dans un nombre de dimensions réduit (souvent 2) la représentation la plus fidèle possible de la variation entre les observations multivariées.</p></li>
+</ul>
+</section><section id="resume-1" class="slide level2">
+<h2>Résumé</h2>
+<ul>
+<li class="fragment"><p>L’analyse en composantes principales (ACP) est une méthode d’ordination qui effectue une transformation linéaire (rotation) des variables originales, afin d’obtenir des composantes principales qui sont non-corrélées et classées en ordre décroissant de variance.</p></li>
+<li class="fragment"><p>Les coordonnées des observations et les variables originales peut être représentées simultanément dans l’espace des composantes principales (diagramme de double projection).</p></li>
+</ul>
+</section><section id="resume-2" class="slide level2">
+<h2>Résumé</h2>
+<ul>
+<li class="fragment"><p>Les méthodes de regroupement visent à classer les observations multivariées dans un petit nombre de groupes d’observations les plus similaires possibles.</p></li>
+<li class="fragment"><p>La classification hiérarchique ascendante effectue un regroupement graduel à partir des observations individuelles et en fonction de différentes règles qui définissent la distance entre groupes. Cette classification produit un dendrogramme.</p></li>
+</ul>
+</section><section id="references" class="slide level2">
+<h2>Références</h2>
+<ul>
+<li class="fragment"><p>Manly, B.F. et Alberto, J.A.N. (2016) <em>Multivariate statistical methods: a primer</em>. Chapman and Hall/CRC.</p></li>
+<li class="fragment"><p>Legendre, P. et Legendre, L. (2012) <em>Numerical Ecology</em>, 3e éd. Elsevier.</p></li>
+<li class="fragment"><p>Borcard, D., Gillet, F. et Legendre, P. (2018) <em>Numerical Ecology with R</em>, 2e éd. Springer.</p></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

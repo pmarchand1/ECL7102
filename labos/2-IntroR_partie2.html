@@ -281,7 +281,7 @@ div.tocify {
 ## 9    C bouleau      8</code></pre>
 <p>En adoptant cette forme pour la plupart de vos données, il sera également plus facile de les visualiser (comme nous verrons plus loin) et des les modéliser dans R.</p>
 <p>Le package <em>tidyr</em> contient des fonctions pour convertir automatiquement un tableau de données entre les deux formats ci-dessus. Nous n’avons pas le temps de couvrir ce package aujourd’hui, mais vous pourrez trouver plus d’informations dans les références en bas de page.</p>
-<p>Maintenant, chargeons le package <em>dplyr</em> ainsi que le jeu de données du Parc national de Kejimkujik, que nous avons déjà utilisé au premier laboratoire.</p>
+<p>Maintenant, chargeons le package <em>dplyr</em> ainsi que le <a href="cours1_kejimkujik.csv">jeu de données du Parc national de Kejimkujik</a>, que nous avons déjà utilisé au premier laboratoire.</p>
 <pre class="r"><code>library(dplyr)
 
 kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
@@ -466,7 +466,7 @@ head(compte_site_annee)</code></pre>
 </div>
 <div id="joindre-deux-tableaux-de-donnees" class="section level2">
 <h2>Joindre deux tableaux de données</h2>
-<p>Le fichier <code>codes_especes.csv</code> contient un tableau de correspondance entre les codes d’espèces du tableau <code>kejim</code> et les noms communs français et anglais de ces espèces.</p>
+<p>Le fichier <a href="codes_especes.csv" class="uri">codes_especes.csv</a> contient un tableau de correspondance entre les codes d’espèces du tableau <code>kejim</code> et les noms communs français et anglais de ces espèces.</p>
 <pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, stringsAsFactors = FALSE,
                       encoding = &quot;UTF-8&quot;)
 head(codes_esp)</code></pre>
