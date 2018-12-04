@@ -30,6 +30,7 @@
 9. [Régression logistique](labos/9-Régression_logistique.pdf)
 10. [Régression de Poisson](labos/10R-Régression_Poisson.html)
 11. [Modèles mixtes](labos/11R-Modèles_mixtes.html)
+12. [Analyses multivariées](labos/12-Analyses_multivariées.pdf) ([Données 1](labos/springs.csv) - [Données 2](labos/arctic.csv))
 
 [Tutoriel R Markdown](labos/Tutoriel_RMarkdown.html)
 

@@ -31,6 +31,7 @@
 9. [Logistic regression](labos/9E-Logistic_regression.pdf)
 10. [Poisson regression](labos/10RE-Poisson_regression.html)
 11. [Mixed models](labos/11RE-Mixed_models.html)
+12. [Multivariate analysis](labos/12E-Multivariate_analysis.pdf) ([Data 1](labos/springs.csv) - [Data 2](labos/arctic.csv))
 
 [R Markdown tutorial](labos/RMarkdown_tutorial.html)
 
