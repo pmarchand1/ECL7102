@@ -1,0 +1,48 @@
+---
+title: "Analyses multivariées"
+date: "5 décembre 2018"
+output: pdf_document
+---
+
+Ce laboratoire doit être remis le **12 décembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+
+## 1. Composition de sources minérales
+
+Le fichier `springs.csv` contient des données tirées d'une étude de Tanaskovic et al. (2012) sur les propriétés physico-chimiques (température, pH, conductivité électrique) et la concentration d'ions de 30 sources minérales de Serbie.
+
+```{r}
+sources <- read.csv("springs.csv")
+str(sources)
+```
+
+Nous nous intéressons d'abord aux 8 colonnes allant de *Ca* à *SiO2*, qui représentent dans l'ordre la concentration d'ions calcium, magnésium, potassium, chlorure, sulfate, bicarbonate et silicate, toutes mesurées en mg/L. 
+
+a) Puisque ces 8 variables ont les mêmes unités, il n'est pas nécessaire de les normaliser avant d'effectuer des analyses multivariées. Toutefois, nous appliquerons une transformation logarithmique à ces données. En inspectant les données, déterminez pourquoi cette transformation est utile ici.
+
+*Note*: Si un tableau de données est composé uniquement de variables numériques, vous pouvez appliquer la fonction `log` au tableau pour prendre le logarithme de toutes les variables d'un coup.   
+
+b) Réalisez une analyse en composantes principales des concentrations transformées. Que remarquez-vous au sujet des contributions des variables sur le premier axe (PC1)? Est-ce qu'il y a une propriété générale (non reliée à une variable en particulier) qui distingue les échantillons avec des valeurs négatives et positives sur cet axe?
+
+c) Réalisez un diagramme de double projection (*biplot*) pour les composantes principales 2 et 3. Quelles variables ont le plus grand effet sur chacun de ces axes? D'après ce diagramme, donnez un exemple de paire d'ions dont les concentrations sont fortement corrélées positivement, et d'une autre paire dont les concentrations sont négativement corrélées.
+
+d) La variable `geoStruct` du tableau de données original est une variable catégorielle représentant le type géologique du site. Comment pourriez-vous vérifier si une composante principale varie significativement entre les sites de différents types géologiques? Réalisez ce test séparément pour les composantes PC1 et PC2 et déterminez la nature des différences significatives s'il y a lieu.
+
+e) Créez un nuage de points des composantes PC1 et PC2 qui indique aussi le type géologique pour chaque site.
+
+
+## 2. Composition de sédiments arctiques
+
+Le fichier `arctic.csv`, tiré d'une étude de Martinez et al. (2009), contient des données sur la composition d'échantillons provenant de différentes profondeurs (`depth`, unités non-spécifiées) d'une carotte de sédiments de l'océan Arctique. Pour chaque échantillon, les colonnes *Al* à *P* indiquent le pourcentage de la masse de l'échantillon correspondant à cet élément.
+
+```{r}
+arctic <- read.csv("arctic.csv")
+head(arctic)
+```
+
+a) Encore une fois, puisque les variables sont sur la même échelle (% de masse), il n'est pas nécessaire de les normaliser. Réalisez une ACP avec les variables originales et une autre avec les variables normalisées, puis comparez les diagrammes de double projection. Expliquez comment le choix de normaliser ou non affecte l'importance de différents éléments sur les résultats de l'ACP.
+
+b) À partir des variables normalisées, créez une classification hiérarchique à partir de la méthode du saut maximum et une autre à partir de la méthode de Ward. Superposez la classification en (i) 2 groupes et (ii) 4 groupes obtenue par chaque méthode aux résultats de l'ACP pour ces mêmes données. Est-ce que les groupes obtenus différent entre les deux méthodes? Est-ce que ces classifications semblent bonnes par rapport aux coordonnées de l'ACP?
+
+*Note*: Pour la classification en quatre groupes, regardez jusqu'à 4 composantes principales pour juger la classification. (Ce n'est pas une règle générale, seulement une suggestion pour ce problème.)
+
+c) Représentez graphiquement la variation des deux premières composantes principales en fonction de la profondeur (`depth`), puis l'appartenance aux groupes de la classification à 4 groupes (selon l'une ou l'autre méthode) en fonction de la profondeur. Est-ce que ces deux méthodes permettent de détecter des changements importants de composition du sédiment le long de la carotte?

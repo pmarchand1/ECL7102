@@ -1,0 +1,48 @@
+---
+title: "Multivariate analysis"
+date: "December 5, 2018"
+output: pdf_document
+---
+
+Answers for this lab must be submitted before **December 12th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+
+## 1. Composition of mineral springs
+
+The `springs.csv` dataset contains data from a study by Tanaskovic et al. (2012) on the physicochemical properties (temperature, pH, electrical conductivity) and ion concentrations of mineral springs in Serbia.
+
+```{r}
+sources <- read.csv("springs.csv")
+str(sources)
+```
+
+We first look at the 8 columns ranging from *Ca* to *SiO2*, which represent the concentration of calcium, magnesium, potassium, chloride, sulfate, bicarbonate and silicate ions (in this order), all measured in mg / L.
+
+a) Since these 8 variables have the same units, it is not necessary to standardize them before performing multivariate analyzes. However, we will apply a logarithmic transformation to these data. Inspect the data and describe why this transformation is useful here.
+
+*Note*: If a data frame consists only of numeric variables, you can apply the `log` function to the array to take the logarithm of all variables at once.
+
+b) Conduct a principal component analysis of the transformed concentrations. What do you notice about the contributions of the variables on the first axis (PC1)? Is there a general property (not related to a particular variable) that distinguishes samples with negative and positive values on that axis?
+
+c) Create a biplot for the 2nd and 3rd principal components. Which variables have the greatest effect on each of these axes? From this plot, give an example of a pair of ions whose concentrations are highly positively correlated, and of another pair whose concentrations are negatively correlated.
+
+d) The `geoStruct` variable in the original data frame is a categorical variable representing the geological type of the site. How could you check if a principal component varies significantly between sites of different geological types? Perform this test separately for the PC1 and PC2 components and determine the nature of the significant differences, if any.
+
+e) Create a scatterplot of the components PC1 and PC2 that also indicates the geological type for each site.
+
+
+## 2. Composition of Arctic sediments
+
+The `arctic.csv` dataset, from a study by Martinez et al. (2009), contains data on the composition of samples at different depths (`depth`, unspecified units) of a sediment core from the Arctic Ocean. For each sample, the columns *Al* to *P* indicate the percentage of the mass of the sample corresponding to that element.
+
+```{r}
+arctic <- read.csv("arctic.csv")
+head(arctic)
+```
+
+a) Again, since the variables are on the same scale (% mass), there is no need to standardize them. Conduct a PCA with the original variables and another one with the standardized variables, then compare the biplots. Explain how the choice to standardize or not affects the importance of different elements on the results of the PCA.
+
+b) From the standardized variables, create a hierarchical clustering using the complete linkage method and another using Ward's method. Overlay the classification into (i) 2 groups and (ii) 4 groups obtained by each method to the results of the PCA for these same data. Did you obtain different groups between the two methods? Do the resulting classifications look good relative to the principal component coordinates? 
+
+*Note*: For the 4-group classification, inspect up to four principal components to evaluate the classification. (This is not a general rule, only a suggestion for this problem.)
+
+c) Graph the variation of the first two principal components as a function of depth, then graph the group membership of the 4-group classification (according to either method) as a function of depth. Do these two methods detect significant changes in sediment composition along the core?
