@@ -272,8 +272,15 @@ Les valeurs $p$ pour l'effet de chaque variable dans `envfit` sont déterminées
 
 La fonction `envfit` tente d'identifier une corrélation linéaire entre une variable numérique et les axes d'ordination. Pour représenter un gradient environnemental non-linéaire comme une surface en deux dimensions, nous pouvons utiliser la fonction `ordisurf`. La surface estimée est représentée par des lignes de contour (comme une carte topographique) sur les axes de l'ordination. Dans l'exemple suivant, nous montrons les lignes de contour pour l'épaisseur du sol A1 sur les deux axes du NMDS, puis y superposons le vecteur obtenu avec `envfit`.
 
-```{r, results = "hold"}
+```{r, include = FALSE}
 ords <- ordisurf(md_dune, dune.env$A1)
+```
+
+```{r, eval = FALSE}
+ords <- ordisurf(md_dune, dune.env$A1)
+```
+
+```{r}
 plot(ords)
 plot(envf)
 ```
@@ -284,7 +291,7 @@ Puisque les lignes de contour sont parallèles et également espacées, l'effet 
 
 Les méthodes d'ordination que nous avons vues jusqu'à maintenant sont du type "sans contrainte", c'est-à-dire que l'ordination structure la variation de réponse multivariée sans faire référence à des variables explicatives. Dans l'ordination sous contraintes, le choix des axes est basé sur la partie de la réponse expliquée par des prédicteurs donnés. Ces méthodes incluent l'analyse de redondance (*redundancy analysis*) et l'analyse canonique de correspondance (*canonical correspondence analysis*).
 
-Prenons une matrice réponse $Y$ contenant $n$ observations de $p$ variables. Supposons que nous effectuons séparément la régression linéaire de chacune des $p$ variables en fonction d'un même ensemble de prédicteurs $x_1$, $x_2$, etc. Par exemple, la régression de la variable $j$ donne une valeur attendue (*fitted*) $\hat{y}_{ij}$ pour chaque observation $i$ de ce prédicteur. Nous pouvons ensuite combiner les valeurs attendues de chaque régression dans une matrice $\hat{Y}$.
+Prenons une matrice réponse $Y$ contenant $n$ observations de $p$ variables. Supposons que nous effectuons séparément la régression linéaire de chacune des $p$ variables en fonction d'un même ensemble de prédicteurs $x_1$, $x_2$, etc. Par exemple, la régression de la variable $j$ donne une valeur attendue (*fitted*) $\hat{y}_{ij}$ pour chaque observation $i$ de cette variable. Nous pouvons ensuite combiner les valeurs attendues de chaque régression dans une matrice $\hat{Y}$.
 
 $$  
 \begin{bmatrix}

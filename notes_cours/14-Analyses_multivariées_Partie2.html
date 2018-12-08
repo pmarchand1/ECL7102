@@ -427,14 +427,14 @@ head(dune.env)</code></pre>
 ## 
 ## Terms added sequentially (first to last)
 ## 
-##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)   
-## A1          1    0.7230 0.72295  5.2038 0.16817  0.002 **
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.005 **
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.033 * 
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.983   
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.490   
-## Residuals   7    0.9725 0.13893         0.22621          
-## Total      19    4.2990                 1.00000          
+##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
+## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.006 ** 
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.034 *  
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.986    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.469    
+## Residuals   7    0.9725 0.13893         0.22621           
+## Total      19    4.2990                 1.00000           
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Comme pour l’ANOVA univariée, cette méthode considère les variables dans l’ordre donné: <em>Moisture</em> donne la fraction de la distance expliquée après avoir tenu compte de l’effet de <em>A1</em>, <em>Management</em> la fraction expliquée après avoir tenu compte de <em>A1</em> et <em>Moisture</em>, etc.</p>
@@ -450,8 +450,8 @@ envf</code></pre>
 <pre><code>## 
 ## ***VECTORS
 ## 
-##      NMDS1   NMDS2    r2 Pr(&gt;r)  
-## A1 0.96474 0.26321 0.365  0.018 *
+##      NMDS1   NMDS2     r2 Pr(&gt;r)  
+## A1 0.96474 0.26321 0.3649  0.018 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -464,11 +464,11 @@ envf</code></pre>
 ## ManagementBF -0.4534 -0.0102
 ## ManagementHF -0.2636 -0.1282
 ## ManagementNM  0.2958  0.5790
-## ManagementSF  0.1505 -0.4670
+## ManagementSF  0.1506 -0.4670
 ## 
 ## Goodness of fit:
 ##                r2 Pr(&gt;r)   
-## Management 0.4134  0.006 **
+## Management 0.4134  0.009 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -482,16 +482,15 @@ plot(envf)</code></pre>
 <p>Les valeurs <span class="math inline">\(p\)</span> pour l’effet de chaque variable dans <code>envfit</code> sont déterminées par test de permutation, comme pour la PERMANOVA. Les valeurs <span class="math inline">\(p\)</span> et les coefficients <span class="math inline">\(r^2\)</span> sont différents dans les deux cas, car la PERMANOVA évaluait l’effet des variables sur la variation multidimensionnelle totale, tandis que le résultat d’<code>envfit</code> mesure l’effet sur l’ordination en deux dimensions.</p>
 <p>La fonction <code>envfit</code> tente d’identifier une corrélation linéaire entre une variable numérique et les axes d’ordination. Pour représenter un gradient environnemental non-linéaire comme une surface en deux dimensions, nous pouvons utiliser la fonction <code>ordisurf</code>. La surface estimée est représentée par des lignes de contour (comme une carte topographique) sur les axes de l’ordination. Dans l’exemple suivant, nous montrons les lignes de contour pour l’épaisseur du sol A1 sur les deux axes du NMDS, puis y superposons le vecteur obtenu avec <code>envfit</code>.</p>
 <pre class="r"><code>ords &lt;- ordisurf(md_dune, dune.env$A1)</code></pre>
-<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <pre class="r"><code>plot(ords)
 plot(envf)</code></pre>
-<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-15-2.png" width="672" /></p>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>Puisque les lignes de contour sont parallèles et également espacées, l’effet d’<em>A1</em> semble effectivement être linéaire dans cette représentation.</p>
 </div>
 <div id="ordination-sous-contraintes" class="section level2">
 <h2>Ordination sous contraintes</h2>
 <p>Les méthodes d’ordination que nous avons vues jusqu’à maintenant sont du type “sans contrainte”, c’est-à-dire que l’ordination structure la variation de réponse multivariée sans faire référence à des variables explicatives. Dans l’ordination sous contraintes, le choix des axes est basé sur la partie de la réponse expliquée par des prédicteurs donnés. Ces méthodes incluent l’analyse de redondance (<em>redundancy analysis</em>) et l’analyse canonique de correspondance (<em>canonical correspondence analysis</em>).</p>
-<p>Prenons une matrice réponse <span class="math inline">\(Y\)</span> contenant <span class="math inline">\(n\)</span> observations de <span class="math inline">\(p\)</span> variables. Supposons que nous effectuons séparément la régression linéaire de chacune des <span class="math inline">\(p\)</span> variables en fonction d’un même ensemble de prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, etc. Par exemple, la régression de la variable <span class="math inline">\(j\)</span> donne une valeur attendue (<em>fitted</em>) <span class="math inline">\(\hat{y}_{ij}\)</span> pour chaque observation <span class="math inline">\(i\)</span> de ce prédicteur. Nous pouvons ensuite combiner les valeurs attendues de chaque régression dans une matrice <span class="math inline">\(\hat{Y}\)</span>.</p>
+<p>Prenons une matrice réponse <span class="math inline">\(Y\)</span> contenant <span class="math inline">\(n\)</span> observations de <span class="math inline">\(p\)</span> variables. Supposons que nous effectuons séparément la régression linéaire de chacune des <span class="math inline">\(p\)</span> variables en fonction d’un même ensemble de prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, etc. Par exemple, la régression de la variable <span class="math inline">\(j\)</span> donne une valeur attendue (<em>fitted</em>) <span class="math inline">\(\hat{y}_{ij}\)</span> pour chaque observation <span class="math inline">\(i\)</span> de cette variable. Nous pouvons ensuite combiner les valeurs attendues de chaque régression dans une matrice <span class="math inline">\(\hat{Y}\)</span>.</p>
 <p><span class="math display">\[  
 \begin{bmatrix}
 \hat{y}_{11} &amp; \hat{y}_{12} &amp; ... &amp; \hat{y}_{1p} \\
@@ -526,7 +525,7 @@ rda_dune</code></pre>
 <p>La régression linéaire effectuée en première étape de l’ADR compte ici 4 prédicteurs (1 pour <em>A1</em> et 3 pour le facteur à 4 niveaux <em>Management</em>). Dans ce cas, puisque la matrice <span class="math inline">\(\hat{Y}\)</span> est une combinaison linéaire des prédicteurs, elle ne peut avoir que 4 composantes principales. La résultat de l’ADR nomme ces 4 composantes “axes contraints” (RDA1 à RDA4). L’ADR effectue aussi une ACP séparée pour les résidus de la régression (<span class="math inline">\(Y\)</span> - <span class="math inline">\(\hat{Y}\)</span>); cette ACP résulte en 15 axes non contraints pour les 15 degrés de liberté résiduels.</p>
 <p>Le graphique d’une ADR est appelé diagramme de triple projection (<em>triplot</em>), car il représente à la fois les observations (sites), les variables de réponse (espèce) et les prédicteurs (conditions environnementales). Notez que puisque l’ADR est basée sur l’ACP, les espèces devraient être représentées par des vecteurs ici (comme le prédicteur numérique A1), mais les flèches sont omises par <em>vegan</em> pour éviter de surcharger le graphique.</p>
 <pre class="r"><code>plot(rda_dune)</code></pre>
-<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>Les coordonnées des sites et espèces sur les deux premiers axes de l’ADR peuvent être consultées en appelant la fonction <code>scores(rda_dune)</code>.</p>
 <p>Si l’analyse de redondance est la combinaison d’une régression et d’une ACP, l’<strong>analyse canonique de correspondance</strong> (ACC) est la combinaison d’une régression et d’une analyse de correspondance. Comme l’analyse de correspondance, l’ACC est basée sur les résidus du <span class="math inline">\(\chi_{ij}\)</span> d’un tableau de contingence. Une régression est appliquée à ces résidus en fonction des prédicteurs, puis une ordination est appliquée aux valeurs attendues estimées par cette régression. Voici un exemple avec la fonction <code>cca</code> de <em>vegan</em>:</p>
 <pre class="r"><code>cca_dune &lt;- cca(dune ~ A1 + Management, dune.env)
@@ -550,12 +549,12 @@ cca_dune</code></pre>
 ## 0.0317 0.0178 0.0116 0.0087 0.0047</code></pre>
 <p>Voici le diagramme de triple projection correspondant à cette analyse:</p>
 <pre class="r"><code>plot(cca_dune)</code></pre>
-<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>Aux fins de comparaison, voici le diagramme de double projection de l’ordination non contrainte (analyse de correspondance) avec l’estimation des effets des prédicteurs obtenue par <code>envfit</code>:</p>
 <pre class="r"><code>plot(ac_dune)
 ac_envf &lt;- envfit(ac_dune, select(dune.env, A1, Management))
 plot(ac_envf)</code></pre>
-<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>Quelle est la différence entre ces deux approches?</p>
 <ul>
 <li><p>Avec une ordination sans contraintes (ACP ou AC), on résume la variation de la <em>réponse</em> multivariée en quelques axes, puis on estime l’effet des prédicteurs sur ces axes. Cette approche est plus parcimonieuse mais court le risque de “perdre” l’effet d’un prédicteur s’il n’est pas relié principalement aux quelques premières composantes principales.</p></li>
