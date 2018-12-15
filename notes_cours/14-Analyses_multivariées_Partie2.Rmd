@@ -67,7 +67,7 @@ $$ d_{ij(BC)} = \frac{\sum_{k=1}^p \left| y_{ik} - y_{jk} \right|}{y_{i \cdot} +
 
 où $y_{i \cdot}$ et $y_{j \cdot}$ représentent l'abondance totale (toutes espèces confondues) des sites $i$ et $j$. La distance de Bray-Curtis mesure donc le rapport entre la somme des différences (en valeur absolue) entre les abondances pour chaque espèce et le nombre total d'individus de toutes les espèces. Elle prend une valeur minimum de 0 lorsque l'abondance observée est la même pour chaque espèce et une valeur maximum de 1 lorsque les sites n'ont aucune espèce en commun.
 
-Cette mesure de distance, ainsi que plusieurs autres utilisées en écologie, peut être calculée avec la fonction `vegdist` du packge *vegan*, un package R spécialisé pour l'écologie des communautés.
+Cette mesure de distance, ainsi que plusieurs autres utilisées en écologie, peut être calculée avec la fonction `vegdist` du package *vegan*, un package R spécialisé pour l'écologie des communautés.
 
 ```{r, warning = FALSE, message = FALSE}
 library(vegan)

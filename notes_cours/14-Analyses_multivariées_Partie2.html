@@ -264,7 +264,7 @@ esp</code></pre>
 <p>La <strong>distance de Bray-Curtis</strong> <span class="math inline">\(d_{ij(BC)}\)</span> (souvent appelée dissimilarité de Bray-Curtis) est une mesure mieux adaptée aux données d’abondance d’espèces:</p>
 <p><span class="math display">\[ d_{ij(BC)} = \frac{\sum_{k=1}^p \left| y_{ik} - y_{jk} \right|}{y_{i \cdot} + y_{j \cdot}} \]</span></p>
 <p>où <span class="math inline">\(y_{i \cdot}\)</span> et <span class="math inline">\(y_{j \cdot}\)</span> représentent l’abondance totale (toutes espèces confondues) des sites <span class="math inline">\(i\)</span> et <span class="math inline">\(j\)</span>. La distance de Bray-Curtis mesure donc le rapport entre la somme des différences (en valeur absolue) entre les abondances pour chaque espèce et le nombre total d’individus de toutes les espèces. Elle prend une valeur minimum de 0 lorsque l’abondance observée est la même pour chaque espèce et une valeur maximum de 1 lorsque les sites n’ont aucune espèce en commun.</p>
-<p>Cette mesure de distance, ainsi que plusieurs autres utilisées en écologie, peut être calculée avec la fonction <code>vegdist</code> du packge <em>vegan</em>, un package R spécialisé pour l’écologie des communautés.</p>
+<p>Cette mesure de distance, ainsi que plusieurs autres utilisées en écologie, peut être calculée avec la fonction <code>vegdist</code> du package <em>vegan</em>, un package R spécialisé pour l’écologie des communautés.</p>
 <pre class="r"><code>library(vegan)
 
 vegdist(esp, method = &quot;bray&quot;)</code></pre>
@@ -429,10 +429,10 @@ head(dune.env)</code></pre>
 ## 
 ##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
 ## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.006 ** 
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.034 *  
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.986    
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.469    
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.001 ***
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.031 *  
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.985    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.454    
 ## Residuals   7    0.9725 0.13893         0.22621           
 ## Total      19    4.2990                 1.00000           
 ## ---
@@ -451,7 +451,7 @@ envf</code></pre>
 ## ***VECTORS
 ## 
 ##      NMDS1   NMDS2     r2 Pr(&gt;r)  
-## A1 0.96474 0.26321 0.3649  0.018 *
+## A1 0.96472 0.26328 0.3649  0.017 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -461,14 +461,14 @@ envf</code></pre>
 ## 
 ## Centroids:
 ##                NMDS1   NMDS2
-## ManagementBF -0.4534 -0.0102
-## ManagementHF -0.2636 -0.1282
-## ManagementNM  0.2958  0.5790
+## ManagementBF -0.4534 -0.0103
+## ManagementHF -0.2635 -0.1282
+## ManagementNM  0.2957  0.5790
 ## ManagementSF  0.1506 -0.4670
 ## 
 ## Goodness of fit:
-##                r2 Pr(&gt;r)   
-## Management 0.4134  0.009 **
+##                r2 Pr(&gt;r)  
+## Management 0.4133  0.013 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free

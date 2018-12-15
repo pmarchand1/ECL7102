@@ -1,0 +1,469 @@
+---
+title: "Analyses multivariées, Partie 2"
+date: "<br/>10 décembre 2018"
+output:
+    revealjs::revealjs_presentation:
+        self_contained: false
+        lib_dir: libs
+        theme: night
+        transition: none
+        css: styles.css
+        incremental: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.dim = c(6, 4))
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+```
+
+
+## Objectifs
+
+- Appliquer des mesures de dissimilarité entre observations appropriées aux matrices de communauté écologique (abondance ou présence/absence).
+
+- Effectuer une ordination de données de communauté avec l'analyse de correspondance et le positionnement multidimensionnel non métrique (NMDS).
+
+- Superposer des gradients environnementaux aux résultats d'une ordination de communautés écologiques.
+
+- Utiliser l'ordination sous contraintes (analyse de redondance et analyse canonique de correspondance) afin de représenter la variation entre observations expliquée par des prédicteurs.
+
+
+## Données de présence ou d'abondance d'espèces
+
+>- Tableau indiquant l'abondance (nombre d'individus, % de recouvrement) de différentes espèces sur chacun des sites étudiés. 
+
+```{r}
+esp <- cbind(esp1 = c(2, 8, 0, 3), esp2 = c(1, 3, 0, 0), esp3 = c(0, 0, 1, 0))
+rownames(esp) <- c("site1", "site2", "site3", "site4")
+esp
+```
+
+>- Données binaires (0/1) si on a seulement l'information sur la présence.
+
+
+# Mesures de distance pour les données d'abondance
+
+## Rappel: distance euclidienne
+
+>- Somme du carré des écarts entre les deux observations pour chacune des variables:
+
+$$ d_{ij} = \sqrt{\sum_{k = 1}^p (y_{ik} - y_{jk})^2} $$
+
+- L'analyse en composantes principales vise notamment à bien représenter les distances euclidiennes entre les points.
+
+## Problèmes avec la distance euclidienne
+
+>- Dans notre exemple ci-dessus, la distance est de 6.3 entre les sites 1 et 2, 2.4 entre les sites 1 et 3. 
+
+```{r}
+dist(esp)
+```
+
+- Pourtant, 1 et 2 partagent les mêmes espèces dans des proportions similaires tandis que 1 et 3 n'ont aucune espèce en commun.
+
+- Deux sites où une espèce est absente (0) seraient plus similaires que deux sites où l'espèce est présente à un niveau un peu différent.
+
+## Distance de Bray-Curtis
+
+>- Mesure de distance mieux adaptée aux données d'abondance:
+
+$$ d_{ij(BC)} = \frac{\sum_{k=1}^p \left| y_{ik} - y_{jk} \right|}{y_{i \cdot} + y_{j \cdot}} $$
+
+- Valeur minimum de 0 lorsque l'abondance est la même pour chaque espèce et maximum de 1 lorsque les sites n'ont aucune espèce en commun.
+
+- Mesure indifférente aux doubles absences, mais sensible aux variation d'abondance totale entre deux sites.
+
+## Distance de Bray-Curtis
+
+>- La distance de Bray-Curtis et plusieurs autres peuvent être calculées avec la fonction `vegdist` du package *vegan*:
+
+```{r, warning = FALSE, message = FALSE}
+library(vegan)
+
+vegdist(esp, method = "bray")
+```
+
+## Distance entre profils
+
+>- Diviser les abondances par leur somme pour chaque site afin d'obtenir la composition ou profil du site.
+
+$$ d_{ij(prof)} = \sqrt{\sum_{k = 1}^p \left( \frac{y_{ik}}{y_{i \cdot}} - \frac{y_{jk}}{y_{j \cdot}} \right)^2} $$
+
+- $y_{i \cdot}$ et $y_{j \cdot}$ sont les abondances totales au site $i$ et $j$. 
+
+## Distance de Hellinger
+
+>- Semblable à la distance entre profils, mais on prend la racine carrée des proportions:
+
+$$ d_{ij(Hel)} = \sqrt{\sum_{k = 1}^p \left( \sqrt{\frac{y_{ik}}{y_{i \cdot}}} - \sqrt{\frac{y_{jk}}{y_{j \cdot}}} \right)^2} $$
+
+## Distance de Hellinger
+
+>- Calculée en transformant la matrice de données (avec `decostand`) puis en calculant la distance euclidienne des données transformées.
+
+```{r}
+esp_hel <- decostand(esp, method = "hellinger")
+dist(esp_hel)
+```
+
+- Valeur maximale de $\sqrt{2}$ (1.414) si aucune espèce en commun.
+
+- Répond de façon plus linéaire aux changements d'abondance d'une espèce; après avoir appliqué la transformation d'Hellinger, on peut appliquer une analyse en composantes principales aux les données transformées. 
+
+## Distance du $\chi^2$
+
+>- Semblable à la distance entre profils, mais la contribution d'une espèce $k$ est divisée par la fraction $p_k$ de l'ensemble des individus qui sont de cette espèce $k$. 
+
+$$ d_{ij(\chi^2)} = \sqrt{\sum_{k = 1}^p \frac{1}{p_k} \left( \frac{y_{ik}}{y_{i \cdot}} - \frac{y_{jk}}{y_{j \cdot}} \right)^2} $$
+
+- Donne une plus grande importance aux espèces rares par rapport aux autres méthodes.
+
+- Valeur maximale de $\sqrt{2N}$, où $N$ est le total d'individus comptés.
+
+- Aussi calculée à partir d'une transformation réalisée par `decostand(..., method = "chi.square")`.
+
+## Quelle mesure choisir?
+
+Toutes ces mesures peuvent servir à créer une matrice de distance pour une analyse de regroupement, en mettant un accent sur certaines différences plutôt que d'autres.
+
+- La distance de Bray-Curtis dépend des différences absolues d'abondance (nombre d'individus).
+
+- La distance de Hellinger dépend des différences relatives d'abondance (proportion d'individus) et accorde plus d'emphase aux espèces communes.
+
+- La distance du $\chi^2$ dépend des différences relatives d'abondance et accorde une plus grande importance aux espèces rares.
+
+## Mesures de distance pour les données de présence
+
+>- Pour des données de présence-absence, on obtient le tableau suivant pour la comparaison de deux sites:
+
+![](../images/pres_abs.png).
+
+- $a$ représente le nombre d'espèces présentes aux deux sites, $b$ le nombre d'espèces présentes au site 1 mais pas au site 2, et ainsi de suite.
+
+## Mesures de distance pour les données de présence
+
+>- L'**indice de Jaccard** mesure la similarité entre deux sites:
+
+$$ J = \frac{a}{a + b + c} $$
+
+>- Prend des valeurs entre 0 (aucune espèce commune) et 1 (mêmes espèces). 
+
+>- L'**indice de Sorenson** est défini de façon similaire, excepté que les espèces présentes aux deux sites sont comptées deux fois.
+
+$$ S = \frac{2a}{2a + b + c} $$
+
+## Mesures de distance pour les données de présence
+
+- Une mesure de distance entre 0 et 1 peut être calculée comme *1 - similarité*.
+
+- La fonction `vegdist(..., method = "jaccard")` calcule la distance de Jaccard ($1 - J$).
+
+- La valeur de $1 - S$ correspond exactement à la distance de Bray-Curtis appliquée à une matrice binaire.
+
+
+# Ordination de matrices de communautés écologiques
+
+## Rappel: Tableaux de contingence
+
+>- Nombre d'observations (fréquence $f$) pour chaque combinaison de niveaux de deux variables catégorielles. 
+
+>- Une matrice de communauté (abondance ou présence/absence) est un tableau de contingence pour les variables "site" et "espèce". 
+
+>- Si les deux variables sont indépendantes, la fréquence attendue pour une cellule $(i, j)$ est $\hat{f_{ij}} = N_i N_j / N$. 
+
+>- $\chi_{ij}$: Résidu normalisé pour la cellule $(i, j)$. Le $\chi^2$ est la somme des carrés des $\chi_{ij}$.
+
+$$\chi_{ij} =  \frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}} $$
+
+## Analyse de correspondance
+
+- Ordination de la matrice des résidus $\chi_{ij}$ d'un tableau de contingences.
+
+- Produit des composantes orthogonales en ordre décroissant de contribution au $\chi^2$ total du tableau. 
+
+- L'ACP fait une distinction entre observations et variables, mais l'analyse de correspondance est symétrique; elle ordonne simultanément les sites en fonction des espèces et vice versa.
+
+- L'analyse de correspondance donne une bonne représentation de la distance du $\chi^2$ (donc elle accorde plus de poids aux espèces rares).
+
+## Analyse de correspondance dans R
+
+>- Tableau `dune` inclus avec *vegan*: abondance de 30 espèces végétales sur 20 sites.
+
+>- L'analyse de correspondance est réalisée avec la fonction `cca` de *vegan*.
+
+```{r, eval = FALSE}
+data(dune)
+
+ac_dune <- cca(dune)
+# display = "reg" pour ne pas afficher toutes les coordonnées d'espèce et de site
+summary(ac_dune, display = "reg") 
+```
+
+## Analyse de correspondance dans R
+
+```{r, echo = FALSE}
+data(dune)
+
+ac_dune <- cca(dune)
+# display = "reg" pour ne pas afficher toutes les coordonnées d'espèce et de site
+summary(ac_dune, display = "reg") 
+```
+
+## Analyse de correspondance dans R
+
+>- La fonction `plot` représente les espèces (en rouge) et les sites (en noir) sur les deux premiers axes.
+
+```{r}
+plot(ac_dune)
+```
+
+## Analyse de correspondance dans R
+
+- Les coordonnées des espèces et des sites peuvent être extraites avec la fonction `scores(ac_dune)`.
+
+- Les gradients environnementaux entre sites peuvent apparaître comme des courbes sur le graphique d'ordination, dû à l'effet non-linéaire de l'environnement sur l'abondance d'une espèce (concept de niche écologique).
+
+- Des méthodes existent pour rectifier l'effet d'un seul gradient (*detrended correspondance analaysis* ou DCA), mais elles ne sont pas recommandées en général. 
+
+## Positionnement multidimensionnel non-métrique (NMDS)
+
+>- Méthode d'ordination basée sur une matrice de distance entre les sites.
+
+>- Applique un algorithme itératif pour trouver une configuration de points dans un petit nombre de dimensions (habituellement 2) qui représente le mieux la distance entre les sites.
+
+>- Le *stress* donne la correspondance entre la distance originale $d$ et la distance euclidienne dans l'espace réduit $\hat{d}$:
+
+$$ \sqrt{\frac{\sum_{(i, j)} (d_{ij} - \hat{d_{ij}})^2}{\sum_{(i, j)} d_{ij}^2}} $$
+
+## Positionnement multidimensionnel non-métrique (NMDS)
+
+- Avantage: Méthode flexible, fonctionne avec n'importe quelle mesure de distance.
+
+- Inconvénient: Algorithme heuristique peut ne pas converger, ou converger vers des solutions différentes selon les conditions de départ. 
+
+- La fonction `metaMDS` qui applique cette méthode répète l'algorithme plusieurs fois à partir de configurations initiales aléatoires. 
+
+## Positionnement multidimensionnel non-métrique (NMDS)
+
+```{r, results = "hide"}
+md_dune <- metaMDS(dune, distance = "bray")
+```
+
+- La distance de Bray-Curtis est choisie par défaut par `metaMDS`.
+
+- Si l'algorithme ne converge pas, il faut augmenter le nombre d'essais (argument `try` de la fonction, 20 par défaut).
+
+- Stress final de 0.118 ici. L'ajustement est excellent si <0.1 et mauvais si >0.2.
+
+- `plot` affiche le résultat du positionnement en deux dimensions. Le NMDS ordonne les sites, puis les espèces sont placées en fonction de la position des sites où elles se trouvent.
+
+## Positionnement multidimensionnel non-métrique (NMDS)
+
+```{r}
+plot(md_dune, type = "t") # type = "t" pour voir les noms des espèces et sites
+```
+
+## Positionnement multidimensionnel non-métrique (NMDS)
+
+```{r}
+# Correspondance entre la distance originale et la distance en 2D
+stressplot(md_dune) 
+```
+
+
+# Effet de prédicteurs sur une réponse multivariée
+
+## Variables environnementales associées aux sites
+
+>- Tableau de données `dune.env` qui contient les valeurs de cinq variables associées aux 20 sites de `dune`.
+
+```{r}
+data(dune.env)
+head(dune.env)
+```
+
+- Une variable numérique (*A1*, épaisseur de la couche A1 du sol), deux variables catégorielles nominales (*Management* et *Use*) et deux variables catégorielles ordinales (*Moisture* et *Manure*).
+
+## Analyse de variance multivariée
+
+>- Fonction `adonis` de *vegan* estime la fraction des distances entre sites expliquée par différents prédicteurs (distance de Bray-Curtis par défaut).
+
+```{r}
+adonis(dune ~ A1 + Moisture + Management + Use + Manure, dune.env)
+```
+
+## Analyse de variance multivariée
+
+- Cette méthode calcule une statistique $F$ pour chaque variable indépendante. 
+
+- La distribution de $F$ sous l'hypothèse nulle n'est pas connue théoriquement, mais déterminée par 999 permutations aléatoires des valeurs de la variables (PERMANOVA).
+
+- Comme pour l'ANOVA univariée, cette méthode considère l'effet des variables dans l'ordre donné.
+
+- La PERMANOVA ne suppose pas l'égalité des variances, mais une différence significative peut représenter soit une différence de la composition "moyenne", soit une différence dans la variance de la composition.
+
+## Superpositions des prédicteurs aux axes d'ordination
+
+- On réalise d'abord une ordination de la réponse, puis on corrèle les variables explicatives aux axes de l'ordination.
+
+- Si les composantes principales sont orthogonales (ACP ou AC, mais pas NMDS), on peut effectuer une régression séparée de chaque composante en fonction des prédicteurs. 
+
+- On peut aussi estimer simultanément la corrélation entre des variables explicatives et chacun des axes: fonction `envfit` de *vegan*. 
+
+## Superpositions des prédicteurs aux axes d'ordination
+
+```{r}
+envf <- envfit(md_dune, select(dune.env, A1, Management))
+envf
+```
+
+## Superpositions des prédicteurs aux axes d'ordination
+
+- Pour *A1*, le résultat indique la magnitude et la direction de l'effet d'une augmentation de cette variable sur les deux axes du NMDS (donc un vecteur).
+
+- Pour *Management*, le résultat indique la position moyenne (centroïde) des sites de chaque catégorie.
+
+- $r^2$ est la portion de la variance sur les deux axes expliquée par chaque variable. Les valeurs $p$ sont déterminées par permutation. 
+
+- Les valeurs $p$ et les $r^2$ diffèrent de la PERMANOVA (données originales vs. ordination).
+
+## Superpositions des prédicteurs aux axes d'ordination
+
+```{r}
+plot(md_dune)
+plot(envf)
+```
+
+## Superposition d'une surface (gradient non-linéaire)
+
+```{r, include = FALSE}
+ords <- ordisurf(md_dune, dune.env$A1)
+```
+
+```{r, eval = FALSE}
+ords <- ordisurf(md_dune, dune.env$A1)
+```
+
+```{r}
+plot(ords)
+plot(envf)
+```
+
+## Ordination sous contraintes
+
+- Les méthodes d'ordination vues jusqu'à maintenant sont sans contrainte; elles structurent la réponse multivariée sans référence à des variables explicatives.
+
+- Dans l'ordination sous contraintes, le choix des axes est basé sur la partie de la réponse expliquée par des prédicteurs donnés. 
+
+- Ces méthodes incluent l'analyse de redondance (*redundancy analysis*) et l'analyse canonique de correspondance (*canonical correspondence analysis*).
+
+## Analyse de redondance
+
+>- Matrice réponse $Y$ contenant $n$ observations de $p$ variables. 
+
+>- On effectue d'abord une régression linéaire séparée pour chacune des $p$ variables en fonction des mêmes prédicteurs. Les valeurs attendues pour chaque observation sont regroupées dans une matrice $\hat{Y}$.
+
+$$  
+\begin{bmatrix}
+\hat{y}_{11} & \hat{y}_{12} & ... & \hat{y}_{1p} \\
+\hat{y}_{21} & \hat{y}_{22} & ... & \hat{y}_{2p} \\
+... & ... & ... & ... \\
+\hat{y}_{n1} & ... & ... & \hat{y}_{np}
+\end{bmatrix}
+$$
+
+- L'analyse de redondance est équivalente à une ACP réalisée sur cette matrice $\hat{Y}$ plutôt que la réponse originale $Y$.
+
+## Analyse de redondance
+
+>- Nous effectuons une transformation de Hellinger aux données `dune` avant d'appliquer l'analyse de redance (`rda`).
+
+```{r}
+dune_hel <- decostand(dune, method = "hellinger")
+dune_hel <- scale(dune_hel)
+rda_dune <- rda(dune_hel ~ A1 + Management, dune.env)
+```
+
+- Puisqu'il y a 4 prédicteurs indépendants (1 pour *A1*, 3 pour le facteur *Management*), il y a 4 axes contraints (RDA1 à RDA4).
+
+- La fonction `rda` réalise aussi une ACP sur les résidus ($Y$ - $\hat{Y}$): 15 degrés de liberté résiduels ici.
+
+## Analyse de redondance
+
+```{r}
+rda_dune
+```
+
+## Diagramme de triple projection (*triplot*)
+
+```{r}
+plot(rda_dune)
+```
+
+## Analyse de canonique de correspondance
+
+>- Combinaison d'une régression et d'une analyse de correspondance.
+
+>- La régression utilise comme réponse les résidus $\chi_{ij}$ d'un tableau de contingence.
+
+```{r}
+cca_dune <- cca(dune ~ A1 + Management, dune.env)
+cca_dune
+```
+
+## Analyse de canonique de correspondance
+
+```{r}
+plot(cca_dune)
+```
+
+## Comparaison avec l'analyse de correspondance
+
+```{r}
+plot(ac_dune)
+ac_envf <- envfit(ac_dune, select(dune.env, A1, Management))
+plot(ac_envf)
+```
+
+## Ordination avec ou sans contraintes?
+
+- Avec une ordination sans contraintes (ACP ou AC), on résume la variation de la *réponse* multivariée en quelques axes, puis on estime l'effet des prédicteurs sur ces axes. 
+
+    + Cette approche est plus parcimonieuse mais court le risque de "perdre" l'effet d'un prédicteur s'il n'est pas relié principalement aux quelques premières composantes principales.
+
+- Avec une ordination sous contraintes (ADR ou ACC), on effectue d'abord la régression dans l'espace multivarié, puis on résume les *prédictions* de cette régression en quelques axes. 
+
+    + Puisque cette approche réalise autant de régressions univariées qu'il y a de colonnes dans la réponse multivariée, il y a plus de chances de détecter un effet dû seulement au hasard (surajustement du modèle).
+
+
+## Résumé
+
+- Le package *vegan* dans R contient plusieurs outils pour l'analyse multivariée des données de communautés écologiques, qui prennent la forme d'une matrice indiquant l'abondance ou la présence d'espèces sur chacun des sites étudiés.
+
+- La distance euclidienne n'est pas appropriée pour les données de communautés écologiques. Nous avons vu plusieurs distances conçues pour les données d'abondance (Bray-Curtis, Hellinger, $\chi^2$) ou de présence-absence (Jaccard, Sorenson). 
+
+- Les matrices de distance obtenues par ces méthodes peuvent être utilisées dans une analyse de regroupement et dans certaines ordinations (ex.: NMDS).
+
+## Résumé
+
+- L'analyse de correspondance est un type d'ordination semblable à l'analyse en composantes principales, mais adaptée aux tableaux de contingence, incluant les données d'abondance ou de présence. 
+
+- Le positionnement multidimensionnel non-métrique (NMDS) optimise la position des points dans un nombre réduit de dimensions pour que leur distance soit la plus près possible d'une matrice de distance donnée.
+
+- La fonction `envfit` permet d'estimer simultanément l'effet de prédicteurs sur les principaux axes d'ordination. 
+
+## Résumé
+
+>- Quatre des méthodes d'ordination (ACP, AC, ADR et ACC) sont reliées par deux propriétés: le type de données et la présence ou non de contraintes.
+
+|  | Sans contrainte | Avec contrainte |
+|--+-----------------+-----------------|
+| Données numériques continues (incluant des transformations des matrices d'abondance) | Analyse en composantes principales | Analyse de redondance |
+| Tableau de contingence (abondance ou présence) | Analyse de correspondance | Analyse canonique de correspondance |
+
+- Ordination sous contraintes: régression des données multivariées suivie d'une ordination est de la partie de la réponse expliquée par les prédicteurs.
+
+
+

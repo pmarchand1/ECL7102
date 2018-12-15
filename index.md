@@ -17,6 +17,7 @@
 12. [Modèles mixtes - Partie 2](notes_cours/12-Modèles_mixtes_Partie2.html)
 13. [Analyses multivariées - Partie 1](notes_cours/13-Analyses_multivariées_Partie1.html)
 14. [Analyses multivariées - Partie 2](notes_cours/14-Analyses_multivariées_Partie2.html)
+15. [Synthèse du cours](notes_cours/15-Synthèse.html)
 
 ## Laboratoires
 

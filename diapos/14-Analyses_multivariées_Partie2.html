@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Analyses multivariées, Partie 2</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
+
+<style type="text/css">
+.reveal section img {
+  background: rgba(255, 255, 255, 0.85);
+}
+</style>
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="styles.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Analyses multivariées, Partie 2</h1>
+    <h3 class="date"><br/>10 décembre 2018</h3>
+</section>
+
+<section id="objectifs" class="slide level2">
+<h2>Objectifs</h2>
+<ul>
+<li class="fragment"><p>Appliquer des mesures de dissimilarité entre observations appropriées aux matrices de communauté écologique (abondance ou présence/absence).</p></li>
+<li class="fragment"><p>Effectuer une ordination de données de communauté avec l’analyse de correspondance et le positionnement multidimensionnel non métrique (NMDS).</p></li>
+<li class="fragment"><p>Superposer des gradients environnementaux aux résultats d’une ordination de communautés écologiques.</p></li>
+<li class="fragment"><p>Utiliser l’ordination sous contraintes (analyse de redondance et analyse canonique de correspondance) afin de représenter la variation entre observations expliquée par des prédicteurs.</p></li>
+</ul>
+</section>
+<section id="donnees-de-presence-ou-dabondance-despeces" class="slide level2">
+<h2>Données de présence ou d’abondance d’espèces</h2>
+<ul>
+<li>Tableau indiquant l’abondance (nombre d’individus, % de recouvrement) de différentes espèces sur chacun des sites étudiés.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">esp &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">esp1 =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">3</span>), <span class="dt">esp2 =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="dt">esp3 =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>))
+<span class="kw">rownames</span>(esp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;site1&quot;</span>, <span class="st">&quot;site2&quot;</span>, <span class="st">&quot;site3&quot;</span>, <span class="st">&quot;site4&quot;</span>)
+esp</code></pre></div>
+<pre><code>##       esp1 esp2 esp3
+## site1    2    1    0
+## site2    8    3    0
+## site3    0    0    1
+## site4    3    0    0</code></pre>
+<ul>
+<li>Données binaires (0/1) si on a seulement l’information sur la présence.</li>
+</ul>
+</section>
+<section><section id="mesures-de-distance-pour-les-donnees-dabondance" class="titleslide slide level1"><h1>Mesures de distance pour les données d’abondance</h1></section><section id="rappel-distance-euclidienne" class="slide level2">
+<h2>Rappel: distance euclidienne</h2>
+<ul>
+<li>Somme du carré des écarts entre les deux observations pour chacune des variables:</li>
+</ul>
+<p><span class="math display">\[ d_{ij} = \sqrt{\sum_{k = 1}^p (y_{ik} - y_{jk})^2} \]</span></p>
+<ul>
+<li class="fragment">L’analyse en composantes principales vise notamment à bien représenter les distances euclidiennes entre les points.</li>
+</ul>
+</section><section id="problemes-avec-la-distance-euclidienne" class="slide level2">
+<h2>Problèmes avec la distance euclidienne</h2>
+<ul>
+<li>Dans notre exemple ci-dessus, la distance est de 6.3 entre les sites 1 et 2, 2.4 entre les sites 1 et 3.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dist</span>(esp)</code></pre></div>
+<pre><code>##          site1    site2    site3
+## site2 6.324555                  
+## site3 2.449490 8.602325         
+## site4 1.414214 5.830952 3.162278</code></pre>
+<ul>
+<li class="fragment"><p>Pourtant, 1 et 2 partagent les mêmes espèces dans des proportions similaires tandis que 1 et 3 n’ont aucune espèce en commun.</p></li>
+<li class="fragment"><p>Deux sites où une espèce est absente (0) seraient plus similaires que deux sites où l’espèce est présente à un niveau un peu différent.</p></li>
+</ul>
+</section><section id="distance-de-bray-curtis" class="slide level2">
+<h2>Distance de Bray-Curtis</h2>
+<ul>
+<li>Mesure de distance mieux adaptée aux données d’abondance:</li>
+</ul>
+<p><span class="math display">\[ d_{ij(BC)} = \frac{\sum_{k=1}^p \left| y_{ik} - y_{jk} \right|}{y_{i \cdot} + y_{j \cdot}} \]</span></p>
+<ul>
+<li class="fragment"><p>Valeur minimum de 0 lorsque l’abondance est la même pour chaque espèce et maximum de 1 lorsque les sites n’ont aucune espèce en commun.</p></li>
+<li class="fragment"><p>Mesure indifférente aux doubles absences, mais sensible aux variation d’abondance totale entre deux sites.</p></li>
+</ul>
+</section><section id="distance-de-bray-curtis-1" class="slide level2">
+<h2>Distance de Bray-Curtis</h2>
+<ul>
+<li>La distance de Bray-Curtis et plusieurs autres peuvent être calculées avec la fonction <code>vegdist</code> du package <em>vegan</em>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(vegan)
+
+<span class="kw">vegdist</span>(esp, <span class="dt">method =</span> <span class="st">&quot;bray&quot;</span>)</code></pre></div>
+<pre><code>##           site1     site2     site3
+## site2 0.5714286                    
+## site3 1.0000000 1.0000000          
+## site4 0.3333333 0.5714286 1.0000000</code></pre>
+</section><section id="distance-entre-profils" class="slide level2">
+<h2>Distance entre profils</h2>
+<ul>
+<li>Diviser les abondances par leur somme pour chaque site afin d’obtenir la composition ou profil du site.</li>
+</ul>
+<p><span class="math display">\[ d_{ij(prof)} = \sqrt{\sum_{k = 1}^p \left( \frac{y_{ik}}{y_{i \cdot}} - \frac{y_{jk}}{y_{j \cdot}} \right)^2} \]</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\(y_{i \cdot}\)</span> et <span class="math inline">\(y_{j \cdot}\)</span> sont les abondances totales au site <span class="math inline">\(i\)</span> et <span class="math inline">\(j\)</span>.</li>
+</ul>
+</section><section id="distance-de-hellinger" class="slide level2">
+<h2>Distance de Hellinger</h2>
+<ul>
+<li>Semblable à la distance entre profils, mais on prend la racine carrée des proportions:</li>
+</ul>
+<p><span class="math display">\[ d_{ij(Hel)} = \sqrt{\sum_{k = 1}^p \left( \sqrt{\frac{y_{ik}}{y_{i \cdot}}} - \sqrt{\frac{y_{jk}}{y_{j \cdot}}} \right)^2} \]</span></p>
+</section><section id="distance-de-hellinger-1" class="slide level2">
+<h2>Distance de Hellinger</h2>
+<ul>
+<li>Calculée en transformant la matrice de données (avec <code>decostand</code>) puis en calculant la distance euclidienne des données transformées.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">esp_hel &lt;-<span class="st"> </span><span class="kw">decostand</span>(esp, <span class="dt">method =</span> <span class="st">&quot;hellinger&quot;</span>)
+<span class="kw">dist</span>(esp_hel)</code></pre></div>
+<pre><code>##            site1      site2      site3
+## site2 0.06600048                      
+## site3 1.41421356 1.41421356           
+## site4 0.60581089 0.54258112 1.41421356</code></pre>
+<ul>
+<li class="fragment"><p>Valeur maximale de <span class="math inline">\(\sqrt{2}\)</span> (1.414) si aucune espèce en commun.</p></li>
+<li class="fragment"><p>Répond de façon plus linéaire aux changements d’abondance d’une espèce; après avoir appliqué la transformation d’Hellinger, on peut appliquer une analyse en composantes principales aux les données transformées.</p></li>
+</ul>
+</section><section id="distance-du-chi2" class="slide level2">
+<h2>Distance du <span class="math inline">\(\chi^2\)</span></h2>
+<ul>
+<li>Semblable à la distance entre profils, mais la contribution d’une espèce <span class="math inline">\(k\)</span> est divisée par la fraction <span class="math inline">\(p_k\)</span> de l’ensemble des individus qui sont de cette espèce <span class="math inline">\(k\)</span>.</li>
+</ul>
+<p><span class="math display">\[ d_{ij(\chi^2)} = \sqrt{\sum_{k = 1}^p \frac{1}{p_k} \left( \frac{y_{ik}}{y_{i \cdot}} - \frac{y_{jk}}{y_{j \cdot}} \right)^2} \]</span></p>
+<ul>
+<li class="fragment"><p>Donne une plus grande importance aux espèces rares par rapport aux autres méthodes.</p></li>
+<li class="fragment"><p>Valeur maximale de <span class="math inline">\(\sqrt{2N}\)</span>, où <span class="math inline">\(N\)</span> est le total d’individus comptés.</p></li>
+<li class="fragment"><p>Aussi calculée à partir d’une transformation réalisée par <code>decostand(..., method = &quot;chi.square&quot;)</code>.</p></li>
+</ul>
+</section><section id="quelle-mesure-choisir" class="slide level2">
+<h2>Quelle mesure choisir?</h2>
+<p>Toutes ces mesures peuvent servir à créer une matrice de distance pour une analyse de regroupement, en mettant un accent sur certaines différences plutôt que d’autres.</p>
+<ul>
+<li class="fragment"><p>La distance de Bray-Curtis dépend des différences absolues d’abondance (nombre d’individus).</p></li>
+<li class="fragment"><p>La distance de Hellinger dépend des différences relatives d’abondance (proportion d’individus) et accorde plus d’emphase aux espèces communes.</p></li>
+<li class="fragment"><p>La distance du <span class="math inline">\(\chi^2\)</span> dépend des différences relatives d’abondance et accorde une plus grande importance aux espèces rares.</p></li>
+</ul>
+</section><section id="mesures-de-distance-pour-les-donnees-de-presence" class="slide level2">
+<h2>Mesures de distance pour les données de présence</h2>
+<ul>
+<li>Pour des données de présence-absence, on obtient le tableau suivant pour la comparaison de deux sites:</li>
+</ul>
+<p><img src="../images/pres_abs.png" />.</p>
+<ul>
+<li class="fragment"><span class="math inline">\(a\)</span> représente le nombre d’espèces présentes aux deux sites, <span class="math inline">\(b\)</span> le nombre d’espèces présentes au site 1 mais pas au site 2, et ainsi de suite.</li>
+</ul>
+</section><section id="mesures-de-distance-pour-les-donnees-de-presence-1" class="slide level2">
+<h2>Mesures de distance pour les données de présence</h2>
+<ul>
+<li>L’<strong>indice de Jaccard</strong> mesure la similarité entre deux sites:</li>
+</ul>
+<p><span class="math display">\[ J = \frac{a}{a + b + c} \]</span></p>
+<ul>
+<li>Prend des valeurs entre 0 (aucune espèce commune) et 1 (mêmes espèces).</li>
+</ul>
+<ul>
+<li>L’<strong>indice de Sorenson</strong> est défini de façon similaire, excepté que les espèces présentes aux deux sites sont comptées deux fois.</li>
+</ul>
+<p><span class="math display">\[ S = \frac{2a}{2a + b + c} \]</span></p>
+</section><section id="mesures-de-distance-pour-les-donnees-de-presence-2" class="slide level2">
+<h2>Mesures de distance pour les données de présence</h2>
+<ul>
+<li class="fragment"><p>Une mesure de distance entre 0 et 1 peut être calculée comme <em>1 - similarité</em>.</p></li>
+<li class="fragment"><p>La fonction <code>vegdist(..., method = &quot;jaccard&quot;)</code> calcule la distance de Jaccard (<span class="math inline">\(1 - J\)</span>).</p></li>
+<li class="fragment"><p>La valeur de <span class="math inline">\(1 - S\)</span> correspond exactement à la distance de Bray-Curtis appliquée à une matrice binaire.</p></li>
+</ul>
+</section></section>
+<section><section id="ordination-de-matrices-de-communautes-ecologiques" class="titleslide slide level1"><h1>Ordination de matrices de communautés écologiques</h1></section><section id="rappel-tableaux-de-contingence" class="slide level2">
+<h2>Rappel: Tableaux de contingence</h2>
+<ul>
+<li>Nombre d’observations (fréquence <span class="math inline">\(f\)</span>) pour chaque combinaison de niveaux de deux variables catégorielles.</li>
+</ul>
+<ul>
+<li>Une matrice de communauté (abondance ou présence/absence) est un tableau de contingence pour les variables “site” et “espèce”.</li>
+</ul>
+<ul>
+<li>Si les deux variables sont indépendantes, la fréquence attendue pour une cellule <span class="math inline">\((i, j)\)</span> est <span class="math inline">\(\hat{f_{ij}} = N_i N_j / N\)</span>.</li>
+</ul>
+<ul>
+<li><span class="math inline">\(\chi_{ij}\)</span>: Résidu normalisé pour la cellule <span class="math inline">\((i, j)\)</span>. Le <span class="math inline">\(\chi^2\)</span> est la somme des carrés des <span class="math inline">\(\chi_{ij}\)</span>.</li>
+</ul>
+<p><span class="math display">\[\chi_{ij} =  \frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}} \]</span></p>
+</section><section id="analyse-de-correspondance" class="slide level2">
+<h2>Analyse de correspondance</h2>
+<ul>
+<li class="fragment"><p>Ordination de la matrice des résidus <span class="math inline">\(\chi_{ij}\)</span> d’un tableau de contingences.</p></li>
+<li class="fragment"><p>Produit des composantes orthogonales en ordre décroissant de contribution au <span class="math inline">\(\chi^2\)</span> total du tableau.</p></li>
+<li class="fragment"><p>L’ACP fait une distinction entre observations et variables, mais l’analyse de correspondance est symétrique; elle ordonne simultanément les sites en fonction des espèces et vice versa.</p></li>
+<li class="fragment"><p>L’analyse de correspondance donne une bonne représentation de la distance du <span class="math inline">\(\chi^2\)</span> (donc elle accorde plus de poids aux espèces rares).</p></li>
+</ul>
+</section><section id="analyse-de-correspondance-dans-r" class="slide level2">
+<h2>Analyse de correspondance dans R</h2>
+<ul>
+<li>Tableau <code>dune</code> inclus avec <em>vegan</em>: abondance de 30 espèces végétales sur 20 sites.</li>
+</ul>
+<ul>
+<li>L’analyse de correspondance est réalisée avec la fonction <code>cca</code> de <em>vegan</em>.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(dune)
+
+ac_dune &lt;-<span class="st"> </span><span class="kw">cca</span>(dune)
+<span class="co"># display = &quot;reg&quot; pour ne pas afficher toutes les coordonnées d&#39;espèce et de site</span>
+<span class="kw">summary</span>(ac_dune, <span class="dt">display =</span> <span class="st">&quot;reg&quot;</span>) </code></pre></div>
+</section><section id="analyse-de-correspondance-dans-r-1" class="slide level2">
+<h2>Analyse de correspondance dans R</h2>
+<pre><code>## 
+## Call:
+## cca(X = dune) 
+## 
+## Partitioning of scaled Chi-square:
+##               Inertia Proportion
+## Total           2.115          1
+## Unconstrained   2.115          1
+## 
+## Eigenvalues, and their contribution to the scaled Chi-square 
+## 
+## Importance of components:
+##                          CA1    CA2    CA3     CA4     CA5     CA6     CA7
+## Eigenvalue            0.5360 0.4001 0.2598 0.17598 0.14476 0.10791 0.09247
+## Proportion Explained  0.2534 0.1892 0.1228 0.08319 0.06844 0.05102 0.04372
+## Cumulative Proportion 0.2534 0.4426 0.5654 0.64858 0.71702 0.76804 0.81175
+##                           CA8     CA9    CA10    CA11    CA12    CA13
+## Eigenvalue            0.08091 0.07332 0.05630 0.04826 0.04125 0.03523
+## Proportion Explained  0.03825 0.03466 0.02661 0.02282 0.01950 0.01665
+## Cumulative Proportion 0.85000 0.88467 0.91128 0.93410 0.95360 0.97025
+##                           CA14     CA15     CA16     CA17     CA18
+## Eigenvalue            0.020529 0.014911 0.009074 0.007938 0.007002
+## Proportion Explained  0.009705 0.007049 0.004290 0.003753 0.003310
+## Cumulative Proportion 0.979955 0.987004 0.991293 0.995046 0.998356
+##                           CA19
+## Eigenvalue            0.003477
+## Proportion Explained  0.001644
+## Cumulative Proportion 1.000000
+## 
+## Scaling 2 for species and site scores
+## * Species are scaled proportional to eigenvalues
+## * Sites are unscaled: weighted dispersion equal on all dimensions</code></pre>
+</section><section id="analyse-de-correspondance-dans-r-2" class="slide level2">
+<h2>Analyse de correspondance dans R</h2>
+<ul>
+<li>La fonction <code>plot</code> représente les espèces (en rouge) et les sites (en noir) sur les deux premiers axes.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ac_dune)</code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-7-1.png" width="576" /></p>
+</section><section id="analyse-de-correspondance-dans-r-3" class="slide level2">
+<h2>Analyse de correspondance dans R</h2>
+<ul>
+<li class="fragment"><p>Les coordonnées des espèces et des sites peuvent être extraites avec la fonction <code>scores(ac_dune)</code>.</p></li>
+<li class="fragment"><p>Les gradients environnementaux entre sites peuvent apparaître comme des courbes sur le graphique d’ordination, dû à l’effet non-linéaire de l’environnement sur l’abondance d’une espèce (concept de niche écologique).</p></li>
+<li class="fragment"><p>Des méthodes existent pour rectifier l’effet d’un seul gradient (<em>detrended correspondance analaysis</em> ou DCA), mais elles ne sont pas recommandées en général.</p></li>
+</ul>
+</section><section id="positionnement-multidimensionnel-non-metrique-nmds" class="slide level2">
+<h2>Positionnement multidimensionnel non-métrique (NMDS)</h2>
+<ul>
+<li>Méthode d’ordination basée sur une matrice de distance entre les sites.</li>
+</ul>
+<ul>
+<li>Applique un algorithme itératif pour trouver une configuration de points dans un petit nombre de dimensions (habituellement 2) qui représente le mieux la distance entre les sites.</li>
+</ul>
+<ul>
+<li>Le <em>stress</em> donne la correspondance entre la distance originale <span class="math inline">\(d\)</span> et la distance euclidienne dans l’espace réduit <span class="math inline">\(\hat{d}\)</span>:</li>
+</ul>
+<p><span class="math display">\[ \sqrt{\frac{\sum_{(i, j)} (d_{ij} - \hat{d_{ij}})^2}{\sum_{(i, j)} d_{ij}^2}} \]</span></p>
+</section><section id="positionnement-multidimensionnel-non-metrique-nmds-1" class="slide level2">
+<h2>Positionnement multidimensionnel non-métrique (NMDS)</h2>
+<ul>
+<li class="fragment"><p>Avantage: Méthode flexible, fonctionne avec n’importe quelle mesure de distance.</p></li>
+<li class="fragment"><p>Inconvénient: Algorithme heuristique peut ne pas converger, ou converger vers des solutions différentes selon les conditions de départ.</p></li>
+<li class="fragment"><p>La fonction <code>metaMDS</code> qui applique cette méthode répète l’algorithme plusieurs fois à partir de configurations initiales aléatoires.</p></li>
+</ul>
+</section><section id="positionnement-multidimensionnel-non-metrique-nmds-2" class="slide level2">
+<h2>Positionnement multidimensionnel non-métrique (NMDS)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">md_dune &lt;-<span class="st"> </span><span class="kw">metaMDS</span>(dune, <span class="dt">distance =</span> <span class="st">&quot;bray&quot;</span>)</code></pre></div>
+<ul>
+<li class="fragment"><p>La distance de Bray-Curtis est choisie par défaut par <code>metaMDS</code>.</p></li>
+<li class="fragment"><p>Si l’algorithme ne converge pas, il faut augmenter le nombre d’essais (argument <code>try</code> de la fonction, 20 par défaut).</p></li>
+<li class="fragment"><p>Stress final de 0.118 ici. L’ajustement est excellent si &lt;0.1 et mauvais si &gt;0.2.</p></li>
+<li class="fragment"><p><code>plot</code> affiche le résultat du positionnement en deux dimensions. Le NMDS ordonne les sites, puis les espèces sont placées en fonction de la position des sites où elles se trouvent.</p></li>
+</ul>
+</section><section id="positionnement-multidimensionnel-non-metrique-nmds-3" class="slide level2">
+<h2>Positionnement multidimensionnel non-métrique (NMDS)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(md_dune, <span class="dt">type =</span> <span class="st">&quot;t&quot;</span>) <span class="co"># type = &quot;t&quot; pour voir les noms des espèces et sites</span></code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-9-1.png" width="576" /></p>
+</section><section id="positionnement-multidimensionnel-non-metrique-nmds-4" class="slide level2">
+<h2>Positionnement multidimensionnel non-métrique (NMDS)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Correspondance entre la distance originale et la distance en 2D</span>
+<span class="kw">stressplot</span>(md_dune) </code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-10-1.png" width="576" /></p>
+</section></section>
+<section><section id="effet-de-predicteurs-sur-une-reponse-multivariee" class="titleslide slide level1"><h1>Effet de prédicteurs sur une réponse multivariée</h1></section><section id="variables-environnementales-associees-aux-sites" class="slide level2">
+<h2>Variables environnementales associées aux sites</h2>
+<ul>
+<li>Tableau de données <code>dune.env</code> qui contient les valeurs de cinq variables associées aux 20 sites de <code>dune</code>.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(dune.env)
+<span class="kw">head</span>(dune.env)</code></pre></div>
+<pre><code>##    A1 Moisture Management      Use Manure
+## 1 2.8        1         SF Haypastu      4
+## 2 3.5        1         BF Haypastu      2
+## 3 4.3        2         SF Haypastu      4
+## 4 4.2        2         SF Haypastu      4
+## 5 6.3        1         HF Hayfield      2
+## 6 4.3        1         HF Haypastu      2</code></pre>
+<ul>
+<li class="fragment">Une variable numérique (<em>A1</em>, épaisseur de la couche A1 du sol), deux variables catégorielles nominales (<em>Management</em> et <em>Use</em>) et deux variables catégorielles ordinales (<em>Moisture</em> et <em>Manure</em>).</li>
+</ul>
+</section><section id="analyse-de-variance-multivariee" class="slide level2">
+<h2>Analyse de variance multivariée</h2>
+<ul>
+<li>Fonction <code>adonis</code> de <em>vegan</em> estime la fraction des distances entre sites expliquée par différents prédicteurs (distance de Bray-Curtis par défaut).</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">adonis</span>(dune <span class="op">~</span><span class="st"> </span>A1 <span class="op">+</span><span class="st"> </span>Moisture <span class="op">+</span><span class="st"> </span>Management <span class="op">+</span><span class="st"> </span>Use <span class="op">+</span><span class="st"> </span>Manure, dune.env)</code></pre></div>
+<pre><code>## 
+## Call:
+## adonis(formula = dune ~ A1 + Moisture + Management + Use + Manure,      data = dune.env) 
+## 
+## Permutation: free
+## Number of permutations: 999
+## 
+## Terms added sequentially (first to last)
+## 
+##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
+## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.004 ** 
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.034 *  
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.980    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.454    
+## Residuals   7    0.9725 0.13893         0.22621           
+## Total      19    4.2990                 1.00000           
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section><section id="analyse-de-variance-multivariee-1" class="slide level2">
+<h2>Analyse de variance multivariée</h2>
+<ul>
+<li class="fragment"><p>Cette méthode calcule une statistique <span class="math inline">\(F\)</span> pour chaque variable indépendante.</p></li>
+<li class="fragment"><p>La distribution de <span class="math inline">\(F\)</span> sous l’hypothèse nulle n’est pas connue théoriquement, mais déterminée par 999 permutations aléatoires des valeurs de la variables (PERMANOVA).</p></li>
+<li class="fragment"><p>Comme pour l’ANOVA univariée, cette méthode considère l’effet des variables dans l’ordre donné.</p></li>
+<li class="fragment"><p>La PERMANOVA ne suppose pas l’égalité des variances, mais une différence significative peut représenter soit une différence de la composition “moyenne”, soit une différence dans la variance de la composition.</p></li>
+</ul>
+</section><section id="superpositions-des-predicteurs-aux-axes-dordination" class="slide level2">
+<h2>Superpositions des prédicteurs aux axes d’ordination</h2>
+<ul>
+<li class="fragment"><p>On réalise d’abord une ordination de la réponse, puis on corrèle les variables explicatives aux axes de l’ordination.</p></li>
+<li class="fragment"><p>Si les composantes principales sont orthogonales (ACP ou AC, mais pas NMDS), on peut effectuer une régression séparée de chaque composante en fonction des prédicteurs.</p></li>
+<li class="fragment"><p>On peut aussi estimer simultanément la corrélation entre des variables explicatives et chacun des axes: fonction <code>envfit</code> de <em>vegan</em>.</p></li>
+</ul>
+</section><section id="superpositions-des-predicteurs-aux-axes-dordination-1" class="slide level2">
+<h2>Superpositions des prédicteurs aux axes d’ordination</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">envf &lt;-<span class="st"> </span><span class="kw">envfit</span>(md_dune, <span class="kw">select</span>(dune.env, A1, Management))
+envf</code></pre></div>
+<pre><code>## 
+## ***VECTORS
+## 
+##      NMDS1   NMDS2     r2 Pr(&gt;r)  
+## A1 0.96473 0.26324 0.3649  0.017 *
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Permutation: free
+## Number of permutations: 999
+## 
+## ***FACTORS:
+## 
+## Centroids:
+##                NMDS1   NMDS2
+## ManagementBF -0.4534 -0.0102
+## ManagementHF -0.2636 -0.1282
+## ManagementNM  0.2957  0.5790
+## ManagementSF  0.1506 -0.4670
+## 
+## Goodness of fit:
+##                r2 Pr(&gt;r)   
+## Management 0.4134  0.005 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Permutation: free
+## Number of permutations: 999</code></pre>
+</section><section id="superpositions-des-predicteurs-aux-axes-dordination-2" class="slide level2">
+<h2>Superpositions des prédicteurs aux axes d’ordination</h2>
+<ul>
+<li class="fragment"><p>Pour <em>A1</em>, le résultat indique la magnitude et la direction de l’effet d’une augmentation de cette variable sur les deux axes du NMDS (donc un vecteur).</p></li>
+<li class="fragment"><p>Pour <em>Management</em>, le résultat indique la position moyenne (centroïde) des sites de chaque catégorie.</p></li>
+<li class="fragment"><p><span class="math inline">\(r^2\)</span> est la portion de la variance sur les deux axes expliquée par chaque variable. Les valeurs <span class="math inline">\(p\)</span> sont déterminées par permutation.</p></li>
+<li class="fragment"><p>Les valeurs <span class="math inline">\(p\)</span> et les <span class="math inline">\(r^2\)</span> diffèrent de la PERMANOVA (données originales vs. ordination).</p></li>
+</ul>
+</section><section id="superpositions-des-predicteurs-aux-axes-dordination-3" class="slide level2">
+<h2>Superpositions des prédicteurs aux axes d’ordination</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(md_dune)
+<span class="kw">plot</span>(envf)</code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-14-1.png" width="576" /></p>
+</section><section id="superposition-dune-surface-gradient-non-lineaire" class="slide level2">
+<h2>Superposition d’une surface (gradient non-linéaire)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ords &lt;-<span class="st"> </span><span class="kw">ordisurf</span>(md_dune, dune.env<span class="op">$</span>A1)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ords)
+<span class="kw">plot</span>(envf)</code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-17-1.png" width="576" /></p>
+</section><section id="ordination-sous-contraintes" class="slide level2">
+<h2>Ordination sous contraintes</h2>
+<ul>
+<li class="fragment"><p>Les méthodes d’ordination vues jusqu’à maintenant sont sans contrainte; elles structurent la réponse multivariée sans référence à des variables explicatives.</p></li>
+<li class="fragment"><p>Dans l’ordination sous contraintes, le choix des axes est basé sur la partie de la réponse expliquée par des prédicteurs donnés.</p></li>
+<li class="fragment"><p>Ces méthodes incluent l’analyse de redondance (<em>redundancy analysis</em>) et l’analyse canonique de correspondance (<em>canonical correspondence analysis</em>).</p></li>
+</ul>
+</section><section id="analyse-de-redondance" class="slide level2">
+<h2>Analyse de redondance</h2>
+<ul>
+<li>Matrice réponse <span class="math inline">\(Y\)</span> contenant <span class="math inline">\(n\)</span> observations de <span class="math inline">\(p\)</span> variables.</li>
+</ul>
+<ul>
+<li>On effectue d’abord une régression linéaire séparée pour chacune des <span class="math inline">\(p\)</span> variables en fonction des mêmes prédicteurs. Les valeurs attendues pour chaque observation sont regroupées dans une matrice <span class="math inline">\(\hat{Y}\)</span>.</li>
+</ul>
+<p><span class="math display">\[  
+\begin{bmatrix}
+\hat{y}_{11} &amp; \hat{y}_{12} &amp; ... &amp; \hat{y}_{1p} \\
+\hat{y}_{21} &amp; \hat{y}_{22} &amp; ... &amp; \hat{y}_{2p} \\
+... &amp; ... &amp; ... &amp; ... \\
+\hat{y}_{n1} &amp; ... &amp; ... &amp; \hat{y}_{np}
+\end{bmatrix}
+\]</span></p>
+<ul>
+<li class="fragment">L’analyse de redondance est équivalente à une ACP réalisée sur cette matrice <span class="math inline">\(\hat{Y}\)</span> plutôt que la réponse originale <span class="math inline">\(Y\)</span>.</li>
+</ul>
+</section><section id="analyse-de-redondance-1" class="slide level2">
+<h2>Analyse de redondance</h2>
+<ul>
+<li>Nous effectuons une transformation de Hellinger aux données <code>dune</code> avant d’appliquer l’analyse de redance (<code>rda</code>).</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dune_hel &lt;-<span class="st"> </span><span class="kw">decostand</span>(dune, <span class="dt">method =</span> <span class="st">&quot;hellinger&quot;</span>)
+dune_hel &lt;-<span class="st"> </span><span class="kw">scale</span>(dune_hel)
+rda_dune &lt;-<span class="st"> </span><span class="kw">rda</span>(dune_hel <span class="op">~</span><span class="st"> </span>A1 <span class="op">+</span><span class="st"> </span>Management, dune.env)</code></pre></div>
+<ul>
+<li class="fragment"><p>Puisqu’il y a 4 prédicteurs indépendants (1 pour <em>A1</em>, 3 pour le facteur <em>Management</em>), il y a 4 axes contraints (RDA1 à RDA4).</p></li>
+<li class="fragment"><p>La fonction <code>rda</code> réalise aussi une ACP sur les résidus (<span class="math inline">\(Y\)</span> - <span class="math inline">\(\hat{Y}\)</span>): 15 degrés de liberté résiduels ici.</p></li>
+</ul>
+</section><section id="analyse-de-redondance-2" class="slide level2">
+<h2>Analyse de redondance</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rda_dune</code></pre></div>
+<pre><code>## Call: rda(formula = dune_hel ~ A1 + Management, data = dune.env)
+## 
+##               Inertia Proportion Rank
+## Total         30.0000     1.0000     
+## Constrained   10.8492     0.3616    4
+## Unconstrained 19.1508     0.6384   15
+## Inertia is variance 
+## 
+## Eigenvalues for constrained axes:
+##  RDA1  RDA2  RDA3  RDA4 
+## 4.395 3.404 1.755 1.295 
+## 
+## Eigenvalues for unconstrained axes:
+##   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9  PC10  PC11  PC12 
+## 4.302 3.120 2.343 1.965 1.667 1.414 1.029 0.947 0.784 0.625 0.368 0.277 
+##  PC13  PC14  PC15 
+## 0.133 0.119 0.056</code></pre>
+</section><section id="diagramme-de-triple-projection-triplot" class="slide level2">
+<h2>Diagramme de triple projection (<em>triplot</em>)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(rda_dune)</code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-20-1.png" width="576" /></p>
+</section><section id="analyse-de-canonique-de-correspondance" class="slide level2">
+<h2>Analyse de canonique de correspondance</h2>
+<ul>
+<li>Combinaison d’une régression et d’une analyse de correspondance.</li>
+</ul>
+<ul>
+<li>La régression utilise comme réponse les résidus <span class="math inline">\(\chi_{ij}\)</span> d’un tableau de contingence.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cca_dune &lt;-<span class="st"> </span><span class="kw">cca</span>(dune <span class="op">~</span><span class="st"> </span>A1 <span class="op">+</span><span class="st"> </span>Management, dune.env)
+cca_dune</code></pre></div>
+<pre><code>## Call: cca(formula = dune ~ A1 + Management, data = dune.env)
+## 
+##               Inertia Proportion Rank
+## Total          2.1153     1.0000     
+## Constrained    0.7798     0.3686    4
+## Unconstrained  1.3355     0.6314   15
+## Inertia is scaled Chi-square 
+## 
+## Eigenvalues for constrained axes:
+##   CCA1   CCA2   CCA3   CCA4 
+## 0.3187 0.2372 0.1322 0.0917 
+## 
+## Eigenvalues for unconstrained axes:
+##    CA1    CA2    CA3    CA4    CA5    CA6    CA7    CA8    CA9   CA10 
+## 0.3620 0.2029 0.1527 0.1345 0.1110 0.0800 0.0767 0.0553 0.0444 0.0415 
+##   CA11   CA12   CA13   CA14   CA15 
+## 0.0317 0.0178 0.0116 0.0087 0.0047</code></pre>
+</section><section id="analyse-de-canonique-de-correspondance-1" class="slide level2">
+<h2>Analyse de canonique de correspondance</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(cca_dune)</code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-22-1.png" width="576" /></p>
+</section><section id="comparaison-avec-lanalyse-de-correspondance" class="slide level2">
+<h2>Comparaison avec l’analyse de correspondance</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ac_dune)
+ac_envf &lt;-<span class="st"> </span><span class="kw">envfit</span>(ac_dune, <span class="kw">select</span>(dune.env, A1, Management))
+<span class="kw">plot</span>(ac_envf)</code></pre></div>
+<p><img src="14-Analyses_multivariées_Partie2_files/figure-revealjs/unnamed-chunk-23-1.png" width="576" /></p>
+</section><section id="ordination-avec-ou-sans-contraintes" class="slide level2">
+<h2>Ordination avec ou sans contraintes?</h2>
+<ul>
+<li class="fragment"><p>Avec une ordination sans contraintes (ACP ou AC), on résume la variation de la <em>réponse</em> multivariée en quelques axes, puis on estime l’effet des prédicteurs sur ces axes.</p>
+<ul>
+<li class="fragment">Cette approche est plus parcimonieuse mais court le risque de “perdre” l’effet d’un prédicteur s’il n’est pas relié principalement aux quelques premières composantes principales.</li>
+</ul></li>
+<li class="fragment"><p>Avec une ordination sous contraintes (ADR ou ACC), on effectue d’abord la régression dans l’espace multivarié, puis on résume les <em>prédictions</em> de cette régression en quelques axes.</p>
+<ul>
+<li class="fragment">Puisque cette approche réalise autant de régressions univariées qu’il y a de colonnes dans la réponse multivariée, il y a plus de chances de détecter un effet dû seulement au hasard (surajustement du modèle).</li>
+</ul></li>
+</ul>
+</section><section id="resume" class="slide level2">
+<h2>Résumé</h2>
+<ul>
+<li class="fragment"><p>Le package <em>vegan</em> dans R contient plusieurs outils pour l’analyse multivariée des données de communautés écologiques, qui prennent la forme d’une matrice indiquant l’abondance ou la présence d’espèces sur chacun des sites étudiés.</p></li>
+<li class="fragment"><p>La distance euclidienne n’est pas appropriée pour les données de communautés écologiques. Nous avons vu plusieurs distances conçues pour les données d’abondance (Bray-Curtis, Hellinger, <span class="math inline">\(\chi^2\)</span>) ou de présence-absence (Jaccard, Sorenson).</p></li>
+<li class="fragment"><p>Les matrices de distance obtenues par ces méthodes peuvent être utilisées dans une analyse de regroupement et dans certaines ordinations (ex.: NMDS).</p></li>
+</ul>
+</section><section id="resume-1" class="slide level2">
+<h2>Résumé</h2>
+<ul>
+<li class="fragment"><p>L’analyse de correspondance est un type d’ordination semblable à l’analyse en composantes principales, mais adaptée aux tableaux de contingence, incluant les données d’abondance ou de présence.</p></li>
+<li class="fragment"><p>Le positionnement multidimensionnel non-métrique (NMDS) optimise la position des points dans un nombre réduit de dimensions pour que leur distance soit la plus près possible d’une matrice de distance donnée.</p></li>
+<li class="fragment"><p>La fonction <code>envfit</code> permet d’estimer simultanément l’effet de prédicteurs sur les principaux axes d’ordination.</p></li>
+</ul>
+</section><section id="resume-2" class="slide level2">
+<h2>Résumé</h2>
+<ul>
+<li>Quatre des méthodes d’ordination (ACP, AC, ADR et ACC) sont reliées par deux propriétés: le type de données et la présence ou non de contraintes.</li>
+</ul>
+<table style="width:54%;">
+<colgroup>
+<col style="width: 4%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Sans contrainte</th>
+<th>Avec contrainte</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Données numériques continues (incluant des transformations des matrices d’abondance)</td>
+<td>Analyse en composantes principales</td>
+<td>Analyse de redondance</td>
+</tr>
+<tr class="even">
+<td>Tableau de contingence (abondance ou présence)</td>
+<td>Analyse de correspondance</td>
+<td>Analyse canonique de correspondance</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li class="fragment">Ordination sous contraintes: régression des données multivariées suivie d’une ordination est de la partie de la réponse expliquée par les prédicteurs.</li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
