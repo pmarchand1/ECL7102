@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Synthèse du cours</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
+
+<style type="text/css">
+.reveal section img {
+  background: rgba(255, 255, 255, 0.85);
+}
+</style>
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="styles.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Synthèse du cours</h1>
+    <h3 class="date"><br/>17 décembre 2018</h3>
+</section>
+
+<section><section id="echantillonnage-et-plans-experimentaux" class="titleslide slide level1"><h1>Échantillonnage et plans expérimentaux</h1></section><section id="echantillonnage" class="slide level2">
+<h2>Échantillonnage</h2>
+<ul>
+<li class="fragment"><p>Aléatoire simple: chaque individu a la même probabilité d’être échantillonné</p></li>
+<li class="fragment"><p>Stratifié: division de la population en strates, échantillonnage aléatoire par strate</p></li>
+<li class="fragment"><p>Par grappe: échantilonner des groupes d’individus, prendre soit tous les individus d’un groupe, soit un échantillon aléatoire simple par groupe (multistade)</p></li>
+</ul>
+</section><section id="plan-dexperience" class="slide level2">
+<h2>Plan d’expérience</h2>
+<ul>
+<li class="fragment"><p>Groupe témoin</p></li>
+<li class="fragment"><p>Assignation aléatoire des individus aux traitements</p></li>
+<li class="fragment"><p>Contrôle de la variation par des blocs</p></li>
+<li class="fragment"><p>Parcelles divisées: deuxième facteur varie à l’intérieur des réplicats du premier facteur</p></li>
+</ul>
+</section></section>
+<section><section id="tests-statistiques" class="titleslide slide level1"><h1>Tests statistiques</h1></section><section id="structure-dun-test-statistique" class="slide level2">
+<h2>Structure d’un test statistique</h2>
+<p><img src="../images/synthese_test.png" /></p>
+</section><section id="exemples" class="slide level2">
+<h2>Exemples</h2>
+<table style="width:71%;">
+<colgroup>
+<col style="width: 2%" />
+<col style="width: 38%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>test <span class="math inline">\(t\)</span> à un échantillon (<span class="math inline">\(n\)</span> individus)</th>
+<th>ANOVA à un facteur (<span class="math inline">\(m\)</span> groupes de <span class="math inline">\(n\)</span> individus)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hypothèse nulle</td>
+<td>La moyenne <span class="math inline">\(\bar{x}\)</span> est égale à <span class="math inline">\(\mu\)</span></td>
+<td>La moyenne est la même pour les <span class="math inline">\(m\)</span> groupes</td>
+</tr>
+<tr class="even">
+<td>Statistique</td>
+<td><span class="math inline">\(t = (\bar{x} - \mu) / (s/\sqrt{n})\)</span></td>
+<td><span class="math inline">\(F = MSA/MSE\)</span></td>
+</tr>
+<tr class="odd">
+<td>Distribution</td>
+<td><span class="math inline">\(t\)</span> avec <span class="math inline">\(n-1\)</span> degrés de liberté</td>
+<td><span class="math inline">\(F\)</span> avec <span class="math inline">\(m(n-1)\)</span> et <span class="math inline">\((m - 1)\)</span> degrés de liberté</td>
+</tr>
+</tbody>
+</table>
+</section><section id="points-cles-sur-les-tests-dhypothese" class="slide level2">
+<h2>Points clés sur les tests d’hypothèse</h2>
+<ul>
+<li class="fragment"><p>Le seuil de signification est la probabilité de rejeter l’hypothèse nulle lorsqu’elle est vraie.</p></li>
+<li class="fragment"><p>Il faut choisir un test et un seuil de signification <em>avant</em> d’analyser les résultats.</p></li>
+<li class="fragment"><p>Si on effectue plusieurs test dans une expérience, la probabilité de rejeter par erreur une des hypothèses nulles augmente (problème des comparaisons multiples).</p></li>
+</ul>
+</section><section id="points-cles-sur-les-tests-dhypothese-1" class="slide level2">
+<h2>Points clés sur les tests d’hypothèse</h2>
+<ul>
+<li class="fragment"><p>La puissance d’un test est la probabilité de rejeter l’hypothèse nulle si elle est fausse. Plus l’effet à détecter est faible par rapport à la variance de la réponse (faible ratio signal/bruit), puis <span class="math inline">\(n\)</span> doit être élevée pour avoir la même puissance.</p></li>
+<li class="fragment"><p>Avec un <span class="math inline">\(n\)</span> suffisamment grand, même un très petit effet sera jugé statistiquement significatif; cela ne signifie pas que l’effet est important.</p></li>
+</ul>
+</section><section id="estimation-de-parametres" class="slide level2">
+<h2>Estimation de paramètres</h2>
+<ul>
+<li class="fragment"><p>Biais: écart systématique entre l’estimé d’un paramètre et sa valeur exacte.</p></li>
+<li class="fragment">Erreur-type: écart-type de l’estimé d’un paramètre, dû à l’échantillonnage limité; diminue lorsque <span class="math inline">\(n\)</span> augmente.
+<ul>
+<li class="fragment">Différent de l’écart-type de la réponse: mesure la variabilité entre individus, ne dépend pas de <span class="math inline">\(n\)</span>.</li>
+</ul></li>
+<li class="fragment"><p>Intervalle de confiance: Dans X% des échantillons possibles, l’intervalle de confiance à X% de l’estimé d’un paramètre contient la vraie valeur de ce paramètre.</p></li>
+<li class="fragment"><p>Relation entre intervalle de confiance et test d’hypothèse: l’hypothèse <span class="math inline">\(\theta = \theta_0\)</span> peut être rejetée à un seuil <span class="math inline">\(\alpha\)</span> si l’intervalle de confiance à <span class="math inline">\(100\%(1 - \alpha)\)</span> de <span class="math inline">\(\hat{\theta}\)</span> n’inclut pas <span class="math inline">\(\theta_0\)</span>.</p></li>
+</ul>
+</section><section id="test-de-differences-entre-groupes" class="slide level2">
+<h2>Test de différences entre groupes</h2>
+<p><img src="../images/synthese_anova.png" width="80%"></p>
+</section><section id="suppositions-de-lanova" class="slide level2">
+<h2>Suppositions de l’ANOVA</h2>
+<ul>
+<li class="fragment"><p>Indépendance: Les observations sont indépendantes.</p></li>
+<li class="fragment"><p>Normalité: La réponse suit une distribution normale dans chaque groupe.</p></li>
+<li class="fragment"><p>Homoscédasticité: La variance est la même dans chaque groupe.</p></li>
+<li class="fragment"><p>L’ANOVA tolère bien des écarts modérés par rapport à la normalité, donc cette supposition est moins critique que les deux autres.</p></li>
+<li class="fragment"><p>Avec seulement 2 groupes, le test <span class="math inline">\(t\)</span> permet des variances inégales.</p></li>
+</ul>
+</section><section id="modeles-de-regression" class="slide level2">
+<h2>Modèles de régression</h2>
+<p><img src="../images/synthese_regression.png" /></p>
+<p><em>Types de modèles en gris non vus dans ce cours.</em></p>
+</section><section id="suppositions-de-la-regression-lineaire" class="slide level2">
+<h2>Suppositions de la régression linéaire</h2>
+<ol type="1">
+<li class="fragment">Effet linéaire et additif des prédicteurs sur la réponse
+<ul>
+<li class="fragment">Sinon: transformer la réponse et/ou les prédicteurs, inclure des interactions, <em>modèles additifs généralisés (GAM)</em></li>
+</ul></li>
+<li class="fragment">Indépendance des résidus
+<ul>
+<li class="fragment">Sinon: modèles mixtes (données groupées), <em>modèles d’autocorrélation temporelle ou spatiale</em></li>
+</ul></li>
+<li class="fragment">Uniformité de la variance (homoscédasticité)
+<ul>
+<li class="fragment">Sinon: transformer la réponse, <em>régression linéaire pondérée</em></li>
+</ul></li>
+<li class="fragment">Normalité
+<ul>
+<li class="fragment">Sinon: transformer la réponse (seulement si très loin de la normalité)</li>
+</ul></li>
+</ol>
+<p><em>Modèles en italique non vus dans ce cours.</em></p>
+</section></section>
+<section><section id="interpreter-les-coefficients-dune-regression" class="titleslide slide level1"><h1>Interpréter les coefficients d’une régression</h1></section><section id="regression-lineaire-sans-interaction" class="slide level2">
+<h2>Régression linéaire sans interaction</h2>
+<p><span class="math display">\[ y \sim w + x + z \]</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\(y\)</span>: réponse numérique</li>
+<li class="fragment"><span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span>: prédicteurs numériques</li>
+<li class="fragment"><span class="math inline">\(z\)</span>: facteur avec codage de traitement et niveaux A (référence), B et C</li>
+</ul>
+</section><section id="regression-lineaire-sans-interaction-1" class="slide level2">
+<h2>Régression linéaire sans interaction</h2>
+<p><span class="math display">\[ y \sim w + x + z \]</span></p>
+<p>Coefficients estimés:</p>
+<ul>
+<li class="fragment"><em>(Intercept)</em>: Valeur moyenne de la réponse lorsque tous les prédicteurs sont à leur niveau de référence (0 pour les prédicteurs numériques).</li>
+<li class="fragment"><em>w</em>: Effet sur <span class="math inline">\(y\)</span> si <span class="math inline">\(w\)</span> augmente de 1, <span class="math inline">\(x\)</span> et <span class="math inline">\(z\)</span> restent constants.</li>
+<li class="fragment"><em>x</em>: Effet sur <span class="math inline">\(y\)</span> si <span class="math inline">\(x\)</span> augmente de 1, <span class="math inline">\(w\)</span> et <span class="math inline">\(z\)</span> restent constants.</li>
+<li class="fragment"><em>zB</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux B et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constant.</li>
+<li class="fragment"><em>zC</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux C et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constant.</li>
+</ul>
+</section><section id="interaction-entre-un-predicteur-numerique-et-un-facteur" class="slide level2">
+<h2>Interaction entre un prédicteur numérique et un facteur</h2>
+<p><span class="math display">\[ y \sim x * z \]</span></p>
+<p>Coefficients estimés:</p>
+<ul>
+<li class="fragment"><em>(Intercept)</em>: Même interprétation.</li>
+<li class="fragment"><em>x</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = A.</li>
+<li class="fragment"><em>zB</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux B et A de <span class="math inline">\(z\)</span> si <span class="math inline">\(x\)</span> = 0.</li>
+<li class="fragment"><em>zC</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux C et A de <span class="math inline">\(z\)</span> si <span class="math inline">\(x\)</span> = 0.</li>
+<li class="fragment"><em>x:zB</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = B.</li>
+<li class="fragment"><em>x:zC</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = C.</li>
+</ul>
+</section><section id="interaction-entre-deux-predicteurs-numeriques" class="slide level2">
+<h2>Interaction entre deux prédicteurs numériques</h2>
+<p><span class="math display">\[ y \sim w * x \]</span></p>
+<p>Coefficients estimés:</p>
+<ul>
+<li class="fragment"><em>(Intercept)</em>: Même interprétation.</li>
+<li class="fragment"><em>w</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(w\)</span> si <span class="math inline">\(x\)</span> = 0.</li>
+<li class="fragment"><em>x</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(w\)</span> = 0.</li>
+<li class="fragment"><em>w:x</em>: Effet sur la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> d’une augmentation unitaire de <span class="math inline">\(w\)</span>, <em>OU</em> effet sur la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(w\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> (deux interprétations équivalentes).</li>
+</ul>
+</section><section id="modeles-lineaires-generalises" class="slide level2">
+<h2>Modèles linéaires généralisés</h2>
+<ul>
+<li class="fragment"><p>Dans ces modèles, la moyenne de <span class="math inline">\(y\)</span> n’est pas égale à la combinaison linéaire des prédicteurs <span class="math inline">\(\eta\)</span>, mais à une transformation de <span class="math inline">\(\eta\)</span> selon une <em>fonction de lien</em>.</p></li>
+<li class="fragment"><p>L’interprétation des paramètres ci-dessus donne l’effet sur <span class="math inline">\(\eta\)</span>. Pour obtenir l’effet sur la moyenne de <span class="math inline">\(y\)</span>, il faut appliquer l’inverse de la fonction de lien.</p>
+<ul>
+<li class="fragment">Inverse du lien logit: <span class="math inline">\(y = 1/(1 + \exp(- \eta))\)</span></li>
+<li class="fragment">Inverse du lien log: <span class="math inline">\(y = \exp(\eta)\)</span></li>
+</ul></li>
+</ul>
+</section><section id="normalisation-des-predicteurs-numeriques" class="slide level2">
+<h2>Normalisation des prédicteurs numériques</h2>
+<ul>
+<li>Normaliser un prédicteur en soustrayant la moyenne et en divisant par l’écart-type.</li>
+</ul>
+<p><span class="math display">\[ x_{norm} = \frac{x - \mu_x}{\sigma_x} \]</span></p>
+<ul>
+<li class="fragment"><p>Puisque <span class="math inline">\(x_{norm} = 0\)</span> correspond à la moyenne de <span class="math inline">\(x\)</span>, il est plus facile d’interpréter l’ordonnée à l’origine (<em>intercept</em>) dans tous les cas, et les coefficients dans le cas d’un modèle avec interactions.</p></li>
+<li class="fragment"><p>Puisqu’une augmentation unitaire de <span class="math inline">\(x_{norm}\)</span> correspond à augmenter <span class="math inline">\(x\)</span> d’un écart-type, la magnitude du coefficient donne une idée de l’importance de l’effet de ce prédicteur. On peut ainsi comparer des prédicteurs dont les échelles originales sont différentes.</p></li>
+</ul>
+</section><section id="selection-de-modeles" class="slide level2">
+<h2>Sélection de modèles</h2>
+<ul>
+<li class="fragment"><p>Choix entre modèles de différentes complexités: compromis entre sous-ajustement et surajustement.</p></li>
+<li class="fragment"><p>Sous-ajustement: effets importants non inclus dans le modèle.</p></li>
+<li class="fragment"><p>Surajustement: le modèle reproduit très bien les données utilisées pour son ajustement, mais performe moins bien sur de nouvelles données.</p></li>
+<li class="fragment"><p>En l’absence de données indépendantes pour évaluer le pouvoir prédictif de différents modèles, on peut l’estimer avec l’AIC (et ses variantes).</p></li>
+</ul>
+</section><section id="points-cles-pour-la-selection-de-modeles" class="slide level2">
+<h2>Points clés pour la sélection de modèles</h2>
+<ul>
+<li class="fragment"><p>Comparer selon la même variable réponse et les mêmes observations.</p></li>
+<li class="fragment"><p>Le meilleur modèle n’est peut-être pas bon: vérifier l’ajustement.</p></li>
+<li class="fragment"><p>Si plusieurs modèles sont plausibles, la moyenne pondérée de leurs prédictions est souvent meilleure que les prédictions du meilleur modèle.</p></li>
+</ul>
+</section><section id="collinearite" class="slide level2">
+<h2>Collinéarité</h2>
+<ul>
+<li class="fragment"><p>Problème où deux ou plusieurs prédicteurs sont fortement corrélés.</p></li>
+<li class="fragment">Différentes options:
+<ul>
+<li class="fragment">Choisir <em>a priori</em> quels prédicteurs éliminer, d’après notre connaissance du système.</li>
+<li class="fragment">Utiliser l’AIC pour choisir entre différents modèles qui incluent des sous-ensembles non collinéaires des prédicteurs.</li>
+<li class="fragment">Effectuer une ordination des prédicteurs pour obtenir des axes non corrélés, puis effectuer une régression de la réponse en fonction de ces nouvelles variables.</li>
+</ul></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="date" content="2018-12-17" />
+
+<title>Course synthesis</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Course synthesis</h1>
+<h4 class="date"><em><br/>December 17, 2018</em></h4>
+
+</div>
+
+
+<div id="sampling-and-experiment-design" class="section level2">
+<h2>Sampling and experiment design</h2>
+<div id="sampling" class="section level3">
+<h3>Sampling</h3>
+<ul>
+<li>Simple random sampling: each individual has the same probability of being sampled</li>
+<li>Stratified sampling: division of population into strata, random sampling by stratum</li>
+<li>Cluster sampling: sample groups of individuals, take either all the individuals of a group, or a simple random sample by group (multistage)</li>
+</ul>
+</div>
+<div id="experimental-design" class="section level3">
+<h3>Experimental design</h3>
+<ul>
+<li>Control group</li>
+<li>Random assignment of individuals to treatments</li>
+<li>Control of variation using blocks</li>
+<li>Split plots: second factor varies within replicates of the first factor</li>
+</ul>
+</div>
+</div>
+<div id="structure-of-a-statistical-test" class="section level2">
+<h2>Structure of a statistical test</h2>
+<div class="figure">
+<img src="../images/synthesis_test.png" />
+
+</div>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
+<table style="width:71%;">
+<colgroup>
+<col width="2%" />
+<col width="38%" />
+<col width="29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>One-sample <span class="math inline">\(t\)</span>-test (<span class="math inline">\(n\)</span> individuals)</th>
+<th>One-factor ANOVA (<span class="math inline">\(m\)</span> groups of <span class="math inline">\(n\)</span> individuals)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Null hypothesis</td>
+<td>The mean <span class="math inline">\(\bar{x}\)</span> equals <span class="math inline">\(\mu\)</span></td>
+<td>Same mean in each of the <span class="math inline">\(m\)</span> groups</td>
+</tr>
+<tr class="even">
+<td>Statistic</td>
+<td><span class="math inline">\(t = (\bar{x} - \mu) / (s/\sqrt{n})\)</span></td>
+<td><span class="math inline">\(F = MSA/MSE\)</span></td>
+</tr>
+<tr class="odd">
+<td>Distribution</td>
+<td><span class="math inline">\(t\)</span> with <span class="math inline">\(n-1\)</span> degrees of freedom</td>
+<td><span class="math inline">\(F\)</span> with <span class="math inline">\(m(n-1)\)</span> and <span class="math inline">\((m - 1)\)</span> degrees of freedom</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="key-points-for-hypothesis-testing" class="section level3">
+<h3>Key points for hypothesis testing</h3>
+<ul>
+<li><p>The significance level is the probability of rejecting the null hypothesis when it is true.</p></li>
+<li><p>You must choose a test and a significance level <em>before</em> analyzing the results.</p></li>
+<li><p>If several tests are performed in an experiment, the probability of mistakenly rejecting one of the null hypotheses increases (multiple comparison problem).</p></li>
+<li><p>The power of a test is the probability of rejecting the null hypothesis if it is false. The smaller the effect to be detected compared to the variance of the response (low signal-to-noise ratio), the higher <span class="math inline">\(n\)</span> must be to have the same power.</p></li>
+<li><p>With a sufficiently large <span class="math inline">\(n\)</span>, even a very small effect will be judged statistically significant; it does not mean that the effect is important.</p></li>
+</ul>
+</div>
+</div>
+<div id="parameter-estimation" class="section level2">
+<h2>Parameter estimation</h2>
+<ul>
+<li><p>Bias: systematic difference between the estimate of a parameter and its exact value.</p></li>
+<li>Standard error: standard deviation of the estimate of a parameter due to limited sampling; decreases when <span class="math inline">\(n\)</span> increases.
+<ul>
+<li>Different from the standard deviation of the response: measures the variability between individuals, does not depend on <span class="math inline">\(n\)</span>.</li>
+</ul></li>
+<li><p>Confidence interval: In X% of the possible samples, the X% confidence interval of a parameter estimate contains the true value of this parameter.</p></li>
+<li><p>Relationship between confidence interval and hypothesis testing: the hypothesis <span class="math inline">\(\theta = \theta_0\)</span> can be rejected at a threshold <span class="math inline">\(\alpha\)</span> if the <span class="math inline">\(100 \% (1 - \ alpha)\)</span> confidence interval of <span class="math inline">\(\hat{\theta}\)</span> does not include <span class="math inline">\(\theta_0\)</span>.</p></li>
+</ul>
+</div>
+<div id="test-differences-between-groups" class="section level2">
+<h2>Test differences between groups</h2>
+<div class="figure">
+<img src="../images/synthesis_anova.png" />
+
+</div>
+<div id="assumptions-of-the-anova" class="section level3">
+<h3>Assumptions of the ANOVA</h3>
+<ul>
+<li>Independence: The observations are independent.</li>
+<li>Normality: The response follows a normal distribution in each group.</li>
+<li>Homoscedasticity: The variance is the same in each group.</li>
+</ul>
+<p>ANOVA tolerates moderate deviations from normality, so that assumption is less critical than the other two.</p>
+<p>With only 2 groups, the <span class="math inline">\(t\)</span>-test allows for unequal variances.</p>
+</div>
+</div>
+<div id="regression-models" class="section level2">
+<h2>Regression models</h2>
+<div class="figure">
+<img src="../images/synthesis_regression.png" />
+
+</div>
+<p><em>Models in gray not seen in this course.</em></p>
+<div id="assumptions-of-the-linear-regression-model" class="section level3">
+<h3>Assumptions of the linear regression model</h3>
+<ol style="list-style-type: decimal">
+<li>Linear and additive effect of predictors on response
+<ul>
+<li>Otherwise: transform the response and / or predictors, include interactions, <em>generalized additive models (GAM)</em></li>
+</ul></li>
+<li>Independence of residuals
+<ul>
+<li>Otherwise: mixed models (grouped data), <em>temporal or spatial autocorrelation models</em></li>
+</ul></li>
+<li>Uniformity of the variance (homoscedasticity)
+<ul>
+<li>Otherwise: transform the response, <em>weighted linear regression</em></li>
+</ul></li>
+<li>Normality
+<ul>
+<li>Otherwise: transform the response (only if very far from normality)</li>
+</ul></li>
+</ol>
+<p><em>Model names in italics not seen in this course.</em></p>
+</div>
+</div>
+<div id="interpreting-regression-coefficients" class="section level2">
+<h2>Interpreting regression coefficients</h2>
+<div id="linear-regression-no-interactions" class="section level3">
+<h3>Linear regression, no interactions</h3>
+<p><span class="math display">\[ y \sim w + x + z \]</span></p>
+<p><span class="math inline">\(y\)</span> is the numerical response, <span class="math inline">\(w\)</span> and <span class="math inline">\(x\)</span> are numerical predictors, <span class="math inline">\(z\)</span> is a factor with treatment coding (default in R) and three levels: A (reference), B, and C.</p>
+<p>Estimated coefficients:</p>
+<ul>
+<li><em>(Intercept)</em>: Mean value of the response when all predictors are at their reference level (0 for numerical predictors).</li>
+<li><em>w</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(w\)</span> if <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> remain constant.</li>
+<li><em>x</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(w\)</span> and <span class="math inline">\(z\)</span> remain constant.</li>
+<li><em>zB</em>: Difference of <span class="math inline">\(y\)</span> between levels B and A of <span class="math inline">\(z\)</span>, if <span class="math inline">\(w\)</span> and <span class="math inline">\(x\)</span> remain constant.</li>
+<li><em>zC</em>: Difference of <span class="math inline">\(y\)</span> between levels C and A of <span class="math inline">\(z\)</span>, if <span class="math inline">\(w\)</span> and <span class="math inline">\(x\)</span> remain constant.</li>
+</ul>
+</div>
+<div id="interaction-of-a-numerical-predictor-and-a-factor" class="section level3">
+<h3>Interaction of a numerical predictor and a factor</h3>
+<p><span class="math display">\[ y \sim x * z \]</span></p>
+<p>Estimated coefficients:</p>
+<ul>
+<li><em>(Intercept)</em>: Same interpretation.</li>
+<li><em>x</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = A.</li>
+<li><em>zB</em>: Difference of <span class="math inline">\(y\)</span> between levels B and A of <span class="math inline">\(z\)</span> if <span class="math inline">\(x\)</span> = 0.</li>
+<li><em>zC</em>: Difference of <span class="math inline">\(y\)</span> between levels C and A of <span class="math inline">\(z\)</span> if <span class="math inline">\(x\)</span> = 0.</li>
+<li><em>x:zB</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = B.</li>
+<li><em>x:zC</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = C.</li>
+</ul>
+</div>
+<div id="interaction-of-two-numerical-predictors" class="section level3">
+<h3>Interaction of two numerical predictors</h3>
+<p><span class="math display">\[ y \sim w * x \]</span></p>
+<p>Estimated coefficients:</p>
+<ul>
+<li><em>(Intercept)</em>: Same interpretation.</li>
+<li><em>w</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(w\)</span> if <span class="math inline">\(x\)</span> = 0.</li>
+<li><em>x</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(w\)</span> = 0.</li>
+<li><em>w:x</em>: Effect on the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> of a unit increase in <span class="math inline">\(w\)</span>, <em>OR</em> effect on the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(w\)</span> of a unit increase in <span class="math inline">\(x\)</span> (two equivalent interpretations).</li>
+</ul>
+</div>
+<div id="generalized-linear-models" class="section level3">
+<h3>Generalized linear models</h3>
+<ul>
+<li><p>In these models, the mean of <span class="math inline">\(y\)</span> is not equal to the linear combination of predictors <span class="math inline">\(\eta\)</span>, but to a transformation of <span class="math inline">\(\eta\)</span> according to a <em>link function</em>.</p></li>
+<li><p>The interpretation of the parameters above indicates the effect on <span class="math inline">\(\eta\)</span>. To obtain the effect on the mean of <span class="math inline">\(y\)</span>, you must apply the inverse of the link function.</p>
+<ul>
+<li>Inverse of the logit link: <span class="math inline">\(y = 1/(1 + \exp(- \eta))\)</span></li>
+<li>Inverse of the log link: <span class="math inline">\(y = \exp(\eta)\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="standardization-of-numerical-predictors" class="section level3">
+<h3>Standardization of numerical predictors</h3>
+<ul>
+<li>Standardize a predictor by subtracting the mean and dividing by the standard deviation.</li>
+</ul>
+<p><span class="math display">\[ x_{norm} = \frac{x - \mu_x}{\sigma_x} \]</span> - Since <span class="math inline">\(x_{norm} = 0\)</span> corresponds to the mean of <span class="math inline">\(x\)</span>, it is easier to interpret the intercept in all cases, and the coefficients in the case of a model with interactions.</p>
+<ul>
+<li>Since a unit increase of <span class="math inline">\(x_{norm}\)</span> corresponds to increasing <span class="math inline">\(x\)</span> by one standard deviation, the magnitude of the coefficient gives an idea of the importance of the effect of this predictor. We can thus compare predictors with different original scales.</li>
+</ul>
+</div>
+</div>
+<div id="model-selection" class="section level2">
+<h2>Model selection</h2>
+<ul>
+<li><p>Choice between models of different complexities: compromise between underfitting and overfitting.</p></li>
+<li><p>Underfitting: important effects not included in the model.</p></li>
+<li><p>Overfitting: the model reproduces very well the data used to fit it, but performs worse on new data.</p></li>
+<li><p>In the absence of independent data to evaluate the predictive power of different models, we can estimate it with the AIC (and its variants).</p></li>
+</ul>
+<div id="key-points-for-model-selection" class="section level3">
+<h3>Key points for model selection</h3>
+<ul>
+<li><p>Compare models based on the same response variable and the same observations.</p></li>
+<li><p>The best model may not be good: check the fit.</p></li>
+<li><p>If several models are plausible, the weighted average of their predictions is often better than the predictions of the best model.</p></li>
+</ul>
+</div>
+<div id="collinearity" class="section level3">
+<h3>Collinearity</h3>
+<ul>
+<li><p>Problem where two or more predictors are strongly correlated.</p></li>
+<li>Different options:
+<ul>
+<li>Choose <em>a priori</em> which predictors to eliminate, according to our knowledge of the system.</li>
+<li>Use AIC to choose between different models that include non-collinear subsets of predictors.</li>
+<li>Perform an ordination of the predictors to obtain uncorrelated axes, then perform a regression the response according to these new variables.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

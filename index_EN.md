@@ -17,6 +17,7 @@
 12. [Mixed models - Part 2](notes_cours/12E-Mixed_models_Part2.html)
 13. [Multivariate analysis - Part 1](notes_cours/13E-Multivariate_analysis_Part1.html)
 14. [Multivariate analysis - Part 2](notes_cours/14E-Multivariate_analysis_Part2.html)
+15. [Course synthesis](notes_cours/15E-Synthesis.html)
 
 ## Labs
 
