@@ -23,6 +23,7 @@ library(cowplot)
 ### Sampling
 
 - Simple random sampling: each individual has the same probability of being sampled
+- Systematic sampling: regularly-spaced samples from a random origin
 - Stratified sampling: division of population into strata, random sampling by stratum
 - Cluster sampling: sample groups of individuals, take either all the individuals of a group, or a simple random sample by group (multistage)
 

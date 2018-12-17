@@ -24,6 +24,8 @@ library(cowplot)
 
 - Aléatoire simple: chaque individu a la même probabilité d'être échantillonné
 
+- Systématique: à intervalles réguliers à partir d'une origine aléatoire
+
 - Stratifié: division de la population en strates, échantillonnage aléatoire par strate
 
 - Par grappe: échantilonner des groupes d'individus, prendre soit tous les individus d'un groupe, soit un échantillon aléatoire simple par groupe (multistade)
