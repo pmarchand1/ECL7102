@@ -1,609 +1,268 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Introduction</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Introduction</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Introduction
+## Pourquoi les statistiques?
+### <br/>26 août 2019
+
+---
 
 
+class: inverse, middle
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
+# Quels types de questions font appel aux statistiques?
 
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
+---
 
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
+# Importance des statistiques
 
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
+- Systèmes complexes
 
-
-
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
-
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-
-  </style>
-
-    <style type="text/css">code{white-space: pre;}</style>
-
-    <link rel="stylesheet" href="styles.css"/>
-
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
-
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
-
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
-
-
-@media print {
-
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
-
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
-
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
-
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
-
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
-
-
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
-
-		overflow: visible !important;
-		display: block !important;
-
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
-
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
+    + Plusieurs types d'entités / individus qui interagissent
+    + Chaînes de cause à effet, rétroaction, etc.
     
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
+--
 
-* {
-	-webkit-print-color-adjust: exact;
-}
+- Variation entre individus
 
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
+--
 
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
+- Observations incomplètes
 
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
+    + Nombre limité de variables
+    + Nombre limité d'individus (échantillonnage)
+    + Erreurs d'observation
 
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
+---
 
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
+# Méthode scientifique
 
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
+&lt;img class="plain"  src="../images/methode_sci.png"&gt;
 
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
+---
 
-	overflow: visible;
-	display: block;
+# Méthode scientifique
 
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
+En pratique...
 
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
+- Chaque étude scientifique ne contient pas toutes les étapes des la méthode scientifique classique.
 
-.reveal .slides section {
-	page-break-after: always !important;
+--
 
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
+- Toutes les questions scientifiques ne sont pas des tests d'hypothèse, par exemple:
+    + Combien y a-t-il d'espèces d'oiseaux uniques à cette région?
+    + Quelle est l'aire de répartition du pin gris? Comment sera-t-elle modifiée par les changements climatiques au 21e siècle?
 
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
+---
 
-	opacity: 1 !important;
+# Rôles des statistiques
 
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
+- *Décrire* les caractéristiques sommaires d'un ensemble de données.
 
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
+- À partir de mesures prises sur un échantillon d'individus, *estimer* les caractéristiques d'une variable, ou d'une relation entre variables, au niveau de la population.
 
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
+- *Tester* une hypothèse portant sur ces variables ou relations entre variables.
 
-.reveal img {
-	box-shadow: none;
-}
+- *Prédire* la valeur d'une variable pour un nouvel individu hors de l'échantillon.
 
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
+---
 
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
+# Rôles des statistiques
 
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
+## Exemples
 
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
+- Quel est le diamètre moyen des arbres mesurés dans une parcelle?
 
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
+--
 
-</script>
+- Combien y a-t-il d’orignaux dans le Parc de la Vérendrye? 
 
+--
 
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
+    + La population est-elle en croissance par rapport à l’année précédente?
+    
+--
 
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
+    + Quelle sera la population dans 10 ans? 
+    
+--
 
-<section>
-    <h1 class="title">Introduction</h1>
-  <h1 class="subtitle">Pourquoi les statistiques?</h1>
-    <h3 class="date"><br/>27 août 2018</h3>
-</section>
+Les trois dernières tâches (estimation, test d'hypothèse et prédiction) demandent de généraliser les connaissances acquises à partir d'un nombre limité d'observations.
 
-<section id="quels-types-de-questions-font-appel-aux-statistiques" class="slide level2 center">
-<h2>Quels types de questions font appel aux statistiques?</h2>
-</section>
-<section id="importance-des-statistiques" class="slide level2">
-<h2>Importance des statistiques</h2>
-<ul>
-<li class="fragment"><p>Systèmes complexes</p>
-<ul>
-<li class="fragment">Plusieurs types d’entités / individus qui interagissent</li>
-<li class="fragment">Chaînes de cause à effet, rétroaction, etc.</li>
-</ul></li>
-<li class="fragment"><p>Variation entre individus</p></li>
-<li class="fragment"><p>Observations incomplètes</p>
-<ul>
-<li class="fragment">Nombre limité de variables</li>
-<li class="fragment">Nombre limité d’individus (échantillonnage)</li>
-<li class="fragment">Erreurs d’observation</li>
-</ul></li>
-</ul>
-</section>
-<section><section id="methode-scientifique" class="titleslide slide level1"><h1>Méthode scientifique</h1></section><section id="methode-scientifique-1" class="slide level2">
-<h2>Méthode scientifique</h2>
-<p><img class="plain"  src="../images/methode_sci.png"></p>
-</section><section id="methode-scientifique-2" class="slide level2">
-<h2>Méthode scientifique</h2>
-<p>En pratique…</p>
-<ul>
-<li class="fragment"><p>Chaque étude scientifique ne contient pas toutes les étapes des la méthode scientifique classique.</p></li>
-<li class="fragment">Toutes les questions scientifiques ne sont pas des tests d’hypothèse, par exemple:
-<ul>
-<li class="fragment">Combien y a-t-il d’espèces d’oiseaux uniques à cette région?</li>
-<li class="fragment">Quelle est l’aire de répartition du pin gris? Comment sera-t-elle modifiée par les changements climatiques au 21e siècle?</li>
-</ul></li>
-</ul>
-</section></section>
-<section><section id="roles-des-statistiques" class="titleslide slide level1"><h1>Rôles des statistiques</h1></section><section id="roles-des-statistiques-1" class="slide level2">
-<h2>Rôles des statistiques</h2>
-<ul>
-<li class="fragment"><p><em>Décrire</em> les caractéristiques sommaires d’un ensemble de données.</p></li>
-<li class="fragment"><p>À partir de mesures prises sur un échantillon d’individus, <em>estimer</em> les caractéristiques d’une variable, ou d’une relation entre variables, au niveau de la population.</p></li>
-<li class="fragment"><p><em>Tester</em> une hypothèse portant sur ces variables ou relations entre variables.</p></li>
-<li class="fragment"><p><em>Prédire</em> la valeur d’une variable pour un nouvel individu hors de l’échantillon.</p></li>
-</ul>
-</section><section id="roles-des-statistiques-2" class="slide level2">
-<h2>Rôles des statistiques</h2>
-<h3 id="exemples">Exemples</h3>
-<ul>
-<li class="fragment"><p>Quel est le diamètre moyen des arbres mesurés dans une parcelle?</p></li>
-<li class="fragment">Combien y a-t-il d’orignaux dans le Parc de la Vérendrye?
-<ul>
-<li class="fragment">La population est-elle en croissance par rapport à l’année précédente?</li>
-<li class="fragment">Quelle sera la population dans 10 ans?</li>
-</ul></li>
-</ul>
-</section><section id="roles-des-statistiques-3" class="slide level2">
-<h2>Rôles des statistiques</h2>
-<p>Les trois dernières tâches (estimation, test d’hypothèse et prédiction) demandent de généraliser les connaissances acquises à partir d’un nombre limité d’observations.</p>
-<p>Cela requiert un <em>modèle</em> du système étudié.</p>
-</section></section>
-<section><section id="quest-ce-quun-modele" class="titleslide slide level1"><h1>Qu’est-ce qu’un modèle?</h1></section><section id="carte-routiere" class="slide level2">
-<h2>Carte routière</h2>
-<p><img src="../images/carte_routiere.gif" /></p>
-</section><section id="structure-dune-proteine" class="slide level2">
-<h2>Structure d’une protéine</h2>
-<p><img src="../images/protein_seq.jpg" /></p>
-</section><section id="modele-predateur-proie-de-lotka-volterra" class="slide level2">
-<h2>Modèle prédateur-proie de Lotka-Volterra</h2>
-<p><br/> <span class="math display">\[ x_{t+1} = a x_t - b x_t y_t \]</span> <br/> <span class="math display">\[ y_{t+1} = -c y_t + d x_t y_t \]</span></p>
-</section><section id="quest-ce-quun-modele-1" class="slide level2">
-<h2>Qu’est-ce qu’un modèle?</h2>
-<ul>
-<li class="fragment">Une représentation abstraite, simplifiée d’un système.
-<ul>
-<li class="fragment">Tous les modèles sont inexacts.</li>
-<li class="fragment">On recherche souvent le modèle le plus simple qui retient les caractéristiques essentielles du système pour un problème donné (parcimonie).</li>
-</ul></li>
-<li class="fragment"><p>Inclut souvent des relations mathématiques entre les attributs observables (<em>variables</em>) des entités étudiées.</p></li>
-<li class="fragment"><p>Modèle statistique: associe les variables à une <em>distribution</em> représentant la probabilité de différentes valeurs possibles.</p></li>
-</ul>
-</section></section>
-<section><section id="contenu-du-cours" class="titleslide slide level1"><h1>Contenu du cours</h1></section><section id="contenu-du-cours-1" class="slide level2">
-<h2>Contenu du cours</h2>
-<ul>
-<li class="fragment"><p>Aujourd’hui: Statistiques descriptives et visualisations graphiques</p></li>
-<li class="fragment"><p>Semaine prochaine: Modèles statistiques, estimation de paramètres</p></li>
-</ul>
-</section><section id="contenu-du-cours-2" class="slide level2">
-<h2>Contenu du cours</h2>
-<ul>
-<li class="fragment"><p>Reste du cours en trois parties:</p>
-<ul>
-<li class="fragment"><p>Introduction aux tests d’hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (4 semaines)</p></li>
-<li class="fragment"><p>Modèles de régression: expliquer la variation d’une variable réponse à partir de prédicteurs numériques ou catégoriques. (6 semaines)</p></li>
-<li class="fragment"><p>Analyses multivariées: lorsque la réponse à expliquer est composée de plusieurs variables. (2 semaines)</p></li>
-</ul></li>
-</ul>
-</section></section>
-    </div>
-  </div>
+Cela requiert un *modèle* du système étudié.
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+---
 
-  <script>
+class: inverse, middle
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'slide', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+# Qu'est-ce qu'un modèle?
 
+---
 
+# Qu'est-ce qu'un modèle?
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+## Carte routière
 
-<script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+![](../images/carte_routiere.gif)
+
+---
+
+# Qu'est-ce qu'un modèle?
+
+## Structure d'une protéine
+
+![](../images/protein_seq.jpg)
+
+---
+
+# Qu'est-ce qu'un modèle?
+
+## Modèle prédateur-proie de Lotka-Volterra
+
+.center[
+&lt;br/&gt;
+`\(x_{t+1} = a x_t - b x_t y_t\)`
+&lt;br/&gt;
+`\(y_{t+1} = -c y_t + d x_t y_t\)`
+]
+
+---
+
+# Qu'est-ce qu'un modèle?
+
+- Une représentation abstraite, simplifiée d'un système.
+
+--
+
+    + Tous les modèles sont inexacts.
+    + On recherche souvent le modèle le plus simple qui retient les caractéristiques essentielles du système pour un problème donné (parcimonie).
+      
+--
+
+- Inclut souvent des relations mathématiques entre les attributs observables (*variables*) des entités étudiées.
+
+--
+
+- Modèle statistique: associe les variables à une *distribution* représentant la probabilité de différentes valeurs possibles.
+
+---
+
+# Contenu du cours
+
+- Aujourd'hui: Statistiques descriptives et visualisations graphiques
+
+- Semaine 2: Modèles statistiques, estimation de paramètres
+
+- Semaine 3: Méthodes d'échantillonnage et plans d'expériences
+
+---
+
+# Contenu du cours
+
+- Reste du cours en trois parties:
+
+    + Introduction aux tests d'hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (3 semaines)
+    
+    + Modèles de régression: expliquer la variation d'une variable réponse à partir de prédicteurs numériques ou catégoriques. (6 semaines)
+    
+    + Analyses multivariées: lorsque la réponse à expliquer est composée de plusieurs variables. (2 semaines)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
     }
-  })();
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>

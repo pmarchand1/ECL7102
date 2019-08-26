@@ -1,31 +1,34 @@
 ---
 title: "Introduction"
 subtitle: "Pourquoi les statistiques?"
-date: "<br/>27 août 2018"
+date: "<br/>26 août 2019"
 output: 
-    revealjs::revealjs_presentation:
-        self_contained: false
-        lib_dir: libs
-        theme: night
-        transition: slide
-        css: styles.css
-        incremental: true
+  xaringan::moon_reader:
+    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
 ---
 
-## Quels types de questions font appel aux statistiques? {.center}
+class: inverse, middle
+
+# Quels types de questions font appel aux statistiques?
 
 ---
-# Demander aux étudiants de proposer des questions statistiques?
----
 
-## Importance des statistiques
+# Importance des statistiques
 
 - Systèmes complexes
 
     + Plusieurs types d'entités / individus qui interagissent
     + Chaînes de cause à effet, rétroaction, etc.
+    
+--
 
 - Variation entre individus
+
+--
 
 - Observations incomplètes
 
@@ -33,27 +36,29 @@ output:
     + Nombre limité d'individus (échantillonnage)
     + Erreurs d'observation
 
+---
 
 # Méthode scientifique
 
-## Méthode scientifique
-
 <img class="plain"  src="../images/methode_sci.png">
 
-## Méthode scientifique
+---
+
+# Méthode scientifique
 
 En pratique...
 
 - Chaque étude scientifique ne contient pas toutes les étapes des la méthode scientifique classique.
 
+--
+
 - Toutes les questions scientifiques ne sont pas des tests d'hypothèse, par exemple:
     + Combien y a-t-il d'espèces d'oiseaux uniques à cette région?
     + Quelle est l'aire de répartition du pin gris? Comment sera-t-elle modifiée par les changements climatiques au 21e siècle?
 
+---
 
 # Rôles des statistiques
-
-## Rôles des statistiques
 
 - *Décrire* les caractéristiques sommaires d'un ensemble de données.
 
@@ -63,27 +68,39 @@ En pratique...
 
 - *Prédire* la valeur d'une variable pour un nouvel individu hors de l'échantillon.
 
-## Rôles des statistiques
+---
 
-### Exemples
+# Rôles des statistiques
+
+## Exemples
 
 - Quel est le diamètre moyen des arbres mesurés dans une parcelle?
 
+--
+
 - Combien y a-t-il d’orignaux dans le Parc de la Vérendrye? 
+
+--
+
     + La population est-elle en croissance par rapport à l’année précédente?
+    
+--
+
     + Quelle sera la population dans 10 ans? 
     
----
-# Classifier les questions proposées plus haut
----
-
-
-## Rôles des statistiques
+--
 
 Les trois dernières tâches (estimation, test d'hypothèse et prédiction) demandent de généraliser les connaissances acquises à partir d'un nombre limité d'observations.
 
 Cela requiert un *modèle* du système étudié.
 
+---
+
+class: inverse, middle
+
+# Qu'est-ce qu'un modèle?
+
+---
 
 # Qu'est-ce qu'un modèle?
 
@@ -91,41 +108,63 @@ Cela requiert un *modèle* du système étudié.
 
 ![](../images/carte_routiere.gif)
 
+---
+
+# Qu'est-ce qu'un modèle?
+
 ## Structure d'une protéine
 
 ![](../images/protein_seq.jpg)
 
+---
+
+# Qu'est-ce qu'un modèle?
+
 ## Modèle prédateur-proie de Lotka-Volterra
 
+.center[
 <br/>
-$$ x_{t+1} = a x_t - b x_t y_t $$
+$x_{t+1} = a x_t - b x_t y_t$
 <br/>
-$$ y_{t+1} = -c y_t + d x_t y_t $$
+$y_{t+1} = -c y_t + d x_t y_t$
+]
 
-## Qu'est-ce qu'un modèle?
+---
+
+# Qu'est-ce qu'un modèle?
 
 - Une représentation abstraite, simplifiée d'un système.
+
+--
+
     + Tous les modèles sont inexacts.
     + On recherche souvent le modèle le plus simple qui retient les caractéristiques essentielles du système pour un problème donné (parcimonie).
       
+--
+
 - Inclut souvent des relations mathématiques entre les attributs observables (*variables*) des entités étudiées.
+
+--
 
 - Modèle statistique: associe les variables à une *distribution* représentant la probabilité de différentes valeurs possibles.
 
+---
 
 # Contenu du cours
 
-## Contenu du cours
-
 - Aujourd'hui: Statistiques descriptives et visualisations graphiques
 
-- Semaine prochaine: Modèles statistiques, estimation de paramètres
+- Semaine 2: Modèles statistiques, estimation de paramètres
 
-## Contenu du cours
+- Semaine 3: Méthodes d'échantillonnage et plans d'expériences
+
+---
+
+# Contenu du cours
 
 - Reste du cours en trois parties:
 
-    + Introduction aux tests d'hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (4 semaines)
+    + Introduction aux tests d'hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (3 semaines)
     
     + Modèles de régression: expliquer la variation d'une variable réponse à partir de prédicteurs numériques ou catégoriques. (6 semaines)
     

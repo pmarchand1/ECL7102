@@ -1,720 +1,479 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Statistiques descriptives et représentations graphiques</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Statistiques descriptives et représentations graphiques</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
 
+# Statistiques descriptives et représentations graphiques
+### <br/>26 août 2019
 
+---
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
 
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
 
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
 
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
 
+# Objectifs
 
+- Connaître les types de données couramment utilisés en statistiques.
 
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
+- Choisir des statistiques sommaires et des représentations graphiques appropriées pour différentes questions et différents types de données.
 
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
+---
 
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
+# Exemple
 
+Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-Écosse) 
 
-  </style>
+&lt;br/&gt;
 
-    <style type="text/css">code{white-space: pre;}</style>
-
-    <link rel="stylesheet" href="styles.css"/>
-
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
-
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
-
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
-
-
-@media print {
-
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
-
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
-
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
-
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
-
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
-
-
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
-
-		overflow: visible !important;
-		display: block !important;
-
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
-
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
-    
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
-
-* {
-	-webkit-print-color-adjust: exact;
-}
-
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
-
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
-
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
-
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
-
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
-
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
-
-	overflow: visible;
-	display: block;
-
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
-
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
-
-.reveal .slides section {
-	page-break-after: always !important;
-
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
-
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
-
-	opacity: 1 !important;
-
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
-
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
-
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
-
-.reveal img {
-	box-shadow: none;
-}
-
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
-
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
-
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
-
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
-
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
-
-</script>
-
-
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
-
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">Statistiques descriptives et représentations graphiques</h1>
-    <h3 class="date"><br/>27 août 2018</h3>
-</section>
-
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Connaître les types de données couramment utilisées en statistiques.</p></li>
-<li class="fragment"><p>Choisir des statistiques sommaires et des représentations graphiques appropriées pour différentes questions et différents types de données.</p></li>
-</ul>
-</section>
-<section><section id="types-de-donnees" class="titleslide slide level1"><h1>Types de données</h1></section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<p>Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-Écosse)</p>
-<p><br/></p>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+```
+##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3
 ## 2   BD        A   31    8  2004         2        1   TSCA 24.0
 ## 3   BD        A   31    8  2004         6        1   TSCA 29.8
 ## 4   BD        A   31    8  2004         7        1   ACRU 29.0
 ## 5   BD        A   31    8  2004         8        1   TSCA 15.5
-## 6   BD        A   31    8  2004         9        1   TSCA 32.0</code></pre>
-<p><small></p>
-<ul>
-<li><em>Num_Arbre</em> est le numéro d’identification de l’arbre.</li>
-<li><em>Nb_Tiges</em> est le nombre de tiges.</li>
-<li><em>DHP</em> est le diamètre à hauteur de poitrine en cm.</li>
-</ul>
-<p></small></p>
-</section><section id="types-de-donnees-1" class="slide level2">
-<h2>Types de données</h2>
-<h3 id="variables-numeriques">Variables numériques</h3>
-<ul>
-<li class="fragment"><p>Continues: Nombre infini de valeurs possibles dans un intervalle (ex. diamètre).</p></li>
-<li class="fragment"><p>Discrètes: Seulement certaines valeurs numériques possibles dans un intervalle, généralement des nombres entiers (ex.: année, nombre de tiges).</p></li>
-</ul>
-</section><section id="types-de-donnees-2" class="slide level2">
-<h2>Types de données</h2>
-<h3 id="variables-categorielles">Variables catégorielles</h3>
-<ul>
-<li class="fragment"><p>Nominales: Catégories sans ordre établi (ex. site, espèce).</p></li>
-<li class="fragment"><p>Ordinales: Catégories ordonnées (ex. classe de drainage: xérique, mésique, hydrique).</p>
-<ul>
-<li class="fragment">En pratique, pourquoi une variable ordinale est-elle différente d’une variable numérique discrète?</li>
-</ul></li>
-</ul>
-</section></section>
-<section><section id="visualiser-la-distribution-dune-variable-categorielle" class="titleslide slide level1"><h1>Visualiser la distribution d’une variable catégorielle</h1></section><section id="graphique-a-barres" class="slide level2">
-<h2>Graphique à barres</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/bar_espece-1.png" width="672" /></p>
-</section><section id="graphique-circulaire-pie-chart" class="slide level2">
-<h2>Graphique circulaire (<em>pie chart</em>)</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/circ_espece-1.png" width="576" /></p>
-<p>Quels sont les avantages et inconvénients de ces deux types de graphiques?</p>
-</section><section id="visualiser-la-distribution-dune-variable-categorielle-1" class="slide level2">
-<h2>Visualiser la distribution d’une variable catégorielle</h2>
-<ul>
-<li class="fragment"><p>Visuellement, il est plus facile de comparer des longueurs que des surfaces.</p></li>
-<li class="fragment"><p>Le graphique circulaire est utile dans des cas très spécifiques, ex.: comparer des proportions à des fractions simples (1/2, 1/4, etc.).</p></li>
-<li class="fragment"><p>Pour une variable nominale, ordonner les valeurs d’après leur fréquence. Pour une variable ordinale, suivre l’ordre des valeurs de la variable.</p></li>
-</ul>
-</section></section>
-<section><section id="visualiser-la-distribution-dune-variable-numerique-continue" class="titleslide slide level1"><h1>Visualiser la distribution d’une variable numérique continue</h1></section><section id="histogramme" class="slide level2">
-<h2>Histogramme</h2>
-<p>Obtenu en comptant le nombre d’observations dans des intervalles de taille égale sur l’axe de la variable observée.</p>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/histo_dhp-1.png" width="672" /></p>
-</section><section id="histogramme-1" class="slide level2">
-<h2>Histogramme</h2>
-<p>Obtenu en comptant le nombre d’observations dans des intervalles de taille égale sur l’axe de la variable observée.</p>
-<ul>
-<li class="fragment"><p>Quelles propriétés de la distribution du DHP apparaissent clairement dans le graphique précédent?</p></li>
-<li class="fragment"><p>Attention: L’apparence de la distribution dépend du choix de la taille de l’intervalle (<em>bin width</em>), donc il est important de tester plusieurs valeurs.</p></li>
-</ul>
-</section><section id="graphique-de-densite" class="slide level2">
-<h2>Graphique de densité</h2>
-<p>Estime la densité de probabilité (probabilité par unité sur l’axe des <em>x</em>) pour une variable continue.</p>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/dens_dhp-1.png" width="672" /></p>
-</section></section>
-<section><section id="statistiques-sommaires-dune-variable-numerique" class="titleslide slide level1"><h1>Statistiques sommaires d’une variable numérique</h1></section></section>
-<section><section id="moyenne-variance-et-ecart-type" class="titleslide slide level1"><h1>Moyenne, variance et écart-type</h1></section><section id="moyenne" class="slide level2">
-<h2>Moyenne</h2>
-<p>Prenons une série de données <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, …, <span class="math inline">\(x_n\)</span> provenant de <span class="math inline">\(n\)</span> observations d’une variable <span class="math inline">\(x\)</span>.</p>
-<p>La moyenne de <span class="math inline">\(x\)</span> est notée <span class="math inline">\(\bar{x}\)</span> et définie comme:</p>
-<p><span class="math display">\[\bar{x} = \frac{x_1 + x_2 + ... + x_n}{n} = \frac{\sum_{i = 1}^{n} x_i}{n}\]</span></p>
-</section><section id="moyenne-1" class="slide level2">
-<h2>Moyenne</h2>
-<p>La moyenne constitue le “centre de gravité” d’une distribution.</p>
-<p><img src="../images/moyenne.PNG" /></p>
-</section><section id="ecart-a-la-moyenne" class="slide level2">
-<h2>Écart à la moyenne</h2>
-<p><img src="../images/moyenne_ecart.PNG" /></p>
-<p>La somme des écarts à la moyenne est égale à zéro.</p>
-</section><section id="variance" class="slide level2">
-<h2>Variance</h2>
-<p>La moyenne du <em>carré</em> des écarts à la moyenne est la variance, une mesure de la dispersion des données.</p>
-<p><span class="math display">\[\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}\]</span></p>
-</section><section id="ecart-type" class="slide level2">
-<h2>Écart-type</h2>
-<p>La racine carrée de la variance, ou <em>écart-type</em>, a l’avantage d’avoir les même unités que les données originales (ex.: cm plutôt que cm<span class="math inline">\(^2\)</span>).</p>
-<p><span class="math display">\[\sigma_x = \sqrt{\frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}}\]</span></p>
-<p><strong>Note</strong>: Lorsqu’on veut estimer la variance ou l’écart-type d’une population à partir d’un échantillon, on divise par <span class="math inline">\(n-1\)</span> plutôt que <span class="math inline">\(n\)</span>. Plus de détails au prochain cours.</p>
-</section><section id="visualisation-de-la-moyenne-et-de-lecart-type" class="slide level2">
-<h2>Visualisation de la moyenne et de l’écart-type</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/histo_moy_dhp-1.png" width="576" /></p>
-<ul>
-<li class="fragment">La moyenne et l’écart-type ne nous indiquent pas que la distribution est asymétrique.</li>
-</ul>
-</section></section>
-<section><section id="quantiles" class="titleslide slide level1"><h1>Quantiles</h1></section><section id="statistiques-de-rang" class="slide level2">
-<h2>Statistiques de rang</h2>
-<p>Basées sur la position des observations classées en ordre croissant (leur rang)</p>
-<ul>
-<li class="fragment"><p>Minimum et maximum</p></li>
-<li class="fragment"><p>Médiane: plus grande que la moitié des observations et plus petite que l’autre moitié.</p></li>
-<li class="fragment"><p>Quantiles: divisent les données en <span class="math inline">\(m\)</span> groupes contenant le même nombre d’observations.</p>
-<ul>
-<li class="fragment">Exemples: quartile (<span class="math inline">\(m\)</span> = 4), quintiles (<span class="math inline">\(m\)</span> = 5), centiles (<span class="math inline">\(m\)</span> = 100)</li>
-</ul></li>
-</ul>
-</section><section id="boite-a-moustaches-boxplot" class="slide level2">
-<h2>Boîte à moustaches (<em>boxplot</em>)</h2>
-<p>Représentation graphique basée sur les quartiles</p>
-<p><img src="../images/boxplot.png" /></p>
-<ul>
-<li class="fragment">La distance entre les 1er et 3e quartiles se nomme écart interquartile (<em>interquartile range</em> ou IQR).</li>
-</ul>
-</section><section id="boite-a-moustaches-boxplot-1" class="slide level2">
-<h2>Boîte à moustaches (<em>boxplot</em>)</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/boxplot_dhp-1.png" width="672" /></p>
-<ul>
-<li class="fragment">Les valeurs extrêmes sont souvent représentées par des points à l’extérieur de la moustache. (Critère de Tukey: Valeur à 1.5 IQR du 1er ou 3e quartile.)</li>
-</ul>
-</section><section id="histogramme-et-boite-a-moustaches" class="slide level2">
-<h2>Histogramme et boîte à moustaches</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/histo_boxplot-1.png" width="576" /></p>
-</section><section id="sensibilite-aux-valeurs-extremes" class="slide level2">
-<h2>Sensibilité aux valeurs extrêmes</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/val_extr-1.png" width="576" /></p>
-<p>L’exclusion de 18 arbres à DHP &gt; 65 cm affecte davantage la moyenne (-4%) et l’écart-type (-16%) que la médiane (-1%) et l’écart interquartile (-2%).</p>
-</section><section id="comparer-plusieurs-distributions" class="slide level2">
-<h2>Comparer plusieurs distributions</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/box_mult-1.png" width="672" /></p>
-<ul>
-<li class="fragment">Comment pourrait-on améliorer ce graphique ?</li>
-</ul>
-</section><section id="comparer-plusieurs-distributions-1" class="slide level2">
-<h2>Comparer plusieurs distributions</h2>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/box_mult2-1.png" width="672" /></p>
-</section></section>
-<section><section id="resume-statistiques-dune-variable" class="titleslide slide level1"><h1>Résumé: Statistiques d’une variable</h1></section><section id="resume-variables-numeriques" class="slide level2">
-<h2>Résumé: Variables numériques</h2>
-<ul>
-<li class="fragment"><p>Visualiser la distribution: boîte à moustaches, histogramme, graphique de densité</p></li>
-<li class="fragment"><p>Mesures de tendance centrale: médiane, moyenne</p></li>
-<li class="fragment"><p>Mesures de dispersion: étendue (max - min), écart interquartile, écart-type</p></li>
-<li class="fragment"><p>Pour des séries de données à différentes échelles, on peut comparer la dispersion relative en calculant le <em>coefficient de variation</em> (ratio de l’écart-type sur la moyenne, souvent exprimé en %).</p></li>
-</ul>
-</section><section id="resume-variables-categorielles" class="slide level2">
-<h2>Résumé: Variables catégorielles</h2>
-<ul>
-<li class="fragment"><p>Visualiser la distribution: graphique à barres.</p></li>
-<li class="fragment"><p>Variable nominale: Comme tendance centrale, on peut seulement définir le <em>mode</em> (valeur la plus commune).</p></li>
-<li class="fragment"><p>Variable ordinale: Puisque les catégories sont ordonnées, on peut aussi définir la valeur médiane.</p></li>
-</ul>
-</section></section>
-<section><section id="relation-entre-deux-variables-numeriques" class="titleslide slide level1"><h1>Relation entre deux variables numériques</h1></section><section id="nuage-de-points" class="slide level2">
-<h2>Nuage de points</h2>
-<p>Exemple: Jeux de données sur le sommeil de 83 mammifères, provenant de l’étude de Savage et West (2004) et inclus avec le package <em>ggplot2</em> dans R.</p>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/nuage_point-1.png" width="576" /></p>
-</section><section id="covariance" class="slide level2">
-<h2>Covariance</h2>
-<ul>
-<li>Prenons deux variables <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> mesurées sur les mêmes unités d’observation.</li>
-</ul>
-<ul>
-<li>On se souvient que la variance est la moyenne du carré des écarts à la moyenne d’une variable.</li>
-</ul>
-<p><span class="math display">\[\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}\]</span></p>
-<ul>
-<li>La covariance est la moyenne du produit des écarts de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> à leur moyenne respective.</li>
-</ul>
-<p><span class="math display">\[\sigma_{xy} = \frac{\sum_{i = 1}^{n} (x_i - \bar{x}) (y_i - \bar{y})}{n}\]</span></p>
-</section><section id="covariance-1" class="slide level2">
-<h2>Covariance</h2>
-<p><span class="math display">\[\sigma_{xy} = \frac{\sum_{i = 1}^{n} (x_i - \bar{x}) (y_i - \bar{y})}{n}\]</span></p>
-<ul>
-<li>Lorsque les variables tendent à être simultanément au-dessus (ou sous) leur moyenne, la covariance est positive. Lorsque les écarts tendent à être de signe opposé, la covariance est négative.</li>
-</ul>
-</section><section id="correlation" class="slide level2">
-<h2>Corrélation</h2>
-<ul>
-<li>Il est pratique de normaliser la covariance en la divisant par le produit des écarts-type. Le résultat est le coefficient de corrélation de Pearson.</li>
-</ul>
-<p><span class="math display">\[\rho_{xy} = \frac{\sigma_{xy}}{\sigma_x \sigma_y}\]</span></p>
-<ul>
-<li>Le coefficient de corrélation a l’avantage d’être toujours compris entre -1 et 1.</li>
-</ul>
-</section><section id="correlation-1" class="slide level2">
-<h2>Corrélation</h2>
-<ul>
-<li class="fragment"><p>Le coefficient de corrélation de Pearson mesure l’association <em>linéaire</em> entre deux variables. Une relation linéaire exacte a une corrélation de 1 (si positive) ou -1 (si négative).</p></li>
-<li class="fragment"><p>Deux variables sont dites <em>indépendantes</em> si connaître l’une n’apporte aucune information sur l’autre.</p></li>
-<li class="fragment"><p>Pour deux variables indépendantes, la corrélation est zéro. Cependant, l’inverse n’est pas nécessairement le cas.</p></li>
-</ul>
-</section><section id="correlation-2" class="slide level2">
-<h2>Corrélation</h2>
-<p>Coefficients de corrélation pour différents nuages de points.</p>
-<p><img src="../images/Correlation_examples.png" /> <small>Source: Wikipédia</small></p>
-</section><section id="correlation-3" class="slide level2">
-<h2>Corrélation</h2>
-<p>Dans notre exemple, la corrélation entre les heures de sommeil et la masse corporelle des mammifères est de -0.57.</p>
-<p><img src="1-Statistiques_descriptives_files/figure-revealjs/nuage_point2-1.png" width="672" /></p>
-</section></section>
-    </div>
-  </div>
+## 6   BD        A   31    8  2004         9        1   TSCA 32.0
+```
+&lt;small&gt;
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+&gt;- *Num_Arbre* est le numéro d'identification de l'arbre.
+&gt;- *Nb_Tiges* est le nombre de tiges.
+&gt;- *DHP* est le diamètre à hauteur de poitrine en cm.
 
-  <script>
+&lt;/small&gt;
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+---
 
+# Types de données
 
+## Variables numériques
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+- Continues: Nombre infini de valeurs possibles dans un intervalle  (ex. diamètre).
+    
+- Discrètes: Seulement certaines valeurs numériques possibles dans un intervalle, généralement des nombres entiers (ex.: année, nombre de tiges).
+
+---
+
+# Types de données
+    
+## Variables catégorielles
+
+- Nominales: Catégories sans ordre établi (ex. site, espèce).
+
+- Ordinales: Catégories ordonnées (ex. classe de drainage: xérique, mésique, hydrique).
+
+--
+
+En pratique, pourquoi une variable ordinale est-elle différente d'une variable numérique discrète?
+    
+---
+
+class: inverse, middle
+
+# Visualiser la distribution d'une variable catégorielle
+
+---
+
+# Graphique à barres
+
+![](1-Statistiques_descriptives_files/figure-html/bar_espece-1.png)&lt;!-- --&gt;
+
+---
+
+# Graphique circulaire (*pie chart*)
+
+![](1-Statistiques_descriptives_files/figure-html/circ_espece-1.png)&lt;!-- --&gt;
+    
+--
+
+Quels sont les avantages et inconvénients de ces deux types de graphiques?
+
+---
+
+# Distribution d'une variable catégorielle
+
+- Visuellement, il est plus facile de comparer des longueurs que des surfaces.
+
+- Le graphique circulaire est utile dans des cas très spécifiques, ex.: comparer des proportions à des fractions simples (1/2, 1/4, etc.).
+
+--
+
+- Pour une variable nominale, ordonner les valeurs d'après leur fréquence. Pour une variable ordinale, suivre l'ordre des valeurs de la variable.
+
+---
+
+class: inverse, middle
+
+# Visualiser la distribution d'une variable numérique continue
+
+---
+
+# Histogramme
+
+Obtenu en comptant le nombre d'observations dans des intervalles de taille égale sur l'axe de la variable observée.
+
+![](1-Statistiques_descriptives_files/figure-html/histo_dhp-1.png)&lt;!-- --&gt;
+
+---
+
+# Histogramme
+
+Obtenu en comptant le nombre d'observations dans des intervalles de taille égale sur l'axe de la variable observée.
+
+- Quelles propriétés de la distribution du DHP apparaissent clairement dans le graphique précédent?
+
+--
+
+- Attention: L'apparence de la distribution dépend du choix de la taille de l'intervalle (*bin width*), donc il est important de tester plusieurs valeurs.
+
+---
+
+# Graphique de densité
+
+Estime la densité de probabilité (probabilité par unité sur l'axe des *x*) pour une variable continue.
+
+![](1-Statistiques_descriptives_files/figure-html/dens_dhp-1.png)&lt;!-- --&gt;
+
+---
+
+class: inverse, middle
+
+# Statistiques sommaires d'une variable numérique
+
+---
+
+# Moyenne
+
+Prenons une série de données `\(x_1\)`, `\(x_2\)`, ..., `\(x_n\)` provenant de `\(n\)` observations d'une variable `\(x\)`.
+
+La moyenne de `\(x\)` est notée `\(\bar{x}\)` et définie comme:
+
+`$$\bar{x} = \frac{x_1 + x_2 + ... + x_n}{n} = \frac{\sum_{i = 1}^{n} x_i}{n}$$`
+
+---
+
+# Moyenne
+
+La moyenne constitue le "centre de gravité" d'une distribution.
+
+.center[![](../images/moyenne.PNG)]
+
+---
+
+# Écart à la moyenne
+
+.center[![](../images/moyenne_ecart.PNG)]
+
+La somme des écarts à la moyenne est égale à zéro.
+
+---
+
+# Variance
+
+La moyenne du *carré* des écarts à la moyenne est la variance, une mesure de la dispersion des données.
+
+`$$\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}$$`
+
+---
+
+# Écart-type
+
+La racine carrée de la variance, ou *écart-type*, a l'avantage d'avoir les même unités que les données originales (ex.: cm plutôt que cm&lt;sup&gt;2&lt;/sup&gt;).
+
+`$$\sigma_x = \sqrt{\frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}}$$`
+--
+
+**Note**: Lorsqu'on veut estimer la variance ou l'écart-type d'une population à partir d'un échantillon, on divise par `\(n-1\)` plutôt que `\(n\)`. Plus de détails au prochain cours.
+
+---
+
+# Visualiser la moyenne et l'écart-type
+
+![](1-Statistiques_descriptives_files/figure-html/histo_moy_dhp-1.png)&lt;!-- --&gt;
+
+--
+
+La moyenne et l'écart-type ne nous indiquent pas que la distribution est asymétrique.
+
+---
+
+# Statistiques de rang
+
+Basées sur la position des observations classées en ordre croissant (leur rang)
+
+--
+
+- Minimum et maximum
+
+--
+
+- Médiane: plus grande que la moitié des observations et plus petite que l'autre moitié.
+
+--
+
+- Quantiles: divisent les données en `\(m\)` groupes contenant le même nombre d'observations.
+
+    + Exemples: quartile ($m$ = 4), quintiles ($m$ = 5), centiles ($m$ = 100)
+
+---
+
+# Boîte à moustaches (*boxplot*)
+
+Représentation graphique basée sur les quartiles
+
+![](../images/boxplot.png)
+
+--
+
+La distance entre les 1er et 3e quartiles se nomme écart interquartile (*interquartile range* ou IQR).
+
+---
+
+# Boîte à moustaches (*boxplot*)
+
+![](1-Statistiques_descriptives_files/figure-html/boxplot_dhp-1.png)&lt;!-- --&gt;
+
+--
+
+- Les valeurs extrêmes sont souvent représentées par des points à l'extérieur de la moustache. (Critère de Tukey: Valeur à 1.5 IQR du 1er ou 3e quartile.)
+
+---
+
+# Histogramme et boîte à moustaches
+
+![](1-Statistiques_descriptives_files/figure-html/histo_boxplot-1.png)&lt;!-- --&gt;
+
+---
+
+# Sensibilité aux valeurs extrêmes
+
+![](1-Statistiques_descriptives_files/figure-html/val_extr-1.png)&lt;!-- --&gt;
+
+L'exclusion de 18 arbres à DHP &gt; 65 cm affecte davantage la moyenne (-4%) 
+et l'écart-type (-16%) que la médiane (-1%) et l'écart interquartile (-2%).
+
+---
+
+# Comparer plusieurs distributions
+
+![](1-Statistiques_descriptives_files/figure-html/box_mult-1.png)&lt;!-- --&gt;
+
+--
+
+Comment pourrait-on améliorer ce graphique ?
+
+---
+
+# Comparer plusieurs distributions
+
+![](1-Statistiques_descriptives_files/figure-html/box_mult2-1.png)&lt;!-- --&gt;
+
+---
+
+# Résumé: Variables numériques
+
+- Visualiser la distribution: boîte à moustaches, histogramme, graphique de densité
+
+--
+
+- Mesures de tendance centrale: médiane, moyenne
+
+--
+
+- Mesures de dispersion: étendue (max - min), écart interquartile, écart-type
+
+--
+
+- Pour des séries de données à différentes échelles, on peut comparer la dispersion relative en calculant le *coefficient de variation* (ratio de l'écart-type sur la moyenne, souvent exprimé en %).
+
+---
+
+# Résumé: Variables catégorielles
+
+- Visualiser la distribution: graphique à barres.
+
+--
+
+- Variable nominale: Comme tendance centrale, on peut seulement définir le *mode* (valeur la plus commune). 
+
+--
+
+- Variable ordinale: Puisque les catégories sont ordonnées, on peut aussi définir la valeur médiane.
+
+---
+
+class: inverse, middle
+
+# Relation entre deux variables numériques
+
+---
+
+# Nuage de points
+
+Exemple: Jeux de données sur le sommeil de 83 mammifères, provenant de l'étude de Savage et West (2004) et inclus avec le package *ggplot2* dans R.
+
+![](1-Statistiques_descriptives_files/figure-html/nuage_point-1.png)&lt;!-- --&gt;
+
+---
+
+# Covariance
+
+- Prenons deux variables `\(x\)` et `\(y\)` mesurées sur les mêmes unités d'observation.
+
+- On se souvient que la variance est la moyenne du carré des écarts à la moyenne d'une variable.
+
+`$$\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}$$`
+
+--
+
+- La covariance est la moyenne du produit des écarts de `\(x\)` et `\(y\)` à leur moyenne respective.
+
+`$$\sigma_{xy} = \frac{\sum_{i = 1}^{n} (x_i - \bar{x}) (y_i - \bar{y})}{n}$$`
+
+---
+
+# Covariance
+
+`$$\sigma_{xy} = \frac{\sum_{i = 1}^{n} (x_i - \bar{x}) (y_i - \bar{y})}{n}$$`
+
+- Lorsque les variables tendent à être simultanément au-dessus (ou sous) leur moyenne, la covariance est positive. Lorsque les écarts tendent à être de signe opposé, la covariance est négative.
+
+---
+
+# Corrélation
+
+- Il est pratique de normaliser la covariance en la divisant par le produit des écarts-type. Le résultat est le coefficient de corrélation de Pearson.
+
+`$$\rho_{xy} = \frac{\sigma_{xy}}{\sigma_x \sigma_y}$$` 
+
+- Le coefficient de corrélation a l'avantage d'être toujours compris entre -1 et 1.
+
+---
+
+# Corrélation
+
+- Le coefficient de corrélation de Pearson mesure l'association *linéaire* entre deux variables. Une relation linéaire exacte a une corrélation de 1 (si positive) ou -1 (si négative).
+
+--
+
+- Deux variables sont dites *indépendantes* si connaître l'une n'apporte aucune information sur l'autre.
+
+--
+
+- Pour deux variables indépendantes, la corrélation est zéro. Cependant, l'inverse n'est pas nécessairement le cas.
+
+---
+
+# Corrélation
+
+Coefficients de corrélation pour différents nuages de points.
+
+![](../images/Correlation_examples.png)
+&lt;small&gt;Source: Wikipédia&lt;/small&gt;
+
+---
+
+# Corrélation
+
+Dans notre exemple, la corrélation entre les heures de sommeil et la masse corporelle des mammifères est de -0.57.
+
+![](1-Statistiques_descriptives_files/figure-html/nuage_point2-1.png)&lt;!-- --&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>
