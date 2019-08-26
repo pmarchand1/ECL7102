@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-08-27" />
+<meta name="date" content="2019-08-26" />
 
 <title>Descriptive statistics and graphics</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Descriptive statistics and graphics</h1>
-<h4 class="date"><em><br/>August 27, 2018</em></h4>
+<h4 class="date"><br/>August 26, 2019</h4>
 
 </div>
 
@@ -268,6 +337,7 @@ div.tocify {
 <div id="visualizing-the-distribution-of-a-continuous-numeric-variable" class="section level1">
 <h1>Visualizing the distribution of a continuous numeric variable</h1>
 <p>A <strong>histogram</strong> is obtained by counting the number of observations in bins of equal size on the axis of the observed variable. Below, the histogram of the DBH clearly shows the asymmetry of the distribution (several small diameter trees and a few trees with very large diameters). We also note that the inventory has a minimum DHH around 10 cm.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1E-Descriptive_statistics_files/figure-html/histo_dhp-1.png" width="672" /></p>
 <p>The approximation of the distribution by a histogram depends on the choice of bin width, so it is useful to test several values. With too large bins, information on small-scale frequency variation is lost; with too small bins, the distribution appears irregular due to lack of data in each bin.</p>
 <p>The <strong>density plot</strong> uses a kernel density estimation method to approximate the continuous probability distribution from the observations. As with the histogram, the density plot includes a parameter that determines the resolution of the graph on the <em>x</em> axis, ranging from a smoother to a more irregular distribution.</p>
@@ -281,15 +351,9 @@ div.tocify {
 <p>The <strong>mean</strong> of <span class="math inline">\(x\)</span> is denoted <span class="math inline">\(\bar{x}\)</span> and defined as:</p>
 <p><span class="math display">\[\bar{x} = \frac{x_1 + x_2 + ... + x_n}{n} = \frac{\sum_{i = 1}^{n} x_i}{n}\]</span></p>
 <p>The average can be seen as the “balancing point” of a distribution: if each observation exerted a weight proportional to its distance from the average, these weights would be in equilibrium.</p>
-<div class="figure">
-<img src="../images/moyenne.PNG" />
-
-</div>
+<p><img src="../images/moyenne.PNG" /></p>
 <p>By this definition, if we subtract <span class="math inline">\(\bar{x}\)</span> from each observation to obtain its deviation from the mean, the sum of these differences is equal to zero.</p>
-<div class="figure">
-<img src="../images/moyenne_ecart.PNG" />
-
-</div>
+<p><img src="../images/moyenne_ecart.PNG" /></p>
 <p>To measure the degree of dispersion of the data around their mean, we take the square of deviations from the mean. The mean of these squared deviations is called the <strong>variance</strong>, denoted <span class="math inline">\(\sigma_x^2\)</span>.</p>
 <p><span class="math display">\[\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}\]</span></p>
 <p>The unit of measure for the variance differs from that of the data (e.g. for a diameter in cm, the variance is in cm<span class="math inline">\(^2\)</span>). For that reason, it is useful to report not the variance as such, but rather its square root, or <strong>standard deviation</strong> (<span class="math inline">\(\sigma_x\)</span>).</p>
@@ -299,6 +363,7 @@ div.tocify {
 </blockquote>
 <p>Since the mean and the standard deviation have the same units, their ratio can be calculated to obtain a measure of the relative dispersion of the data. This ratio is called <strong>coefficient of variation</strong> (CV) and is usually expressed as a percentage.</p>
 <p>In our dataset, the trees have a mean DBH of 21.8 cm, with a standard deviation of 12.3 cm (CV of 56%). We add a point on the histogram to represent the mean and a line corresponding to a standard deviation on each side of the mean. Note that if the mean and standard deviation provide some information on the distribution of values, other information such as the asymmetry of the distribution is lost.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1E-Descriptive_statistics_files/figure-html/histo_moy_dhp-1.png" width="672" /></p>
 </div>
 <div id="rank-statistics" class="section level2">
@@ -315,15 +380,14 @@ div.tocify {
 <div id="boxplot" class="section level2">
 <h2>Boxplot</h2>
 <p>Popularized by Tukey, this graph makes shows the position of the quartiles (including the median). The box between the 1st and 3rd quartile represents the region containing 50% of the observations. The distance between the 1st and 3rd quartile is called the interquartile range (or IQR). A whisker shows the range of the data on each side of the box.</p>
-<div class="figure">
-<img src="../images/boxplot.png" />
-
-</div>
+<p><img src="../images/boxplot.png" /></p>
 <p>Often, the maximum length of the whiskers is based on the IQR (1.5x the IQR, according to Tukey’s convention). Extreme values beyond those limits are represented by points.</p>
 <p><img src="1E-Descriptive_statistics_files/figure-html/boxplot_dhp-1.png" width="672" /></p>
 <p>By juxtaposing the histogram of the DBH and boxplot, we see that the latter represents the essential characteristics of the distribution, including the asymmetry, the minimum DBH and the presence of some very large trees.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1E-Descriptive_statistics_files/figure-html/histo_boxplot-1.png" width="672" /></p>
 <p>Compared to the mean and standard deviation, quantile-based statistics are less sensitive to extreme values. Let’s see what happens if we remove the 18 trees (out of more than 1100) with a DBH greater than 65 cm.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1E-Descriptive_statistics_files/figure-html/val_extr-1.png" width="672" /></p>
 <p>The exclusion of these few large trees affects the average (4% decrease) and standard deviation (16% decrease) more than the median (1% decrease) or interquartile gap (2% decrease). Remember that the effect of an observation on the average depends on its distance to the latter. Comparatively, the median depends only on the number of smaller or larger observations, but not on the distance.</p>
 <p>While the boxplot represents a distribution in a very coarse way, this simplicity can be an advantage when it comes to visualizing numerous distributions side-by-side. For example, we illustrate below the distribution of DBH of the main tree species at Kejimkujik. We see immediately that the DBH of white birches is less variable and distributed more symmetrically than that of other species.</p>

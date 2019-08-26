@@ -1,6 +1,6 @@
 ---
 title: "Statistiques descriptives et représentations graphiques"
-date: "<br/>27 août 2018"
+date: "<br/>26 août 2019"
 output:
     html_document:
         self_contained: false
@@ -19,7 +19,7 @@ library(cowplot)
 
 # Objectifs
 
-- Connaître les types de données couramment utilisées en statistiques.
+- Connaître les types de données couramment utilisés en statistiques.
 
 - Choisir des statistiques sommaires et des représentations graphiques appropriées pour différentes questions et différents types de données.
 
@@ -194,7 +194,7 @@ dhp_boxplot <- ggplot(kejim, aes(x = 0, y = DHP)) +
 dhp_boxplot + scale_x_continuous(limits = c(-0.1, 0.2))
 ```
 
-En juxtaposant l'histogramme du DHP et la boîte à moustaches, on voit que cette dernière représente bien les caractéristiques essentielles de la distribution, incluant l'asymétrie, le DHP minimal et la présence de quelques très grand arbres.
+En juxtaposant l'histogramme du DHP et la boîte à moustaches, on voit que cette dernière représente bien les caractéristiques essentielles de la distribution, incluant l'asymétrie, le DHP minimal et la présence de quelques très grands arbres.
 
 ```{r histo_boxplot}
 plot_grid(dhp_histo_moy, dhp_boxplot + theme_nothing(), 
@@ -306,7 +306,7 @@ Si deux variables sont **indépendantes**, c'est-à-dire que connaître l'une d'
 ![](../images/Correlation_examples.png)
 <small>Source: Wikipédia</small>
 
-Cette figure indique les coefficients de corrélation associés à différents nuages de points. La première rangée montre la progression entre deux variables indépendantes (au centre) vers des associations positives et négatives de plus en plus fortes. La deuxième rangée montre que le coefficient de corrélation ne dépend pas de la pente d'une relation linéaire entre deux variables. La troisième rangée donne plusieurs exemples où la corrélation linéaire est de zéro, même s'il existe des patrons d'association (non-linéaires) enter les deux variables. 
+Cette figure indique les coefficients de corrélation associés à différents nuages de points. La première rangée montre la progression entre deux variables indépendantes (au centre) vers des associations positives et négatives de plus en plus fortes. La deuxième rangée montre que le coefficient de corrélation ne dépend pas de la pente d'une relation linéaire entre deux variables. La troisième rangée donne plusieurs exemples où la corrélation linéaire est de zéro, même s'il existe des patrons d'association (non-linéaires) entre les deux variables. 
 
 
 # Références

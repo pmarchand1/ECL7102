@@ -1,7 +1,7 @@
 ---
 title: "Introduction"
 subtitle: "Pourquoi les statistiques?"
-date: "<br/>27 août 2018"
+date: "<br/>26 août 2019"
 output: 
     html_document:
         self_contained: false
@@ -84,13 +84,15 @@ Au sens mathématique, un modèle inclut des équations reliant les attributs ob
 
 # Aperçu du contenu du cours
 
-- Première semaine: Statistiques descriptives et visualisations graphiques.
+- Semaine 1: Statistiques descriptives et visualisations graphiques.
 
-- Deuxième semaine: Modèles statistiques, estimation de paramètres.
+- Semaine 2: Modèles statistiques, estimation de paramètres.
+
+- Semaine 3: Méthodes d'échantillonnage et plans d'expériences.
 
 - Reste du cours en trois parties:
 
-    + Introduction aux tests d'hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (4 semaines)
+    + Introduction aux tests d'hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (3 semaines)
     
     + Modèles de régression: expliquer la variation d'une variable réponse à partir de prédicteurs numériques ou catégoriques. (6 semaines)
     

@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,8 +288,8 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction</h1>
-<h3 class="subtitle"><em>Pourquoi les statistiques?</em></h3>
-<h4 class="date"><em><br/>27 août 2018</em></h4>
+<h3 class="subtitle">Pourquoi les statistiques?</h3>
+<h4 class="date"><br/>26 août 2019</h4>
 
 </div>
 
@@ -271,14 +340,8 @@ div.tocify {
 <h1>Qu’est-ce qu’un modèle?</h1>
 <p>La modélisation est souvent associée aux mathématiques, mais l’idée de modèle ne se limite pas à une liste d’équations.</p>
 <p>Par exemple, une carte routière constitue un modèle du réseau routier d’une région. Elle met l’accent sur des informations jugées prioritaires – routes principales et secondaires, distances entre les villes – mais ne peut représenter l’intégralité du réseau faute d’espace. La prolifération des appareils de navigation GPS nous permet maintenant d’utiliser des modèles plus complexes et plus informatifs du même réseau.</p>
-<div class="figure">
-<img src="../images/carte_routiere.gif" />
-
-</div>
-<div class="figure">
-<img src="../images/protein_seq.jpg" />
-
-</div>
+<p><img src="../images/carte_routiere.gif" /></p>
+<p><img src="../images/protein_seq.jpg" /></p>
 <p>Comparons maintenant deux modèles d’une protéine dans l’image ci-dessus: en bas, une séquence d’acides aminés, chacun représentés par une lettre; en haut, une représentation de la structure 3D de la protéine. Chacune des deux représentations inclut une information absente de l’autre.</p>
 <p>Finalement, voici un modèle mathématique bien connu en écologie. Le modèle de Lotka-Volterra représente l’évolution du nombre de proies (<span class="math inline">\(x\)</span>) et de prédateurs (<span class="math inline">\(y\)</span>) en fonction de quatre constantes: taux de reproduction des proies, taux d’attaque, efficacité de conversion et mortalité des prédateurs.</p>
 <p><span class="math display">\[ x_{t+1} = a x_t - b x_t y_t \]</span> <span class="math display">\[ y_{t+1} = -c y_t + d x_t y_t \]</span> Qu’est-ce que ces modèles ont en commun? Ils constituent des <em>représentations abstraites et simplifiées</em> d’un système. Au sens strict, tous les modèles sont inexacts. Cependant, il s’agit de concevoir le modèle le plus simple possible qui retient les caractéristiques essentielles du système pour un problème donné, tout en ignorant les détails qui sont superflus. On parle ici d’un principe de <em>parcimonie</em>.</p>
@@ -287,11 +350,12 @@ div.tocify {
 <div id="apercu-du-contenu-du-cours" class="section level1">
 <h1>Aperçu du contenu du cours</h1>
 <ul>
-<li><p>Première semaine: Statistiques descriptives et visualisations graphiques.</p></li>
-<li><p>Deuxième semaine: Modèles statistiques, estimation de paramètres.</p></li>
+<li><p>Semaine 1: Statistiques descriptives et visualisations graphiques.</p></li>
+<li><p>Semaine 2: Modèles statistiques, estimation de paramètres.</p></li>
+<li><p>Semaine 3: Méthodes d’échantillonnage et plans d’expériences.</p></li>
 <li><p>Reste du cours en trois parties:</p>
 <ul>
-<li><p>Introduction aux tests d’hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (4 semaines)</p></li>
+<li><p>Introduction aux tests d’hypothèses, dans le contexte de la comparaison des effets de deux ou plusieurs traitements. (3 semaines)</p></li>
 <li><p>Modèles de régression: expliquer la variation d’une variable réponse à partir de prédicteurs numériques ou catégoriques. (6 semaines)</p></li>
 <li><p>Analyses multivariées: lorsque la réponse à expliquer est composée de plusieurs variables. (2 semaines)</p></li>
 </ul></li>

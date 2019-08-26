@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Statistiques descriptives et représentations graphiques</h1>
-<h4 class="date"><em><br/>27 août 2018</em></h4>
+<h4 class="date"><br/>26 août 2019</h4>
 
 </div>
 
@@ -227,7 +296,7 @@ div.tocify {
 <div id="objectifs" class="section level1">
 <h1>Objectifs</h1>
 <ul>
-<li><p>Connaître les types de données couramment utilisées en statistiques.</p></li>
+<li><p>Connaître les types de données couramment utilisés en statistiques.</p></li>
 <li><p>Choisir des statistiques sommaires et des représentations graphiques appropriées pour différentes questions et différents types de données.</p></li>
 </ul>
 </div>
@@ -267,6 +336,7 @@ div.tocify {
 <div id="visualiser-la-distribution-dune-variable-numerique-continue" class="section level1">
 <h1>Visualiser la distribution d’une variable numérique continue</h1>
 <p>Un <strong>histogramme</strong> est obtenu en comptant le nombre d’observations dans des intervalles de taille égale sur l’axe de la variable observée. Ci-dessous, l’histogramme du DHP montre clairement l’asymétrie de la distribution (plusieurs arbres de petit diamètre et de rares arbres avec un très grand diamètre). On remarque aussi que l’inventaire comporte un DHP minimum autour de 10 cm.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1-Statistiques_descriptives_files/figure-html/histo_dhp-1.png" width="672" /></p>
 <p>L’approximation de la distribution par un histogramme dépend du choix de la taille de l’intervalle (<em>bin width</em> en anglais), donc il est utile de tester plusieurs valeurs. Avec des intervalles trop grands, on perd de l’information sur les variation de fréquence à petite échelle; avec des intervalles trop petits, on obtient une distribution trop irrégulière par manque de données dans chaque intervalle.</p>
 <p>Le <strong>graphique de densité</strong> utilise quant à lui une méthode d’estimation par noyau (<em>kernel density estimation</em>) pour approximer la distribution de probabilité continue à partir des observations. Comme pour l’histogramme, le graphique de densité comprend un paramètre qui détermine la résolution du graphique sur l’axe des <em>x</em>, allant d’une distribution plus lisse à une plus irrégulière.</p>
@@ -280,15 +350,9 @@ div.tocify {
 <p>La <strong>moyenne</strong> de <span class="math inline">\(x\)</span> est notée <span class="math inline">\(\bar{x}\)</span> et définie comme:</p>
 <p><span class="math display">\[\bar{x} = \frac{x_1 + x_2 + ... + x_n}{n} = \frac{\sum_{i = 1}^{n} x_i}{n}\]</span></p>
 <p>La moyenne constitue en quelque sorte le “centre de gravité” d’une distribution: si chaque observation exerçait un poids proportionnel à sa distance de la moyenne, ces poids seraient en équilibre.</p>
-<div class="figure">
-<img src="../images/moyenne.PNG" />
-
-</div>
+<p><img src="../images/moyenne.PNG" /></p>
 <p>Par cette définition, si on soustrait <span class="math inline">\(\bar{x}\)</span> de chaque observation pour obtenir son écart à la moyenne, la somme de ces écarts est égale à zéro.</p>
-<div class="figure">
-<img src="../images/moyenne_ecart.PNG" />
-
-</div>
+<p><img src="../images/moyenne_ecart.PNG" /></p>
 <p>Pour mesurer le degré de dispersion des données autour de leur moyenne, on prend le carré des écarts à la moyenne. La moyenne de ces écarts au carré se nomme la <strong>variance</strong>, notée <span class="math inline">\(\sigma_x^2\)</span>.</p>
 <p><span class="math display">\[\sigma_x^2 = \frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}\]</span></p>
 <p>L’unité de mesure de la variance diffère de celle des données (ex.: pour un diamètre en cm, la variance est en cm<span class="math inline">\(^2\)</span>). Pour cette raison, il est utile de rapporter non pas la variance comme telle, mais plutôt sa racine carrée, ou <strong>écart-type</strong> (<span class="math inline">\(\sigma_x\)</span>)</p>
@@ -298,6 +362,7 @@ div.tocify {
 </blockquote>
 <p>Comme la moyenne et l’écart-type ont les mêmes unités, on peut calculer leur ratio pour obtenir une mesure de la dispersion relative des données. Ce ratio est nommé <strong>coefficient de variation</strong> (CV) et s’exprime généralement en pourcentage.</p>
 <p>Dans notre jeu de données, l’ensemble des arbres a un DHP moyen de 21.8 cm, avec un écart-type de 12.3 cm (CV de 56%). Nous ajoutons un point à l’histogramme pour représenter la moyenne et une ligne correspondant à un écart-type de chaque côté de la moyenne. Notez que si la moyenne et l’écart-type donnent une certaine idée de la distribution des valeurs, d’autres informations telles que l’asymétrie de la distribution sont perdues.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1-Statistiques_descriptives_files/figure-html/histo_moy_dhp-1.png" width="672" /></p>
 </div>
 <div id="statistiques-de-rang" class="section level2">
@@ -314,15 +379,14 @@ div.tocify {
 <div id="boite-a-moustaches" class="section level2">
 <h2>Boîte à moustaches</h2>
 <p>Popularisé par Tukey, ce graphique permet de visualiser la position des quartiles (incluant la médiane). La boîte située entre le 1er et le 3e quartile représente la région contenant 50% des observations. La distance entre le 1er et le 3e quartile se nomme l’écart interquartile (ou IQR pour <em>interquartile range</em>). Une moustache montre l’étendue des données de chaque côté de la boîte.</p>
-<div class="figure">
-<img src="../images/boxplot.png" />
-
-</div>
+<p><img src="../images/boxplot.png" /></p>
 <p>Souvent, la longueur maximale de chaque moustache est déterminée par l’écart interquartile (1.5 fois l’IQR, selon la convention de Tukey). Les valeurs extrêmes au-delà de cette limite sont représentées par des points.</p>
 <p><img src="1-Statistiques_descriptives_files/figure-html/boxplot_dhp-1.png" width="672" /></p>
-<p>En juxtaposant l’histogramme du DHP et la boîte à moustaches, on voit que cette dernière représente bien les caractéristiques essentielles de la distribution, incluant l’asymétrie, le DHP minimal et la présence de quelques très grand arbres.</p>
+<p>En juxtaposant l’histogramme du DHP et la boîte à moustaches, on voit que cette dernière représente bien les caractéristiques essentielles de la distribution, incluant l’asymétrie, le DHP minimal et la présence de quelques très grands arbres.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1-Statistiques_descriptives_files/figure-html/histo_boxplot-1.png" width="672" /></p>
 <p>Par rapport à la moyenne et l’écart-type, les statistiques basées sur les quantiles sont moins sensibles aux valeurs extrêmes. Voyons ce qu’il arrive si nous supprimons les données des 18 arbres (sur plus de 1100) avec un DHP supérieur à 65 cm.</p>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
 <p><img src="1-Statistiques_descriptives_files/figure-html/val_extr-1.png" width="672" /></p>
 <p>L’exclusion de ces quelques grands arbres affecte davantage la moyenne (diminution de 4%) et l’écart-type (diminution de 16%) que la médiane (diminution de 1%) et l’écart interquartile (diminution de 2%). Rappelons-nous que le poids d’une observation sur la moyenne dépend de sa distance à cette dernière. Comparativement, la médiane dépend seulement du nombre d’observations plus petites ou plus grandes, mais pas de leur distance.</p>
 <p>Si la boîte à moustaches représente une distribution de manière très simplifiée, cette simplicité peut représenter un avantage lorsqu’on souhaite visualiser de nombreuses distributions côte-à-côte. Par exemple, nous illustrons ci-dessous la distribution du DHP des principales espèces d’arbres à Kejimkujik. On remarque tout de suite que le DHP des bouleaux blancs est moins variable et distribué plus symétriquement que celui des autres espèces.</p>
@@ -363,7 +427,7 @@ div.tocify {
 <p>Le coefficient de corrélation de Pearson mesure l’association <em>linéaire</em> entre deux variables. Un coefficient de 1 (respectivement, -1) correspond à une corrélation positive (resp., négative) parfaite. Un coefficient de 0 indique l’absence de corrélation. Pour notre exemple précédent (heures de sommeil vs. logarithme de la masse corporelle), <span class="math inline">\(\rho_{xy}\)</span> = -0.57.</p>
 <p>Si deux variables sont <strong>indépendantes</strong>, c’est-à-dire que connaître l’une d’elle n’apporte aucune information sur l’autre, leur corrélation est nécessairement égale à zéro. Toutefois, comme le montre l’image ci-dessous, l’inverse n’est pas nécessairement le cas.</p>
 <p><img src="../images/Correlation_examples.png" /> <small>Source: Wikipédia</small></p>
-<p>Cette figure indique les coefficients de corrélation associés à différents nuages de points. La première rangée montre la progression entre deux variables indépendantes (au centre) vers des associations positives et négatives de plus en plus fortes. La deuxième rangée montre que le coefficient de corrélation ne dépend pas de la pente d’une relation linéaire entre deux variables. La troisième rangée donne plusieurs exemples où la corrélation linéaire est de zéro, même s’il existe des patrons d’association (non-linéaires) enter les deux variables.</p>
+<p>Cette figure indique les coefficients de corrélation associés à différents nuages de points. La première rangée montre la progression entre deux variables indépendantes (au centre) vers des associations positives et négatives de plus en plus fortes. La deuxième rangée montre que le coefficient de corrélation ne dépend pas de la pente d’une relation linéaire entre deux variables. La troisième rangée donne plusieurs exemples où la corrélation linéaire est de zéro, même s’il existe des patrons d’association (non-linéaires) entre les deux variables.</p>
 </div>
 </div>
 <div id="references" class="section level1">

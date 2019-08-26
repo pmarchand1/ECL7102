@@ -1,7 +1,7 @@
 ---
 title: "Introduction"
 subtitle: "The role of statistics"
-date: "<br/>August 27, 2018"
+date: "<br/>August 26, 2019"
 output: 
     html_document:
         self_contained: false
@@ -85,13 +85,15 @@ In the mathematical sense, a model includes equations linking the observable att
 
 # Overview of course content
 
-- First week: Descriptive statistics and graphics.
+- Week 1: Descriptive statistics and graphics.
 
-- Second week: Statistical models, estimation of parameters.
+- Week 2: Statistical models, estimation of parameters.
+
+- Week 3: Sampling methods and design of experiments.
 
 - Rest of the course in three parts:
 
-    + Introduction to hypothesis testing, in the context of comparing the effects of two or more treatments. (4 weeks)
+    + Introduction to hypothesis testing, in the context of comparing the effects of two or more treatments. (3 weeks)
     
     + Regression models: Explain the variation of a response variable from numerical or categorical predictors. (6 weeks)
     
