@@ -67,7 +67,7 @@ La modélisation est souvent associée aux mathématiques, mais l'idée de modè
 
 Par exemple, une carte routière constitue un modèle du réseau routier d'une région. Elle met l'accent sur des informations jugées prioritaires -- routes principales et secondaires, distances entre les villes -- mais ne peut représenter l'intégralité du réseau faute d'espace. La prolifération des appareils de navigation GPS nous permet maintenant d'utiliser des modèles plus complexes et plus informatifs du même réseau.
 
-![](../images/carte_routiere.gif)
+![](../images/carte_routiere.png)
 
 ![](../images/protein_seq.jpg)
 

@@ -67,7 +67,7 @@ Modeling is often associated with mathematics, but the idea of a model is not li
 
 For example, a road map is a model of the road network of a region. It focuses on information deemed to be important - main and secondary roads, distances between cities - but cannot represent the entire network due to space limitations. The proliferation of GPS navigation devices now allows us to use more complex and informative models of the same network.
 
-![](../images/carte_routiere.gif)
+![](../images/carte_routiere.png)
 
 ![](../images/protein_seq.jpg)
 
