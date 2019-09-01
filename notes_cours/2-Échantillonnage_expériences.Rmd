@@ -260,7 +260,7 @@ Jusqu'à maintenant, nous avons présenté des plans d'expérience où les trait
 
 ### Exercice
 
-Vous êtes responsable d'une expérience visant à déterminer si la croissance de semis de quatre espèces d'arbres (érable rouge, pin gris, sapin baumier et tremble) dépend de la texture du sol (sableuse, limoneuse ou équilibrée). Vous avez la capacité de planter 144 semis dans 12 placettes. Décrivez un plan pour organiser les placettes dans l'espace et les traitements (espèces d'arbres et type de sol) dans les placettes.
+Vous êtes responsable d'une expérience visant à déterminer si la croissance de semis de quatre espèces d'arbres (érable rouge, pin gris, sapin baumier et tremble) dépend de la texture du sol (sableuse, limoneuse ou argileuse). Vous avez la capacité de planter 144 semis dans 12 placettes. Décrivez un plan pour organiser les placettes dans l'espace et les traitements (espèces d'arbres et type de sol) dans les placettes.
 
 ### Plan factoriel
 

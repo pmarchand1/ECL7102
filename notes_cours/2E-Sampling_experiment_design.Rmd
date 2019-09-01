@@ -1,6 +1,6 @@
 ---
 title: "Sampling methods and experiment design"
-date: "<br/>September 10, 2018"
+date: "<br/>September 3, 2019"
 output:
     html_document:
         self_contained: false
@@ -39,7 +39,7 @@ In addition, we want an *effective* sampling method, that is, it allows us to es
 
 The chaga (*Inonutus obliquus*) is a mushroom parasite of birch trees found in the boreal forest. Generally consumed as a herbal tea, it is particularly sought after for its high concentration of antioxidants which could provide health benefits.
 
-<img src="../images/Inonotus_obliquus.jpg" width="300">
+![](../images/Inonotus_obliquus.jpg)
 
 Imagine you were charged with creating a sampling plan to estimate the abundance of chaga and its commercial harvest potential in a 120 km$^2$ (12 000 ha) region north-west of Rouyn-Noranda. How would you place your sampling units (plots) in that landscape? You have a map of forest types showing the distribution of stands by dominant species.
 
@@ -51,19 +51,7 @@ Imagine you were charged with creating a sampling plan to estimate the abundance
 
 In simple random sampling, each individual or unit of observation has the same probability of being sampled.
 
-For this type of sampling, the mean of a variable and its standard error, as well as the variance, can be estimated directly using the equations seen during the last class.
-
-Sample mean:
-
-$$\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i$$
-
-Sample variance:
-
-$$s^2 = \frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2$$
-
-Standard error of the mean:
-
-$$s_{\bar{x}} = \frac{s}{\sqrt{n}}$$
+For this type of sampling, the sample mean of the variable is an unbiased estimator of its population mean. (We will discuss these estimation concepts in the next class.)
 
 In our example, we select 20 random points in the study area to locate 50 m x 50 m plots (the sampling unit). 
 
@@ -92,25 +80,17 @@ For example, instead of choosing to randomly place 20 plots in the study area, 4
 
 This method is used when we believe that the measured variable varies more between individuals of different strata than between individuals of the same stratum.
 
-Suppose we divide the population into $m$ strata and calculate the mean and variance of $x$ for the random sample taken in each stratum.
-
-In this case, the estimateur for the overall mean of $x$ is a weighted mean of the means for each stratum.
+Suppose we divide the population into $m$ strata and calculate the mean of $x$ for the random sample taken in each stratum. In this case, the estimator for the overall mean of $x$ is a weighted mean of the means for each stratum.
 
 $$\bar{x} = \sum_{j = 1}^{m} w_j \bar{x}_j$$
 
-And the standard error of that mean is given by:
+In this equations, $\bar{x}_j$ is the mean of observations in stratum $j$ and $w_j$ is the fraction of the population or study area contained in that stratum, which we call the *weight* of that stratum. For example, if one quarter of the study area is in the first stratum, $w_1$ = 0.25.
 
-$$s_{\bar{x}} = \sqrt{\sum_{j = 1}^{m} w_j^2 \frac{s_j^2}{n_j}}$$
+In general, the more the values of $x$ are homogeneous in each stratum and different between strata, the more efficient stratified sampling will be (greater precision of the mean) compared with simple random sampling for the same total $n$.
 
-In these equations, $n_j$ is the number of observations in the sample of the stratum $j$, $\bar{x}_j$ is its mean and $s_j^2$ is its variance. Note that the fraction $s_j^2/n$ is the standard error of the mean for the stratum $j$.
+However, this effectiveness also depends on the choice of sample size in each stratum.
 
-The weight $w_j$ of a stratum is the fraction of the population or study area contained in that stratum. For example, if one quarter of the study area is in the first stratum, $w_1$ = 0.25.
-
-In general, the more the values of $x$ are homogeneous in each stratum and different between strata, the more efficient stratified sampling will be (smaller standard error) compared with simple random sampling for the same total $n$.
-
-However, this effectiveness also depends on the choice of sample size in each stratum (the distribution of $n_j$).
-
-- Each stratum can be sampled in proportion to its weight $w_j$ in the population. If the variance is the same in each stratum, this choice minimizes the standard error of the overall mean.
+- Each stratum can be sampled in proportion to its weight $w_j$ in the population. If the variance is the same in each stratum, this choice maximizes the precision of the estimated mean.
 
 - If we know that the variable varies more in certain strata, we can oversample them relative to their weight $w_j$.
 
@@ -172,7 +152,7 @@ In our example, we divide the study area into clusters of 500 x 500 m and choose
 
 By reducing the costs and time associated with moving between observation units, this method allows in principle to sample more individuals for the same number of resources.
 
-While $x$ varies a lot within clusters but has a similar distribution from cluster to cluster, the standard error for this method approaches that of simple random sampling. However, as we saw earlier, two points close together often have more homogeneous characteristics than two distant points. In this case, cluster (or multistage) sampling is less efficient than other methods.
+While $x$ varies a lot within clusters but has a similar distribution from cluster to cluster, the efficiency of this method approaches that of simple random sampling. However, as we saw earlier, two points close together often have more homogeneous characteristics than two distant points. In this case, cluster (or multistage) sampling is less efficient than other methods.
 
 *Advantages*
 
@@ -180,7 +160,7 @@ While $x$ varies a lot within clusters but has a similar distribution from clust
 
 *Disadvantages*
 
-- Less efficient sampling (larger standard error) if the study area is heterogeneous. This disadvantage may be partially offset by the increase of $n$.
+- Less efficient sampling (less precise estimate) if the study area is heterogeneous. This disadvantage may be partially offset by the increase of $n$.
 
 
 ## Adaptive sampling
@@ -209,6 +189,12 @@ Thus, experimental manipulation aims to eliminate the effect of other variables 
 
 In this example, a possible experiment would be to grow seedlings from the same population in temperature-controlled chambers, keeping the other variables constant (e.g. light, moisture, soil type). To manipulate the temperature of the air, it is necessary here to create an artificial environment, but other types of experiments can be carried out in a natural environment, as we will see in the next examples.
 
+## Exercise
+
+a) After changing the composition of fertilizer applied to several corn fields in one region, agronomists note that the average yield is significantly higher than last year in the same fields. Do these results convince you that the new fertilizer is superior?
+
+b) To compare the effect of two soil preparation methods on forest regeneration after logging, you measure average seedling growth in two logging areas, one where method 1 was applied and the other where method 2 was applied. Is it useful to delimit several plots on each area to increase the size of your sample?
+
 ## Principles of experiment design
 
 In this section, a **treatment** is an experimental manipulation, for which we want to measure the effect on a **response** variable. Different treatment options or treatment intensities can be tested in the same experiment (for example, the effect of several soil types, or different soil moisture levels, on growth).
@@ -223,21 +209,31 @@ To ensure that the treatment is the cause of the response observed in the treate
 
 For example, suppose we want to measure the effect of a herbivore insect on seedling growth and survival in a forest environment. To do this, we cover some of the seedlings with a mesh net small enough to exclude the desired insect. In this case, the treatment is the exclusion of the insect. However, to verify that the net does not itself have an effect on the measured response, two control groups could be defined: one without a net, and the other with a mesh net slightly larger than the insect.
 
-*Note*: When the compared treatments are different values of a continuous variable, the concept of the control group does not apply.
+The state of a system before the treatment is rarely a good control, as we saw in part (a) of the exercise above, because the system is affected by other variables that change from one period to the other. If you want to compare a site before and after a treatment, it is better to follow a control site during the same period. This type of plan is known by the acronym BACI ( before-after-control-impact) and is used in particular for studies of the impact of anthropogenic disturbances on ecosystems. In this case, a change in time observed on the disturbed site, but not on the control site, constitutes a better proof of impact.
+
+When treatments serve to compare the effect of different levels of a variable (eg low, medium or high pH), the concept of a control does not apply.
+
+In the following test, we consider the absence of treatment as a treatment; for example, the expression "each treatment" also includes the control.
 
 ### Random assignment
 
 Simple random sampling, as we saw earlier, gives each individual the same probability of being part of the sample.
 
-In an experimental setting, the random assignment of different treatments (including the absence of treatment) gives each individual the same chance of getting one or the other treatment. As with random sampling, the goal is to eliminate sources of bias. Ideally, the only source of systematic difference between the two groups should be the treatment applied.
+In an experimental setting, the random assignment of different treatments (including the absence of treatment) gives each individual the same chance of getting one or the other treatment. As with random sampling, the goal is to eliminate sources of bias.
+
+Ideally, the only source of systematic difference between the two groups should be the treatment applied. If another factor consistently varied between the control and treated groups, the effect of this factor would be confounded with that of the treatment.
+
+In a context of random assignment, it is possible to obtain by chance an association between the treatment and another characteristic of the population; this probability is greater when the sample size is small. Block design (see below) is one way to address this problem for a limited number of confounding factors.
 
 ### Replication
 
 In principle, random assignment makes it possible to estimate without bias the effect of a treatment for the population where the experiment is carried out. However, in order to check whether the effect is generalized to several sites, it is useful to create several replicates of the experimental design.
 
+If the replicates of a treatment are more similar to each other than those of the other treatments, they cannot be considered independent observations. In ecology, this type of **pseudoreplication** (see the article on this topic in references) is often due to a proximity of sites in space. For example, in part (b) of the previous exercise, the delineation of several plots on the control site and the treated site does not constitute an independent replication.
+
 ### Blocking
 
-Random assignment of treatments is intended to ensure that individuals receiving each treatment have, on average, similar characteristics. With a large enough sample, we can control the effect of other variables affecting the response, without even knowing what these variables are.
+Random assignment of treatments is intended to ensure that individuals receiving one treatment or another have, on average, similar characteristics. With a large enough sample, we can control the effect of other variables affecting the response, without even knowing what these variables are.
 
 We may also be known in advance that certain characteristics of individuals could influence their response to treatment. In this case, it is better to group the individuals into more homogeneous *blocks* and randomly assign the various treatments within each block.
 
@@ -251,11 +247,35 @@ Example: We plant maples from different populations in a single plot and want to
 
 ![](../images/blocs_pop.PNG)
 
-As mentioned in the context of sampling methods, environmental conditions are generally more similar for two points closer together than two points farther apart. In this case, to avoid confounding local environmental conditions with the effect of a treatment, it is advantageous to disperse the treatments in space, especially if there is a known environmental gradient (slope, proximity to water, etc.). In the diagram below, the trees are organized in blocks along the gradient axis.
+As mentioned in the replication section, environmental conditions are generally more similar for two points closer together than two points farther apart. In this case, to avoid confounding local environmental conditions with the effect of a treatment, it is advantageous to disperse the treatments in space, especially if there is a known environmental gradient (slope, proximity to water, etc.). In the diagram below, the trees are organized in blocks along the gradient axis.
 
 ![](../images/blocs_grad.PNG)
 
 When the blocks are organized according to a spatial gradient, the individuals in the same block must be close together so that the environmental conditions are homogeneous, but not so close that the treatments "contaminate" adjacent individuals. 
+
+We will learn how to analyze data from blocked experimental designs in the class on analysis of variance (ANOVA).
+
+## Multi-factor experiment design
+
+So far, we have presented experimental designs where treatments could be considered as different values of a single variable, or *factor*. The following exercise shows a case where we want to simultaneously measure the effect of two factors.
+
+### Exercise
+
+You are responsible for an experiment to determine whether seedling growth of four tree species (red maple, jack pine, balsam fir, and aspen) depends on soil texture (sandy, silty, or balanced). You have the capacity to plant 144 seedlings in 12 plots. Describe a plan for organizing plots in space and treatments (tree species and soil type) in the plots.
+
+### Factorial design
+
+For an experiment with several factors, a factorial design consists of assigning each of the possible combinations of treatments. For example, if there are three possible treatments for variable 1 and five for variable 2, the factorial design requires at least 3 x 5 = 15 observation units. Ideally, we would like a multiple of 15 so that each combination of treatments is replicated.
+
+### Split-plot design
+
+A **split-plot design** is a way of organizing a multi-factorial experimental setup when one of the factors is more difficult to control. For example, suppose we want to measure the effect of a change in CO$_2$ concentration on the photosynthetic activity of different varieties of poplar. Control of the CO_$2$ concentration requires the isolation of trees in growth chambers. In this case, the difficult-to-control factor is replicated a small number of times (e.g. two low and two high concentration chambers), while the other factor is nested in the first one (e.g. 8 seedlings of each variety arranged randomly in each of the 4 chambers).
+
+![](../images/split_plot_design.png)
+
+We will see how to analyze the data of a split-plot experiment in the mixed models course.
+
+**Question**: How would you apply a split-plot design in the previous exercise?
 
 
 # References
