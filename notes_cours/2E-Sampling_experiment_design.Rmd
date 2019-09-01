@@ -261,7 +261,7 @@ So far, we have presented experimental designs where treatments could be conside
 
 ### Exercise
 
-You are responsible for an experiment to determine whether seedling growth of four tree species (red maple, jack pine, balsam fir, and aspen) depends on soil texture (sandy, silty, or balanced). You have the capacity to plant 144 seedlings in 12 plots. Describe a plan for organizing plots in space and treatments (tree species and soil type) in the plots.
+You are responsible for an experiment to determine whether seedling growth of four tree species (red maple, jack pine, balsam fir, and aspen) depends on soil texture (sandy, silty, or clayey). You have the capacity to plant 144 seedlings in 12 plots. Describe a plan for organizing plots in space and treatments (tree species and soil type) in the plots.
 
 ### Factorial design
 
