@@ -1,7 +1,7 @@
 ---
 title: "Introduction à R - Partie 1"
-date: "29 août 2018"
-output: 
+date: "4 septembre 2019"
+output:
     html_document:
         self_contained: false
         lib_dir: libs
@@ -292,7 +292,7 @@ dim(kejim)
 Dans R, l'opérateur `$` permet d'extraire une partie d'un objet complexe, et en particulier, d'extraire une variable (colonne) d'un tableau de données.
 
 ```{r extr_col}
-dhp <- kejim$DHP
+dhp <- kejim$dhp
 ```
 
 Ici, le résultat `dhp` est un vecteur numérique. 
@@ -318,12 +318,19 @@ Finalement, il est possible de sélectionner des valeurs selon une condition log
 dhp5[dhp5 > 20]
 ```
 
+Il est possible de remplacer certains éléments d'un vecteur (ou d'une colonne d'un tableau de données) en combinant la sélection et l'assignation de valeur. Le code suivant remplace les valeurs de DHP inférieures à 1 par la valeur 1.
+
+```{r extr_rempl}
+dhp[dhp < 1] <- 1
+```
+
+
 ## Exercice 3 {#retour3}
 
 1. Que signifie la commande suivante?
 
 ```{r esp_dhp50}
-esp_dhp50 <- kejim$Espece[kejim$DHP > 50] 
+esp_dhp50 <- kejim$espece[kejim$dhp > 50] 
 ```
 
 2. Créez un vecteur comportant les mesures de DHP pour tous les arbres ayant plus d'une tige.
@@ -340,7 +347,7 @@ kejim[1:5, 6:9]
 
 On peut aussi choisir les colonnes avec un vecteur de noms:
 ```{r sub_df_noms}
-kejim2 <- kejim[, c("Num_Arbre", "Espece", "DHP")]
+kejim2 <- kejim[, c("num_arbre", "espece", "dhp")]
 str(kejim2)
 ```
 
@@ -349,6 +356,20 @@ str(kejim2)
 - L'absence d'informations avant la virgule signifie qu'on souhaite conserver toutes les rangées.
 
 - Les noms de colonnes sont entre guillemets ici, contrairement au cas où on extrait une seule colonne avec `$`. 
+
+
+# Graphiques de base
+
+R contient certaines fonctions de base pour visualiser des données. Dans l'exemple, ci-dessous, la fonction `plot` affiche les valeurs d'un vecteur dans l'ordre de leur position (index) et la fonction `hist` montre l'histogramme de ces valeurs.
+
+```{r}
+plot(kejim$dhp)
+hist(kejim$dhp)
+```
+
+La fonction `plot` crée différents types de graphiques selon ses arguments; en lui donnant deux vecteurs numériques, elle produit un nuage de points. 
+
+Au prochain laboratoire, nous verrons comment réaliser des graphiques plus complexes et personnalisés à l'aide du package **ggplot2**.
 
 
 # Autres structures de données
@@ -402,22 +423,22 @@ sort(dhp5)
 
 - `sum`: Calcule la somme des valeurs d'un vecteur.
 ```{r sum}
-sum(kejim$Nb_Tiges)
+sum(kejim$nb_tiges)
 ```
 
 - `summary`: Donne le minimum, maximum, la moyenne et les quartiles d'une variable numérique.
 ```{r summary}
-summary(kejim$DHP)
+summary(kejim$dhp)
 ```
 
 - `table`: Compte le nombre d'occurrences de chaque valeur d'un vecteur (utile pour les valeurs catégorielles ou discrètes). 
 ```{r table}
-table(kejim$Espece)
+table(kejim$espece)
 ```
 
 Avec deux ou plusieurs vecteurs, `table` crée un tableau de contingence:
 ```{r}
-table(kejim$Espece, kejim$Site)
+table(kejim$espece, kejim$site)
 ```
 
 Il existe également plusieurs fonctions pour calculer différentes statistiques à partir d'un vecteur de données: `mean`, `median` `min`, `max`, `sd` (écart-type).
@@ -587,7 +608,7 @@ Le vecteur `c(1, 2, "pin")` est de type *character* parce que les nombres peuven
 
 2. 
 ```{r ex3}
-dhp_multi_tige <- kejim$DHP[kejim$Nb_Tiges > 1]
+dhp_multi_tige <- kejim$dhp[kejim$nb_tiges > 1]
 ```
 
 [Retour](#retour3)
@@ -598,7 +619,7 @@ dhp_multi_tige <- kejim$DHP[kejim$Nb_Tiges > 1]
 
 2. 
 ```{r ex4}
-sum(kejim$Espece == "ACRU")
+sum(kejim$espece == "ACRU")
 ```
 
 [Retour](#retour4)

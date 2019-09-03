@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction à R - Partie 1</h1>
-<h4 class="date"><em>29 août 2018</em></h4>
+<h4 class="date">4 septembre 2019</h4>
 
 </div>
 
@@ -387,7 +456,7 @@ espece &lt;- c(&quot;sapin&quot;, &quot;pin&quot;, &quot;bouleau&quot;)</code></
 <h2>Exercice 2</h2>
 <ol style="list-style-type: decimal">
 <li><p>Quel est le type de données du vecteur <code>espece</code>?</p></li>
-<li><p>Qu’arrive-t-il si vous essayez de créer un vecteur avec différents types de données, ex.: <code>c(1, 2, &quot;pin&quot;)</code>?</p></li>
+<li><p>Qu’arrive-t-il si vous essayez de créer un vecteur avec différents types de données, ex.: <code>c(1, 2, "pin")</code>?</p></li>
 </ol>
 <p><a href="#sol2">Solution</a></p>
 </div>
@@ -441,15 +510,15 @@ arbres</code></pre>
 <pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
 str(kejim)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1161 obs. of  9 variables:
-##  $ Site     : chr  &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; ...
-##  $ Parcelle : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
-##  $ Jour     : int  31 31 31 31 31 31 31 31 31 31 ...
-##  $ Mois     : int  8 8 8 8 8 8 8 8 8 8 ...
-##  $ Annee    : int  2004 2004 2004 2004 2004 2004 2004 2004 2004 2004 ...
-##  $ Num_Arbre: int  1 2 6 7 8 9 10 11 12 13 ...
-##  $ Nb_Tiges : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ Espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
-##  $ DHP      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
+##  $ site     : chr  &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; ...
+##  $ parcelle : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
+##  $ jour     : int  31 31 31 31 31 31 31 31 31 31 ...
+##  $ mois     : int  8 8 8 8 8 8 8 8 8 8 ...
+##  $ annee    : int  2004 2004 2004 2004 2004 2004 2004 2004 2004 2004 ...
+##  $ num_arbre: int  1 2 6 7 8 9 10 11 12 13 ...
+##  $ nb_tiges : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
+##  $ dhp      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
 <p>La fonction <code>read.csv</code> requiert d’abord le nom du fichier CSV et accepte plusieurs arguments optionnels. Ici, nous spécifions <code>stringsAsFactors = FALSE</code> pour désactiver la conversion automatique des variables textuelles en facteurs.</p>
 <blockquote>
 <p><strong>Trucs</strong></p>
@@ -463,7 +532,7 @@ str(kejim)</code></pre>
 </blockquote>
 <p>La fonction <code>head</code> montre les premières rangées (par défaut, les 6 premières) d’un tableau de données.</p>
 <pre class="r"><code>head(kejim)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3
 ## 2   BD        A   31    8  2004         2        1   TSCA 24.0
 ## 3   BD        A   31    8  2004         6        1   TSCA 29.8
@@ -480,7 +549,7 @@ str(kejim)</code></pre>
 <div id="extaire-une-variable-dun-tableau-de-donnees" class="section level2">
 <h2>Extaire une variable d’un tableau de données</h2>
 <p>Dans R, l’opérateur <code>$</code> permet d’extraire une partie d’un objet complexe, et en particulier, d’extraire une variable (colonne) d’un tableau de données.</p>
-<pre class="r"><code>dhp &lt;- kejim$DHP</code></pre>
+<pre class="r"><code>dhp &lt;- kejim$dhp</code></pre>
 <p>Ici, le résultat <code>dhp</code> est un vecteur numérique.</p>
 </div>
 <div id="extraire-des-elements-dun-vecteur" class="section level2">
@@ -498,13 +567,15 @@ dhp5</code></pre>
 <p>Finalement, il est possible de sélectionner des valeurs selon une condition logique. Dans l’instruction ci-dessous, R détermine les positions des valeurs <em>TRUE</em> dans le vecteur logique <code>dhp5 &gt; 20</code>, puis extrait les valeurs de <code>dhp5</code> correspondant à ses positions:</p>
 <pre class="r"><code>dhp5[dhp5 &gt; 20]</code></pre>
 <pre><code>## [1] 24.0 29.8 29.0</code></pre>
+<p>Il est possible de remplacer certains éléments d’un vecteur (ou d’une colonne d’un tableau de données) en combinant la sélection et l’assignation de valeur. Le code suivant remplace les valeurs de DHP inférieures à 1 par la valeur 1.</p>
+<pre class="r"><code>dhp[dhp &lt; 1] &lt;- 1</code></pre>
 </div>
 <div id="retour3" class="section level2">
 <h2>Exercice 3</h2>
 <ol style="list-style-type: decimal">
 <li>Que signifie la commande suivante?</li>
 </ol>
-<pre class="r"><code>esp_dhp50 &lt;- kejim$Espece[kejim$DHP &gt; 50] </code></pre>
+<pre class="r"><code>esp_dhp50 &lt;- kejim$espece[kejim$dhp &gt; 50] </code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>Créez un vecteur comportant les mesures de DHP pour tous les arbres ayant plus d’une tige.</li>
 </ol>
@@ -514,25 +585,35 @@ dhp5</code></pre>
 <h2>Extraire une section d’un tableau de données</h2>
 <p>On peut aussi utiliser la notation <code>[]</code> pour extraire une partie d’un tableau de données. Dans ce cas, le choix des rangées et des colonnes est séparé par une virgule:</p>
 <pre class="r"><code>kejim[1:5, 6:9]</code></pre>
-<pre><code>##   Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   num_arbre nb_tiges espece  dhp
 ## 1         1        1   TSCA 16.3
 ## 2         2        1   TSCA 24.0
 ## 3         6        1   TSCA 29.8
 ## 4         7        1   ACRU 29.0
 ## 5         8        1   TSCA 15.5</code></pre>
 <p>On peut aussi choisir les colonnes avec un vecteur de noms:</p>
-<pre class="r"><code>kejim2 &lt;- kejim[, c(&quot;Num_Arbre&quot;, &quot;Espece&quot;, &quot;DHP&quot;)]
+<pre class="r"><code>kejim2 &lt;- kejim[, c(&quot;num_arbre&quot;, &quot;espece&quot;, &quot;dhp&quot;)]
 str(kejim2)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1161 obs. of  3 variables:
-##  $ Num_Arbre: int  1 2 6 7 8 9 10 11 12 13 ...
-##  $ Espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
-##  $ DHP      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
+##  $ num_arbre: int  1 2 6 7 8 9 10 11 12 13 ...
+##  $ espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
+##  $ dhp      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
 <p><strong>Notes</strong>:</p>
 <ul>
 <li><p>L’absence d’informations avant la virgule signifie qu’on souhaite conserver toutes les rangées.</p></li>
 <li><p>Les noms de colonnes sont entre guillemets ici, contrairement au cas où on extrait une seule colonne avec <code>$</code>.</p></li>
 </ul>
 </div>
+</div>
+<div id="graphiques-de-base" class="section level1">
+<h1>Graphiques de base</h1>
+<p>R contient certaines fonctions de base pour visualiser des données. Dans l’exemple, ci-dessous, la fonction <code>plot</code> affiche les valeurs d’un vecteur dans l’ordre de leur position (index) et la fonction <code>hist</code> montre l’histogramme de ces valeurs.</p>
+<pre class="r"><code>plot(kejim$dhp)</code></pre>
+<p><img src="1-IntroR_partie1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>hist(kejim$dhp)</code></pre>
+<p><img src="1-IntroR_partie1_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p>La fonction <code>plot</code> crée différents types de graphiques selon ses arguments; en lui donnant deux vecteurs numériques, elle produit un nuage de points.</p>
+<p>Au prochain laboratoire, nous verrons comment réaliser des graphiques plus complexes et personnalisés à l’aide du package <strong>ggplot2</strong>.</p>
 </div>
 <div id="autres-structures-de-donnees" class="section level1">
 <h1>Autres structures de données</h1>
@@ -612,23 +693,23 @@ str(liste2)</code></pre>
 <ul>
 <li><code>sum</code>: Calcule la somme des valeurs d’un vecteur.</li>
 </ul>
-<pre class="r"><code>sum(kejim$Nb_Tiges)</code></pre>
+<pre class="r"><code>sum(kejim$nb_tiges)</code></pre>
 <pre><code>## [1] 1190</code></pre>
 <ul>
 <li><code>summary</code>: Donne le minimum, maximum, la moyenne et les quartiles d’une variable numérique.</li>
 </ul>
-<pre class="r"><code>summary(kejim$DHP)</code></pre>
+<pre class="r"><code>summary(kejim$dhp)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##    8.80   13.00   18.40   21.76   26.50   84.10</code></pre>
 <ul>
 <li><code>table</code>: Compte le nombre d’occurrences de chaque valeur d’un vecteur (utile pour les valeurs catégorielles ou discrètes).</li>
 </ul>
-<pre class="r"><code>table(kejim$Espece)</code></pre>
+<pre class="r"><code>table(kejim$espece)</code></pre>
 <pre><code>## 
 ## ABBA ACPE ACRU BEAL BECO BEPA FAGR PIRU PIST POGR POTR QURU TSCA 
 ##   27    4  246    9   18  117   39  109  131   45    3   64  349</code></pre>
 <p>Avec deux ou plusieurs vecteurs, <code>table</code> crée un tableau de contingence:</p>
-<pre class="r"><code>table(kejim$Espece, kejim$Site)</code></pre>
+<pre class="r"><code>table(kejim$espece, kejim$site)</code></pre>
 <pre><code>##       
 ##         BD CFR  CL CLT NCL  PL
 ##   ABBA   3   0  10  11   0   3
@@ -739,7 +820,7 @@ type_arbre &lt;- function(espece) {
 <td>Sélectionner une partie d’un objet</td>
 </tr>
 <tr class="even">
-<td><code>&quot; &quot;</code></td>
+<td><code>" "</code></td>
 <td>Délimiter des chaînes de caractères</td>
 </tr>
 <tr class="odd">
@@ -806,10 +887,10 @@ type_arbre &lt;- function(espece) {
 <div id="selectionner-des-elements-dun-objet" class="section level2">
 <h2>Sélectionner des éléments d’un objet</h2>
 <p><em>Ici, i,j,k et l sont des nombres entiers positifs.</em></p>
-<table style="width:89%;">
+<table>
 <colgroup>
-<col width="16%" />
-<col width="72%" />
+<col width="17%" />
+<col width="82%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -843,7 +924,7 @@ type_arbre &lt;- function(espece) {
 <td>Les rangées de <em>df</em> pour lesquelles <em>condition</em> est vraie.</td>
 </tr>
 <tr class="odd">
-<td><code>df[i:j, c(&quot;nom1&quot;, &quot;nom2&quot;)]</code></td>
+<td><code>df[i:j, c("nom1", "nom2")]</code></td>
 <td>Les éléments des colonnes <em>nom1</em> et <em>nom2</em> se trouvant dans les rangées allant de <em>i</em> à <em>j</em>.</td>
 </tr>
 </tbody>
@@ -869,7 +950,7 @@ type_arbre &lt;- function(espece) {
 <pre><code>## [1] &quot;character&quot;</code></pre>
 <pre class="r"><code>c(1, 2, &quot;pin&quot;)</code></pre>
 <pre><code>## [1] &quot;1&quot;   &quot;2&quot;   &quot;pin&quot;</code></pre>
-<p>Le vecteur <code>c(1, 2, &quot;pin&quot;)</code> est de type <em>character</em> parce que les nombres peuvent être représentés comme du texte, mais pas l’inverse.</p>
+<p>Le vecteur <code>c(1, 2, "pin")</code> est de type <em>character</em> parce que les nombres peuvent être représentés comme du texte, mais pas l’inverse.</p>
 <p><a href="#retour2">Retour</a></p>
 </div>
 <div id="sol3" class="section level2">
@@ -878,7 +959,7 @@ type_arbre &lt;- function(espece) {
 <li><p><code>esp_dhp50</code> est un vecteur des espèces correspondant aux arbres de <code>kejim</code> ayant un DHP supérieur à 50 cm.</p></li>
 <li></li>
 </ol>
-<pre class="r"><code>dhp_multi_tige &lt;- kejim$DHP[kejim$Nb_Tiges &gt; 1]</code></pre>
+<pre class="r"><code>dhp_multi_tige &lt;- kejim$dhp[kejim$nb_tiges &gt; 1]</code></pre>
 <p><a href="#retour3">Retour</a></p>
 </div>
 <div id="sol4" class="section level2">
@@ -887,7 +968,7 @@ type_arbre &lt;- function(espece) {
 <li><p>La somme d’un vecteur logique correspond au nombre de valeurs vraies.</p></li>
 <li></li>
 </ol>
-<pre class="r"><code>sum(kejim$Espece == &quot;ACRU&quot;)</code></pre>
+<pre class="r"><code>sum(kejim$espece == &quot;ACRU&quot;)</code></pre>
 <pre><code>## [1] 246</code></pre>
 <p><a href="#retour4">Retour</a></p>
 </div>

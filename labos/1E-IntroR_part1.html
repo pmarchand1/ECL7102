@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-08-29" />
+<meta name="date" content="2019-09-04" />
 
 <title>Introduction to R - Part 1</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction to R - Part 1</h1>
-<h4 class="date"><em>August 29, 2018</em></h4>
+<h4 class="date">September 4, 2019</h4>
 
 </div>
 
@@ -308,7 +377,7 @@ div.tocify {
 <h2>Calling functions</h2>
 <p>Note that parentheses <code>()</code> play two roles in R:</p>
 <ul>
-<li>They delimit parts of a mathematical expression (e.g. <code>(4 + 3) * 2</code>).</li>
+<li>They delimit parts of a mathematical expression (e.g. <code>(4 + 3) * 2</code>).</li>
 <li>They follow the name of a function and contain the <em>arguments</em> of that function. If there are multiple arguments, they are separated by commas.</li>
 </ul>
 <p>For example, the <code>seq(a, b)</code> function creates a sequence of integers between <code>a</code> and<code>b</code>:</p>
@@ -339,7 +408,7 @@ div.tocify {
 <p><strong>Tips</strong>:</p>
 <ul>
 <li><p>To make the code more readable, object names must (while still being brief) provide information about their contents. For example, <code>diametre</code> or<code>diam</code> rather than <code>d</code> or<code>x</code>.</p></li>
-<li><p>It is better to adopt a uniform style for object names. We recommend using only lowercase letters and separating compound names with <code>_</code>, e.g. <code>temp_min</code> for minimum temperature.</p></li>
+<li><p>It is better to adopt a uniform style for object names. We recommend using only lowercase letters and separating compound names with <code>_</code>, e.g. <code>temp_min</code> for minimum temperature.</p></li>
 </ul>
 </blockquote>
 </div>
@@ -353,7 +422,7 @@ div.tocify {
 </div>
 <div id="get-help" class="section level2">
 <h2>Get help</h2>
-<p>The documentation of a function can be found by preceding its name with a question mark, e.g. <code>?seq</code>. In RStudio, the help page appears on the <em>Help</em> tab (lower right corner). If you do not know the exact name of the function, use two question marks, e.g. <code>??logarithm</code>. You can also write directly in the search window of the <em>Help</em> tab.</p>
+<p>The documentation of a function can be found by preceding its name with a question mark, e.g. <code>?seq</code>. In RStudio, the help page appears on the <em>Help</em> tab (lower right corner). If you do not know the exact name of the function, use two question marks, e.g. <code>??logarithm</code>. You can also write directly in the search window of the <em>Help</em> tab.</p>
 <p>Many websites offer information about R. Often, the fastest way to get help for a specific problem is to write your question in a search engine.</p>
 </div>
 </div>
@@ -390,7 +459,7 @@ species &lt;- c (&quot;fir&quot;, &quot;pine&quot;, &quot;birch&quot;)</code></p
 <h2>Exercise 2</h2>
 <ol style="list-style-type: decimal">
 <li><p>What is the data type of the vector <code>species</code>?</p></li>
-<li><p>What happens if you try to create a vector with different types of data, e.g.: <code>c (1, 2, &quot;pine&quot;)</code>?</p></li>
+<li><p>What happens if you try to create a vector with different types of data, e.g.: <code>c (1, 2, "pine")</code>?</p></li>
 </ol>
 <p><a href="#sol2">Solution</a></p>
 </div>
@@ -444,15 +513,15 @@ trees</code></pre>
 <pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
 str(kejim)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1161 obs. of  9 variables:
-##  $ Site     : chr  &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; ...
-##  $ Parcelle : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
-##  $ Jour     : int  31 31 31 31 31 31 31 31 31 31 ...
-##  $ Mois     : int  8 8 8 8 8 8 8 8 8 8 ...
-##  $ Annee    : int  2004 2004 2004 2004 2004 2004 2004 2004 2004 2004 ...
-##  $ Num_Arbre: int  1 2 6 7 8 9 10 11 12 13 ...
-##  $ Nb_Tiges : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ Espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
-##  $ DHP      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
+##  $ site     : chr  &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; ...
+##  $ parcelle : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
+##  $ jour     : int  31 31 31 31 31 31 31 31 31 31 ...
+##  $ mois     : int  8 8 8 8 8 8 8 8 8 8 ...
+##  $ annee    : int  2004 2004 2004 2004 2004 2004 2004 2004 2004 2004 ...
+##  $ num_arbre: int  1 2 6 7 8 9 10 11 12 13 ...
+##  $ nb_tiges : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
+##  $ dhp      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
 <p>The <code>read.csv</code> function first requires the name of the CSV file and accepts several optional arguments. Here, we specify <code>stringsAsFactors = FALSE</code> to disable the automatic conversion of character variables into factors.</p>
 <blockquote>
 <p><strong>Tips</strong></p>
@@ -466,7 +535,7 @@ str(kejim)</code></pre>
 </blockquote>
 <p>The <code>head</code> function shows the first rows (by default, the first 6) of a data frame.</p>
 <pre class="r"><code>head(kejim)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3
 ## 2   BD        A   31    8  2004         2        1   TSCA 24.0
 ## 3   BD        A   31    8  2004         6        1   TSCA 29.8
@@ -483,7 +552,7 @@ str(kejim)</code></pre>
 <div id="extract-a-variable-from-a-data-frame" class="section level2">
 <h2>Extract a variable from a data frame</h2>
 <p>In R, the <code>$</code> operator allows to extract a part of a complex object, and in particular, to extract a variable (column) from a data frame.</p>
-<pre class="r"><code>dhp &lt;- kejim$DHP</code></pre>
+<pre class="r"><code>dhp &lt;- kejim$dhp</code></pre>
 <p>Here, the result <code>dhp</code> is a numeric vector.</p>
 </div>
 <div id="extract-elements-from-a-vector" class="section level2">
@@ -501,15 +570,17 @@ dhp5</code></pre>
 <p>Finally, it is possible to select values according to a logical condition. In the statement below, R determines the positions of the <em>TRUE</em> values in the <code>dhp5 &gt; 20</code> logical vector, and then extracts the values of <code>dhp5</code> corresponding to those positions:</p>
 <pre class="r"><code>dhp5[dhp5 &gt; 20]</code></pre>
 <pre><code>## [1] 24.0 29.8 29.0</code></pre>
+<p>We can replace specific elements in a vector (or in a data frame column) by combining selection and assignment. The code below replaces the DHP values smaller than 1 with the value 1.</p>
+<pre class="r"><code>dhp[dhp &lt; 1] &lt;- 1</code></pre>
 </div>
 <div id="return3" class="section level2">
 <h2>Exercise 3</h2>
 <ol style="list-style-type: decimal">
 <li>What does the following command mean?</li>
 </ol>
-<pre class="r"><code>esp_dhp50 &lt;- kejim$Espece[kejim$DHP &gt; 50]</code></pre>
+<pre class="r"><code>esp_dhp50 &lt;- kejim$espece[kejim$dhp &gt; 50]</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>Create a vector with DHP measurements for all trees with more than one stem (<em>Nb_Tiges</em> variable).</li>
+<li>Create a vector with DHP measurements for all trees with more than one stem (<em>nb_tiges</em> variable).</li>
 </ol>
 <p><a href="#sol3">Solution</a></p>
 </div>
@@ -517,25 +588,32 @@ dhp5</code></pre>
 <h2>Extract a section from a data frame</h2>
 <p>You can also use the <code>[]</code> notation to extract part of a data frame. In this case, the subsets of rows and columns are separated by a comma:</p>
 <pre class="r"><code>kejim[1:5, 6:9]</code></pre>
-<pre><code>##   Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   num_arbre nb_tiges espece  dhp
 ## 1         1        1   TSCA 16.3
 ## 2         2        1   TSCA 24.0
 ## 3         6        1   TSCA 29.8
 ## 4         7        1   ACRU 29.0
 ## 5         8        1   TSCA 15.5</code></pre>
 <p>You can also select columns with a vector of names:</p>
-<pre class="r"><code>kejim2 &lt;- kejim[, c(&quot;Num_Arbre&quot;, &quot;Espece&quot;, &quot;DHP&quot;)]
+<pre class="r"><code>kejim2 &lt;- kejim[, c(&quot;num_arbre&quot;, &quot;espece&quot;, &quot;dhp&quot;)]
 str(kejim2)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1161 obs. of  3 variables:
-##  $ Num_Arbre: int  1 2 6 7 8 9 10 11 12 13 ...
-##  $ Espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
-##  $ DHP      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
+##  $ num_arbre: int  1 2 6 7 8 9 10 11 12 13 ...
+##  $ espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
+##  $ dhp      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
 <p><strong>Note</strong>:</p>
 <ul>
 <li><p>The absence of information before the comma means that we want to keep all the rows.</p></li>
 <li><p>The names of columns are in quotation marks here, unlike when you extract a single column with <code>$</code>.</p></li>
 </ul>
 </div>
+</div>
+<div id="base-graphics" class="section level1">
+<h1>Base graphics</h1>
+<p>R contains some basic functions to visualize data. In the example below, the <code>plot</code> function displays the values in a vector in order of their position (index), and the <code>hist</code> function shows a histogram of these values.</p>
+<pre class="r"><code>plot(kejim$dhp)
+plot(kejim$dhp)</code></pre>
+<p><img src="1E-IntroR_part1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="other-data-structures" class="section level1">
 <h1>Other data structures</h1>
@@ -615,23 +693,23 @@ str(list2)</code></pre>
 <ul>
 <li><code>sum</code>: Calculates the sum of the values of a vector.</li>
 </ul>
-<pre class="r"><code>sum(kejim$Nb_Tiges)</code></pre>
+<pre class="r"><code>sum(kejim$nb_tiges)</code></pre>
 <pre><code>## [1] 1190</code></pre>
 <ul>
 <li><code>summary</code>: Returns the minimum, maximum, average and quartiles of a numeric variable.</li>
 </ul>
-<pre class="r"><code>summary(kejim$DHP)</code></pre>
+<pre class="r"><code>summary(kejim$dhp)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##    8.80   13.00   18.40   21.76   26.50   84.10</code></pre>
 <ul>
 <li><code>table</code>: Counts the number of occurrences of each value of a vector (useful for categorical or discrete values).</li>
 </ul>
-<pre class="r"><code>table(kejim$Espece)</code></pre>
+<pre class="r"><code>table(kejim$espece)</code></pre>
 <pre><code>## 
 ## ABBA ACPE ACRU BEAL BECO BEPA FAGR PIRU PIST POGR POTR QURU TSCA 
 ##   27    4  246    9   18  117   39  109  131   45    3   64  349</code></pre>
 <p>With two or more vectors, <code>table</code> creates a contingency table:</p>
-<pre class="r"><code>table(kejim$Espece, kejim$Site)</code></pre>
+<pre class="r"><code>table(kejim$espece, kejim$site)</code></pre>
 <pre><code>##       
 ##         BD CFR  CL CLT NCL  PL
 ##   ABBA   3   0  10  11   0   3
@@ -742,7 +820,7 @@ tree_type &lt;- function (species) {
 <td>Select part of an object</td>
 </tr>
 <tr class="even">
-<td><code>&quot; &quot;</code></td>
+<td><code>" "</code></td>
 <td>Delimit strings</td>
 </tr>
 <tr class="odd">
@@ -809,10 +887,10 @@ tree_type &lt;- function (species) {
 <div id="select-elements-of-an-object" class="section level2">
 <h2>Select elements of an object</h2>
 <p><em>Here, i, j, k and l are positive integers.</em></p>
-<table style="width:89%;">
+<table>
 <colgroup>
-<col width="16%" />
-<col width="72%" />
+<col width="17%" />
+<col width="82%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -846,7 +924,7 @@ tree_type &lt;- function (species) {
 <td>The rows of <em>df</em> for which <em>condition</em> is true.</td>
 </tr>
 <tr class="odd">
-<td><code>df [i:j, c(&quot;name1&quot;, &quot;name2&quot;)]</code></td>
+<td><code>df [i:j, c("name1", "name2")]</code></td>
 <td>The elements in columns <em>name1</em> and <em>name2</em> are in rows from <em>i</em> to <em>j</em>.</td>
 </tr>
 </tbody>
@@ -872,7 +950,7 @@ tree_type &lt;- function (species) {
 <pre><code>## [1] &quot;character&quot;</code></pre>
 <pre class="r"><code>c(1, 2, &quot;pine&quot;)</code></pre>
 <pre><code>## [1] &quot;1&quot;    &quot;2&quot;    &quot;pine&quot;</code></pre>
-<p>The vector <code>c(1, 2,&quot;pine&quot;)</code> is of type <em>character</em> because numbers can be represented as text, but text cannot be represented as numbers.</p>
+<p>The vector <code>c(1, 2,"pine")</code> is of type <em>character</em> because numbers can be represented as text, but text cannot be represented as numbers.</p>
 <p><a href="#return2">Back</a></p>
 </div>
 <div id="sol3" class="section level2">
@@ -881,7 +959,7 @@ tree_type &lt;- function (species) {
 <li><p><code>esp_dhp50</code> is a vector of species corresponding to trees in <code>kejim</code> with DHP greater than 50 cm.</p></li>
 <li></li>
 </ol>
-<pre class="r"><code>dhp_multi_tige &lt;- kejim$DHP[kejim$Nb_Tiges &gt; 1]</code></pre>
+<pre class="r"><code>dhp_multi_tige &lt;- kejim$dhp[kejim$nb_tiges &gt; 1]</code></pre>
 <p><a href="#return3">Back</a></p>
 </div>
 <div id="sol4" class="section level2">
@@ -890,7 +968,7 @@ tree_type &lt;- function (species) {
 <li><p>The sum of a logical vector is the number of true values.</p></li>
 <li></li>
 </ol>
-<pre class="r"><code>sum(kejim$Espece == &quot;ACRU&quot;)</code></pre>
+<pre class="r"><code>sum(kejim$espece == &quot;ACRU&quot;)</code></pre>
 <pre><code>## [1] 246</code></pre>
 <p><a href="#return4">Back</a></p>
 </div>

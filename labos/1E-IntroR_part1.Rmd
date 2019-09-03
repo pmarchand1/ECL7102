@@ -1,6 +1,6 @@
 ---
 title: "Introduction to R - Part 1"
-date: "August 29, 2018"
+date: "September 4, 2019"
 output:
     html_document:
         self_contained: false
@@ -292,7 +292,7 @@ dim(kejim)
 In R, the `$` operator allows to extract a part of a complex object, and in particular, to extract a variable (column) from a data frame.
 
 ```{r extr_col}
-dhp <- kejim$DHP
+dhp <- kejim$dhp
 ```
 
 Here, the result `dhp` is a numeric vector.
@@ -318,15 +318,22 @@ Finally, it is possible to select values according to a logical condition. In th
 dhp5[dhp5 > 20]
 ```
 
+We can replace specific elements in a vector (or in a data frame column) by combining selection and assignment. The code below replaces the DHP values smaller than 1 with the value 1.
+
+```{r extr_rempl}
+dhp[dhp < 1] <- 1
+```
+
+
 ## Exercise 3 {#return3}
 
 1. What does the following command mean?
 
 ```{r esp_dhp50}
-esp_dhp50 <- kejim$Espece[kejim$DHP > 50]
+esp_dhp50 <- kejim$espece[kejim$dhp > 50]
 ```
 
-2. Create a vector with DHP measurements for all trees with more than one stem (*Nb_Tiges* variable).
+2. Create a vector with DHP measurements for all trees with more than one stem (*nb_tiges* variable).
 
 [Solution](#sol3)
 
@@ -340,7 +347,7 @@ kejim[1:5, 6:9]
 
 You can also select columns with a vector of names:
 ```{r sub_df_noms}
-kejim2 <- kejim[, c("Num_Arbre", "Espece", "DHP")]
+kejim2 <- kejim[, c("num_arbre", "espece", "dhp")]
 str(kejim2)
 ```
 
@@ -349,6 +356,16 @@ str(kejim2)
 - The absence of information before the comma means that we want to keep all the rows.
 
 - The names of columns are in quotation marks here, unlike when you extract a single column with `$`.
+
+# Base graphics
+
+R contains some basic functions to visualize data. In the example below, the `plot` function displays the values in a vector in order of their position (index), and the `hist` function shows a histogram of these values.
+
+```{r}
+plot(kejim$dhp)
+plot(kejim$dhp)
+```
+
 
 
 # Other data structures
@@ -402,22 +419,22 @@ sort(dhp5)
 
 - `sum`: Calculates the sum of the values of a vector.
 ```{r sum}
-sum(kejim$Nb_Tiges)
+sum(kejim$nb_tiges)
 ```
 
 - `summary`: Returns the minimum, maximum, average and quartiles of a numeric variable.
 ```{r summary}
-summary(kejim$DHP)
+summary(kejim$dhp)
 ```
 
 - `table`: Counts the number of occurrences of each value of a vector (useful for categorical or discrete values).
 ```{r table}
-table(kejim$Espece)
+table(kejim$espece)
 ```
 
 With two or more vectors, `table` creates a contingency table:
 ```{r}
-table(kejim$Espece, kejim$Site)
+table(kejim$espece, kejim$site)
 ```
 
 There are also several functions for calculating different statistics from a data vector: `mean`,` median` `min`,` max`, `sd` (standard deviation).
@@ -587,7 +604,7 @@ The vector `c(1, 2,"pine")` is of type *character* because numbers can be repres
 
 2.
 ```{r ex3}
-dhp_multi_tige <- kejim$DHP[kejim$Nb_Tiges > 1]
+dhp_multi_tige <- kejim$dhp[kejim$nb_tiges > 1]
 ```
 
 [Back](#return3)
@@ -598,7 +615,7 @@ dhp_multi_tige <- kejim$DHP[kejim$Nb_Tiges > 1]
 
 2.
 ```{r ex4}
-sum(kejim$Espece == "ACRU")
+sum(kejim$espece == "ACRU")
 ```
 
 [Back](#return4)

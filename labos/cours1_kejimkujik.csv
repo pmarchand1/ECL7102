@@ -1,4 +1,4 @@
-Site,Parcelle,Jour,Mois,Annee,Num_Arbre,Nb_Tiges,Espece,DHP
+site,parcelle,jour,mois,annee,num_arbre,nb_tiges,espece,dhp
 BD,A,31,8,2004,1,1,TSCA,16.3
 BD,A,31,8,2004,2,1,TSCA,24
 BD,A,31,8,2004,6,1,TSCA,29.8
