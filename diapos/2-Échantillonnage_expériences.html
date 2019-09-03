@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Méthodes d’échantillonnage et plans d’expérience</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Méthodes d’échantillonnage et plans d’expérience
+### <br/>3 septembre 2019
+
+---
+
+
+# Objectifs
+
+- Choisir une méthode d'échantillonnage en fonction des caractéristiques de la population à étudier.
+
+- Décrire les avantages et inconvénients de différentes méthodes d'échantillonnage.
+
+--
+
+- Différencier études d'observation et manipulations expérimentales.
+
+- Connaître les éléments importants à considérer lors de la planification d'expériences.
+
+- Décrire le principe et l'intérêt d'une expérience par blocs.
+
+---
+
+# Méthodes d'échantillonnage
+
+- Visent à obtenir un échantillon *représentatif* d'une population pour la variable qu'on souhaite mesurer. 
+
+- Plus une méthode d'échantillonnage nous permet d'estimer une variable précisément pour une quantité de ressources donnée, plus elle est *efficace*.
+
+---
+
+# Exercice
+
+Le chaga (*Inonutus obliquus*) est un champignon parasite du bouleau qu’on retrouve en forêt boréale.
+
+![](../images/Inonotus_obliquus.jpg)
+
+--
+
+Vous devez estimer l'abondance du chaga pour une région de 120 km&lt;sup&gt;2&lt;/sup&gt; au nord-ouest de Rouyn-Noranda. Comment disposerez-vous des unités d'échantillonnage (placettes) dans ce territoire?
+
+---
+
+# Carte écoforestière
+
+![](../images/inventaire_sm.png)
+
+---
+
+# Échantilonnage aléatoire simple
+
+Chaque individu ou unité d'observation a la même probabilité de faire partie de l'échantillon. 
+
+![](../images/inventaire_srs_sm.png)
+
+---
+
+# Échantilonnage aléatoire simple
+
+*Avantages*
+
+- C'est la méthode la plus simple permettant d'obtenir un échantillon représentatif. 
+
+- Elle ne requiert pas de connaissances particulières sur la structure de la population.
+
+--
+
+*Inconvénients*
+
+- Par hasard, les points d'un échantilon donné peuvent être concentrés dans une certaine partie de la population. 
+
+- Comme nous allons le voir, d'autres méthodes peuvent être plus efficaces selon la situation.
+
+---
+
+# Échantillonnage stratifié
+
+- On divise la population ou l'aire d'étude en strates, puis on effectue un échantillonnage aléatoire simple dans chaque strate. 
+
+--
+
+- Si on divise en `\(m\)` strates et qu'on calcule la moyenne de `\(x\)` pour l'échantillon de chaque strate, la moyenne globale de `\(x\)` est la moyenne pondérée:
+
+`$$\bar{x} = \sum_{j = 1}^{m} w_j \bar{x}_j$$`
+
+--
+
+- Plus `\(x\)` est homogène dans chaque strate et variable entre les strates, plus l'échantillonnage stratifié sera efficace par rapport à l'échantillonnage aléatoire simple.
+
+---
+
+# Échantillonnage stratifié
+
+*Comment répartir l'échantillon entre les strates?*
+
+--
+
+- On peut échantillonner chaque strate en proportion de son poids `\(w_j\)` dans la population. C'est le choix optimal si la variance de `\(x\)` est identique dans chaque strate.
+
+--
+
+- Si on sait que la variable varie davantage dans certaines strates, on peut sur-échantillonner celles-ci par rapport à leur poids `\(w_j\)`.
+
+--
+
+- Si certaines strates sont plus difficiles ou coûteuses à échantillonner, il est possible qu'on doive les sous-échantillonner par rapport à leur poids.
+
+--
+
+- Si on s'intéresse non seulement à la moyenne globale, mais aussi à la moyenne par strate, les plus petites strates peuvent être sur-échantillonnées par rapport à leur poids.
+
+---
+
+# Échantillonnage stratifié
+
+*Avantages*
+
+- Estimation plus efficace lorsque la distribution de la variable mesurée diffère de façon importante entre les strates.
+
+- Avec un échantillon suffisant, on obtient non seulement un bon estimé de la moyenne globale, mais aussi par strate. 
+
+--
+
+*Inconvénients*
+
+- Cette méthode demande une certaine connaissance de la variation de la variable dans la population afin d'établir des strates pertinentes.
+
+- Le résultat peut être biaisé si les poids utilisés ne correspondent pas aux proportions réelles de chaque strate dans la population. 
+
+---
+
+# Échantillonnage systématique
+
+Les points d'échantillonnage sont pris à intervalles réguliers dans l'espace, sur une grille. L'origine de la grille est aléatoire.
+
+![](../images/inventaire_syst_sm.png)
+
+---
+
+# Échantillonnage systématique
+
+*Avantages*
+
+- Plus efficace que l'échantillonnage aléatoire simple si la variable est influencée par un gradient spatial.
+
+--
+
+*Désavantages*
+
+- Il n'est parfois pas pratique de placer les points à intervalles réguliers.
+
+- Si on veut une estimation non seulement de la moyenne, mais aussi de la variance de `\(x\)`, alors il faut répéter l'échantillonnage systématique avec une autre grille (origine aléatoire différente).
+
+- Plus rarement, si l'habitat varie de façon périodique, ce type d'échantillonnage peut être non représentatif. 
+
+---
+
+# Échantillonnage par grappe
+
+On divise la population ou l'aire d'étude en grappes et on choisit aléatoirement certaines grappes. On peut ensuite choisir un échantillon aléatoire à l'intérieur de ces grappes (multi-stade).
+
+![](../images/inventaire_grap_sm.png)
+
+---
+
+# Échantillonnage par grappe
+
+*Avantages*
+
+- Réduit les coûts liés à l'échantillonnage, permettant d'augmenter la taille de l'échantillon pour un budget donné.
+
+--
+
+*Désavantages*
+
+- Échantillonnage moins efficace (estimation moins précise) si la région d'étude est hétérogène. Ce désavantage peut être en partie compensé par l'augmentation de `\(n\)`.
+
+---
+
+# Échantillonnage adaptatif
+
+- Utile pour l'échantillonnage d'une espèce rare. 
+
+- Échantillonnage adaptatif par grappes (*adaptive cluster sampling*): On commence par échantillonner une nombre de placettes indépendantes, mais lorsqu'on détecte l'espèce voulue, on poursuit l'échantillonnage avec des placettes adjacentes à celle où l'espèce a été détectée.
+
+--
+
+- Puisque l'échantillonnage est concentré sur les régions où l'espèce est abondante, il faut appliquer une correction statistique (voir références dans les notes de cours).
+
+---
+
+class: inverse, middle
+
+# Plans expérimentaux
+
+---
+
+# Exemple
+
+Supposons que nous souhaitons déterminer l'effet de la température sur la croissance des semis d'épinette noire. 
+
+- Est-ce suffisant de mesurer la croissance de semis le long d'un gradient de température nord-sud, ou en alternative, de mesurer la croissance des semis d'une même population lors d'années plus chaudes ou plus froides?
+
+--
+
+- Dans une étude d'observation, d'autres variables peuvent varier avec celle qui nous intéresse, donc leurs effets sont *confondus*.
+
+--
+
+- La manipulation expérimentale vise à isoler l'effet causal d'une variable. 
+
+Ex.: Faire croître les semis dans des chambres à température contrôlée, en gardant les autres variables constantes (ex.: lumière, humidité, type de sol).
+
+---
+
+# Exercice
+
+a) Après avoir modifié la composition de l'engrais appliqué à plusieurs champs de maïs dans une région, des agronomes notent que le rendement moyen est significativement supérieur à celui de l'an dernier dans les mêmes champs. Ces résultats vous convainquent-ils que le nouvel engrais est supérieur?
+
+b) Pour comparer l'effet de deux méthodes de préparation du sol sur la regénération d'une forêt après coupe, vous mesurez la croissance moyenne de semis sur deux parterres de coupe, un où a été appliquée la méthode 1 et l'autre où a été appliquée la méthode 2. Est-il utile de délimiter plusieurs parcelles sur chaque parterre afin d'augmenter la taille de votre échantillon?
+
+---
+
+class: inverse, middle
+
+# Principes de la planification d'expériences
+
+---
+
+# Traitement et réponse
+
+- Le **traitement** est une manipulation expérimentale dont on veut mesurer l'effet sur une variable **réponse**. 
+
+- On peut tester différentes options ou intensités de traitement dans la même expérience (ex.: effet de plusieurs types de sols, ou de différents taux d'humidité du sol, sur la croissance).
+
+- Si la réponse à un traitement varie d'un individu à un autre, on s'intéresse à estimer l'effet moyen du traitement à partir des réponses mesurées sur un groupe d'individus. 
+
+---
+
+# Groupe témoin
+
+- Comparer la réponse chez les individus traitées à celle d'un groupe non-traité placé dans les mêmes conditions.
+
+--
+
+- Dans certains cas, le concept de témoin ne s'applique pas, comme lorsque l'on souhaite comparer les réponses pour différents niveaux d'une variable (ex.: pH bas, moyen ou élevé).
+
+--
+
+- Il est parfois nécessaire d'établir plus d'un groupe témoin.
+
+---
+
+# Groupe témoin
+
+- L'état d'un système avant le traitement est rarement un bon témoin, car le système est affecté par d'autres variables qui changent d'une période à l'autre. 
+
+--
+
+- Pour comparer un site avant et après un traitement, on peut faire le suivi d'un site témoin durant la même période (plan BACI, pour *before-after-control-impact*). 
+
+- Un changement dans le temps observé sur le site perturbé, mais pas sur le site témoin, constitue une meilleure preuve d'impact du traitement.
+
+---
+
+# Assignation aléatoire
+
+- L'assignation aléatoire des différents traitements donne à chaque individu la même chance d'obtenir l'un ou l'autre des traitements.
+
+- Idéalement, la seule source de différence systématique entre les deux groupes devrait être le traitement appliqué. 
+
+--
+
+- Une association entre le traitement et une autre caractéristique de la population peut se produire par hasard; cette probabilité est plus grande lorsque l'échantillon est petit.
+
+---
+
+# Réplication
+
+- Afin de vérifier si l'effet se généralise à plusieurs sites, il est utile d'effectuer plusieurs réplicats du dispositif expérimental.
+
+--
+
+- Si les réplicats d'un traitement sont plus semblables entre eux qu'avec ceux des autres traitements, ils ne peuvent pas être considérés comme des observations indépendantes (*pseudoréplication*).
+
+- En écologie, cela peut se produire si les sites recevant le même traitement sont concentrés dans l'espace.
+
+---
+
+# Expériences par blocs
+
+- Si on sait d'avance que certaines caractéristiques des individus influenceront leur réponse au traitement, on peut regrouper les individus par *blocs* plus homogènes et assigner aléatoirement les traitements dans chaque bloc.
+
+--
+
+- Avec deux traitement (ou un traitement et témoin) à comparer, des paires d'individus semblables peuvent constituer un bloc. 
+
+---
+
+# Blocs complets aléatoires
+
+Les individus sont divisés en blocs et chacun des traitements est assigné de façon aléatoire à un nombre égal d'individus par bloc.
+
+--
+
+Par exemple, si on veut mesurer l'effet d'une variation du pH du sol sur la productivité d'érables provenant de différentes populations, on peut définir chaque population d'origine comme un bloc.
+
+![](../images/blocs_pop.PNG)
+
+---
+
+# Blocs complets aléatoires
+
+Pour éviter de confondre les conditions environnementales locales avec l'effet d'un traitement, il est avantageux de disperser les traitements dans l'espace, surtout s'il y a un gradient environnemental connu (pente, proximité de l'eau, etc.). 
+
+--
+
+![](../images/blocs_grad.PNG)
+
+Lorsque les blocs sont organisés d'après un gradient spatial, les individus d'un même bloc doivent être assez rapprochés pour que les conditions environnementales soient homogènes, mais pas tant que les traitements "contaminent" les individus adjacents. 
+
+---
+
+# Plan d'expérience à plusieurs facteurs
+
+## Exercice
+
+Vous êtes responsable d'une expérience visant à déterminer si la croissance de semis de quatre espèces d'arbres (érable rouge, pin gris, sapin baumier et tremble) dépend de la texture du sol (sableuse, limoneuse ou argileuse). Vous avez la capacité de planter 144 semis dans 12 placettes. Décrivez un plan pour organiser les placettes dans l'espace et les traitements (espèces d'arbres et type de sol) dans les placettes.
+
+---
+
+# Plan factoriel
+
+- Pour une expérience avec plusieurs facteurs, un plan factoriel consiste à assigner chacune des combinaisons possibles des traitements. 
+
+- Exemple: S'il y a trois traitements possibles pour la variable 1 et cinq pour la variable 2, le plan factoriel requiert au minimum 3 x 5 = 15 unités d'observation. Idéalement, nous voudrions un multiple de 15 afin que chaque combinaison de traitements soit répliquée.
+
+---
+
+# Plan en parcelles divisées
+
+- Appelé *split-plot design* en anglais, il sert à organiser un dispositif expérimental multi-factoriel lorsqu'un des facteurs est plus difficile à contrôler.
+
+- Exemple: Supposons que nous voulons mesurer l'effet d'un changement de la concentration de CO&lt;sub&gt;2&lt;/sub&gt; sur l'activité photosynthétique de différentes variétés de peuplier. Le contrôle de la concentration de CO&lt;sub&gt;2&lt;/sub&gt; requiert d'isoler les arbres dans des chambres de croissance.
+
+---
+
+# Plan en parcelles divisées
+
+- Le facteur difficile à contrôler est répliqué un petit nombre de fois (deux chambres à basse concentration et deux à haute concentration), tandis que l'autre facteur est niché dans le premier (ex.: 8 semis de chaque variété disposés aléatoirement dans chacune des 4 chambres).
+
+![](../images/split_plot_design.png)
+
+--
+
+**Question**: Comment appliqueriez-vous un plan en parcelles divisées dans l'exercice précédent?
+
+---
+
+# Rappel - Plans d'expérience
+
+## Principes
+
+- Groupe témoin
+- Assignation aléatoire
+- Réplication
+
+## Types de plans
+
+- Blocs complets aléatoires
+- Factoriel
+- En parcelles divisées
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
