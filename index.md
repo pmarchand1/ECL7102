@@ -5,7 +5,7 @@
 0. [Introduction](notes_cours/0-Introduction.html) ([PDF](notes_cours/0-Introduction.pdf))
 1. [Statistiques descriptives et graphiques](notes_cours/1-Statistiques_descriptives.html) ([PDF](notes_cours/1-Statistiques_descriptives.pdf))
 2. [Méthodes d'échantillonnage et plans d'expérience](notes_cours/2-Échantillonnage_expériences.html) ([PDF](notes_cours/2-Échantillonnage_expériences.pdf))
-3. [Modèles statistiques, paramètres et estimateurs](notes_cours/3-Modèles_statistiques.html)
+3. [Modèles statistiques, paramètres et estimateurs](notes_cours/3-Modèles_statistiques.html) ([PDF](notes_cours/3-Modèles_statistiques.pdf))
 
 ## Laboratoires
 

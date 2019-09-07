@@ -339,10 +339,10 @@ div.tocify {
 </div>
 <div id="loi-des-grands-nombres" class="section level2">
 <h2>Loi des grands nombres</h2>
-<p>En R, la commande suivante génère dix valeurs aléatoires (<code>n = 10</code>) tirées de la distribution uniforme (continue) entre 0 et 6, que nous avons vu dans la section précédente.</p>
+<p>En R, la commande suivante génère dix valeurs aléatoires (<code>n = 10</code>) tirées de la distribution uniforme (continue) entre 0 et 6, que nous avons vue dans la section précédente.</p>
 <pre class="r"><code>x &lt;- runif(n = 10, min = 0, max = 6)
 round(x, 2) # round affiche les valeurs avec 2 décimales</code></pre>
-<pre><code>##  [1] 4.60 4.72 5.75 5.39 1.89 1.41 0.96 3.09 0.42 2.68</code></pre>
+<pre><code>##  [1] 5.35 0.19 1.23 3.98 4.74 4.25 5.66 3.18 4.93 2.72</code></pre>
 <p>Voici les histogrammes des valeurs obtenues pour différents <span class="math inline">\(n\)</span>. Que remarquez-vous?</p>
 <p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>La fonction <code>runif</code> simule l’échantillonnage d’une variable qui suit une distribution uniforme. Plus la taille de l’échantillon aléatoire est grand, plus la distribution des valeurs de cet échantillon s’approche de la distribution de la variable dans la population. C’est ce qu’on appelle la <strong>loi des grands nombres</strong>.</p>
@@ -398,16 +398,16 @@ x &lt;- replicate(10000, somme_unif(n, 0, 6))</code></pre>
 <p>La distribution cumulative d’une variable aléatoire (aussi appelée fonction de répartition) correspond pour chaque valeur <span class="math inline">\(x\)</span> à la probabilité que la valeur de la variable soit inférieure ou égale à <span class="math inline">\(x\)</span>. Elle est donc égale à l’aire sous la courbe de la densité de probabilité à gauche de <span class="math inline">\(x\)</span>.</p>
 <p>Voici une illustration de la distribution cumulative <span class="math inline">\(F(z)\)</span> d’une variable normale centrée réduite <span class="math inline">\(z\)</span>.</p>
 <p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>À partir de la distribution cumulative <span class="math inline">\(F(x)\)</span>, on peut facilement calculer la probabilité dans un intervalle (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>) en faisant la soustraction <span class="math inline">\(F(x_2)\)</span> - <span class="math inline">\(F(x_1)\)</span>.</p>
+<p>À partir de la distribution cumulative <span class="math inline">\(F(x)\)</span>, on peut facilement calculer la probabilité que <span class="math inline">\(x\)</span> se trouve dans un intervalle (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>) en faisant la soustraction <span class="math inline">\(F(x_2)\)</span> - <span class="math inline">\(F(x_1)\)</span>.</p>
 </div>
 <div id="les-fonctions-de-distribution-dans-r" class="section level1">
 <h1>Les fonctions de distribution dans R</h1>
 <p>Quatre fonctions dans R permettent de travailler avec la distribution normale. Dans chaque cas, il faut spécifier la moyenne (<code>mean</code>) et l’écart-type (<code>sd</code>) de la distribution.</p>
 <ul>
-<li><p><code>rnorm(n, mean, sd)</code> génère <code>n</code> valeurs aléatoires à partir d’une distribution normale avec de moyenne <code>mean</code> et d’écart-type <code>sd</code>.</p></li>
+<li><p><code>rnorm(n, mean, sd)</code> génère <code>n</code> valeurs aléatoires à partir d’une distribution normale de moyenne <code>mean</code> et d’écart-type <code>sd</code>.</p></li>
 <li><p><code>dnorm(x, mean, sd)</code> donne la densité de probabilité associée à la valeur <code>x</code>.</p></li>
 <li><p><code>pnorm(q, mean, sd)</code> donne la probabilité cumulative associée à une valeur <code>q</code>.</p></li>
-<li><p><code>qnorm(p, mean, sd)</code> donne la valeur (<code>q</code> pour quantile) associé à une probabilité cumulative <code>p</code> donnée.</p></li>
+<li><p><code>qnorm(p, mean, sd)</code> donne la valeur (<code>q</code> pour quantile) associée à une probabilité cumulative <code>p</code> donnée.</p></li>
 </ul>
 <p>Des fonctions semblables sont définies pour d’autres distributions courantes, comme nous le verrons plus tard.</p>
 <p>Par exemple, pour la distribution normale centrée réduite:</p>
@@ -454,6 +454,11 @@ qqline(dhp)</code></pre>
 </ul>
 <p>Ainsi, le diagramme quantile-quantile nous indique que la distribution est asymétrique avec des valeurs plus rapprochées à gauche et plus éloignées à droite. Puisqu’il s’agit d’une différence assez flagrante, on pouvait la détecter plus facilement avec un histogramme (ci-dessous). Toutefois, le diagramme quantile-quantile peut détecter des différences plus subtiles, il est donc utile d’apprendre à lire et interpréter ce graphique.</p>
 <p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div id="exercice" class="section level2">
+<h2>Exercice</h2>
+<p>Voici un diagramme quantile-quantile comparant un échantillon à une distribution normale. Pouvez-vous décrire comment cet échantillon diffère de la distribution théorique?</p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
 </div>
 <div id="la-distribution-log-normale" class="section level1">
 <h1>La distribution log-normale</h1>
@@ -461,7 +466,7 @@ qqline(dhp)</code></pre>
 <h2>Définition</h2>
 <p>Une variable <span class="math inline">\(x\)</span> suit une distribution log-normale si <span class="math inline">\(y = log(x)\)</span> suit une distribution normale.</p>
 <p>De façon équivalente, si <span class="math inline">\(y\)</span> suit une distribution normale, <span class="math inline">\(x = e^y\)</span> suit une distribution log-normale.</p>
-<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 <div id="proprietes-des-logarithmes" class="section level2">
 <h2>Propriétés des logarithmes</h2>
@@ -479,20 +484,29 @@ qqline(dhp)</code></pre>
 </div>
 <div id="utilite-de-la-distribution-log-normale" class="section level2">
 <h2>Utilité de la distribution log-normale</h2>
-<p>Si la distribution normale tend à être associés à des processus additifs (somme de nombreux effets indépendants), la distribution log-normale est associée à des processus multiplicatifs. Par exemple, si une population croît de 5%, 10% et 3% lors de trois années consécutives, l’accroissement cumulatif correspond à la multiplication: 1.05 x 1.10 x 1.03 = 1.19, soit une augmentation de 19%. Dans un processus multiplicatif, plus une variable est grande, plus elle peut croître, ce qui explique que la distribution résultante soit asymétrique et s’étire vers la droite.</p>
-<p>Souvenons-nous que la distribution du DHP de tous les arbres du jeu de données Kejimkujik avait ce type d’asymétrie. Il est aussi plausible que le diamètre d’un arbre soit distribué de façon log-normale, considérant que les plus grands arbres peuvent capter plus de ressources pour croître.</p>
-<p>Pour vérifier si la distribution du DHP est approximativement log-normale, observons le diagramme quantile-quantile pour le logarithme du DHP.</p>
+<p>Si la distribution normale tend à être associée à des processus additifs (somme de nombreux effets indépendants), la distribution log-normale est associée à des processus multiplicatifs. Par exemple, si une population croît de 5%, 10% et 3% lors de trois années consécutives, l’accroissement cumulatif correspond à la multiplication: 1.05 x 1.10 x 1.03 = 1.19, soit une augmentation de 19%. Dans un processus multiplicatif, plus une variable est grande, plus elle peut croître, ce qui explique que la distribution résultante soit asymétrique et s’étire vers la droite.</p>
+<p>Souvenons-nous que la distribution du DHP de tous les arbres du jeu de données Kejimkujik avait ce type d’asymétrie. Pour vérifier si la distribution du DHP est approximativement log-normale, observons le diagramme quantile-quantile pour le logarithme du DHP.</p>
 <pre class="r"><code>qqnorm(log(dhp))
 qqline(log(dhp))</code></pre>
-<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-<p>On observe une meilleure correspondance que pour les données non-transformées, sauf au niveau des valeurs les plus petites du DHP dans l’échantillon, qui demeurent plus élevées que prévus par la distribution de référence. Avez-vous une hypothèse pour cette anomalie près du minimum? (Indice: Quels arbres ne sont pas échantillonnés?)</p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>On observe une meilleure correspondance que pour les données non-transformées, sauf au niveau des valeurs les plus petites du DHP dans l’échantillon, qui demeurent plus élevées que prévu par la distribution de référence. Avez-vous une hypothèse pour cette anomalie près du minimum? (Indice: Quels arbres ne sont pas échantillonnés?)</p>
 </div>
 <div id="transformation-logarithmique" class="section level2">
 <h2>Transformation logarithmique</h2>
 <p>Dans les prochaines semaines, nous verrons plusieurs méthodes statistiques qui supposent toutes que la variable observée est expliquée par des effets additifs, avec une composante aléatoire suivant une distribution normale.</p>
 <p>Ainsi, si le processus qui nous intéresse est plutôt multiplicatif et que la variable mesurée s’approche d’une distribution log-normale, nous pouvons modéliser cette variable après lui avoir appliqué une transformation logarithmique. Il faut toutefois être prudent lors de l’interprétation des résultats. En particulier, la moyenne de <span class="math inline">\(log(x)\)</span> n’est <em>pas</em> égale au logarithme de la moyenne de <span class="math inline">\(x\)</span>, comme le montre ce graphique.</p>
-<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>Dans le graphique ci-dessus, les deux distributions de <span class="math inline">\(y = log(x)\)</span> ont le même mode (maximum de probabilité), la même médiane et la même moyenne à 0. Toutefois, sur l’échelle originale, la moyenne de <span class="math inline">\(x\)</span> est plus élevée pour la distribution en bleu, tandis que le mode est plus petit; les deux distributions ont la même valeur médiane (égale à 1).</p>
+</div>
+<div id="exercice-1" class="section level2">
+<h2>Exercice</h2>
+<p>Parmi les variables suivantes, lesquelles s’approchent à votre avis le plus d’une distribution normale, et pourquoi?</p>
+<ol style="list-style-type: lower-alpha">
+<li>La température moyenne de septembre à Rouyn-Noranda.</li>
+<li>La population des municipalités du Québec.</li>
+<li>Le nombre d’abonnés par compte dans un réseau social (ex.: Twitter).</li>
+<li>Le temps pris par des coureurs pour terminer un marathon.</li>
+</ol>
 </div>
 </div>
 <div id="resume" class="section level1">
@@ -500,7 +514,7 @@ qqline(log(dhp))</code></pre>
 <ul>
 <li><p>Une distribution discrète est représenté par une fonction de masse de probabilité; une distribution continue est représentée par une fonction de densité de probabilité.</p></li>
 <li><p>La distribution cumulative d’une variable au point <span class="math inline">\(x\)</span> donne la probabilité que cette variable soit inférieure ou égale à <span class="math inline">\(x\)</span>.</p></li>
-<li><p>Quelques distributions continues: uniforme, normale, log-normale. (Nous verrons plus d’exemples de distributions discrètes plus tard dans la session.)</p></li>
+<li><p>Quelques distributions continues: uniforme, normale, log-normale. (Nous verrons plus d’exemples de distributions discrètes et continues au cours de la session.)</p></li>
 <li><p>La distribution normale est caractérisée par sa moyenne <span class="math inline">\(\mu\)</span> et son écart-type <span class="math inline">\(\sigma\)</span>.</p></li>
 <li><p>Toute distribution normale peut être ramenée à la distribution normale centrée réduite (<span class="math inline">\(\mu\)</span> = 0, <span class="math inline">\(\sigma\)</span> = 1) avec la transformation linéaire: <span class="math inline">\(z = (x - \mu)/\sigma\)</span>.</p></li>
 <li><p>La transformation logarithmique convertit les effets multiplicatifs en effets additifs, et les distributions log-normales en distributions normales.</p></li>
@@ -511,7 +525,7 @@ qqline(log(dhp))</code></pre>
 <h1>Estimation de paramètres</h1>
 <div id="estimation-de-la-moyenne" class="section level2">
 <h2>Estimation de la moyenne</h2>
-<p>Supposons qu’on mesure une variable <span class="math inline">\(x\)</span> sur un échantillon de <span class="math inline">\(n\)</span> individus choisis aléatoirement dans une population. (Nous discuterons davantage des stratégies d’échantillonnage dans le prochain cours.) Nous nous servons de la moyenne de l’échantillon:</p>
+<p>Supposons qu’on mesure une variable <span class="math inline">\(x\)</span> sur un échantillon de <span class="math inline">\(n\)</span> individus choisis aléatoirement dans une population. Nous nous servons de la moyenne de l’échantillon:</p>
 <p><span class="math display">\[\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i\]</span></p>
 <p>comme estimateur de <span class="math inline">\(\mu\)</span>, la moyenne de la distribution de <span class="math inline">\(x\)</span> dans la population. Pour l’instant, nous ne supposons pas que <span class="math inline">\(x\)</span> suit une distribution normale.</p>
 <p>Pour cet exemple, imaginons que les 1161 arbres du tableau de données Kejimkujik représentent la population entière, et que nous échantillonnons une partie de ces arbres.</p>
@@ -520,9 +534,9 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <pre><code>## [1] &quot;La population a un DHP moyen de 21.76 cm avec un écart-type de 12.25 cm.&quot;</code></pre>
 <p>Dans R, la fonction <code>sample</code> sert à tirer un échantillon aléatoire des éléments d’un vecteur.</p>
 <pre class="r"><code>mean(sample(dhp, 20)) # moyenne d&#39;un échantillon de n = 20 arbres</code></pre>
-<pre><code>## [1] 21.0325</code></pre>
+<pre><code>## [1] 19.938</code></pre>
 <p>Les histogrammes ci-dessous montrent la distribution (estimée à partir de 10 000 simulations) du DHP moyen avec une taille d’échantillon <span class="math inline">\(n\)</span> = 10, 20 ou 40.</p>
-<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>À mesure que la taille de l’échantillon augmente, la distribution devient moins dispersée, mais aussi plus symétrique. Cette deuxième observation est une conséquence du théorème de la limite centrale. Puisque la moyenne est calculée à partir de la somme des valeurs échantillonnées, sa distribution s’approche de la distribution normale pour un <span class="math inline">\(n\)</span> suffisamment grand.</p>
 <p>Pour une variable <span class="math inline">\(x\)</span> dont la distribution a une moyenne <span class="math inline">\(\mu\)</span> et une variance <span class="math inline">\(\sigma^2\)</span>, on peut démontrer que <span class="math inline">\(\bar{x}\)</span> a une moyenne égale à <span class="math inline">\(\mu\)</span> et une variance égale à <span class="math inline">\(\sigma^2 / n\)</span>. L’écart-type de <span class="math inline">\(\bar{x}\)</span>, qu’on appelle dans ce contexte l’erreur-type (<em>standard error</em>), est donc inversement proportionnelle à la racine carrée de <span class="math inline">\(n\)</span>.</p>
 <p>Erreur-type de la moyenne: <span class="math display">\[\sigma_{\bar{x}} = \frac{\sigma_{x}}{\sqrt{n}}\]</span></p>
@@ -563,7 +577,7 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <h2>Écart-type ou erreur-type</h2>
 <p>Il est important de ne pas confondre l’écart-type de <span class="math inline">\(x\)</span> avec l’erreur-type d’un estimateur, comme <span class="math inline">\(\bar{x}\)</span>. L’écart-type de <span class="math inline">\(x\)</span> mesure la dispersion des valeurs individuelles de la variable par rapport à leur moyenne. L’erreur-type de <span class="math inline">\(\bar{x}\)</span> mesure la dispersion de la moyenne d’un échantillon par rapport à la moyenne de la population. L’erreur-type diminue avec la taille de l’échantillon.</p>
 <p>Puisque l’erreur-type diminue selon <span class="math inline">\(\sqrt{n}\)</span> plutôt que <span class="math inline">\(n\)</span>, si on veut diminuer cette erreur-type de moitié, il faut multiplier la taille de l’échantillon par 4.</p>
-<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p>Notez aussi que l’erreur-type dépend seulement de la taille de l’échantillon, pas de celle de la population. Cela est vrai tant que l’échantillon est petit par rapport à la population. Lorsqu’on échantillonne une fraction significative de la population (disons plus de 5%), l’erreur-type réelle est plus petite que <span class="math inline">\(\sigma / \sqrt{n}\)</span>.</p>
 </div>
 <div id="estimation-de-la-variance" class="section level2">
@@ -607,10 +621,15 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <p>Contrairement à <span class="math inline">\(s^2\)</span>, l’estimateur <span class="math inline">\(s\)</span> pour l’écart-type est biaisé, mais il demeure le plus utilisé, puisqu’il n’existe pas de formule aussi simple et non biaisée pour l’écart-type.</p>
 <p>Finalement, on utilise aussi <span class="math inline">\(s\)</span> comme estimateur de <span class="math inline">\(\sigma\)</span> pour le calcul de l’erreur-type de <span class="math inline">\(\bar{x}\)</span> (<span class="math inline">\(s / \sqrt{n}\)</span>).</p>
 </div>
+<div id="degres-de-liberte" class="section level2">
+<h2>Degrés de liberté</h2>
+<p>Une autre façon d’expliquer la division par (<span class="math inline">\(n - 1\)</span>) dans le calcul de <span class="math inline">\(s^2\)</span> fait appel au concept de degrés de liberté.</p>
+<p>Le nombre de degrés de liberté correspond au nombre de données indépendantes utilisées dans le calcul d’une statistique. Ici, <span class="math inline">\(s^2\)</span> est calculée à partir des déviations entre chaque observation de <span class="math inline">\(x\)</span> et leur moyenne (<span class="math inline">\(x_i - \bar{x}\)</span>). Comme nous avons vu au premier cours, la définition de <span class="math inline">\(\bar{x}\)</span> assure que la somme de ces déviations est égale à 0. Dans ce cas, lorsqu’on connaît les <span class="math inline">\(n - 1\)</span> premières déviations, on peut automatiquement déduire la dernière, qui n’est donc pas une donnée indépendante.</p>
+</div>
 <div id="biais-et-erreur-type-dun-estimateur" class="section level2">
 <h2>Biais et erreur-type d’un estimateur</h2>
-<p>Les notions de biais et d’erreur-type ont été présentées brièvement dans la section précédente.</p>
-<p>Plus généralement, si on estimons un paramètre <span class="math inline">\(\theta\)</span> (ex.: <span class="math inline">\(\mu\)</span>) avec un estimateur <span class="math inline">\(\hat{\theta}\)</span> (ex.: <span class="math inline">\(\bar{x}\)</span>), on peut diviser l’erreur carrée moyenne (<em>mean square error</em>) entre <span class="math inline">\(\hat{\theta}\)</span> et <span class="math inline">\(\theta\)</span> en deux composantes. (Dans l’équation ci-dessous, la fonction <span class="math inline">\(E[]\)</span> est une autre façon de représenter l’opération de la moyenne.)</p>
+<p>Les notions de biais et d’erreur-type ont été présentées brièvement plus haut.</p>
+<p>Plus généralement, si on estimons un paramètre <span class="math inline">\(\theta\)</span> (ex.: <span class="math inline">\(\mu\)</span>) avec un estimateur <span class="math inline">\(\hat{\theta}\)</span> (ex.: <span class="math inline">\(\bar{x}\)</span>), on peut décomposer l’erreur carrée moyenne (<em>mean square error</em>) entre <span class="math inline">\(\hat{\theta}\)</span> et <span class="math inline">\(\theta\)</span> en deux composantes. <em>Note</em>: Dans l’équation ci-dessous, la fonction <span class="math inline">\(E[]\)</span> est une autre façon de représenter l’opération de la moyenne.</p>
 <p><span class="math display">\[ E[(\hat{\theta} - \theta)^2] = E[(\hat{\theta} - E[\hat{\theta}])^2] + (E[\hat{\theta}] - \theta)^2 \]</span></p>
 <p>Cette équation nous dit que l’écart carré moyen entre un estimateur et le paramètre est la somme de:</p>
 <ul>
@@ -619,6 +638,14 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 </ul>
 <p>Donc, on a la relation suivante: <em>Erreur carrée moyenne = (Erreur-type)<span class="math inline">\(^2\)</span> + (Biais)<span class="math inline">\(^2\)</span></em>.</p>
 <p>Ces deux sources d’erreur ont des propriétés différentes. L’erreur-type est due à la taille limitée de l’échantillon et diminue lorsque <span class="math inline">\(n\)</span> augmente. Le biais est une erreur systématique qui ne dépend pas de la taille de l’échantillon, mais peut être dû à un estimateur biaisé où à un échantillonnage non représentatif de la population.</p>
+</div>
+<div id="exercice-2" class="section level2">
+<h2>Exercice</h2>
+<p>Afin d’estimer la densité moyenne du bois de pin gris sur un site, vous échantillonnez d’abord 9 arbres, qui ont une densité moyenne de 450 kg/m<span class="math inline">\(^3\)</span> avec un écart-type de 90 kg/m<span class="math inline">\(^3\)</span>.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Quelle est l’erreur-type de cette moyenne?</p></li>
+<li><p>Si vous vouliez connaître la moyenne avec une erreur-type d’au plus 10 kg/m<span class="math inline">\(^3\)</span>, combien d’arbres vous attendez-vous à devoir échantillonner?</p></li>
+</ol>
 </div>
 </div>
 <div id="intervalle-de-confiance" class="section level1">
@@ -645,7 +672,7 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <p>Admettons qu’on représente la valeur de <span class="math inline">\(z\)</span> correspondant à une probabilité cumulative <span class="math inline">\(p\)</span> par <span class="math inline">\(z_p\)</span>. Par exemple, <span class="math inline">\(z_{0.25}\)</span> est le premier quartile. Alors, nous ré-écrivons l’intervalle ci-dessus comme:</p>
 <p><span class="math display">\[ \left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>Pour un intervalle de probabilité de 90%, nous remplacerions <span class="math inline">\(z_{0.25}\)</span> et <span class="math inline">\(z_{0.75}\)</span> par <span class="math inline">\(z_{0.05}\)</span> et <span class="math inline">\(z_{0.95}\)</span>. En effet, un intervalle de 90% exclut 10% de la distribution et puisqu’on souhaite un intervalle centré, on exclut 5% des deux extrémités de la distribution, tel qu’indiqué par la section coloriée en rouge ci-dessous.</p>
-<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <p>Donc, de façon générale, si on représente par <span class="math inline">\(\alpha\)</span> la probabilité exclue, l’intervalle contenant (100% - <span class="math inline">\(\alpha\)</span>) de la distribution de <span class="math inline">\(\bar{x}\)</span> correspond à:</p>
 <p><span class="math display">\[ \left( z_{\alpha/2} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{1-\alpha/2} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>Pour des raisons historiques, l’intervalle de 95% correspondant à <span class="math inline">\(\alpha\)</span> = 0.05 est le plus souvent utilisé:</p>
@@ -665,7 +692,7 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <ul>
 <li><p>La probabilité associée à un intervalle de confiance est basée sur la variabilité de <span class="math inline">\(\bar{x}\)</span> d’un échantillon à l’autre. Elle constitue une probabilité <em>a priori</em> (avant d’avoir échantillonné).</p></li>
 <li><p>Le paramètre <span class="math inline">\(\mu\)</span> est fixe. Une fois que l’estimé <span class="math inline">\(\bar{x}\)</span> est obtenu pour un échantillon donné, l’intervalle de confiance contient <span class="math inline">\(\mu\)</span> ou ne le contient pas.</p></li>
-<li><p>En particulier, lorsqu’on obtient un intervalle de confiance pour un échantillon donné, il est incorrect d’affirmer que “le paramètre <span class="math inline">\(\mu\)</span> a 95% de probabilité d’être à l’intérieur de cet intervalle”.</p></li>
+<li><p>Parce que le paramètre <span class="math inline">\(\mu\)</span> n’est pas une variable aléatoire, il n’a pas de distribution statistique. Il est donc erroné d’affirmer, après avoir calculé un intervalle de confiance pour un échantillon donné, que “le paramètre <span class="math inline">\(\mu\)</span> a 95% de probabilité d’être à l’intérieur de cet intervalle”.</p></li>
 </ul>
 </div>
 <div id="intervalle-de-confiance-dune-moyenne" class="section level2">
@@ -674,9 +701,16 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <p><span class="math display">\[ \left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alpha/2} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>Le seul problème avec cette équation est que nous ne connaissons pas le paramètre <span class="math inline">\(\sigma\)</span>. De plus, si nous remplaçons <span class="math inline">\(\sigma\)</span> par son estimé <span class="math inline">\(s\)</span>, la probabilité associée à l’intervalle devient inférieure à (100% - <span class="math inline">\(\alpha\)</span>). En pratique, il faut donc élargir l’intervalle pour prendre en compte notre connaissance imparfaite de l’écart-type des données.</p>
 <p>La solution de ce problème a été découverte par William Gosset, qui l’a publié sous le pseudonyme de Student. Lorsqu’on utilise un estimé de l’écart-type, l’intervalle de confiance n’est plus basé sur la distribution normale centrée réduite <span class="math inline">\(z\)</span>, mais plutôt la distribution <span class="math inline">\(t\)</span> de Student.</p>
-<p>La distribution comporte un paramètre, le nombre de degrés de liberté, qui correspond dans ce cas-ci à <span class="math inline">\(n\)</span> - 1. Ainsi, la version corrigée de l’intervalle de confiance à (100% - <span class="math inline">\(\alpha\)</span>) pour <span class="math inline">\(\bar{x}\)</span> est:</p>
+<p>La distribution comporte un paramètre, le nombre de degrés de liberté, qui correspond dans ce cas-ci à <span class="math inline">\(n - 1\)</span>. Ainsi, la version corrigée de l’intervalle de confiance à (100% - <span class="math inline">\(\alpha\)</span>) pour <span class="math inline">\(\bar{x}\)</span> est:</p>
 <p><span class="math display">\[ \left( \bar{x} + t_{(n-1)\alpha/2} \frac{s}{\sqrt{n}}, \bar{x} + t_{(n-1)1 - \alpha/2} \frac{s}{\sqrt{n}} \right)\]</span></p>
-<p>où le <span class="math inline">\(n-1\)</span> entre parenthèses indique le nombre de degrés de liberté de la distribution <span class="math inline">\(t\)</span>. Plus <span class="math inline">\(n\)</span> est petit, plus la différence entre la distribution <span class="math inline">\(t\)</span> et la distribution normale centrée réduite <span class="math inline">\(z\)</span> est importante.</p>
+<p>où le <span class="math inline">\(n-1\)</span> entre parenthèses indique le nombre de degrés de liberté de la distribution <span class="math inline">\(t\)</span>.</p>
+</div>
+<div id="distribution-t" class="section level2">
+<h2>Distribution t</h2>
+<p>Le graphique ci-dessous compare la distribution normale centrée réduite (<span class="math inline">\(z\)</span>) avec des distributions <span class="math inline">\(t\)</span> à 4 et 9 degrés de liberté. Plus le nombre de degrés de liberté est petit, plus la distribution <span class="math inline">\(t\)</span> s’éloigne de la normale. En particulier, l’écart-type augmente et les valeurs loins de la moyenne ont une probabilité plus grande, ce qui explique que l’intervalle de confiance construit à partir de la distribution <span class="math inline">\(t\)</span> est plus large.</p>
+<p><img src="3-Modèles_statistiques_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>Bien que ce soit difficile à voir sur ce graphique, la distribution <span class="math inline">\(t\)</span> a aussi une forme différente. Même comparée à une distribution normale de même écart-type, la distribution <span class="math inline">\(t\)</span> a une plus grande probabilité d’obtenir des valeurs extrêmes (très loin de la moyenne).</p>
+<p>Lorsque le nombre de degrés de liberté est élevé, comme c’est le cas si on calcule la moyenne de nombreuses observations, la distribution <span class="math inline">\(t\)</span> s’approche de la distribution normale centrée réduite.</p>
 </div>
 </div>
 <div id="resume-1" class="section level1">
@@ -685,6 +719,8 @@ paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm
 <li><p>Un estimateur est biaisé lorsque sa moyenne sur l’ensemble des échantillons possibles diffère de la valeur du paramètre à estimer.</p></li>
 <li><p>L’erreur-type mesure la dispersion d’un estimateur d’un échantillon à l’autre, elle diminue avec la taille de l’échantillon.</p></li>
 <li><p>Un intervalle de confiance est défini autour d’un estimé de manière à ce que sur l’ensemble des échantillons possibles, il y ait une probabilité spécifique que l’intervalle de confiance obtenu contienne la valeur du paramètre à estimer.</p></li>
+<li><p>En raison du théorème de la limite centrale, la différence entre la moyenne d’un échantillon et celle de la population suit souvent une distribution approximativement normale.</p></li>
+<li><p>La distribution <span class="math inline">\(t\)</span> de Student remplace la distribution normale centrée réduite pour estimer l’intervalle de confiance de la moyenne d’un échantillon, lorsque l’écart-type de la population est inconnu. Cette distribution a des valeurs extrêmes plus fréquentes que la distribution normale, surtout lorsque le nombre de degrés de liberté est faible.</p></li>
 </ul>
 </div>
 <div id="reference" class="section level1">

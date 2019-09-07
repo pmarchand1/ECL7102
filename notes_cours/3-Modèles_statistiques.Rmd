@@ -89,7 +89,7 @@ L'intégrale de la densité de probabilité sur l'ensemble des valeurs possibles
 
 ## Loi des grands nombres
 
-En R, la commande suivante génère dix valeurs aléatoires (`n = 10`) tirées de la distribution uniforme (continue) entre 0 et 6, que nous avons vu dans la section précédente.
+En R, la commande suivante génère dix valeurs aléatoires (`n = 10`) tirées de la distribution uniforme (continue) entre 0 et 6, que nous avons vue dans la section précédente.
 
 ```{r}
 x <- runif(n = 10, min = 0, max = 6)
@@ -164,23 +164,21 @@ Cette distribution a deux *paramètres*, $\mu$ (qui correspond à la moyenne de 
 Sur un graphique de $f(x)$, $\mu$ correspond à la position du centre de la distribution, tandis que $\sigma$ correspond à sa dispersion; plus $\sigma$ est élevé, plus la distribution s'étend et moins elle est concentrée près de la moyenne.
 
 ```{r echo = FALSE, out.width = "100%"}
-df <- data.frame(mu = c(-1, 0, 2), sigma = c(0.5, 1, 3)) %>%
-    expand(mu, sigma) %>%
-    mutate(x = map2(mu, sigma, ~ rnorm(10000, .x, .y))) %>%
-    unnest()
-
-p1 <- ggplot(filter(df, mu == 0), aes(x = x, color = as.factor(sigma))) +
+p1 <- ggplot(data.frame(x = c(-10, 10)), aes(x)) +
     labs(y = "f(x)", title = expression(mu == 0), color = expression(sigma)) +
-    geom_density(size = 1) +
-    scale_y_continuous(expand = c(0, 0)) +
+    stat_function(aes(color = "0.5"), fun = dnorm, args = list(mean = 0, sd = 0.5), size = 1) +
+    stat_function(aes(color = "1"), fun = dnorm, args = list(mean = 0, sd = 1), size = 1) +
+    stat_function(aes(color = "3"), fun = dnorm, args = list(mean = 0, sd = 3), size = 1) +
     scale_color_brewer(palette = "Dark2") +
     theme(legend.position = c(0.7, 0.5))
 
-p2 <- ggplot(filter(df, sigma == 1), aes(x = x, color = as.factor(mu))) +
+p2 <- ggplot(data.frame(x = c(-6, 8)), aes(x)) +
     labs(y = "f(x)", title = expression(sigma == 1), color = expression(mu)) +
-    geom_density(size = 1) +
-    scale_y_continuous(expand = c(0, 0)) +
-    scale_color_brewer(palette = "Dark2")
+    stat_function(aes(color = "-1"), fun = dnorm, args = list(mean = -1, sd = 1), size = 1) +
+    stat_function(aes(color = "0"), fun = dnorm, args = list(mean = 0, sd = 1), size = 1) +
+    stat_function(aes(color = "2"), fun = dnorm, args = list(mean = 2, sd = 1), size = 1) +
+    scale_color_brewer(palette = "Dark2") +
+    theme(legend.position = c(0.7, 0.5))
 
 plot_grid(p1, p2, nrow = 1)
 ```
@@ -232,20 +230,20 @@ plot_grid(plot_c(-1.5), plot_c(0), plot_c(1.25),
           plot_d(-1.5), plot_d(0), plot_d(1.25), nrow = 2, align = "v")
 ```
 
-À partir de la distribution cumulative $F(x)$, on peut facilement calculer la probabilité dans un intervalle ($x_1$, $x_2$) en faisant la soustraction $F(x_2)$ - $F(x_1)$. 
+À partir de la distribution cumulative $F(x)$, on peut facilement calculer la probabilité que $x$ se trouve dans un intervalle ($x_1$, $x_2$) en faisant la soustraction $F(x_2)$ - $F(x_1)$. 
 
 
 # Les fonctions de distribution dans R
 
 Quatre fonctions dans R permettent de travailler avec la distribution normale. Dans chaque cas, il faut spécifier la moyenne (`mean`) et l'écart-type (`sd`) de la distribution.
 
-- `rnorm(n, mean, sd)` génère `n` valeurs aléatoires à partir d'une distribution normale avec de moyenne `mean` et d'écart-type `sd`.
+- `rnorm(n, mean, sd)` génère `n` valeurs aléatoires à partir d'une distribution normale de moyenne `mean` et d'écart-type `sd`.
 
 - `dnorm(x, mean, sd)` donne la densité de probabilité associée à la valeur `x`.
 
 - `pnorm(q, mean, sd)` donne la probabilité cumulative associée à une valeur `q`. 
 
-- `qnorm(p, mean, sd)` donne la valeur (`q` pour quantile) associé à une probabilité cumulative `p` donnée.
+- `qnorm(p, mean, sd)` donne la valeur (`q` pour quantile) associée à une probabilité cumulative `p` donnée.
 
 Des fonctions semblables sont définies pour d'autres distributions courantes, comme nous le verrons plus tard.
 
@@ -313,6 +311,16 @@ ggplot(kejim, aes(x = dhp)) +
     scale_y_continuous(expand = c(0, 0))
 ```
 
+## Exercice
+
+Voici un diagramme quantile-quantile comparant un échantillon à une distribution normale. Pouvez-vous décrire comment cet échantillon diffère de la distribution théorique? 
+
+```{r echo = FALSE}
+tval <- rt(100, df = 2)
+qqnorm(tval)
+qqline(tval)
+```
+
 
 # La distribution log-normale
 
@@ -353,18 +361,16 @@ $$log_{10}(x) = \frac{log(x)}{log(10)}$$
 
 ## Utilité de la distribution log-normale
 
-Si la distribution normale tend à être associés à des processus additifs (somme de nombreux effets indépendants), la distribution log-normale est associée à des processus multiplicatifs. Par exemple, si une population croît de 5%, 10% et 3% lors de trois années consécutives, l'accroissement cumulatif correspond à la multiplication: 1.05 x 1.10 x 1.03 = 1.19, soit une augmentation de 19%. Dans un processus multiplicatif, plus une variable est grande, plus elle peut croître, ce qui explique que la distribution résultante soit asymétrique et s'étire vers la droite.
+Si la distribution normale tend à être associée à des processus additifs (somme de nombreux effets indépendants), la distribution log-normale est associée à des processus multiplicatifs. Par exemple, si une population croît de 5%, 10% et 3% lors de trois années consécutives, l'accroissement cumulatif correspond à la multiplication: 1.05 x 1.10 x 1.03 = 1.19, soit une augmentation de 19%. Dans un processus multiplicatif, plus une variable est grande, plus elle peut croître, ce qui explique que la distribution résultante soit asymétrique et s'étire vers la droite.
 
-Souvenons-nous que la distribution du DHP de tous les arbres du jeu de données Kejimkujik avait ce type d'asymétrie. Il est aussi plausible que le diamètre d'un arbre soit distribué de façon log-normale, considérant que les plus grands arbres peuvent capter plus de ressources pour croître.  
-
-Pour vérifier si la distribution du DHP est approximativement log-normale, observons le diagramme quantile-quantile pour le logarithme du DHP.
+Souvenons-nous que la distribution du DHP de tous les arbres du jeu de données Kejimkujik avait ce type d'asymétrie. Pour vérifier si la distribution du DHP est approximativement log-normale, observons le diagramme quantile-quantile pour le logarithme du DHP.
 
 ```{r}
 qqnorm(log(dhp))
 qqline(log(dhp))
 ```
 
-On observe une meilleure correspondance que pour les données non-transformées, sauf au niveau des valeurs les plus petites du DHP dans l'échantillon, qui demeurent plus élevées que prévus par la distribution de référence. Avez-vous une hypothèse pour cette anomalie près du minimum? (Indice: Quels arbres ne sont pas échantillonnés?)
+On observe une meilleure correspondance que pour les données non-transformées, sauf au niveau des valeurs les plus petites du DHP dans l'échantillon, qui demeurent plus élevées que prévu par la distribution de référence. Avez-vous une hypothèse pour cette anomalie près du minimum? (Indice: Quels arbres ne sont pas échantillonnés?)
 
 ## Transformation logarithmique
 
@@ -388,13 +394,23 @@ plot_grid(p1, p2, nrow = 1)
 
 Dans le graphique ci-dessus, les deux distributions de $y = log(x)$ ont le même mode (maximum de probabilité), la même médiane et la même moyenne à 0. Toutefois, sur l'échelle originale, la moyenne de $x$ est plus élevée pour la distribution en bleu, tandis que le mode est plus petit; les deux distributions ont la même valeur médiane (égale à 1).
 
+## Exercice
+
+Parmi les variables suivantes, lesquelles s'approchent à votre avis le plus d'une distribution normale, et pourquoi?
+
+(a) La température moyenne de septembre à Rouyn-Noranda.
+(b) La population des municipalités du Québec.
+(c) Le nombre d'abonnés par compte dans un réseau social (ex.: Twitter).
+(d) Le temps pris par des coureurs pour terminer un marathon.
+
+
 # Résumé
 
 - Une distribution discrète est représenté par une fonction de masse de probabilité; une distribution continue est représentée par une fonction de densité de probabilité. 
 
 - La distribution cumulative d'une variable au point $x$ donne la probabilité que cette variable soit inférieure ou égale à $x$.
 
-- Quelques distributions continues: uniforme, normale, log-normale. (Nous verrons plus d'exemples de distributions discrètes plus tard dans la session.)
+- Quelques distributions continues: uniforme, normale, log-normale. (Nous verrons plus d'exemples de distributions discrètes et continues au cours de la session.)
 
 - La distribution normale est caractérisée par sa moyenne $\mu$ et son écart-type $\sigma$. 
 
@@ -409,7 +425,7 @@ Dans le graphique ci-dessus, les deux distributions de $y = log(x)$ ont le même
 
 ## Estimation de la moyenne
 
-Supposons qu'on mesure une variable $x$ sur un échantillon de $n$ individus choisis aléatoirement dans une population. (Nous discuterons davantage des stratégies d'échantillonnage dans le prochain cours.) Nous nous servons de la moyenne de l'échantillon:
+Supposons qu'on mesure une variable $x$ sur un échantillon de $n$ individus choisis aléatoirement dans une population. Nous nous servons de la moyenne de l'échantillon:
 
 $$\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i$$
 
@@ -519,13 +535,19 @@ $$s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2}$$
 
 Contrairement à $s^2$, l'estimateur $s$ pour l'écart-type est biaisé, mais il demeure le plus utilisé, puisqu'il n'existe pas de formule aussi simple et non biaisée pour l'écart-type.
 
-Finalement, on utilise aussi $s$ comme estimateur de $\sigma$ pour le calcul de l'erreur-type de $\bar{x}$ ($s / \sqrt{n}$). 
+Finalement, on utilise aussi $s$ comme estimateur de $\sigma$ pour le calcul de l'erreur-type de $\bar{x}$ ($s / \sqrt{n}$).
+
+## Degrés de liberté
+
+Une autre façon d'expliquer la division par ($n - 1$) dans le calcul de $s^2$ fait appel au concept de degrés de liberté.
+
+Le nombre de degrés de liberté correspond au nombre de données indépendantes utilisées dans le calcul d'une statistique. Ici, $s^2$ est calculée à partir des déviations entre chaque observation de $x$ et leur moyenne ($x_i - \bar{x}$). Comme nous avons vu au premier cours, la définition de $\bar{x}$ assure que la somme de ces déviations est égale à 0. Dans ce cas, lorsqu'on connaît les $n - 1$ premières déviations, on peut automatiquement déduire la dernière, qui n'est donc pas une donnée indépendante.
 
 ## Biais et erreur-type d'un estimateur
 
-Les notions de biais et d'erreur-type ont été présentées brièvement dans la section précédente. 
+Les notions de biais et d'erreur-type ont été présentées brièvement plus haut. 
 
-Plus généralement, si on estimons un paramètre $\theta$ (ex.: $\mu$) avec un estimateur $\hat{\theta}$ (ex.: $\bar{x}$), on peut diviser l'erreur carrée moyenne (*mean square error*) entre $\hat{\theta}$ et $\theta$ en deux composantes. (Dans l'équation ci-dessous, la fonction $E[]$ est une autre façon de représenter l'opération de la moyenne.)
+Plus généralement, si on estimons un paramètre $\theta$ (ex.: $\mu$) avec un estimateur $\hat{\theta}$ (ex.: $\bar{x}$), on peut décomposer l'erreur carrée moyenne (*mean square error*) entre $\hat{\theta}$ et $\theta$ en deux composantes. *Note*: Dans l'équation ci-dessous, la fonction $E[]$ est une autre façon de représenter l'opération de la moyenne.
 
 $$ E[(\hat{\theta} - \theta)^2] = E[(\hat{\theta} - E[\hat{\theta}])^2] + (E[\hat{\theta}] - \theta)^2 $$
 
@@ -538,6 +560,14 @@ Cette équation nous dit que l'écart carré moyen entre un estimateur et le par
 Donc, on a la relation suivante: *Erreur carrée moyenne = (Erreur-type)$^2$ + (Biais)$^2$*.
 
 Ces deux sources d'erreur ont des propriétés différentes. L'erreur-type est due à la taille limitée de l'échantillon et diminue lorsque $n$ augmente. Le biais est une erreur systématique qui ne dépend pas de la taille de l'échantillon, mais peut être dû à un estimateur biaisé où à un échantillonnage non représentatif de la population. 
+
+## Exercice
+
+Afin d'estimer la densité moyenne du bois de pin gris sur un site, vous échantillonnez d'abord 9 arbres, qui ont une densité moyenne de 450 kg/m$^3$ avec un écart-type de 90 kg/m$^3$. 
+
+(a) Quelle est l'erreur-type de cette moyenne?
+
+(b) Si vous vouliez connaître la moyenne avec une erreur-type d'au plus 10 kg/m$^3$, combien d'arbres vous attendez-vous à devoir échantillonner?
 
 
 # Intervalle de confiance
@@ -620,7 +650,7 @@ D'après notre modèle, nous pouvons affirmer que pour 95% des échantillons pos
 
 - Le paramètre $\mu$ est fixe. Une fois que l'estimé $\bar{x}$ est obtenu pour un échantillon donné, l'intervalle de confiance contient $\mu$ ou ne le contient pas. 
 
-- En particulier, lorsqu'on obtient un intervalle de confiance pour un échantillon donné, il est incorrect d'affirmer que "le paramètre $\mu$ a 95% de probabilité d'être à l'intérieur de cet intervalle".
+- Parce que le paramètre $\mu$ n'est pas une variable aléatoire, il n'a pas de distribution statistique. Il est donc erroné d'affirmer, après avoir calculé un intervalle de confiance pour un échantillon donné, que "le paramètre $\mu$ a 95% de probabilité d'être à l'intérieur de cet intervalle".
 
 ## Intervalle de confiance d'une moyenne
 
@@ -632,11 +662,31 @@ Le seul problème avec cette équation est que nous ne connaissons pas le param�
 
 La solution de ce problème a été découverte par William Gosset, qui l'a publié sous le pseudonyme de Student. Lorsqu'on utilise un estimé de l'écart-type, l'intervalle de confiance n'est plus basé sur la distribution normale centrée réduite $z$, mais plutôt la distribution $t$ de Student.
 
-La distribution comporte un paramètre, le nombre de degrés de liberté, qui correspond dans ce cas-ci à $n$ - 1. Ainsi, la version corrigée de l'intervalle de confiance à (100% - $\alpha$) pour $\bar{x}$ est:
+La distribution comporte un paramètre, le nombre de degrés de liberté, qui correspond dans ce cas-ci à $n - 1$. Ainsi, la version corrigée de l'intervalle de confiance à (100% - $\alpha$) pour $\bar{x}$ est:
 
 $$ \left( \bar{x} + t_{(n-1)\alpha/2} \frac{s}{\sqrt{n}}, \bar{x} + t_{(n-1)1 - \alpha/2} \frac{s}{\sqrt{n}} \right)$$
 
-où le $n-1$ entre parenthèses indique le nombre de degrés de liberté de la distribution $t$. Plus $n$ est petit, plus la différence entre la distribution $t$ et la distribution normale centrée réduite $z$ est importante.
+où le $n-1$ entre parenthèses indique le nombre de degrés de liberté de la distribution $t$. 
+
+## Distribution t
+
+Le graphique ci-dessous compare la distribution normale centrée réduite ($z$) avec des distributions $t$ à 4 et 9 degrés de liberté. Plus le nombre de degrés de liberté est petit, plus la distribution $t$ s'éloigne de la normale. En particulier, l'écart-type augmente et les valeurs loins de la moyenne ont une probabilité plus grande, ce qui explique que l'intervalle de confiance construit à partir de la distribution $t$ est plus large. 
+
+```{r echo = FALSE}
+
+ggplot(data.frame(x = c(-4, 4)), aes(x)) +
+    labs(y = "f(x)", color = "Distribution") +
+    stat_function(aes(color = "z"), fun = dnorm, args = list(mean = 0, sd = 1), size = 1) +
+    stat_function(aes(color = "t[4]"), fun = dt, args = list(df = 4), size = 1) +
+    stat_function(aes(color = "t[9]"), fun = dt, args = list(df = 9), size = 1) +
+    scale_color_brewer(palette = "Dark2", 
+                       labels = c(expression(t[4]), expression(t[9]), expression(z))) +
+    theme(legend.position = c(0.8, 0.5))
+```
+
+Bien que ce soit difficile à voir sur ce graphique, la distribution $t$ a aussi une forme différente. Même comparée à une distribution normale de même écart-type, la distribution $t$ a une plus grande probabilité d'obtenir des valeurs extrêmes (très loin de la moyenne).
+
+Lorsque le nombre de degrés de liberté est élevé, comme c'est le cas si on calcule la moyenne de nombreuses observations, la distribution $t$ s'approche de la distribution normale centrée réduite.   
 
 # Résumé
 
@@ -645,6 +695,10 @@ où le $n-1$ entre parenthèses indique le nombre de degrés de liberté de la d
 - L'erreur-type mesure la dispersion d'un estimateur d'un échantillon à l'autre, elle diminue avec la taille de l'échantillon.
 
 - Un intervalle de confiance est défini autour d'un estimé de manière à ce que sur l'ensemble des échantillons possibles, il y ait une probabilité spécifique que l'intervalle de confiance obtenu contienne la valeur du paramètre à estimer.
+
+- En raison du théorème de la limite centrale, la différence entre la moyenne d'un échantillon et celle de la population suit souvent une distribution approximativement normale.
+
+- La distribution $t$ de Student remplace la distribution normale centrée réduite pour estimer l'intervalle de confiance de la moyenne d'un échantillon, lorsque l'écart-type de la population est inconnu. Cette distribution a des valeurs extrêmes plus fréquentes que la distribution normale, surtout lorsque le nombre de degrés de liberté est faible.
 
 # Référence
 
