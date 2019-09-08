@@ -10,6 +10,7 @@
 
 
 
+<meta name="date" content="2019-09-11" />
 
 <title>Introduction to R - Part 2</title>
 
@@ -72,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction to R - Part 2</h1>
-<h4 class="date"><em>September 5, 2018</em></h4>
+<h4 class="date">September 11, 2019</h4>
 
 </div>
 
@@ -228,6 +298,12 @@ div.tocify {
 <h1>Objectives for this part</h1>
 <ul>
 <li><p>Load <em>packages</em> to add functions to R.</p></li>
+<li><p>Produce graphics with the <em>ggplot2</em> package.</p>
+<ul>
+<li>Create different types of graphics: point clouds, boxplots, histograms and more.</li>
+<li>Create composite graphics.</li>
+<li>Customize the appearance of graphical elements.</li>
+</ul></li>
 <li><p>Manipulate data frames with the <em>dplyr</em> package.</p>
 <ul>
 <li>Filter and sort observations.</li>
@@ -235,21 +311,175 @@ div.tocify {
 <li>Calculate statistics by groups of observations.</li>
 <li>Join two tables according to common variables.</li>
 </ul></li>
-<li><p>Produce graphics with the <em>ggplot2</em> package.</p>
-<ul>
-<li>Create different types of graphics: point clouds, boxplots, histograms and more.</li>
-<li>Create composite graphics.</li>
-<li>Customize the appearance of graphical elements.</li>
-</ul></li>
 </ul>
 </div>
 <div id="r-packages" class="section level1">
 <h1>R packages</h1>
 <ul>
 <li><p>A package is a collection of functions developed by R users that increases the basic capabilities of the R language in a certain domain. The CRAN (<a href="https://cran.r-project.org/web/packages/" class="uri">https://cran.r-project.org/web/packages/</a>) package repository currently has more than 12,000!</p></li>
-<li><p>To <strong>install</strong> a package on your computer, use the <code>install.packages</code> function with the package name in quotation marks, e.g.<code>install.packages (&quot;dplyr&quot;)</code>. In RStudio, you can view the list of packages already installed under the <em>Packages</em> tab in the lower right quadrant.</p></li>
-<li><p>To <strong>load</strong> a package into your current R session and have access to its functions, use the <code>library</code> function, e.g. <code>library(dplyr)</code>. Note that quotation marks are not required this time.</p></li>
+<li><p>To <strong>install</strong> a package on your computer, use the <code>install.packages</code> function with the package name in quotation marks, e.g.<code>install.packages ("ggplot2")</code>. In RStudio, you can view the list of packages already installed under the <em>Packages</em> tab in the lower right quadrant.</p></li>
+<li><p>To <strong>load</strong> a package into your current R session and have access to its functions, use the <code>library</code> function, e.g. <code>library(ggplot2)</code>. Note that quotation marks are not required this time.</p></li>
 </ul>
+</div>
+<div id="data-visualization-with-ggplot2" class="section level1">
+<h1>Data visualization with <em>ggplot2</em></h1>
+<p>There are several ways to produce graphs in R. We will use in this course the <em>ggplot2</em> package, which provides a consistent code structure for multiple types of graphs and offers a wide range of options to customize the appearance of the graphics.</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<div id="create-a-scatter-plot" class="section level2">
+<h2>Create a scatter plot</h2>
+<p>The <code>msleep</code> dataset included with <em>ggplot2</em> contains data on sleep of 83 mammal species.</p>
+<pre class="r"><code>msleep</code></pre>
+<pre><code>## # A tibble: 83 x 11
+##    name  genus vore  order conservation sleep_total sleep_rem sleep_cycle
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Chee~ Acin~ carni Carn~ lc                  12.1      NA        NA    
+##  2 Owl ~ Aotus omni  Prim~ &lt;NA&gt;                17         1.8      NA    
+##  3 Moun~ Aplo~ herbi Rode~ nt                  14.4       2.4      NA    
+##  4 Grea~ Blar~ omni  Sori~ lc                  14.9       2.3       0.133
+##  5 Cow   Bos   herbi Arti~ domesticated         4         0.7       0.667
+##  6 Thre~ Brad~ herbi Pilo~ &lt;NA&gt;                14.4       2.2       0.767
+##  7 Nort~ Call~ carni Carn~ vu                   8.7       1.4       0.383
+##  8 Vesp~ Calo~ &lt;NA&gt;  Rode~ &lt;NA&gt;                 7        NA        NA    
+##  9 Dog   Canis carni Carn~ domesticated        10.1       2.9       0.333
+## 10 Roe ~ Capr~ herbi Arti~ lc                   3        NA        NA    
+## # ... with 73 more rows, and 3 more variables: awake &lt;dbl&gt;, brainwt &lt;dbl&gt;,
+## #   bodywt &lt;dbl&gt;</code></pre>
+<p>Enter the following code to produce a scatter plot showing the number of hours of the REM phase (<em>sleep_rem</em>) based on the total number of hours of sleep.</p>
+<pre class="r"><code>ggplot(data = msleep, mapping = aes(x = sleep_total, y = sleep_rem)) +
+    geom_point()</code></pre>
+<pre><code>## Warning: Removed 22 rows containing missing values (geom_point).</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>The graph appears in the <em>Plots</em> tab of the lower right quadrant in RStudio. You can export it in .PNG or .PDF format using the <em>Export</em> menu.</p>
+<p>This first example illustrates the basic structure for producing a graph with <em>ggplot2</em>:</p>
+<ul>
+<li><p>A call to the <code>ggplot</code> function with two arguments:</p>
+<ul>
+<li>a data frame (<code>data</code>) and</li>
+<li>a mapping specified with the <code>aes</code> function. Within this function, we associate elements of the graph with variables in the dataset (eg <em>sleep_total</em> on the <em>x</em> axis).</li>
+</ul></li>
+<li><p>The <code>+</code> symbol to indicate that we will add other components to the graph.</p></li>
+<li><p>A <em>geom</em> function to specify the geometric elements represented (here <code>geom_point</code>, for a scatter plot).</p></li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> After naming the data frame in the <code>data</code> argument, the <code>aes</code> function only requires the variable names, without quotation marks and without specifying the data frame again (<code>sleep_rem</code> instead of <code>msleep$sleep_rem</code>). This is a special property of the <em>ggplot2</em> package functions, which we will also find with the <em>dplyr</em> package below, as well as with the regression functions later in the lesson.</p>
+</blockquote>
+</div>
+<div id="retour1" class="section level2">
+<h2>Exercise 1</h2>
+<p>First, load the <a href="cours1_kejimkujik.csv">Kejimkujik National Park Dataset</a> that we used in the first lab:</p>
+<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
+head(kejim)</code></pre>
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
+## 1   BD        A   31    8  2004         1        1   TSCA 16.3
+## 2   BD        A   31    8  2004         2        1   TSCA 24.0
+## 3   BD        A   31    8  2004         6        1   TSCA 29.8
+## 4   BD        A   31    8  2004         7        1   ACRU 29.0
+## 5   BD        A   31    8  2004         8        1   TSCA 15.5
+## 6   BD        A   31    8  2004         9        1   TSCA 32.0</code></pre>
+<p>From this data frame, produce a scatter plot of the DBH (<code>dhp</code>, on the y axis) according to the species (<code>espece</code>, on the x axis).</p>
+<p><a href="#sol1">Solution</a></p>
+</div>
+<div id="types-of-graphics-the-geom-functions" class="section level2">
+<h2>Types of graphics: the <em>geom</em> functions</h2>
+<p>Here, there are too many trees to see the distribution of DBH by species with a scatter plot. To view the same data with boxplots, just replace <code>geom_point</code> with<code>geom_boxplot</code> in our previous code.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = espece, y = dhp)) +
+    geom_boxplot()</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Multiple <code>geom _...</code> functions can be used to overlay elements on the same graph. So we add the dots to the boxplot, specifying a different color for <code>geom_point</code>.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = espece, y = dhp)) +
+    geom_boxplot() +
+    geom_point(color = &quot;red&quot;)</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>We can also represent summary statistics of a set of points, such as their mean.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = espece, y = dhp)) +
+    geom_boxplot() +
+    geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun.y = &quot;mean&quot;)</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Now, we produce a histogram of the DBH for all trees with <code>geom_histogram</code>. The histogram represents a single variable, so we do not need to specify <em>y</em> in <code>aes</code>.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = dhp)) +
+    geom_histogram(binwidth = 5, color = &quot;white&quot;, fill = &quot;blue&quot;)</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>In the <code>geom_histogram</code> function, we specified several arguments in order to choose the size of the bins (<code>binwith</code>), the color of the border (<code>color</code>) and the fill color of the bars (<code>fill</code>).</p>
+<p>Rather than using one fill color for all bars, we could represent different species by bars of different colors on the histogram. In this case, we must associate <code>fill</code> to the variable <code>espece</code> inside the <code>aes</code> function.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = dhp, fill = espece)) +
+    geom_histogram(binwidth = 5, color = &quot;white&quot;)</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="retour2" class="section level2">
+<h2>Exercise 2</h2>
+<p>With <code>geom_bar</code>, create a bar graph of the number of individuals per species (different species on the x-axis). Use a color code to identify individuals from different sites.</p>
+<p><a href="#sol2">Solution</a></p>
+</div>
+<div id="divide-a-graph-in-facets" class="section level2">
+<h2>Divide a graph in facets</h2>
+<p>In the exercise, we produced a graph of the number of individuals per species. If we want to visualize separately the distribution of species on different sites, we could divide the data by site and produce several graphs. Fortunately, <em>ggplot2</em> simplifies this task with the facet concept.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = espece)) +
+    geom_bar() +
+    facet_wrap(~ site)</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Note that you must put a <em>tilde</em> (~) before the name of the variable in <code>facet_wrap</code>.</p>
+<p>In the previous graph, species codes are not visible on the <em>x</em> axis. So we add the <code>coord_flip</code> function to invert the axes and produce horizontal bars.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = espece)) +
+    geom_bar() +
+    facet_wrap(~ site) +
+    coord_flip()</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>We can also create a grid of facets (<code>facet_grid</code>) with two variables. For example, here are histograms of the DBH by site and by year.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = dhp)) +
+    geom_histogram(binwidth = 5) +
+    facet_grid(annee ~ site)</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="retour3" class="section level2">
+<h2>Exercise 3</h2>
+<p>From the <code>msleep</code> dataset, create a scatter plot of total sleep (<code>sleep_total</code>) and REM sleep (<code>sleep_rem</code>) with one facet for each type of diet (<code>vore</code>).</p>
+<p><a href="#sol3">Solution</a></p>
+</div>
+<div id="customize-the-appearance-of-graphs" class="section level2">
+<h2>Customize the appearance of graphs</h2>
+<p>All visual aspects of <em>ggplot2</em> graphics can be customized: title and scale of axes, size and font, colors, margins, etc. If the default values of these parameters are sufficient for a quick exploration of the data, the production of figures for publications or presentations requires further adjustments.</p>
+<p>Let’s start with a density chart for the DBH of three species (TSCA, ACRU and BEPA). We save this graph in an object (<code>dens</code>) so that we can modify it without rewriting the code of the basic graph.</p>
+<pre class="r"><code>trois_esp &lt;- kejim[kejim$espece %in% c(&quot;TSCA&quot;, &quot;ACRU&quot;, &quot;BEPA&quot;), ]
+
+dens &lt;- ggplot(trois_esp, aes(x = dhp, fill = espece)) +
+    geom_density(alpha = 0.3)
+
+dens</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>What does the <code>alpha</code> parameter means? Try changing its value.</p>
+<p>The title of the chart, axes, and legend are specified with the <code>labs</code> function (for <em>labels</em>).</p>
+<pre class="r"><code>dens &lt;- dens +
+    labs(title = &quot;Distribution of the diameter of three species at Kejimkujik National Park&quot;, 
+         x = &quot;Diameter at breast height (cm)&quot;, y = &quot;Density&quot;, fill = &quot;Species&quot;)
+dens</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Functions starting with <code>scale _...</code> let us adjust different elements of the scales represented on the graph. In the following example, we change the values shown on the <em>x</em> axis with the <code>breaks</code> argument of <code>scale_x_continuous</code>. With the <code>scale_fill_manual</code> function, we specify the fill colors for the density curves (<code>values</code>), and then rename the legend elements (<code>labels</code>).</p>
+<pre class="r"><code>dens &lt;- dens +
+    scale_x_continuous(breaks = seq(10, 80, 10)) +
+    scale_fill_manual(values = c(&quot;orange&quot;, &quot;purple&quot;, &quot;green&quot;),
+                      labels = c(&quot;Acer rubrum&quot;, &quot;Betula papyrifera&quot;, &quot;Tsuga canadensis&quot;))
+dens</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>Finally, <em>ggplot2</em> has themes that change the overall appearance of the chart. Here we replace the default theme (with the gray background) with <code>theme_bw</code>.</p>
+<pre class="r"><code>dens + 
+    theme_bw()</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>In addition to changing the entire theme, you can edit specific theme parameters with the <code>theme</code> function. For example, <code>legend.position</code> indicates where to put the legend relative to <em>x</em> and <em>y</em> (0.7 and 0.5 mean 70% of the way along <em>x</em> and 50% along <em>y</em>).</p>
+<pre class="r"><code>dens + 
+    theme_bw() +
+    theme(legend.position = c(0.7, 0.5))</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>The purpose of this part was to give an overview of the possibilities of <em>ggplot2</em>. More complete references on this package are indicated at the bottom of the page.</p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<ul>
+<li><p>The code of a graph is composed of several functions separated by <code>+</code>.</p></li>
+<li><p>We start with the <code>ggplot</code> function, which requires two arguments: the data frame, and the association between variables and elements of the graph (with the<code>aes</code> function).</p></li>
+<li><p>We then add one or more geometric layers (<code>geom _...</code>) indicating the type of graph (points, lines, bars, histogram, etc.).</p></li>
+<li><p>If necessary, we can then modify the appearance of the graph with functions like <code>scale _...</code>, <code>facet _...</code>, <code>labs</code> and<code>theme</code>.</p></li>
+</ul>
+</div>
 </div>
 <div id="data-manipulation-with-dplyr" class="section level1">
 <h1>Data manipulation with <em>dplyr</em></h1>
@@ -281,26 +511,14 @@ div.tocify {
 ## 9    C   birch      8</code></pre>
 <p>By formatting your data in this way, it will also be easier to visualize (as we will see later) and to model in R.</p>
 <p>The <em>tidyr</em> package contains functions to automatically convert an array of data between the two formats above. We do not have time to cover this package today, but you can find more information in the references at the bottom of the page.</p>
-<p>Now let’s load the <em>dplyr</em> package as well as the Kejimkujik National Park dataset, which we already used at the first lab.</p>
-<pre class="r"><code>library(dplyr)
-
-kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
-head(kejim)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
-## 1   BD        A   31    8  2004         1        1   TSCA 16.3
-## 2   BD        A   31    8  2004         2        1   TSCA 24.0
-## 3   BD        A   31    8  2004         6        1   TSCA 29.8
-## 4   BD        A   31    8  2004         7        1   ACRU 29.0
-## 5   BD        A   31    8  2004         8        1   TSCA 15.5
-## 6   BD        A   31    8  2004         9        1   TSCA 32.0</code></pre>
-<p>Note that this data frame is already in normal form.</p>
+<p>For this lab, we will use the Kejimkujik National Park dataset, which is already in normal form.</p>
 </div>
 <div id="select-observations-with-filter" class="section level2">
 <h2>Select observations with <em>filter</em></h2>
 <p>At the last class, we saw how to choose rows from a data frame according to a given condition. For example, the following code retrieves all rows corresponding to the species <em>ACRU</em> (red maple).</p>
-<pre class="r"><code>acru &lt;- kejim[kejim$Espece == &quot;ACRU&quot;, ]
+<pre class="r"><code>acru &lt;- kejim[kejim$espece == &quot;ACRU&quot;, ]
 head(acru)</code></pre>
-<pre><code>##    Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##    site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 4    BD        A   31    8  2004         7        1   ACRU 29.0
 ## 12   BD        A   31    8  2004        15        1   ACRU 42.9
 ## 13   BD        A   31    8  2004        16        1   ACRU 18.0
@@ -308,9 +526,18 @@ head(acru)</code></pre>
 ## 25   BD        B   26    8  2004         4        1   ACRU 29.8
 ## 34   BD        B   26    8  2004        14        1   ACRU 33.0</code></pre>
 <p>Here is the same operation with the function <code>filter</code>.</p>
-<pre class="r"><code>acru &lt;- filter(kejim, Espece == &quot;ACRU&quot;)
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>acru &lt;- filter(kejim, espece == &quot;ACRU&quot;)
 head(acru)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         7        1   ACRU 29.0
 ## 2   BD        A   31    8  2004        15        1   ACRU 42.9
 ## 3   BD        A   31    8  2004        16        1   ACRU 18.0
@@ -326,12 +553,12 @@ head(acru)</code></pre>
 </ul>
 <p>The benefits of using <em>dplyr</em> will become more clear after seeing many of the functions.</p>
 <blockquote>
-<p><strong>Note:</strong> After specifying the data frame as the first argument, the following arguments can use the variables names from the data, without quotation marks and without repeating the name of the data frame (e.g. <code>Espece</code> instead of <code>kejim$Espece</code>). This is a specific feature of the <em>dplyr</em> package, which we will also find with the <em>ggplot2</em> package later, as well as with the regression functions later in the lesson.</p>
+<p>As in <em>ggplot2</em>, after specifying the data frame as the first argument, the following arguments can simply use the variable names, without quotation marks.</p>
 </blockquote>
-<p>Multiple filters can be applied at a time by separating the conditions with commas. For example, <code>acru30</code> contains red maple trees with a DBH (<em>DHP</em>) greater than 30 cm.</p>
-<pre class="r"><code>acru30 &lt;- filter(kejim, Espece == &quot;ACRU&quot;, DHP &gt; 30)
+<p>Multiple filters can be applied at a time by separating the conditions with commas. For example, <code>acru30</code> contains red maple trees with a DBH (<em>dhp</em>) greater than 30 cm.</p>
+<pre class="r"><code>acru30 &lt;- filter(kejim, espece == &quot;ACRU&quot;, dhp &gt; 30)
 head(acru30)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004        15        1   ACRU 42.9
 ## 2   BD        B   26    8  2004         1        1   ACRU 32.5
 ## 3   BD        B   26    8  2004        14        1   ACRU 33.0
@@ -339,17 +566,17 @@ head(acru30)</code></pre>
 ## 5   CL        A   18    8  2004         7        1   ACRU 39.8
 ## 6   CL        A   18    8  2004        14        1   ACRU 46.2</code></pre>
 </div>
-<div id="retour1" class="section level2">
-<h2>Exercise 1</h2>
+<div id="retour4" class="section level2">
+<h2>Exercise 4</h2>
 <p>Produce a table of observations for the year 2014, excluding the individuals of the species <em>TSCA</em> (eastern hemlock).</p>
-<p><a href="#sol1">Solution</a></p>
+<p><a href="#sol4">Solution</a></p>
 </div>
 <div id="sort-observations-with-arrange" class="section level2">
 <h2>Sort observations with <em>arrange</em></h2>
 <p>The <code>arrange</code> function sorts the rows of a data frame according to the value of one or more variables.</p>
-<pre class="r"><code>acru_tri_dhp &lt;- arrange(acru, DHP)
+<pre class="r"><code>acru_tri_dhp &lt;- arrange(acru, dhp)
 head(acru_tri_dhp)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1  CLT        A   13    8  2004        37        1   ACRU 9.20
 ## 2  CLT        A   13    8  2004        26        1   ACRU 9.25
 ## 3  CLT        A   13    8  2004        31        1   ACRU 9.40
@@ -357,9 +584,9 @@ head(acru_tri_dhp)</code></pre>
 ## 5  CLT        A   14   10  2009        46        1   ACRU 9.70
 ## 6  CLT        A   14   10  2009        37        1   ACRU 9.80</code></pre>
 <p>To sort in descending order, use the <code>desc()</code> function. The following code sorts the data in ascending order of year, then in descending order of DBH.</p>
-<pre class="r"><code>acru_tri_an_dhp &lt;- arrange(acru, Annee, desc(DHP))
+<pre class="r"><code>acru_tri_an_dhp &lt;- arrange(acru, annee, desc(dhp))
 head(acru_tri_an_dhp)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   CL        B   18    8  2004         7        1   ACRU 48.5
 ## 2   CL        B   18    8  2004        14        1   ACRU 47.5
 ## 3   CL        A   18    8  2004        14        1   ACRU 46.2
@@ -370,9 +597,9 @@ head(acru_tri_an_dhp)</code></pre>
 <div id="pick-variables-with-select" class="section level2">
 <h2>Pick variables with <em>select</em></h2>
 <p>The <code>select</code> function selects columns from a data frame based on a comma-separated list of variable names.</p>
-<pre class="r"><code>acru_select &lt;- select(acru_tri_dhp, Site, Annee, DHP)
+<pre class="r"><code>acru_select &lt;- select(acru_tri_dhp, site, annee, dhp)
 head(acru_select)</code></pre>
-<pre><code>##   Site Annee  DHP
+<pre><code>##   site annee  dhp
 ## 1  CLT  2004 9.20
 ## 2  CLT  2004 9.25
 ## 3  CLT  2004 9.40
@@ -385,12 +612,12 @@ head(acru_select)</code></pre>
 <p>We often want to apply a series of operations to a data frame, without keeping the intermediate results. <em>dplyr</em> provides a useful shortcut for this purpose with the <code>%&gt;%</code> (called <em>pipe</em>) operator.</p>
 <p>The <code>%&gt;%</code> operator has the effect of passing the result of a function as the first argument of the following function. For example, three of the operations we did earlier (select ACRU trees, sort by DBH and extract site, year, and DBH) can be combined in the following sequence.</p>
 <pre class="r"><code>acru &lt;- kejim %&gt;%
-    filter(Espece == &quot;ACRU&quot;) %&gt;%
-    arrange(DHP) %&gt;%
-    select(Site, Annee, DHP)
+    filter(espece == &quot;ACRU&quot;) %&gt;%
+    arrange(dhp) %&gt;%
+    select(site, annee, dhp)
     
 head(acru)</code></pre>
-<pre><code>##   Site Annee  DHP
+<pre><code>##   site annee  dhp
 ## 1  CLT  2004 9.20
 ## 2  CLT  2004 9.25
 ## 3  CLT  2004 9.40
@@ -399,17 +626,17 @@ head(acru)</code></pre>
 ## 6  CLT  2009 9.80</code></pre>
 <p>The first <code>%&gt;%</code> passes the initial data frame <code>kejim</code> to the <code>filter</code> function, then the chain continues up to the last output, which is assigned to <code>acru</code>.</p>
 </div>
-<div id="retour2" class="section level2">
-<h2>Exercise 2</h2>
+<div id="retour5" class="section level2">
+<h2>Exercise 5</h2>
 <p>Using <code>%&gt;%</code>, produce a table of balsam fir (ABBA) observations with DBH &gt; 15 cm, sorted in chronological order.</p>
-<p><a href="#sol2">Solution</a></p>
+<p><a href="#sol5">Solution</a></p>
 </div>
 <div id="derive-new-variables-with-mutate" class="section level2">
 <h2>Derive new variables with <em>mutate</em></h2>
 <p>The <code>mutate</code> function creates variables derived from existing columns in the data frame. In this example, we calculate the DBH in millimeters.</p>
-<pre class="r"><code>kejim_dhp_mm &lt;- mutate(kejim, DHP_mm = DHP * 10)
+<pre class="r"><code>kejim_dhp_mm &lt;- mutate(kejim, dhp_mm = dhp * 10)
 head(kejim_dhp_mm)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP DHP_mm
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp dhp_mm
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3    163
 ## 2   BD        A   31    8  2004         2        1   TSCA 24.0    240
 ## 3   BD        A   31    8  2004         6        1   TSCA 29.8    298
@@ -420,10 +647,10 @@ head(kejim_dhp_mm)</code></pre>
 <div id="compte-summary-statistics-per-group-group_by-and-summarize" class="section level2">
 <h2>Compte summary statistics per group: <em>group_by</em> and <em>summarize</em></h2>
 <p>These two functions are often used together: <code>group_by</code> divides a data frame into groups according to the value of one or more variables and <code>summarize</code> calculates one or more summary variables for each group. The following example calculates the mean and standard deviation of the DBH by species.</p>
-<pre class="r"><code>group_by(kejim, Espece) %&gt;%
-    summarize(moyDHP = mean(DHP), etDHP = sd(DHP))</code></pre>
+<pre class="r"><code>group_by(kejim, espece) %&gt;%
+    summarize(moyDHP = mean(dhp), etDHP = sd(dhp))</code></pre>
 <pre><code>## # A tibble: 13 x 3
-##    Espece moyDHP etDHP
+##    espece moyDHP etDHP
 ##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
 ##  1 ABBA     12.2  3.26
 ##  2 ACPE     12.0  1.71
@@ -443,14 +670,14 @@ head(kejim_dhp_mm)</code></pre>
 <li><p>Among the columns in the input data frame, only those defining the groups are retained by <code>summarize</code>.</p></li>
 <li><p>The <code>summarize</code> function is similar to <code>mutate</code>: both create new columns. However, <code>mutate</code> outputs a new value for each row of the input data frame, while <code>summarize</code> outputs a single value per group.</p></li>
 </ul>
-<p>In addition to <code>mean</code>,<code>summarize</code> accepts any function that calculates a value from a group of values, e.g. <code>sum</code>, <code>min</code>, <code>max</code>, <code>sd</code>, and many others. A special function, <code>n()</code>, returns the number of observations in each group. The following example shows how to count the number of trees by site and year.</p>
+<p>In addition to <code>mean</code>,<code>summarize</code> accepts any function that calculates a value from a group of values, e.g. <code>sum</code>, <code>min</code>, <code>max</code>, <code>sd</code>, and many others. A special function, <code>n()</code>, returns the number of observations in each group. The following example shows how to count the number of trees by site and year.</p>
 <pre class="r"><code>compte_site_annee &lt;- kejim %&gt;%
-    group_by(Site, Annee) %&gt;%
+    group_by(site, annee) %&gt;%
     summarize(compte = n())
 head(compte_site_annee)</code></pre>
 <pre><code>## # A tibble: 6 x 3
-## # Groups:   Site [2]
-##   Site  Annee compte
+## # Groups:   site [2]
+##   site  annee compte
 ##   &lt;chr&gt; &lt;int&gt;  &lt;int&gt;
 ## 1 BD     2004     45
 ## 2 BD     2009     42
@@ -459,10 +686,10 @@ head(compte_site_annee)</code></pre>
 ## 5 CFR    2009     47
 ## 6 CFR    2014     45</code></pre>
 </div>
-<div id="retour3" class="section level2">
-<h2>Exercise 3</h2>
+<div id="retour6" class="section level2">
+<h2>Exercise 6</h2>
 <p>Sort the species in <code>kejim</code> in descending order of maximum diameter.</p>
-<p><a href="#sol3">Solution</a></p>
+<p><a href="#sol6">Solution</a></p>
 </div>
 <div id="join-two-data-frames" class="section level2">
 <h2>Join two data frames</h2>
@@ -470,33 +697,33 @@ head(compte_site_annee)</code></pre>
 <pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, stringsAsFactors = FALSE,
                       encoding = &quot;UTF-8&quot;)
 head(codes_esp)</code></pre>
-<pre><code>##   Espece             Nom_Espece   Species_Name
+<pre><code>##   espece             nom_espece   species_name
 ## 1   ABBA          Sapin baumier     Balsam Fir
 ## 2   ACPE Érable de Pennsylvanie  Striped Maple
 ## 3   ACRU           Érable rouge      Red Maple
 ## 4   ACSA         Érable à sucre    Sugar Maple
 ## 5   ACSP          Érable à épis Mountain Maple
 ## 6   AMLA            Amélanchier    Indian Pear</code></pre>
-<p><strong>Note</strong>: The <code>encoding = &quot;UTF-8&quot;</code> argument is required to properly read diacritic marks in French.</p>
+<p><strong>Note</strong>: The <code>encoding = "UTF-8"</code> argument is required to properly read diacritic marks in French.</p>
 <p>To add these species names to the <code>kejim</code> data frame, we must join the two data frames with <code>inner_join</code>.</p>
 <pre class="r"><code>kejim_esp &lt;- inner_join(kejim, codes_esp)</code></pre>
-<pre><code>## Joining, by = &quot;Espece&quot;</code></pre>
+<pre><code>## Joining, by = &quot;espece&quot;</code></pre>
 <pre class="r"><code>head(kejim_esp)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3
 ## 2   BD        A   31    8  2004         2        1   TSCA 24.0
 ## 3   BD        A   31    8  2004         6        1   TSCA 29.8
 ## 4   BD        A   31    8  2004         7        1   ACRU 29.0
 ## 5   BD        A   31    8  2004         8        1   TSCA 15.5
 ## 6   BD        A   31    8  2004         9        1   TSCA 32.0
-##         Nom_Espece    Species_Name
+##         nom_espece    species_name
 ## 1 Pruche du Canada Eastern Hemlock
 ## 2 Pruche du Canada Eastern Hemlock
 ## 3 Pruche du Canada Eastern Hemlock
 ## 4     Érable rouge       Red Maple
 ## 5 Pruche du Canada Eastern Hemlock
 ## 6 Pruche du Canada Eastern Hemlock</code></pre>
-<p>The concept of a join originates in relational databases. As we can see here, the <code>inner_join</code> function has attached to each row of the first data frame (<code>kejim</code>) the data from a row in the second data frame (<code>codes_esp</code>) that has a matching value in <code>Espece</code>. By default, <em>dplyr</em> assumes that the match must be made on columns of the same name, but it is possible to specify otherwise.</p>
+<p>The concept of a join originates in relational databases. As we can see here, the <code>inner_join</code> function has attached to each row of the first data frame (<code>kejim</code>) the data from a row in the second data frame (<code>codes_esp</code>) that has a matching value in <code>espece</code>. By default, <em>dplyr</em> assumes that the match must be made on columns of the same name, but it is possible to specify otherwise.</p>
 <p>Note that the <code>kejim_esp</code> data frame has 1070 rows, 91 fewer than <code>kejim</code>. This is because species codes in <code>kejim</code> are missing from <code>codes_esp</code>. To keep the rows from the first data frame with no match in the second (and add missing values to the species name columns), you must use a different join type, <code>left_join</code>. We do not have time to discuss the different join types, but you can read the <em>dplyr</em> cheatsheet in the footnotes for more information.</p>
 </div>
 <div id="summary-of-dplyr-functions" class="section level2">
@@ -541,156 +768,6 @@ head(codes_esp)</code></pre>
 </table>
 </div>
 </div>
-<div id="data-visualization-with-ggplot2" class="section level1">
-<h1>Data visualization with <em>ggplot2</em></h1>
-<p>There are several ways to produce graphs in R. We will use in this course the <em>ggplot2</em> package, which provides a consistent code structure for multiple types of graphs and offers a wide range of options to customize the appearance of the graphics.</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<div id="create-a-scatter-plot" class="section level2">
-<h2>Create a scatter plot</h2>
-<p>The <code>msleep</code> dataset included with <em>ggplot2</em> contains data on sleep of 83 mammal species.</p>
-<pre class="r"><code>msleep</code></pre>
-<pre><code>## # A tibble: 83 x 11
-##    name  genus vore  order conservation sleep_total sleep_rem sleep_cycle
-##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-##  1 Chee~ Acin~ carni Carn~ lc                  12.1      NA        NA    
-##  2 Owl ~ Aotus omni  Prim~ &lt;NA&gt;                17         1.8      NA    
-##  3 Moun~ Aplo~ herbi Rode~ nt                  14.4       2.4      NA    
-##  4 Grea~ Blar~ omni  Sori~ lc                  14.9       2.3       0.133
-##  5 Cow   Bos   herbi Arti~ domesticated         4         0.7       0.667
-##  6 Thre~ Brad~ herbi Pilo~ &lt;NA&gt;                14.4       2.2       0.767
-##  7 Nort~ Call~ carni Carn~ vu                   8.7       1.4       0.383
-##  8 Vesp~ Calo~ &lt;NA&gt;  Rode~ &lt;NA&gt;                 7        NA        NA    
-##  9 Dog   Canis carni Carn~ domesticated        10.1       2.9       0.333
-## 10 Roe ~ Capr~ herbi Arti~ lc                   3        NA        NA    
-## # ... with 73 more rows, and 3 more variables: awake &lt;dbl&gt;, brainwt &lt;dbl&gt;,
-## #   bodywt &lt;dbl&gt;</code></pre>
-<p>Enter the following code to produce a scatter plot showing the number of hours of the REM phase (<em>sleep_rem</em>) based on the total number of hours of sleep.</p>
-<pre class="r"><code>ggplot(data = msleep, mapping = aes(x = sleep_total, y = sleep_rem)) +
-    geom_point()</code></pre>
-<pre><code>## Warning: Removed 22 rows containing missing values (geom_point).</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>The graph appears in the <em>Plots</em> tab of the lower right quadrant in RStudio. You can export it in .PNG or .PDF format using the <em>Export</em> menu.</p>
-<p>This first example illustrates the basic structure for producing a graph with <em>ggplot2</em>:</p>
-<ul>
-<li><p>A call to the <code>ggplot</code> function with two arguments:</p>
-<ul>
-<li>a data frame (<code>data</code>) and</li>
-<li>a mapping specified with the <code>aes</code> function. Within this function, we associate elements of the graph with variables in the dataset (eg <em>sleep_total</em> on the <em>x</em> axis).</li>
-</ul></li>
-<li><p>The <code>+</code> symbol to indicate that we will add other components to the graph.</p></li>
-<li><p>A <em>geom</em> function to specify the geometric elements represented (here <code>geom_point</code>, for a scatter plot).</p></li>
-</ul>
-<blockquote>
-<p>Just as for the <em>dplyr</em> functions, once the data frame is specified in the <code>data</code> argument, you can use the variable names in the<code>aes</code> function without quotation marks and without repeating the name of the data frame.</p>
-</blockquote>
-</div>
-<div id="retour4" class="section level2">
-<h2>Exercise 4</h2>
-<p>From the <code>kejim</code> data frame, produce a scatter plot of the DBH (<code>DHP</code>, on the y axis) according to the species (<code>Espece</code>, on the x axis).</p>
-<p><a href="#sol4">Solution</a></p>
-</div>
-<div id="types-de-graphiques-les-fonctions-geom" class="section level2">
-<h2>Types de graphiques: les fonctions <em>geom</em></h2>
-<p>Here, there are too many trees to see the distribution of DBH by species with a scatter plot. To view the same data with boxplots, just replace <code>geom_point</code> with<code>geom_boxplot</code> in our previous code.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = Espece, y = DHP)) +
-    geom_boxplot()</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
-<p>Multiple <code>geom _...</code> functions can be used to overlay elements on the same graph. So we add the dots to the boxplot, specifying a different color for <code>geom_point</code>.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = Espece, y = DHP)) +
-    geom_boxplot() +
-    geom_point(color = &quot;red&quot;)</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
-<p>We can also represent summary statistics of a set of points, such as their mean.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = Espece, y = DHP)) +
-    geom_boxplot() +
-    geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun.y = &quot;mean&quot;)</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<p>Now, we produce a histogram of the DBH for all trees with <code>geom_histogram</code>. The histogram represents a single variable, so we do not need to specify <em>y</em> in <code>aes</code>.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = DHP)) +
-    geom_histogram(binwidth = 5, color = &quot;white&quot;, fill = &quot;blue&quot;)</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<p>In the <code>geom_histogram</code> function, we specified several arguments in order to choose the size of the bins (<code>binwith</code>), the color of the border (<code>color</code>) and the fill color of the bars (<code>fill</code>).</p>
-<p>Rather than using one fill color for all bars, we could represent different species by bars of different colors on the histogram. In this case, we must associate <code>fill</code> to the variable <code>Espece</code> inside the <code>aes</code> function.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = DHP, fill = Espece)) +
-    geom_histogram(binwidth = 5, color = &quot;white&quot;)</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-</div>
-<div id="retour5" class="section level2">
-<h2>Exercise 5</h2>
-<p>With <code>geom_bar</code>, create a bar graph of the number of individuals per species (different species on the x-axis). Use a color code to identify individuals from different sites.</p>
-<p><a href="#sol5">Solution</a></p>
-</div>
-<div id="divide-a-graph-in-facets" class="section level2">
-<h2>Divide a graph in facets</h2>
-<p>In the exercise, we produced a graph of the number of individuals per species. If we want to visualize separately the distribution of species on different sites, we could divide the data by site and produce several graphs. Fortunately, <em>ggplot2</em> simplifies this task with the facet concept.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = Espece)) +
-    geom_bar() +
-    facet_wrap(~ Site)</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-<p>Note that you must put a <em>tilde</em> (~) before the name of the variable in <code>facet_wrap</code>.</p>
-<p>In the previous graph, species codes are not visible on the <em>x</em> axis. So we add the <code>coord_flip</code> function to invert the axes and produce horizontal bars.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = Espece)) +
-    geom_bar() +
-    facet_wrap(~ Site) +
-    coord_flip()</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
-<p>We can also create a grid of facets (<code>facet_grid</code>) with two variables. For example, here are histograms of the DBH by site and by year.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = DHP)) +
-    geom_histogram(binwidth = 5) +
-    facet_grid(Annee ~ Site)</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
-</div>
-<div id="retour6" class="section level2">
-<h2>Exercise 6</h2>
-<p>From the <code>msleep</code> dataset, create a scatter plot of total sleep (<code>sleep_total</code>) and REM sleep (<code>sleep_rem</code>) with one facet for each type of diet (<code>vore</code>).</p>
-<p><a href="#sol6">Solution</a></p>
-</div>
-<div id="customize-the-appearance-of-graphs" class="section level2">
-<h2>Customize the appearance of graphs</h2>
-<p>All visual aspects of <em>ggplot2</em> graphics can be customized: title and scale of axes, size and font, colors, margins, etc. If the default values of these parameters are sufficient for a quick exploration of the data, the production of figures for publications or presentations requires further adjustments.</p>
-<p>Let’s start with a density chart for the DHP of three species (TSCA, ACRU and BEPA). We save this graph in an object (<code>dens</code>) so that we can modify it without rewriting the code of the basic graph.</p>
-<pre class="r"><code>trois_esp &lt;- filter(kejim, Espece %in% c(&quot;TSCA&quot;, &quot;ACRU&quot;, &quot;BEPA&quot;))
-
-dens &lt;- ggplot(trois_esp, aes(x = DHP, fill = Espece)) +
-    geom_density(alpha = 0.3)
-
-dens</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
-<p>What does the <code>alpha</code> parameter means? Try changing its value.</p>
-<p>The title of the chart, axes, and legend are specified with the <code>labs</code> function (for <em>labels</em>).</p>
-<pre class="r"><code>dens &lt;- dens +
-    labs(title = &quot;Distribution of the diameter of three species at Kejimkujik National Park&quot;, 
-         x = &quot;Diameter at breast height (cm)&quot;, y = &quot;Density&quot;, fill = &quot;Species&quot;)
-dens</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
-<p>Functions starting with <code>scale _...</code> let us adjust different elements of the scales represented on the graph. In the following example, we change the values shown on the <em>x</em> axis with the <code>breaks</code> argument of <code>scale_x_continuous</code>. With the <code>scale_fill_manual</code> function, we specify the fill colors for the density curves (<code>values</code>), and then rename the legend elements (<code>labels</code>).</p>
-<pre class="r"><code>dens &lt;- dens +
-    scale_x_continuous(breaks = seq(10, 80, 10)) +
-    scale_fill_manual(values = c(&quot;orange&quot;, &quot;purple&quot;, &quot;green&quot;),
-                      labels = c(&quot;Acer rubrum&quot;, &quot;Betula papyrifera&quot;, &quot;Tsuga canadensis&quot;))
-dens</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
-<p>Finally, <em>ggplot2</em> has themes that change the overall appearance of the chart. Here we replace the default theme (with the gray background) with <code>theme_bw</code>.</p>
-<pre class="r"><code>dens + 
-    theme_bw()</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
-<p>In addition to changing the entire theme, you can edit specific theme parameters with the <code>theme</code> function. For example, <code>legend.position</code> indicates where to put the legend relative to <em>x</em> and <em>y</em> (0.7 and 0.5 mean 70% of the way along <em>x</em> and 50% along <em>y</em>).</p>
-<pre class="r"><code>dens + 
-    theme_bw() +
-    theme(legend.position = c(0.7, 0.5))</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
-<p>The purpose of this part was to give an overview of the possibilities of <em>ggplot2</em>. More complete references on this package are indicated at the bottom of the page.</p>
-</div>
-<div id="summary" class="section level2">
-<h2>Summary</h2>
-<ul>
-<li><p>The code of a graph is composed of several functions separated by <code>+</code>.</p></li>
-<li><p>We start with the <code>ggplot</code> function, which requires two arguments: the data frame, and the association between variables and elements of the graph (with the<code>aes</code> function).</p></li>
-<li><p>We then add one or more geometric layers (<code>geom _...</code>) indicating the type of graph (points, lines, bars, histogram, etc.).</p></li>
-<li><p>If necessary, we can then modify the appearance of the graph with functions like <code>scale _...</code>, <code>facet _...</code>, <code>labs</code> and<code>theme</code>.</p></li>
-</ul>
-</div>
-</div>
 <div id="references" class="section level1">
 <h1>References</h1>
 <ul>
@@ -704,40 +781,66 @@ dens</code></pre>
 <h1>Solutions to the exercises</h1>
 <div id="sol1" class="section level2">
 <h2>Exercise 1</h2>
+<p>From the <code>kejim</code> data frame, produce a scatter plot of the DBH (<code>dhp</code>, on the y axis) according to the species (<code>espece</code>, on the x axis).</p>
+<pre class="r"><code>ggplot(data = kejim, mapping = aes(x = espece, y = dhp)) +
+    geom_point()</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p><a href="#retour1">Return</a></p>
+</div>
+<div id="sol2" class="section level2">
+<h2>Exercise 2</h2>
+<p>With <code>geom_bar</code>, create a bar graph of the number of individuals per species (different species on the x-axis). Use a color code to identify individuals from different sites.</p>
+<pre class="r"><code>ggplot(kejim, aes(x = espece, fill = site)) +
+    geom_bar()</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p><a href="#retour2">Return</a></p>
+</div>
+<div id="sol3" class="section level2">
+<h2>Exercise 3</h2>
+<p>From the <code>msleep</code> dataset, create a scatter plot of total sleep (<code>sleep_total</code>) and REM sleep (<code>sleep_rem</code>) with one facet for each type of diet (<code>vore</code>)</p>
+<pre class="r"><code>ggplot(msleep, aes(x = sleep_total, y = sleep_rem)) +
+    geom_point() +
+    facet_wrap(~ vore)</code></pre>
+<pre><code>## Warning: Removed 22 rows containing missing values (geom_point).</code></pre>
+<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><a href="#retour3">Return</a></p>
+</div>
+<div id="sol4" class="section level2">
+<h2>Exercise 4</h2>
 <p>Produce a table of observations for the year 2014, excluding the individuals of the species <em>TSCA</em> (eastern hemlock).</p>
-<pre class="r"><code>kejim2014 &lt;- filter(kejim, Annee == 2014, Espece != &quot;TSCA&quot;)
+<pre class="r"><code>kejim2014 &lt;- filter(kejim, annee == 2014, espece != &quot;TSCA&quot;)
 head(kejim2014)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   11    8  2014         4        1   ACRU 38.2
 ## 2   BD        A   11    8  2014         7        1   ACRU 32.9
 ## 3   BD        A   11    8  2014        15        1   ACRU 44.3
 ## 4   BD        A   11    8  2014        16        1   ACRU 18.2
 ## 5   BD        B   11    8  2014         1        1   ACRU 33.9
 ## 6   BD        B   11    8  2014         3        1   PIRU  9.8</code></pre>
-<p><a href="#retour1">Return</a></p>
+<p><a href="#retour4">Return</a></p>
 </div>
-<div id="sol2" class="section level2">
-<h2>Exercise 2</h2>
+<div id="sol5" class="section level2">
+<h2>Exercise 5</h2>
 <p>Using <code>%&gt;%</code>, produce a table of balsam fir (ABBA) observations with DBH &gt; 15 cm, sorted in chronological order.</p>
 <pre class="r"><code>kejim %&gt;%
-    filter(Espece == &quot;ABBA&quot;, DHP &gt; 15) %&gt;%
-    arrange(Annee, Mois, Jour)</code></pre>
-<pre><code>##   Site Parcelle Jour Mois Annee Num_Arbre Nb_Tiges Espece  DHP
+    filter(espece == &quot;ABBA&quot;, dhp &gt; 15) %&gt;%
+    arrange(annee, mois, jour)</code></pre>
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1  CLT        A   13    8  2004        35        1   ABBA 18.8
 ## 2   CL        A   18    8  2004         8        1   ABBA 15.1
 ## 3  CLT        A   14   10  2009        35        1   ABBA 22.9
 ## 4   CL        A   21   10  2009         8        1   ABBA 15.3
 ## 5  CLT        B   20   10  2014        10        1   ABBA 15.2</code></pre>
-<p><a href="#retour2">Return</a></p>
+<p><a href="#retour5">Return</a></p>
 </div>
-<div id="sol3" class="section level2">
-<h2>Exercise 3</h2>
+<div id="sol6" class="section level2">
+<h2>Exercise 6</h2>
 <p>Sort the species in <code>kejim</code> in descending order of maximum diameter.</p>
-<pre class="r"><code>group_by(kejim, Espece) %&gt;%
-    summarize(maxDHP = max(DHP)) %&gt;%
+<pre class="r"><code>group_by(kejim, espece) %&gt;%
+    summarize(maxDHP = max(dhp)) %&gt;%
     arrange(desc(maxDHP))</code></pre>
 <pre><code>## # A tibble: 13 x 2
-##    Espece maxDHP
+##    espece maxDHP
 ##    &lt;chr&gt;   &lt;dbl&gt;
 ##  1 PIST     84.1
 ##  2 BEAL     82.7
@@ -752,32 +855,6 @@ head(kejim2014)</code></pre>
 ## 11 FAGR     35.1
 ## 12 ABBA     22.9
 ## 13 ACPE     14.1</code></pre>
-<p><a href="#retour3">Return</a></p>
-</div>
-<div id="sol4" class="section level2">
-<h2>Exercise 4</h2>
-<p>From the <code>kejim</code> data frame, produce a scatter plot of the DBH (<code>DHP</code>, on the y axis) according to the species (<code>Espece</code>, on the x axis).</p>
-<pre class="r"><code>ggplot(data = kejim, mapping = aes(x = Espece, y = DHP)) +
-    geom_point()</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
-<p><a href="#retour4">Return</a></p>
-</div>
-<div id="sol5" class="section level2">
-<h2>Exercise 5</h2>
-<p>With <code>geom_bar</code>, create a bar graph of the number of individuals per species (different species on the x-axis). Use a color code to identify individuals from different sites.</p>
-<pre class="r"><code>ggplot(kejim, aes(x = Espece, fill = Site)) +
-    geom_bar()</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
-<p><a href="#retour5">Return</a></p>
-</div>
-<div id="sol6" class="section level2">
-<h2>Exercise 6</h2>
-<p>From the <code>msleep</code> dataset, create a scatter plot of total sleep (<code>sleep_total</code>) and REM sleep (<code>sleep_rem</code>) with one facet for each type of diet (<code>vore</code>)</p>
-<pre class="r"><code>ggplot(msleep, aes(x = sleep_total, y = sleep_rem)) +
-    geom_point() +
-    facet_wrap(~ vore)</code></pre>
-<pre><code>## Warning: Removed 22 rows containing missing values (geom_point).</code></pre>
-<p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
 <p><a href="#retour6">Return</a></p>
 </div>
 </div>
