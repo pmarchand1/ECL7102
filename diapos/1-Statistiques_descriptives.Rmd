@@ -36,9 +36,9 @@ head(kejim)
 ```
 <small>
 
->- *Num_Arbre* est le numéro d'identification de l'arbre.
->- *Nb_Tiges* est le nombre de tiges.
->- *DHP* est le diamètre à hauteur de poitrine en cm.
+>- *num_arbre* est le numéro d'identification de l'arbre.
+>- *nb_tiges* est le nombre de tiges.
+>- *dhp* est le diamètre à hauteur de poitrine en cm.
 
 </small>
 
@@ -77,10 +77,10 @@ class: inverse, middle
 # Graphique à barres
 
 ```{r bar_espece, warning = FALSE}
-compte_esp <- group_by(kejim, Espece) %>%
-    summarize(Compte = n()) %>%
-    mutate(Espece = reorder(Espece, Compte))
-ggplot(compte_esp, aes(x = Espece, y = Compte)) +
+compte_esp <- group_by(kejim, espece) %>%
+    summarize(compte = n()) %>%
+    mutate(espece = reorder(espece, compte))
+ggplot(compte_esp, aes(x = espece, y = compte)) +
     geom_col(fill = "darkblue") +
     scale_y_continuous(expand = c(0, 0)) +
     coord_flip()
@@ -92,15 +92,15 @@ ggplot(compte_esp, aes(x = Espece, y = Compte)) +
 
 ```{r circ_espece, fig.dim = c(7, 5)}
 compte_esp5 <- kejim %>%
-    mutate(Espece = as.character(Espece)) %>%
-    mutate(Espece = ifelse(Espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
-                           Espece, "Autres")) %>%
-    group_by(Espece) %>%
-    summarize(Compte = n()) %>%
-    mutate(Espece = factor(Espece, 
+    mutate(espece = as.character(espece)) %>%
+    mutate(espece = ifelse(espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
+                           espece, "Autres")) %>%
+    group_by(espece) %>%
+    summarize(compte = n()) %>%
+    mutate(espece = factor(espece, 
                   levels = c("TSCA", "ACRU", "PIST", "BEPA", "PIRU", "Autres")))
 
-ggplot(compte_esp5, aes(x = factor(1), y = Compte, fill = Espece)) +
+ggplot(compte_esp5, aes(x = factor(1), y = compte, fill = espece)) +
     geom_col(position = position_stack(), color = "white") +
     coord_polar(theta = "y") +
     theme(axis.line = element_blank(), axis.title = element_blank(), 
@@ -137,7 +137,7 @@ class: inverse, middle
 Obtenu en comptant le nombre d'observations dans des intervalles de taille égale sur l'axe de la variable observée.
 
 ```{r histo_dhp, warning = FALSE}
-dhp_histo <- ggplot(kejim, aes(x = DHP)) +
+dhp_histo <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
@@ -164,7 +164,7 @@ Obtenu en comptant le nombre d'observations dans des intervalles de taille égal
 Estime la densité de probabilité (probabilité par unité sur l'axe des *x*) pour une variable continue.
 
 ```{r dens_dhp}
-ggplot(kejim, aes(x = DHP)) +
+ggplot(kejim, aes(x = dhp)) +
     geom_density(color = "orange", fill = "orange", alpha = 0.4) +
     scale_x_continuous(breaks = seq(0, 90, 10)) +
     scale_y_continuous(expand = c(0, 0))
@@ -226,7 +226,7 @@ $$\sigma_x = \sqrt{\frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}}$$
 # Visualiser la moyenne et l'écart-type
 
 ```{r histo_moy_dhp, fig.dim = c(7, 5), warning = FALSE}
-dhp_histo_moy <- ggplot(kejim, aes(x = DHP)) +
+dhp_histo_moy <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
     geom_point(x = mean(kejim$DHP), y = 100, color = "orange", size = 4) +
     geom_segment(x = mean(kejim$DHP) - sd(kejim$DHP), y = 100,
@@ -278,7 +278,7 @@ La distance entre les 1er et 3e quartiles se nomme écart interquartile (*interq
 # Boîte à moustaches (*boxplot*)
 
 ```{r boxplot_dhp, fig.dim = c(8, 4)}
-dhp_boxplot <- ggplot(kejim, aes(x = 0, y = DHP)) +
+dhp_boxplot <- ggplot(kejim, aes(x = 0, y = dhp)) +
     geom_boxplot(fill = "grey70", width = 0.1) +
     labs(x = "") +
     scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
@@ -306,18 +306,18 @@ plot_grid(dhp_histo_moy, dhp_boxplot + theme_nothing(),
 # Sensibilité aux valeurs extrêmes
 
 ```{r val_extr, fig.dim = c(7, 5), warning = FALSE}
-kejim_max65 <- filter(kejim, DHP <= 65)
-dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = DHP)) +
+kejim_max65 <- filter(kejim, dhp <= 65)
+dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
-    geom_point(x = mean(kejim_max65$DHP), y = 100, color = "orange", size = 4) +
-    geom_segment(x = mean(kejim_max65$DHP) - sd(kejim_max65$DHP), y = 100,
-                 xend = mean(kejim_max65$DHP) + sd(kejim_max65$DHP), yend = 100, 
+    geom_point(x = mean(kejim_max65$dhp), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim_max65$dhp) - sd(kejim_max65$dhp), y = 100,
+                 xend = mean(kejim_max65$dhp) + sd(kejim_max65$dhp), yend = 100, 
                  color = "orange", size = 2) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
     scale_y_continuous(expand = c(0, 0))
 
-dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = DHP)) +
+dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = dhp)) +
     geom_boxplot(fill = "grey70", width = 0.1) +
     labs(x = "") +
     scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
@@ -329,7 +329,7 @@ plot_grid(dhp_nonextr_histo, dhp_nonextr_boxplot + theme_nothing(),
           rel_heights = c(0.8, 0.2), align = "v", ncol = 1)
 ```
 
-L'exclusion de 18 arbres à DHP > 65 cm affecte davantage la moyenne (-4%) 
+L'exclusion de 18 arbres à dhp > 65 cm affecte davantage la moyenne (-4%) 
 et l'écart-type (-16%) que la médiane (-1%) et l'écart interquartile (-2%).
 
 ---
@@ -337,8 +337,8 @@ et l'écart-type (-16%) que la médiane (-1%) et l'écart interquartile (-2%).
 # Comparer plusieurs distributions
 
 ```{r box_mult}
-ggplot(filter(kejim, Espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")), 
-              aes(x = Espece, y = DHP)) +
+ggplot(filter(kejim, espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")), 
+              aes(x = espece, y = dhp)) +
     geom_boxplot(fill = "grey70")
 ```
 
@@ -351,10 +351,10 @@ Comment pourrait-on améliorer ce graphique ?
 # Comparer plusieurs distributions
 
 ```{r box_mult2}
-kejim_sub <- filter(kejim, Espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
-    mutate(Espece = reorder(Espece, DHP, FUN = function(x) -median(x)))
+kejim_sub <- filter(kejim, espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
+    mutate(espece = reorder(espece, dhp, FUN = function(x) -median(x)))
 
-ggplot(kejim_sub, aes(x = Espece, y = DHP)) +
+ggplot(kejim_sub, aes(x = espece, y = dhp)) +
     labs(x = "", y = "Diamètre à hauteur de poitrine (cm)") +
     geom_boxplot(fill = "grey70") +
     scale_x_discrete(labels = c("Bouleau blanc", "Pin blanc", "Pruche du Canada",

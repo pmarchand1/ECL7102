@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Modèles statistiques, paramètres et estimateurs</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Modèles statistiques, paramètres et estimateurs
+### <br/>9 septembre 2019
+
+---
+
+
+
+
+# Questions éclair
+
+1. Si vous réalisez 200 observations d'une variable aléatoire X, combien d'entre elles se trouveront entre le premier et le troisième quartile?
+
+2. Vrai ou faux? Le premier et le troisième quartile se trouvent toujours à distance égale de la moyenne.
+
+3. Vous voulez évaluer un traitement au moyen d'une expérience en blocs complets aléatoires, avec 30 individus divisés en 3 blocs. Comment assignez-vous les individus au groupe témoin et au groupe traité?
+
+---
+
+# Statistiques, paramètres et estimateurs
+
+- Une *statistique* est une quantité calculée à partir d'observations de variables aléatoires. 
+
+- Un *paramètre* est une quantité qui apparaît dans un modèle statistique.
+
+- Un *estimateur* est une statistique qui vise à estimer un paramètre.
+
+---
+
+# Statistiques, paramètres et estimateurs
+
+## Exemple
+
+Si on mesure le poids d'écureuils roux et qu'on fait la moyenne de ces mesures (une statistique), quel est notre estimé du poids moyen de la population locale d'écureuils roux (un paramètre)? Quelle est sa marge d'erreur? 
+
+--
+
+- Dans la deuxième partie du cours d'aujourd'hui, nous verrons comment définir la précision d'un estimateur.
+
+- Tout d'abord, nous allons revoir plusieurs notions de base sur les distributions statistiques, et particulièrement la distribution normale.
+
+---
+
+# Objectifs
+
+## Distributions statistiques
+
+- Décrire les caractéristiques et l'utilité des distributions normale et log-normale.
+
+- Connaître la relation entre densité de probabilité et probabilité cumulative pour une variable continue, et calculer ces quantités dans R.
+
+- Comparer des données à une distribution de référence avec un diagramme quantile-quantile.
+
+---
+
+# Objectifs
+
+## Estimation de paramètres
+
+- Estimer la moyenne et la variance d'une population à partir d'un échantillon.
+
+- Définir le biais et l'erreur-type d'un estimateur.
+
+- Calculer les propriétés d'un estimateur en simulant l'échantillonnage.
+
+- Interpréter un intervalle de confiance et calculer l'intervalle de confiance pour la moyenne d'une distribution normale.
+
+---
+
+class: inverse, middle
+
+# Distributions statistiques
+
+---
+
+# Distribution discrète
+
+- Distribution statistique (ou loi de probabilité): fonction qui associe une probabilité à chaque valeur possible d'une variable aléatoire.
+
+- Pour une variable discrète, chaque valeur a une masse de probabilité, dont la somme doit être égale à 1.
+
+---
+
+# Distribution discrète
+
+- Exemple: Lancer un dé équilibré à six faces.
+
+- Une distribution *uniforme* assigne la même probabilité à chaque valeur.
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+
+---
+
+# Distribution continue
+
+- Pour une variable continue, chaque valeur a une *densité de probabilité*.
+
+- Voici une distribution uniforme continue entre 0 et 6.
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+
+# Distribution continue
+
+- Pour calculer la probabilité d'un intervalle donné, on calcule l'intégrale (aire sous la courbe) de la densité.
+
+- Ex.: Probabilté que `\(x\)` soit dans l'intervalle (2.5, 3) est 1/12.
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+---
+
+# Simuler des valeurs aléatoires dans R
+
+Le code R ci-dessous génère 10 valeurs aléatoires tirées de la distribution uniforme (continue) entre 0 et 6.
+
+
+```r
+x &lt;- runif(n = 10, min = 0, max = 6)
+round(x, 2) # round affiche les valeurs avec 2 décimales
+```
+
+```
+##  [1] 0.36 3.26 3.82 5.76 1.91 0.90 5.63 1.66 2.78 3.89
+```
+
+---
+
+# Simuler des valeurs aléatoires dans R
+
+Voici les histogrammes des valeurs obtenues pour différents `\(n\)`. Que remarquez-vous? 
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+
+# Loi des grands nombres
+
+- Nous avons illustré la distribution d'une variable en *simulant* un échantillon (10 000 valeurs).
+
+- *Loi des grands nombres*: Plus un échantillon aléatoire est grand, plus la distribution des valeurs s'approche de la distribution théorique.
+
+---
+
+class: inverse, middle
+
+# La distribution normale
+
+---
+
+# Motivation
+
+- Dans un système complexe, les variables que nous observons résultent de l'effet combiné de nombreux processus que nous ne pouvons pas directement percevoir. 
+
+--
+
+- Lorsque de nombreux facteurs agissent indépendamment sur une même variable, leur effet total tend à converger vers certaines distributions statistiques bien connues.
+
+---
+
+# Distribution d'une somme de `\(n\)` variables
+
+- Voici une fonction dans R qui calcule la somme de `\(n\)` observations tirées d'une distribution uniforme entre 0 et 6.
+
+- Nous générons 10 000 valeurs de cette somme (avec `replicate`) pour visualiser sa distribution.
+
+
+```r
+# Somme de n variables aléatoires uniformes entre min et max
+somme_unif &lt;- function(n, min, max) {
+    sum(runif(n, min, max))
+}
+
+n &lt;- 10
+x &lt;- replicate(10000, somme_unif(n, 0, 6))
+```
+
+---
+
+# Distribution d'une somme de `\(n\)` variables
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+---
+
+# Théorème de la limite centrale
+
+Si on additionne un grand nombre de variables aléatoires indépendantes, peu importe leur distribution, la distribution de la somme s'approche d'une distribution normale.*
+
+--
+
+&lt;small&gt;* Certaines conditions s'appliquent.&lt;/small&gt;
+
+---
+
+# Distribution normale (ou gaussienne)
+
+Formule pour la densité de probabilité:
+
+`$$f(x) = \frac{1}{\sigma \sqrt{2 \pi}} e^{-\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2}$$`
+
+Deux paramètres: `\(\mu\)` (moyenne) et `\(\sigma\)` (écart-type).
+
+---
+
+# Distribution normale
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+
+# Distribution normale centrée réduite
+
+Si `\(x\)` suit une distribution normale avec comme paramètres `\(\mu\)`, `\(\sigma\)`.
+
+`$$z = \frac{x - \mu}{\sigma}$$`
+
+Alors `\(z\)` suit une distribution normale centrée réduite `\((\mu = 0, \sigma = 1)\)`:
+
+`$$f(z) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} z^2}$$`
+
+---
+
+# Distribution cumulative
+
+- La distribution cumulative d'une variable aléatoire (aussi appelée fonction de répartition) correspond pour chaque valeur `\(x\)` à la probabilité que la valeur de la variable soit inférieure ou égale à `\(x\)`. 
+
+--
+
+- Elle est donc égale à l'aire sous la courbe de la densité de probabilité à gauche de `\(x\)`. 
+
+---
+
+# Distribution cumulative
+
+Distribution cumulative `\(F(z)\)` d'une variable normale centrée réduite
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+
+# Distribution cumulative
+
+- La distribution cumulative d'une variable aléatoire (aussi appelée fonction de répartition) correspond pour chaque valeur `\(x\)` à la probabilité que la valeur de la variable soit inférieure ou égale à `\(x\)`. 
+
+- Elle est donc égale à l'aire sous la courbe de la densité de probabilité à gauche de `\(x\)`. 
+
+- À partir de la distribution cumulative `\(F(x)\)`, on peut facilement calculer la probabilité dans un intervalle `\((x_1, x_2)\)` en faisant la soustraction `\(F(x_2)\)` - `\(F(x_1)\)`. 
+
+---
+
+# Fonctions de distribution dans R
+
+Quatre fonctions dans R permettent de travailler avec la distribution normale:
+
+- `rnorm(n, mean, sd)` génère `n` valeurs aléatoires à partir d'une distribution normale avec de moyenne `mean` et d'écart-type `sd`.
+
+- `dnorm(x, mean, sd)` donne la densité de probabilité associée à la valeur `x`.
+
+- `pnorm(q, mean, sd)` donne la probabilité cumulative associée à une valeur `q`. 
+
+- `qnorm(p, mean, sd)` donne la valeur (`q` pour quantile) associé à une probabilité cumulative `p` donnée.
+
+---
+
+# Fonctions de distribution dans R
+
+La probabilité cumulative à 2 écarts-type est de 98%.
+
+```r
+pnorm(2, mean = 0, sd = 1)
+```
+
+```
+## [1] 0.9772499
+```
+
+--
+
+La probabilité d'être à `\(\pm\)` 1 écart-type de la moyenne est de 68%.
+
+```r
+pnorm(1, mean = 0, sd = 1) - pnorm(-1, mean = 0, sd = 1)
+```
+
+```
+## [1] 0.6826895
+```
+
+--
+
+Le troisième quartile est à 0.67 écart-type au-dessus de la moyenne.
+
+```r
+qnorm(0.75, mean = 0, sd = 1)
+```
+
+```
+## [1] 0.6744898
+```
+
+---
+
+# Diagramme quantile-quantile
+
+- Le diagramme quantile-quantile (*Q-Q plot*) sert à visualiser la correspondance entre deux distributions statistiques.
+
+- Le plus souvent, nous voulons comparer un échantillon à une distribution théorique donnée.
+
+- Dans ce cas, on place les observations en ordre croissant et on associe chaque observation au quantile correspondant de la distribution théorique.
+
+---
+
+# Diagramme quantile-quantile
+
+Fonctions `qqnorm` et `qqline` dans R
+
+
+```r
+test &lt;- rnorm(99, mean = 6, sd = 4)
+
+qqnorm(test)
+qqline(test)
+```
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+---
+
+# Exemple
+
+- Histogramme du DHP des arbres du jeu de données de Kejimkujik.
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+
+---
+
+# Diagramme quantile-quantile
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+
+---
+
+# Exercice
+
+Voici un diagramme quantile-quantile comparant un échantillon à une distribution normale. Pouvez-vous décrire comment cet échantillon diffère de la distribution théorique? 
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+
+---
+
+class: inverse, middle
+
+# La distribution log-normale
+
+---
+
+# Distribution log-normale
+
+- Une variable `\(x\)` suit une distribution log-normale si `\(y = log(x)\)` suit une distribution normale.
+
+--
+
+- Équivalent: si `\(y\)` suit une distribution normale, `\(x = e^y\)` suit une distribution log-normale.
+
+--
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+---
+
+# Propriétés des logarithmes
+
+- `\(log(x)\)` est seulement défini pour `\(x &gt; 0\)`.
+
+- `\(log(x) = 0\)` si `\(x = 1\)`. Un logarithme négatif ou positif représente une valeur de `\(x\)` inférieure ou supérieure à 1, respectivement.
+
+--
+
+- Le logarithme transforme les multiplications en additions et les divisions en soustractions. 
+
+`$$log(xw) = log(x) + log(w)$$`
+
+`$$log(x/v) = log(x) - log(v)$$`
+    
+--
+
+- Donc, dans une échelle logarithmique, la distance entre deux nombres est proportionnelle à leur ratio dans l'échelle originale. 
+
+---
+
+# Propriétés des logarithmes
+
+- Si nous ne spécifions pas, les logarithmes sont des logarithmes naturels (base `\(e\)`). Toutefois, un changement de base correspond seulement à un changement d'échelle et n'affecte pas la forme de la distribution. Par exemple, pour convertir en base 10:
+
+`$$log_{10}(x) = \frac{log(x)}{log(10)}$$`
+
+---
+
+# Utilité de la distribution log-normale
+
+- Si la distribution normale est associée à des processus additifs, la distribution log-normale est associée à des processus multiplicatifs. 
+
+--
+
+- Exemple: Une population croît de 5%, 10% et 3% lors de trois années consécutives. 
+    + La croissance totale est 1.05 x 1.10 x 1.03 = 1.19. 
+
+---
+
+# Exemple
+
+- Diagramme quantile-quantile de log(DHP) pour les arbres du jeu de données de Kejimkujik.
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+
+---
+
+# Transformation logarithmique
+
+- Dans ce cours, nous verrons plusieurs méthodes qui supposent que la variable observée est expliquée par des effets additifs, avec une composante aléatoire suivant une distribution normale.
+
+--
+
+- Transformation logarithmique: convertit une variable log-normale en variable normale.
+
+--
+
+- Attention à l'interprétation des résultats.
+
+---
+
+# Transformation logarithmique
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+
+--
+
+- La moyenne de `\(log(x)\)` n'est *pas* égale au logarithme de la moyenne de `\(x\)`.
+
+---
+
+# Exercice
+
+Parmi les variables suivantes, lesquelles s'approchent à votre avis le plus d'une distribution normale, et pourquoi?
+
+(a) La température moyenne de septembre à Rouyn-Noranda.
+
+(b) La population des municipalités du Québec.
+
+(c) Le nombre d'abonnés par compte dans un réseau social (ex.: Twitter).
+
+(d) Le temps pris par des coureurs pour terminer un marathon.
+
+---
+
+# Résumé
+
+- Une distribution discrète est représenté par une fonction de masse de probabilité; une distribution continue est représentée par une fonction de densité de probabilité. 
+
+--
+
+- La distribution cumulative d'une variable au point `\(x\)` donne la probabilité que cette variable soit inférieure ou égale à `\(x\)`.
+
+--
+
+- Quelques distributions continues: uniforme, normale, log-normale.
+
+---
+
+# Résumé
+
+- La distribution normale est caractérisée par sa moyenne `\(\mu\)` et son écart-type `\(\sigma\)`. 
+
+--
+
+- Toute distribution normale peut être ramenée à la distribution normale centrée réduite `\((\mu = 0, \sigma = 1)\)` avec la transformation linéaire: `\(z = (x - \mu)/\sigma\)`.
+
+--
+
+- La transformation logarithmique convertit les effets multiplicatifs en effets additifs, et les distributions log-normales en distributions normales.
+
+--
+
+- Le diagramme quantile-quantile permet de comparer visuellement des données à une distribution de référence.
+
+---
+
+class: inverse, middle
+
+# Estimation de paramètres 
+
+---
+
+# Estimation de la moyenne
+
+- On mesure une variable `\(x\)` sur un échantillon aléatoire de taille `\(n\)`.
+
+- `\(x\)` ne suit pas nécessairement une distribution normale.
+
+--
+
+- La moyenne de l'échantillon est un estimateur de `\(\mu\)`, la moyenne de la population.
+
+`$$\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i$$`
+
+---
+
+# Simulation d'échantillonnage
+
+Imaginons que les 1161 arbres du tableau de données Kejimkujik (vecteur `dhp`) représentent la population entière, et que nous échantillonnons une partie de ces arbres. 
+
+
+```r
+# dhp est le vecteur du DHP des 1161 arbres
+c(mean(dhp), sd(dhp))
+```
+
+```
+## [1] 21.76106 12.25337
+```
+
+--
+
+Dans R, la fonction `sample` sert à tirer un échantillon aléatoire des éléments d'un vecteur.
+
+
+```r
+mean(sample(dhp, 20)) # moyenne d'un échantillon de n = 20 arbres
+```
+
+```
+## [1] 21.38
+```
+
+---
+
+# Simulation d'échantillonnage
+
+Simulons 10 000 échantillons pour différentes valeurs de `\(n\)`.
+
+--
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+
+---
+
+# Erreur-type de la moyenne
+
+- Prenons une variable `\(x\)` dont la distribution a une moyenne `\(\mu\)` et une variance `\(\sigma^2\)`.
+
+--
+
+- On peut démontrer que `\(\bar{x}\)` a une moyenne égale à `\(\mu\)` et une variance égale à `\(\sigma^2 / n\)`. 
+
+--
+
+- L'écart-type de `\(\bar{x}\)`, qui dans ce contexte se nomme l'*erreur-type* (*standard error*), est donc inversement proportionnel à la racine carrée de `\(n\)`:
+    
+`$$\sigma_{\bar{x}} = \frac{\sigma_{x}}{\sqrt{n}}$$`
+
+---
+
+# Erreur-type de la moyenne
+
+Moyenne et erreur-type de `\(\bar{x}\)` calculées à partir des 10 000 échantillons.
+
+|  n|  Moyenne (cm)| Erreur-type (cm)| `\(\sigma / \sqrt{n}\)`|
+|--:|--------:|-----------:|--------:|
+| 10|    21.76|        3.85| 3.87|
+| 20|    21.81|        2.75| 2.74|
+| 40|    21.78|        1.91| 1.94|
+
+--
+
+La moyenne de l'estimateur correspond à la valeur du paramètre `\(\mu\)`, donc `\(\bar{x}\)` est un estimateur *non-biaisé* de `\(\mu\)`.
+
+---
+
+# Écart-type ou erreur-type
+
+- Écart-type de `\(x\)`: mesure la dispersion des valeurs individuelles par rapport à la moyenne.
+
+- Erreur-type de `\(\bar{x}\)`: mesure la dispersion de la moyenne d'un échantillon.
+
+--
+
+    + Diminue avec la taille de l'échantillon.
+    
+    + Ne dépend pas de la taille de la population (sauf si l'échantillon s'en approche).
+    
+---
+    
+# Erreur-type en fonction de `\(n\)`
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+
+---
+
+# Estimation de la variance
+
+`\(s^2\)` est-il est un bon estimateur de la variance `\(\sigma^2\)`?
+
+$$s^2 = \frac{1}{n} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2  $$
+
+--
+
+- Comme plus tôt, simulons 10 000 échantillons du vecteur `dhp` avec différentes valeurs de `\(n\)`.
+
+---
+
+# Estimation de la variance
+
+Moyenne de `\(s^2\)` et son ratio avec la valeur de `\(\sigma^2\)` pour la population, soit 150.1 cm&lt;sup&gt;2&lt;/sup&gt;.
+
+|  n| Moyenne de `\(s^2\)` | Moyenne de `\(s^2\)` / `\(\sigma^2\)` |
+|--:|--------:|-----------:|
+| 10|    136.3|        0.90|
+| 20|    143.1|        0.95|
+| 40|    146.6|        0.97|
+
+--
+
+- L'estimateur `\(s^2\)` est biaisé, sous-estime systématiquement la variance.
+
+---
+
+# Estimation de la variance
+
+- L'estimateur est basé sur la moyenne de l'échantillon `\(\bar{x}\)` plutôt que `\(\mu\)`.
+
+--
+
+- La sous-estimation correspond exactement au ratio `\((n - 1)/n\)` et peut donc être corrigée en multiplant `\(s^2\)` par `\(n/(n-1)\)`.
+
+`$$s^2 = \frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2$$`
+
+---
+
+# Estimation de l'écart-type
+
+- Pour l'écart-type, on prend la racine carrée de `\(s^2\)`.
+
+`$$s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2}$$`
+
+--
+
+- Contrairement à `\(s^2\)`, cet estimateur est biaisé, mais on l'utilise quand même.
+
+- Cet estimateur est aussi utilisé pour obtenir l'erreur-type de `\(\bar{x}\)` (égale à `\(s / \sqrt{n})\)`. 
+
+---
+
+# Degrés de liberté
+
+Le nombre de degrés de liberté correspond au nombre de données indépendantes utilisées dans le calcul d'une statistique.
+
+--
+
+Autre façon d'expliquer la division par `\(n - 1\)` dans le calcul de `\(s^2\)`.
+
+- `\(s^2\)` est calculée à partir des déviations entre chaque observation de `\(x\)` et leur moyenne `\((x_i - \bar{x})\)`.
+
+- La définition de `\(\bar{x}\)` assure que la somme de ces déviations est égale à 0.
+
+- Lorsqu'on connaît les `\(n - 1\)` premières déviations, on peut automatiquement déduire la dernière, qui n'est donc pas une donnée indépendante.
+
+---
+
+# Biais et erreur-type d'un estimateur
+
+- Contexte: On estime un paramètre `\(\theta\)` avec l'estimateur `\(\hat{\theta}\)`. 
+
+- L'erreur carrée moyenne correspond à la moyenne des écarts entre l'estimateur et le paramètre. Elle se divise en deux parties.
+
+$$ E[(\hat{\theta} - \theta)^2] = E[(\hat{\theta} - E[\hat{\theta}])^2] + (E[\hat{\theta}] - \theta)^2 $$
+
+--
+
+- Le premier terme à droite est la variance de l'estimateur (le carré de l'erreur-type).
+
+--
+
+- Le deuxième terme est le carré du biais.
+
+---
+
+# Biais et erreur-type d'un estimateur
+
+- L'erreur-type est due à la taille limitée de l'échantillon et diminue lorsque `\(n\)` augmente. 
+
+--
+
+- Le biais est une erreur systématique qui ne dépend pas de la taille de l'échantillon, mais peut être dû à un estimateur biaisé où à un échantillonnage non représentatif de la population. 
+
+---
+
+# Exercice
+
+Afin d'estimer la densité moyenne du bois de pin gris sur un site, vous échantillonnez d'abord 9 arbres, qui ont une densité moyenne de 450 kg/m&lt;sup&gt;3&lt;/sup&gt; avec un écart-type de 90 kg/m&lt;sup&gt;3&lt;/sup&gt;. 
+
+(a) Quelle est l'erreur-type de cette moyenne?
+
+(b) Si vous vouliez connaître la moyenne avec une erreur-type d'au plus 10 kg/m&lt;sup&gt;3&lt;/sup&gt;, combien d'arbres vous attendez-vous à devoir échantillonner?
+
+---
+
+class: inverse, middle
+
+# Intervalle de confiance
+
+---
+
+# Estimateur normalement distribué
+
+- Supposons que `\(\bar{x}\)` suit une distribution normale.
+
+--
+
+    + En pratique, soit `\(x\)` suit une distribution normale, soit l'échantillon est assez grand pour que le théorème de la limite centrale s'applique.
+    
+--
+    
+- Définissons une variable normale centrée réduite `\(z\)`:
+
+$$ z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} $$
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Exemple: l'intervalle entre le premier quartile (25%) et le troisième quartile (75%) a une probabilité de 50%.
+
+--
+
+- Pour une variable normale centrée réduite, cet intervalle correspond à (-0.674, 0.674).
+
+
+```r
+c(qnorm(0.25), qnorm(0.75))
+```
+
+```
+## [1] -0.6744898  0.6744898
+```
+
+---
+
+# Intervalle de probabilité déterminée
+ 
+- Convertissons cet intervalle de `\(z\)` en intervalle de `\(\bar{x}\)`:
+
+$$ \left( -0.674 \le \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \le 0.674 \right)$$
+
+--
+
+$$ \left( - 0.674 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 0.674 \frac{\sigma}{\sqrt{n}} \right)$$
+
+--
+
+- La probabilité que `\(\bar{x}\)` se trouve à `\(\pm\)` 0.674 erreur-type de `\(\mu\)` est égale à 50%.
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Définissons `\(z_p\)` comme la valeur de `\(z\)` correspondant à une probabilité cumulative `\(p\)`. Ex.: `\(z_{0.25}\)` est le premier quartile. 
+
+--
+
+- Alors l'intervalle contenant 50% de la probabilité s'écrit:
+
+`$$\left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\sigma}{\sqrt{n}} \right)$$`
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Pour un intervalle avec probabilité de 90%, on exclut 5% de chaque côté ( `\(z_{0.05}\)` et `\(z_{0.95}\)` ). 
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+
+---
+
+# Intervalle de probabilité déterminée
+
+- De façon générale, si `\(\alpha\)` est la probabilité exclue, l'intervalle contenant (100% - `\(\alpha\)`) de la distribution de `\(\bar{x}\)` correspond à:
+
+`$$\left( z_{\alpha/2} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{1-\alpha/2} \frac{\sigma}{\sqrt{n}} \right)$$`
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Pour des raisons historiques, l'intervalle de 95% correspondant à `\(\alpha\)` = 0.05 est le plus souvent utilisé:
+
+`$$\left( z_{0.025} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le  z_{0.975} \frac{\sigma}{\sqrt{n}} \right)$$`
+
+--
+
+- En remplaçant les quantiles par leur valeur, on obtient:
+
+`$$\left(- 1.96 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 1.96 \frac{\sigma}{\sqrt{n}} \right)$$`
+
+---
+
+# Intervalle de confiance
+
+- Si on calcule la moyenne `\(\bar{x}\)` d'un échantillon (et que `\(\bar{x}\)` suit une distribution normale), la probabilité que notre estimé `\(\bar{x}\)` se trouve à `\(\pm\)` 1.96 erreurs-type du paramètre `\(\mu\)` est de 95%.
+
+--
+
+- Après avoir calculé `\(\bar{x}\)` et ainsi que l'erreur-type, nous établissons un intervalle de 1.96 erreurs-type autour de `\(\bar{x}\)`:
+
+`$$\left(\bar{x} - 1.96 \frac{\sigma}{\sqrt{n}}, \bar{x} + 1.96 \frac{\sigma}{\sqrt{n}} \right)$$`
+
+--
+
+- Selon ce modèle, pour 95% des échantillons possibles de `\(x\)`, l'intervalle ainsi calculé contiendra la valeur de `\(\mu\)`. 
+
+--
+
+- Il s'agit donc d'un **intervalle de confiance** à 95% pour `\(\bar{x}\)`. 
+
+---
+
+# Intervalle de confiance
+
+- La probabilité associée à un intervalle de confiance est basée sur la variabilité de `\(\bar{x}\)` d'un échantillon à l'autre. Elle constitue une probabilité *a priori* (avant d'avoir échantillonné).
+
+- Le paramètre `\(\mu\)` est fixe. Une fois que l'estimé `\(\bar{x}\)` est obtenu pour un échantillon donné, l'intervalle de confiance contient `\(\mu\)` ou ne le contient pas. 
+
+--
+
+- Parce que le paramètre `\(\mu\)` n'est pas une variable aléatoire, il n'a pas de distribution statistique. 
+
+- Il est donc erroné d'affirmer, après avoir calculé un intervalle de confiance pour un échantillon donné, que "le paramètre `\(\mu\)` a 95% de probabilité d'être à l'intérieur de cet intervalle".
+
+---
+
+# Intervalle de confiance d'une moyenne
+
+- L'intervalle de confiance à (100% - `\(\alpha\)`) de la moyenne `\(\bar{x}\)` est donné par:
+
+`$$\left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alpha/2} \frac{\sigma}{\sqrt{n}} \right)$$`
+
+--
+
+- En pratique, on ne connaît pas `\(\sigma\)`.
+
+--
+
+- Si on remplace `\(\sigma\)` par son estimé `\(s\)`, la probabilité de l'intervalle devient inférieure à (100% - `\(\alpha\)`). Il faut donc élargir l'intervalle afin de compenser pour la connaissance imparfaite de l'écart-type.
+
+---
+
+# Distribution `\(t\)` de Student
+
+- Lorsqu'on utilise un estimé de l'écart-type, l'intervalle de confiance n'est plus basé sur la distribution normale centrée réduite `\(z\)`, mais plutôt sur la distribution `\(t\)`.
+
+- La distribution `\(t\)` comporte un paramètre, le nombre de degrés de liberté, égal ici à `\(n - 1\)`. 
+
+--
+
+- La version corrigée de l'intervalle de confiance à (100% - `\(\alpha\)`) pour `\(\bar{x}\)` est:
+
+`$$\left( \bar{x} + t_{(n-1)\alpha/2} \frac{s}{\sqrt{n}}, \bar{x} + t_{(n-1)1 - \alpha/2} \frac{s}{\sqrt{n}} \right)$$`
+
+---
+
+# Distribution `\(t\)` de Student
+
+- Comparaison de la distribution normale centrée réduite `\(z\)` avec des distributions `\(t\)` à 4 et 9 degrés de liberté.
+
+![](3-Modèles_statistiques_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+
+---
+
+# Distribution `\(t\)` de Student
+
+- Plus le nombre de degrés de liberté est petit, plus la distribution `\(t\)` s'éloigne de la normale. 
+
+--
+
+- En particulier, l'écart-type augmente et les valeurs loins de la moyenne ont une probabilité plus grande, ce qui explique que l'intervalle de confiance construit à partir de la distribution `\(t\)` est plus large. 
+
+--
+
+- La distribution `\(t\)` a aussi une forme différente. Même comparée à une distribution normale de même écart-type, la distribution `\(t\)` a une plus grande probabilité d'obtenir des valeurs extrêmes.
+
+---
+
+# Résumé
+
+- Un estimateur est biaisé lorsque sa moyenne sur l'ensemble des échantillons possibles diffère de la valeur du paramètre à estimer. 
+
+--
+
+- L'erreur-type mesure la dispersion d'un estimateur d'un échantillon à l'autre, elle diminue avec la taille de l'échantillon.
+
+--
+
+- En raison du théorème de la limite centrale, la différence entre la moyenne d'un échantillon et celle de la population suit souvent une distribution approximativement normale.
+
+---
+
+# Résumé
+
+- Un intervalle de confiance est défini autour d'un estimé de manière à ce que sur l'ensemble des échantillons possibles, il y ait une probabilité spécifique que l'intervalle de confiance obtenu contienne la valeur du paramètre à estimer.
+
+--
+
+- La distribution `\(t\)` de Student remplace la distribution normale centrée réduite pour estimer l'intervalle de confiance de la moyenne d'un échantillon, lorsque l'écart-type de la population est inconnu. Cette distribution a des valeurs extrêmes plus fréquentes que la distribution normale, surtout lorsque le nombre de degrés de liberté est faible.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
