@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Tests d’hypothèse</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Tests d’hypothèse</h1>
+<h4 class="date"><br/>16 septembre 2019</h4>
+
+</div>
+
+
+<div id="objectifs" class="section level1">
+<h1>Objectifs</h1>
+<ul>
+<li>Décrire le fonctionnement général d’un test d’hypothèse statistique.</li>
+<li>Définir des concepts liés à la précision d’un test: seuil de signification, puissance, erreurs de type I et II.</li>
+<li>Utiliser le test <span class="math inline">\(t\)</span> pour comparer la moyenne de deux échantillons indépendants ou appariés.</li>
+</ul>
+<div id="comparer-la-moyenne-dun-echantillon-a-une-valeur-de-reference" class="section level2">
+<h2>Comparer la moyenne d’un échantillon à une valeur de référence</h2>
+<p>Dans cet exemple, nous voulons vérifier l’absence de biais d’un humidimètre, en mesurant l’humidité relative du sol à 9 endroits dans une placette de 1 m<span class="math inline">\(^2\)</span>. Avec un appareil plus précis, nous avons déterminé que l’humidité moyenne dans cette parcelle est de 50%. Voici les 9 valeurs obtenues avec l’appareil à tester, leur moyenne et l’erreur-type de cette moyenne.</p>
+<pre class="r"><code>humidite &lt;- c(47, 50, 48, 50, 54, 49, 56, 52, 51)
+humid_moy &lt;- mean(humidite)
+humid_et &lt;- sd(humidite) / sqrt(length(humidite))
+paste(&quot;Moyenne de&quot;, round(humid_moy, 2), &quot;et erreur-type de&quot;, round(humid_et, 2))</code></pre>
+<pre><code>## [1] &quot;Moyenne de 50.78 et erreur-type de 0.95&quot;</code></pre>
+<p>Supposons que ces mesures suivent une distribution normale. Si l’appareil n’était pas biaisé (<span class="math inline">\(\mu\)</span> = 50), quelle serait la probabilité que la moyenne de l’échantillon <span class="math inline">\(\bar{x}\)</span> soit aussi éloignée de la valeur de référence <span class="math inline">\(\mu\)</span>?</p>
+<p>Durant le cours sur les intervalles de confiances, nous avons vu que l’écart entre <span class="math inline">\(\bar{x}\)</span> et <span class="math inline">\(\mu\)</span>, divisé par l’erreur-type, suit une distribution <span class="math inline">\(t\)</span> avec <span class="math inline">\(n - 1\)</span> degrés de liberté:</p>
+<p><span class="math display">\[ t_{n-1} = \frac{\bar{x} - \mu}{s / \sqrt{n}} \]</span></p>
+<p>Souvenez-vous que la distribution <span class="math inline">\(t\)</span> remplace la distribution normale centrée réduite lorsque que l’écart-type <span class="math inline">\(s\)</span> est estimé à partir de l’échantillon.</p>
+<p>La statistique <span class="math inline">\(t\)</span> pour cet échantillon, si <span class="math inline">\(\mu\)</span> = 50, est égale à:</p>
+<pre class="r"><code>humid_t &lt;- (humid_moy - 50) / humid_et
+humid_t</code></pre>
+<pre><code>## [1] 0.8151115</code></pre>
+<p>La distribution <span class="math inline">\(t\)</span> cumulative (fonction <code>pt</code> dans R) nous donne la probabilité d’observer une valeur plus petite ou égale à une valeur donnée. Dans ce cas, la probabilité d’obtenir une valeur de la statistique <span class="math inline">\(t\)</span> plus grande que celle observée pour notre échantillon, si <span class="math inline">\(\mu\)</span> est bien égale à 50, est calculée ainsi:</p>
+<pre class="r"><code>1 - pt(humid_t, df = 8)</code></pre>
+<pre><code>## [1] 0.2192996</code></pre>
+<p>Cette probabilité (21.9%) correspond à la portion de l’aire sous la courbe coloriée dans le graphique ci-dessous:</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Puisque notre question était: “Quelle est la probabilité de la moyenne de l’échantillon soit aussi éloignée de la valeur de référence?”, il faut aussi considérer la probabilité d’obtenir un écart négatif plus grand que l’écart positif observé, i.e. une valeur de la statistique <span class="math inline">\(t\)</span> inférieure à -0.815. Comme la distribution <span class="math inline">\(t\)</span> est symétrique, cette probabilité est aussi égale à 21.9%, donc la probabilité d’avoir obtenu une moyenne plus éloignée de 50 que celle observée est de 43.8%, tel qu’illustré sur le graphique suivant.</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Ainsi, l’écart observé entre la moyenne de l’échantillon et la valeur attendue (<span class="math inline">\(\mu\)</span> = 50) est très probable vu la variation entre les mesures. Dans le contexte des tests d’hypothèse, la probabilité d’obtenir un résultat plus extrême que celui observé se nomme <strong>valeur <em>p</em></strong> (<em>p-value</em>). Dans ce cas, la valeur <em>p</em> associée à l’hypothèse <span class="math inline">\(\mu\)</span> = 50 est de 0.438.</p>
+<p>Dans les prochaines sections, nous verrons de façon plus formelle les éléments d’un test d’hypothèse statistique.</p>
+</div>
+</div>
+<div id="tests-dhypothese-statistique" class="section level1">
+<h1>Tests d’hypothèse statistique</h1>
+<p>De façon générale, un test d’hypothèse statistique vise à déterminer si une variation observée dans un échantillon de données est compatible avec un modèle “par défaut” (l’hypothèse nulle), ou si les observations sont si improbables selon cette hypothèse nulle qu’elle doit être rejetée au profit d’une hypothèse alternative.</p>
+<div id="hypothese-nulle-et-hypothese-alternative" class="section level2">
+<h2>Hypothèse nulle et hypothèse alternative</h2>
+<p>L’hypothèse nulle tire son nom du fait qu’elle correspond souvent à une absence d’effet: aucune différence entre deux traitements, absence de corrélation entre deux variables, etc.</p>
+<p>Dans notre exemple précédent, l’hypothèse nulle (<span class="math inline">\(H_0\)</span>) correspondait à l’absence de biais de l’humidimètre (<span class="math inline">\(\mu = 50\)</span>). L’hypothèse alternative (<span class="math inline">\(H_a\)</span>) est la négation logique de l’hypothèse nulle, donc <span class="math inline">\(\mu \neq 50\)</span>.</p>
+<div id="exercice" class="section level3">
+<h3>Exercice</h3>
+<p>Quelle est l’hypothèse nulle correspondant à chacune des hypothèses alternatives suivantes?</p>
+<ul>
+<li><p>La densité des semis de sapins varie selon la pente dans une parcelle.</p></li>
+<li><p>Ce nouvel insecticide est plus efficace que le traitement existant contre l’agrile du frêne.</p></li>
+</ul>
+</div>
+</div>
+<div id="test-unilateral-ou-bilateral" class="section level2">
+<h2>Test unilatéral ou bilatéral</h2>
+<p>Le deuxième exemple de l’exercice constitue un test unilatéral. Si <span class="math inline">\(\mu_T\)</span> est l’effet du nouveau traitement et <span class="math inline">\(\mu_R\)</span> celui du traitement de référence, alors l’hypothèse nulle est <span class="math inline">\(\mu_T \leq \mu_R\)</span> et l’hypothèse alternative est <span class="math inline">\(\mu_T &gt; \mu_R\)</span>.</p>
+<p>Dans notre premier l’exemple, nous voulions tester la présence d’un biais positif ou négatif dans les mesures de l’humidimètre. Il s’agit d’un test bilatéral, où l’hypothèse alternative <span class="math inline">\(\mu \neq 50\)</span> est équivalente à l’union de deux hypothèse unilatérales (<span class="math inline">\(\mu &lt; 50\)</span> ou <span class="math inline">\(\mu &gt; 50\)</span>).</p>
+<p>Le choix d’un test unilatéral ou bilatéral doit être fait à l’avance et dépend de la question qui nous intéresse.</p>
+<div id="exercice-1" class="section level3">
+<h3>Exercice</h3>
+<p>Quel serait un exemple d’hypothèse nulle et d’hypothèse alternative dans votre domaine de recherche?</p>
+</div>
+</div>
+<div id="hypothese-scientifique-et-hypothese-statistique" class="section level2">
+<h2>Hypothèse scientifique et hypothèse statistique</h2>
+<p>Dans le contexte d’évaluation de traitements expérimentaux (en médecine, en agronomie ou sylviculture, etc.), l’hypothèse nulle correspond généralement à l’absence d’effet du traitement étudié par rapport à un traitement de référence ou un groupe témoin. Dans ce cas, l’hypothèse alternative correspond à l’hypothèse scientifique qui intéresse réellement les chercheurs. On fait l’hypothèse que le traitement a un effet, donc on vérifie si cet effet peut être détecté (c’est-à-dire, si l’hypothèse nulle est rejetée par l’expérience).</p>
+<p>Dans d’autres contextes, l’hypothèse nulle est basée sur les prédictions d’un modèle qu’on souhaite tester. Par exemple, est-ce que les jours de pluie observés dans une année correspondent aux probabilités de précipitation prévues par les modèles météorologiques? Dans ce cas, le rejet de l’hypothèse nulle signifie que les observations sont incompatibles avec le modèle et donc que ce modèle doit être amélioré.</p>
+</div>
+<div id="elements-dun-test-dhypothese" class="section level2">
+<h2>Éléments d’un test d’hypothèse</h2>
+<p>À partir d’une hypothèse nulle donnée, la construction d’un test statistique requiert trois principaux éléments:</p>
+<ul>
+<li>une statistique qui mesure l’écart des observations par rapport à l’hypothèse nulle;</li>
+<li>la distribution de cette statistique sous l’hypothèse nulle; et</li>
+<li>un seuil de signification.</li>
+</ul>
+<p>Dans l’exemple vu au début de ce cours, nous avons calculé la statistique <span class="math inline">\(t\)</span> dont nous connaissons la distribution théorique, ce qui nous a permis de déterminer une valeur <span class="math inline">\(p\)</span>, soit la probabilité d’obtenir un écart égal ou supérieur à celui observé, si l’hypothèse nulle était vraie.</p>
+<p>Le seuil de signification (<span class="math inline">\(\alpha\)</span>) correspond à une probabilité qu’on considère assez petite pour rejeter l’hypothèse nulle si <span class="math inline">\(p \leq \alpha\)</span>. Pour des raisons historiques, le seuil le plus souvent utilisé dans est <span class="math inline">\(\alpha = 0.05\)</span>. Cela correspond à une probabilité de 5% de rejet erroné de l’hypothèse nulle.</p>
+<p>Le seuil <span class="math inline">\(\alpha\)</span> doit être choisi avant l’analyse des données.</p>
+</div>
+<div id="test-unilateral-ou-bilateral-1" class="section level2">
+<h2>Test unilatéral ou bilatéral</h2>
+<p>Pour un test bilatéral, on rejette une fraction <span class="math inline">\(\alpha / 2\)</span> de chaque extrême de la distribution (comme pour l’intervalle de confiance). Pour un test unilatéral, on rejette une fraction <span class="math inline">\(\alpha\)</span> d’une extrême de la distribution. Voici une illustration des deux cas avec <span class="math inline">\(\alpha = 0.05\)</span>.</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+</div>
+<div id="types-derreur-et-puissance-dun-test" class="section level1">
+<h1>Types d’erreur et puissance d’un test</h1>
+<div id="erreurs-de-type-i-et-ii" class="section level2">
+<h2>Erreurs de type I et II</h2>
+<p>Voici les quatre scénarios possibles selon que <span class="math inline">\(H_0\)</span> soit vraie ou fausse et qu’elle soit rejetée ou non:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>On ne rejette pas <span class="math inline">\(H_0\)</span></th>
+<th>On rejette <span class="math inline">\(H_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(H_0\)</span> vraie</td>
+<td>décision correcte</td>
+<td>erreur de type I</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(H_0\)</span> fausse</td>
+<td>erreur de type II</td>
+<td>décision correcte</td>
+</tr>
+</tbody>
+</table>
+<p><em>Note</em>: La vérité d’<span class="math inline">\(H_0\)</span> pour une hypothèse nulle du type <span class="math inline">\(\mu = 0\)</span> est plutôt une abstraction. En pratique, la différence entre deux traitements peut être très faible, mais ne sera jamais parfaitement nulle. Néanmoins, on peut concevoir une hypothèse nulle qui soit vraie à une certaine précision.</p>
+<p>Une <strong>erreur de type I</strong> survient lorsqu’on rejette <span class="math inline">\(H_0\)</span> bien que celle-ci soit vraie. Le seuil de signification <span class="math inline">\(\alpha\)</span> correspond à la probabilité de ce type d’erreur si <span class="math inline">\(H_0\)</span> est vraie.</p>
+<p>Une <strong>erreur de type II</strong> survient lorsqu’on ne rejette pas <span class="math inline">\(H_0\)</span> même si celle-ci est fausse. La probabilité de ce type d’erreur est désignée par <span class="math inline">\(\beta\)</span>. Plus souvent, on s’intéresse à (<span class="math inline">\(1 - \beta\)</span>), soit la probabilité de rejeter <span class="math inline">\(H_0\)</span> lorsque celle-ci est fausse (de détecter un écart significatif lorsqu’il y en a un). Cette probabilité se nomme la <strong>puissance</strong> du test.</p>
+<div id="question" class="section level3">
+<h3>Question</h3>
+<p>Dans notre exemple du début du cours, pourrions-nous calculer la puissance du test, soit la probabilité de détecter un biais de l’appareil avec l’échantillon de 9 mesures? De quelle information supplémentaire avons-nous besoin?</p>
+</div>
+</div>
+<div id="puissance-dun-test" class="section level2">
+<h2>Puissance d’un test</h2>
+<p>Contrairement au seuil de signification <span class="math inline">\(\alpha\)</span> qui est choisi par l’analyste, la puissance d’un test dépend (entre autres) de la valeur réelle de l’effet. Dans notre exemple, pour un <span class="math inline">\(\alpha\)</span> et un plan d’expérience fixes, il est plus facile de détecter un grand biais qu’un plus petit biais.</p>
+<p>Le calcul de la puissance d’un test <span class="math inline">\(t\)</span> est un problème assez complexe; dans R, vous pouvez utiliser les fonctions du package <strong>pwr</strong> pour effectuer ce calcul.</p>
+<p>Ici, nous simplifierons en supposant que la statistique de test suit une distribution normale (ce qui est approximativement correct si la taille de l’échantillon <span class="math inline">\(n\)</span> est élevé).</p>
+<p>Par exemple, calculons la puissance de notre test sur les données d’humidité (hypothèse nulle: <span class="math inline">\(\mu = 50\)</span>), si le biais réel est de 2, l’erreur-type est de 1 et le seuil <span class="math inline">\(\alpha = 0.05\)</span>. Dans ce cas, le biais réel correspond à une valeur centrée réduite <span class="math inline">\(z = 2\)</span>, soit 2 erreurs-types au-dessus de la moyenne prévue par l’hypothèse nulle.</p>
+<p>Puisque <span class="math inline">\(\alpha = 0.05\)</span> et que notre test est bilatéral, l’hypothèse nulle sera rejetée pour les valeurs de <span class="math inline">\(z\)</span> correspondant à une probabilité cumulative &lt; 0.025 et &gt; 0.975.</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Concentrons-nous pour l’instant sur la limite supérieure. La <strong>valeur critique</strong> de <span class="math inline">\(z\)</span> au-delà de laquelle on rejette l’hypothèse nulle peut être déterminée avec <code>qnorm</code>.</p>
+<pre class="r"><code>qnorm(0.975)</code></pre>
+<pre><code>## [1] 1.959964</code></pre>
+<p>En raison du biais, la moyenne mesurée à partir de l’échantillon suivra une distribution normale avec le même écart-type, mais centrée sur <span class="math inline">\(z = 2\)</span>. Cette distribution est la courbe en bleu sur le graphique ci-dessous.</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>La section coloriée en bleu correspond à la probabilité que l’hypothèse nulle soit rejetée, si la moyenne réelle est 2 erreurs-types au-dessus de celle prévue. Cette probabilité, la puissance du test, est d’environ 50%. La valeur exacte peut être calculée ainsi: 1 - (Probabilité que la moyenne obtenue soit plus petite que la valeur critique de <span class="math inline">\(z\)</span> selon l’hypothèse nulle).</p>
+<pre class="r"><code>1 - pnorm(qnorm(0.975), mean = 2)</code></pre>
+<pre><code>## [1] 0.5159678</code></pre>
+<div id="question-1" class="section level3">
+<h3>Question</h3>
+<ul>
+<li><p>Pour le même <span class="math inline">\(\alpha\)</span>, la puissance d’un test unilatéral (hypothèse alternative: <span class="math inline">\(\mu &gt; 50\)</span>) est-elle plus petite, égale ou plus grande à celle d’un test bilatéral?</p></li>
+<li><p>Si vous réalisez le test illustré par ce graphique et que vous obtenez un résultat significatif (rejet de l’hypothèse nulle), est-ce que le biais mesuré serait un bon estimé du biais réel de l’appareil? Pourquoi?</p></li>
+</ul>
+<p>Si on prend seulement la section coloriée en bleu du graphique ci-dessus, la moyenne de <span class="math inline">\(z\)</span> est égale à 2.77. Donc, dans les cas où l’on détecte un effect significatif, cet effet est surestimé.</p>
+<p>Voici un cas plus extrême, lorsque le biais réel est à <span class="math inline">\(z = 0.5\)</span> (l’effet réel est la moitié de l’erreur-type).</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Dans ce cas, nous avons:</p>
+<ul>
+<li>une probabilité de 92% de ne détecter aucun effet;</li>
+<li>une probabilité de 7% de détecter un effet, mais celui-ci sera fortement sur-estimé;</li>
+<li>une probabilité de 1% de détecter un effet de signe opposé à l’effet réel.</li>
+</ul>
+<p>Gelman et Carlin (2014) qualifient ces deux derniers cas d’erreurs de type M (erreur sur la magnitude de l’effet) et de type S (erreur sur le signe).</p>
+<p><small>Gelman, A. et Carlin, J. (2014) Beyond power calculations: Assessing type S (sign) and type M (magnitude) errors.</small></p>
+</div>
+</div>
+<div id="augmenter-la-puissance-dun-test" class="section level2">
+<h2>Augmenter la puissance d’un test</h2>
+<ul>
+<li><p>Un seuil de signification <span class="math inline">\(\alpha\)</span> plus élevé diminue le nombre d’erreurs de type II (meilleure puissance), mais augmente le nombre d’erreurs de type I (et de type S… détection erronée d’effets contraires).</p></li>
+<li><p>La seule façon de réduire tous ces types d’erreurs est d’augmenter la taille de l’échantillon. La taille d’échantillon appropriée dépend à la fois de la magnitude de l’effet qu’on souhaite mesurer et de la variabilité des données.</p></li>
+<li><p>On ne peut <em>pas</em> calculer la puissance après coup à partir de l’effet mesuré. Comme nous avons vu, cet effet peut êter fortement biaisé si la puissance réelle est faible.</p></li>
+</ul>
+</div>
+</div>
+<div id="applications-du-test-t" class="section level1">
+<h1>Applications du test t</h1>
+<div id="comparer-la-moyenne-dun-echantillon-a-une-valeur-de-reference-1" class="section level2">
+<h2>Comparer la moyenne d’un échantillon à une valeur de référence</h2>
+<p>La première application du test <span class="math inline">\(t\)</span> consiste à comparer la moyenne d’un échantillon à une valeur fixe (par exemple, une prédiction théorique ou une valeur de référence très précise).</p>
+<p>Répétons notre premier exemple, une comparaison d’un échantillon de 9 valeurs d’humidité à une moyenne de référence de 50, en utilisant cette fois-ci la fonction <code>t.test</code> dans R.</p>
+<pre class="r"><code>humidite &lt;- c(47, 50, 48, 50, 54, 49, 56, 52, 51)
+t.test(humidite, mu = 50)</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  humidite
+## t = 0.81511, df = 8, p-value = 0.4386
+## alternative hypothesis: true mean is not equal to 50
+## 95 percent confidence interval:
+##  48.57739 52.97816
+## sample estimates:
+## mean of x 
+##  50.77778</code></pre>
+<div id="question-2" class="section level3">
+<h3>Question</h3>
+<ol style="list-style-type: decimal">
+<li><p>Que signifie chacun des éléments de ce résultat de la fonction <code>t.test</code>?</p></li>
+<li><p>Quel est la relation entre un intervalle de confiance et un test d’hypothèse? Qu’est-ce que l’intervalle de confiance à 95% de <span class="math inline">\(\bar{x}\)</span> nous dit sur le résultat du test de l’hypothèse nulle <span class="math inline">\(\mu = 50\)</span> avec un seuil <span class="math inline">\(\alpha = 0.05\)</span>?</p></li>
+</ol>
+</div>
+</div>
+<div id="comparer-les-moyennes-de-deux-echantillons-independants" class="section level2">
+<h2>Comparer les moyennes de deux échantillons indépendants</h2>
+<p>Le tableau de données <code>InsectSprays</code> inclus avec R contient les données d’une expérience de Geoffrey Beall (1942) sur le nombre d’insectes (<code>count</code>) sur des placettes traitées avec différents insecticides (<code>spray</code>), avec 12 mesures indépendantes par type d’insecticide.</p>
+<pre class="r"><code>ggplot(InsectSprays, aes(x = spray, y = count)) + 
+    geom_boxplot()</code></pre>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Considérons un sous-ensemble des données composé des placettes traitées avec les produits A et B, et testons l’hypothèse nulle selon laquelle les deux produits ont la même efficacité: <span class="math inline">\(\mu_A = \mu_B\)</span>, ou de façon équivalente, <span class="math inline">\(\mu_A - \mu_B = 0\)</span>.</p>
+<p>Pour deux échantillons indépendants suivant chacun une distribution normale, la différence des moyennes <span class="math inline">\(\bar{x}_A - \bar{x}_B\)</span> divisée par son erreur-type suit aussi une distribution <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}\]</span> Il reste à déterminer l’erreur-type de la différence entre deux moyennes et le nombre de degrés de liberté de cette distribution <span class="math inline">\(t\)</span>.</p>
+<p>La variance d’une différence entre deux variables aléatoires indépendantes est égale à la somme des variances des variables prises séparément. Ainsi, on peut relier l’erreur-type de la différence à la variance et à la taille de chacun des deux échantillons.</p>
+<p><span class="math display">\[\sigma_{\bar{x}_A - \bar{x}_B}^2 = \sigma_{\bar{x}_A}^2 + \sigma_{\bar{x}_B}^2\]</span> <span class="math display">\[\sigma_{\bar{x}_A - \bar{x}_B}^2 = \frac{s_A^2}{n_A} + \frac{s_B^2}{n_B}\]</span> <span class="math display">\[\sigma_{\bar{x}_A - \bar{x}_B} = \sqrt{\frac{s_A^2}{n_A} + \frac{s_B^2}{n_B}}\]</span></p>
+<p>Le calcul du nombre de degrés de liberté est plus complexe. Selon l’approximation de Welch:</p>
+<p><span class="math display">\[df = \frac{\left(s_A^2 / n_A + s_B^2 / n_B \right)^2}{\frac{\left( s_A^2 / n_A \right) ^2}{n_A - 1} + \frac{\left( s_B^2/n_B \right)^2}{n_B - 1}}\]</span></p>
+<p>Voici le code pour comparer la moyenne des échantillons traités par les produits A et B avec <code>t.test</code>.</p>
+<pre class="r"><code>library(dplyr)
+insectesAB &lt;- filter(InsectSprays, spray %in% c(&quot;A&quot;, &quot;B&quot;))
+t.test(count ~ spray, data = insectesAB)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  count by spray
+## t = -0.45352, df = 21.784, p-value = 0.6547
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -4.646182  2.979515
+## sample estimates:
+## mean in group A mean in group B 
+##        14.50000        15.33333</code></pre>
+<p>Le premier argument de <code>t.test</code> est la formule <code>count ~ spray</code>. Ces formules sont utilisées dans plusieurs fonctions R pour définir des modèles statistiques. La variable précédent le symbole <code>~</code> est la variable dépendante (réponse), tandis que la variable suivant ce symbole est la variable indépendante (prédicteur, traitement).</p>
+<p>Si on sait que la variance de chaque groupe est égale, on peut spécifier <code>var.equal = TRUE</code>.</p>
+<pre class="r"><code>t.test(count ~ spray, data = insectesAB, var.equal = TRUE)</code></pre>
+<pre><code>## 
+##  Two Sample t-test
+## 
+## data:  count by spray
+## t = -0.45352, df = 22, p-value = 0.6546
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -4.643994  2.977327
+## sample estimates:
+## mean in group A mean in group B 
+##        14.50000        15.33333</code></pre>
+<p>Dans ce cas-ci, le résultat est quasiment identique, sauf pour une légère augmentation du nombre de degrés de liberté, et donc une légère réduction de la largeur de l’intervalle de confiance. Lorsque les groupes sont de même taille et que leurs variances sont semblables, les deux versions du test donnent des résultats semblables.</p>
+<p>La fonction <code>t.test</code> choisit <code>var.equal = FALSE</code> par défaut et dans le doute, il est préférable de supposer que les variances sont différentes. Il existe des tests pour déterminer si la variance de deux échantillons est identique, mais ces tests sont moins fiables que les tests comparant les moyennes, surtout lorsque la distribution de la variable n’est pas exactement normale.</p>
+<div id="question-3" class="section level3">
+<h3>Question</h3>
+<p>Si on s’intéresse seulement au cas où l’insecticide B est plus efficace que A, quelle est l’hypothèse nulle et l’hypothèse alternative sur la valeur de <span class="math inline">\(\bar{x}_A - \bar{x}_B\)</span>?</p>
+<p>Pour faire un test unilatéral, il faut définir l’argument <code>alternative</code> de <code>t.test</code> comme étant <code>less</code> ou <code>greater</code>. Dans le cas où notre hypothèse alternative est <span class="math inline">\(\bar{x}_A - \bar{x}_B &gt; 0\)</span>, on spécifie <code>alternative = "greater"</code>.</p>
+<pre class="r"><code>t.test(count ~ spray, data = insectesAB, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  count by spray
+## t = -0.45352, df = 21.784, p-value = 0.6727
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -3.989891       Inf
+## sample estimates:
+## mean in group A mean in group B 
+##        14.50000        15.33333</code></pre>
+</div>
+</div>
+<div id="comparaison-de-la-moyenne-de-deux-groupes-apparies" class="section level2">
+<h2>Comparaison de la moyenne de deux groupes appariés</h2>
+<p>Supposons que nous souhaitons comparer les mesures d’humidité du sol prises par deux appareils aux mêmes 9 points sur une placette. Notre hypothèse nulle est que la moyenne des mesures est la même pour les deux appareils.</p>
+<pre class="r"><code>humi &lt;- data.frame(
+    point = 1:9,
+    mesureA = c(50.0, 51.1, 48.0, 50.0, 51.1, 55.7, 54.3, 46.0, 50.7),
+    mesureB = c(49.6, 52.2, 48.3, 50.2, 52.0, 56.1, 54.5, 46.8, 51.7)
+)
+humi</code></pre>
+<pre><code>##   point mesureA mesureB
+## 1     1    50.0    49.6
+## 2     2    51.1    52.2
+## 3     3    48.0    48.3
+## 4     4    50.0    50.2
+## 5     5    51.1    52.0
+## 6     6    55.7    56.1
+## 7     7    54.3    54.5
+## 8     8    46.0    46.8
+## 9     9    50.7    51.7</code></pre>
+<p>Il s’agit de mesures appariées (une paire de mesures par point), donc nous utilisons l’argument <code>paired = TRUE</code> de la fonction <code>t.test</code>.</p>
+<pre class="r"><code>t.test(humi$mesureA, humi$mesureB, paired = TRUE)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  humi$mesureA and humi$mesureB
+## t = -3.0779, df = 8, p-value = 0.01516
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.8746025 -0.1253975
+## sample estimates:
+## mean of the differences 
+##                    -0.5</code></pre>
+<p>Notez que ce test est équivalent à un test <span class="math inline">\(t\)</span> à un échantillon, qui comparerait la moyenne des neufs différences (une par paire) à la valeur 0.</p>
+<pre class="r"><code>humi &lt;- mutate(humi, diff = mesureA - mesureB)
+t.test(humi$diff)</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  humi$diff
+## t = -3.0779, df = 8, p-value = 0.01516
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  -0.8746025 -0.1253975
+## sample estimates:
+## mean of x 
+##      -0.5</code></pre>
+<div id="exercice-2" class="section level3">
+<h3>Exercice</h3>
+<p>Interprétez le résultat du test apparié ci-dessus et comparez-le au test suivant qui suppose que les deux échantillons sont indépendants.</p>
+<pre class="r"><code>t.test(humi$mesureA, humi$mesureB)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  humi$mesureA and humi$mesureB
+## t = -0.3629, df = 16, p-value = 0.7214
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.420809  2.420809
+## sample estimates:
+## mean of x mean of y 
+##  50.76667  51.26667</code></pre>
+<p>Lorsque deux groupes sont appariés, le nombre de degrés de liberté du test <span class="math inline">\(t\)</span> est plus petit, puisque nous avons 9 paires indépendantes plutôt que 18 points indépendants. Malgré cela, la puissance du test augmente si l’utilisation de paires permet de séparer l’effet du traitement d’autres sources de variation qui influencent la réponse entre les paires. Ici, on veut séparer la différence de mesure de l’humidité entre les deux appareils de la variation de l’humidité entre différents points de la placette.</p>
+</div>
+</div>
+</div>
+<div id="validite-des-resultats-du-test-t" class="section level1">
+<h1>Validité des résultats du test t</h1>
+<div id="suppositions-du-test-t" class="section level2">
+<h2>Suppositions du test t</h2>
+<p>Le test <span class="math inline">\(t\)</span> requiert que:</p>
+<ul>
+<li><p>les observations soient indépendantes les unes des autres (pour les groupes appariées, les paires d’observations doivent être indépendantes); et</p></li>
+<li><p>les observations proviennent d’une distribution normale.</p></li>
+</ul>
+<p>L’indépendance des observations dépend de l’échantillonnage ou du plan d’expérience (échantillonnage aléatoire ou assignation aléatoire des traitements).</p>
+</div>
+<div id="normalite-des-donnees" class="section level2">
+<h2>Normalité des données</h2>
+<ul>
+<li><p>Le test <span class="math inline">\(t\)</span> est plutôt robuste, c’est-à-dire que ses conclusions sont peu affectées par des déviations faibles à modérées de la supposition de normalité.</p></li>
+<li>Il existe des tests de la normalité d’un échantillon (ex.: test de Shapiro-Wilk). Toutefois, ceux-ci sont rarement nécessaires.
+<ul>
+<li>Avec un échantillon de grande taille, la distribution de la moyenne de l’échantillon est presque normale (théorème de la limite centrale) même si les données ne le sont pas.</li>
+<li>Avec un échantillon de petite taille, la puissance du test de normalité est faible.</li>
+</ul></li>
+<li>Le test <span class="math inline">\(t\)</span> est moins fiable lorsque la distribution est fortement asymétrique ou comporte des valeurs extrêmes aberrantes (<em>outliers</em>).
+<ul>
+<li>Dans le premier cas, une transformation (ex.: logarithmique) peut produire une distribution plus symétrique qui convient au test <span class="math inline">\(t\)</span>.</li>
+<li>Dans le deuxième cas, on a recours à des méthodes moins sensibles aux valeurs extrêmes (plus robustes).</li>
+</ul></li>
+</ul>
+</div>
+<div id="autres-options-en-alternative-au-test-t" class="section level2">
+<h2>Autres options en alternative au test t</h2>
+<p>Le test de <strong>Wilcoxon-Mann-Whitney</strong> est basé le rang des observations. Pour le test bilatéral avec deux échantillons A et B indépendants, l’hypothèse nulle est qu’en tirant au hasard un élément de chaque groupe <span class="math inline">\(x_A\)</span> et <span class="math inline">\(x_B\)</span>, les probabilités <span class="math inline">\(P(x_A &gt; x_B)\)</span> et <span class="math inline">\(P(x_A &lt; x_B)\)</span> sont égales. Habituellement, cela équivaut à affirmer que la médiane est la même pour les deux groupes.</p>
+<p>Ce test est effectué par la fonction <code>wilcox.test</code> dans R, dont la structure est semblable à <code>t.test</code>.</p>
+<p>Puisque le test est basé sur l’ordre des observations plutôt que leur valeur, il est moins sensible aux valeurs extrêmes, comme la médiane est moins sensible aux valeurs extrêmes que la moyenne.</p>
+<p>Toutefois, étant un test non-paramétrique (qui ne dépend pas d’une distribution spécifique des observations), le test de Wilcoxon-Mann-Whitney ne fournit qu’une valeur <span class="math inline">\(p\)</span>, sans estimer la taille de l’effet ou son intervalle de confiance. De plus, il n’est pas conçu pour comparer deux échantillons de variance inégale.</p>
+<p>D’autres méthodes non-paramétriques sont basées sur un ré-échantillonnage des observations afin d’obtenir un intervalle de confiance. Ce type de méthodes, dont le <em>bootstrap</em>, feront partie du cours avancé de statistiques (ECL 8202, offert à la session hiver).</p>
+</div>
+</div>
+<div id="rappel" class="section level1">
+<h1>Rappel</h1>
+<ul>
+<li>Concepts généraux des tests d’hypothèese
+<ul>
+<li>Hypothèse nulle et alternative</li>
+<li>Test unilatéral et bilatéral</li>
+<li>Statistique, distribution de référence et seuil de signification</li>
+<li>Puissance d’un test</li>
+</ul></li>
+<li>Utilisation du test t
+<ul>
+<li>Comparer la moyenne d’un échantillon à une valeur de référence</li>
+<li>Comparer la moyenne de deux échantillons indépendants ou appariés</li>
+<li>Suppositions: indépendance des observations, distribution normale de la moyenne</li>
+</ul></li>
+</ul>
+</div>
+<div id="presentation-et-interpretation-des-tests-dhypothese" class="section level1">
+<h1>Présentation et interprétation des tests d’hypothèse</h1>
+<p>Les tests d’hypothèse sont souvant mal utilisés dans la littérature scientifique. Cette dernière section présente donc quelques points à surveiller au sujet de l’utilisation et de l’interprétation de ces tests.</p>
+<div id="eviter-les-tests-inutiles" class="section level2">
+<h2>Éviter les tests inutiles</h2>
+<p>Pour justifier la présentation d’un test d’hypothèse, l’hypothèse nulle doit être plausible. Par exemple, s’il n’y a aucun doute qu’une variable a un effet sur la réponse mesurée, il suffit d’estimer cet effet et indiquer son intervalle de confiance.</p>
+</div>
+<div id="la-valeur-p-nest-quune-partie-du-resultat" class="section level2">
+<h2>La valeur p n’est qu’une partie du résultat</h2>
+<p>Le graphique ci-dessous montre l’estimation de deux effets avec leur intervalle de confiance à 95%. Les deux effets sont significativement différents de zéro avec une valeur <span class="math inline">\(p\)</span> = 0.01.</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Une petite valeur <span class="math inline">\(p\)</span> indique qu’il est très improbable d’avoir observé un effet donné si l’hypothèse nulle est vraie. Elle n’indique pas la magnitude de l’effet sur la variable mesurée. C’est pourquoi il est important de non seulement indiquer le résultat du test d’hypothèse avec sa valeur <span class="math inline">\(p\)</span>, mais aussi une estimation de la taille de l’effet avec un intervalle de confiance.</p>
+<p>Dans le graphique suivant, les deux effets ont le même intervalle de confiance. Toutefois, la distribution des valeurs observées (points) est différente.</p>
+<p><img src="4-Tests_hypothese_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>En résumé, il faut communiquer au moins trois résultats d’un test statistique:</p>
+<ul>
+<li>la probabilité que l’effet mesuré soit dû au hasard (valeur <span class="math inline">\(p\)</span>);</li>
+<li>l’estimé et l’intervalle de confiance de l’effet mesuré; et</li>
+<li>la magnitude de l’effet comparée à la variance des données individuelles.</li>
+</ul>
+</div>
+<div id="statistiquement-significatif-negale-pas-important" class="section level2">
+<h2>(Statistiquement) significatif n’égale pas important</h2>
+<p>En réalité, il est rare que l’effet d’un traitement soit exactement zéro. Dans ce cas, avec un échantillon assez grand et un seuil <span class="math inline">\(\alpha\)</span> constant, on pourra toujours détecter un effet significatif.</p>
+<p>Par exemple, en 2014, une étude controversée produite par des statisticiens de Facebook avait montré qu’une manipulation expérimentale des sujets négatifs et positifs apparaissant sur le fil de nouvelles des abonnés au site pouvait affecter le nombre de mots positifs et négatifs des les messages écrits par ces mêmes abonnés. La taille de l’échantillon est immense (<span class="math inline">\(n\)</span> d’environ 700,000) et les effets mesurés sont minuscules.</p>
+<p><img src="../images/fb1.PNG" width="200" /><img src="../images/fb2.PNG" width="200" /></p>
+<p>Aussi, notez qu’un diagramme à barres doit <em>toujours</em> inclure le zéro de l’axe. Dans le cas contraire, comme on voit ici, la différence entre la longueur des barres surestime la magnitude de l’effet.</p>
+<p>Si un test statistique démontre qu’un effet n’est pas dû au hasard de l’échantillonnage, il en revient aux chercheurs de déterminer si l’effet estimé est important dans le contexte du sujet d’étude.</p>
+</div>
+<div id="attention-aux-comparaisons-multiples" class="section level2">
+<h2>Attention aux comparaisons multiples</h2>
+<p>Par définition, un test d’hypothèse réalisé avec <span class="math inline">\(\alpha\)</span> = 0.05 va commettre une erreur de type I une fois sur 20. Ainsi, lorsqu’on effectue plusieurs tests dans une même étude, la probabilité qu’un des tests détecte un effet dû seulement au hasard de l’échantillonnage augmente. Nous verrons certaines solutions au problème des comparaisons multiples dans le prochain cours.</p>
+<p>Aussi, rappelons-nous qu’un taux d’erreur de type I de 5% n’est pas négligeable, surtout lorsqu’on considère le nombre d’études publiant des tests d’hypothèses à chaque année. La publication d’une étude montrant avec <span class="math inline">\(p &lt; 0.05\)</span> ne signifie pas que l’hypothèse nulle est définitivement rejetée. De plus, comme nous l’avons vu plus haut, lorsque la puissance statistique est faible, les résultats qui dépassent le seuil de signification peuvent fortement surestimer l’effet réel. Il est donc prudent de faire preuve de scepticisme envers une étude montrant un effet plus grand que prévu si la taille de l’échantillon est faible. La réplication du résultat significatif sur un autre site est un bon moyen de confirmer l’existence d’un effet.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
