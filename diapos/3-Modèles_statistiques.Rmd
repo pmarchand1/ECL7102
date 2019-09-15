@@ -821,6 +821,19 @@ Afin d'estimer la densité moyenne du bois de pin gris sur un site, vous échant
 
 ---
 
+# Questions éclair
+
+Supposons que la variable $x$ représente l'âge d'un individu dans un peuplement de trembles, et $F$ est sa distribution cumulative.
+
+a) Comment interprétez-vous la valeur de $F$ lorsque $x$ = 30 ans, $F(30)$? 
+
+b) Comment pouvez-vous calculer la probabilité qu'un arbre de ce peuplement ait plus que 50 ans?
+
+c) Supposons que $x$ suit une distribution normale avec une moyenne de 40 ans et un écart-type de 6 ans. En transformant cette variable dans sa forme centrée réduite $z$, quelle valeur de $z$ correspond à $x$ = 28 ans?
+
+
+---
+
 class: inverse, middle
 
 # Intervalle de confiance

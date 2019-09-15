@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Tests d’hypothèse</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Tests d’hypothèse
+### <br/>16 septembre 2019
+
+---
+
+
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { font-size: 50% }
+
+&lt;/style&gt;
+
+# Objectifs
+
+- Décrire le fonctionnement général d'un test d'hypothèse statistique.
+
+- Définir des concepts liés à la précision d'un test: seuil de signification, puissance, erreurs de type I et II.
+
+- Utiliser le test `\(t\)` pour comparer la moyenne de deux échantillons indépendants ou appariés.
+
+---
+
+# Moyenne comparée à une référence
+
+Nous voulons vérifier l'absence de biais d'un humidimètre, en mesurant l'humidité relative du sol à 9 endroits dans une placette de 1 m&lt;sup&gt;2&lt;/sup&gt;. Nous savons que la vraie moyenne est 50%.
+
+
+```r
+humidite &lt;- c(47, 50, 48, 50, 54, 49, 56, 52, 51)
+humid_moy &lt;- mean(humidite)
+humid_et &lt;- sd(humidite) / sqrt(length(humidite))
+c(round(humid_moy, 2), round(humid_et, 2))
+```
+
+```
+## [1] 50.78  0.95
+```
+
+---
+
+# Moyenne comparée à une référence
+
+- Supposons que ces mesures suivent une distribution normale. 
+
+- Si l'appareil n'était pas biaisé (si `\(\mu\)` = 50), quelle serait la probabilité que la moyenne de l'échantillon `\(\bar{x}\)` soit aussi éloignée de `\(\mu\)`?
+
+---
+
+# Moyenne comparée à une référence
+
+Si `\(\mu\)` = 50, l'écart entre `\(\bar{x}\)` et `\(\mu\)`, divisé par l'erreur-type, suit une distribution `\(t\)` avec `\(n - 1\)` degrés de liberté:
+
+$$ t_{n-1} = \frac{\bar{x} - \mu}{s / \sqrt{n}} $$
+
+--
+
+
+```r
+humid_t &lt;- (humid_moy - 50) / humid_et
+humid_t
+```
+
+```
+## [1] 0.8151115
+```
+
+---
+
+# Moyenne comparée à une référence
+
+Probabilité d'une valeur `\(t\)` plus élevée que celle de notre échantillon, si `\(\mu\)` = 50:
+
+
+```r
+1 - pt(humid_t, df = 8)
+```
+
+```
+## [1] 0.2192996
+```
+
+--
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+
+# Moyenne comparée à une référence
+
+Probabilité d'obtenir un plus grand écart, positif ou négatif (valeur *p*): 0.438.
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+
+# Test d'une hypothèse statistique
+
+Un test d'hypothèse statistique vise à déterminer si une variation observée dans un échantillon de données est compatible avec un modèle "par défaut" (l'hypothèse nulle), ou si les observations sont si improbables selon cette hypothèse nulle qu'elle doit être rejetée au profit d'une hypothèse alternative.
+
+---
+
+# Hypothèse nulle et alternative
+
+- L'hypothèse nulle correspond souvent à une absence d'effet: aucune différence entre deux traitements, absence de corrélation entre deux variables, etc. 
+
+- Dans notre exemple précédent, l'hypothèse nulle `\(H_0\)` est `\(\mu = 50\)`. L'hypothèse alternative `\(H_a\)` est sa négation: `\(\mu \neq 50\)`.
+
+---
+
+# Exercice
+
+Quelle est l'hypothèse nulle correspondant à chacune des hypothèses alternatives suivantes?
+
+a) La densité des semis de sapins varie selon la pente dans une parcelle.
+
+b) Ce nouvel insecticide est plus efficace que le traitement existant contre l'agrile du frêne.
+
+---
+
+
+# Test unilatéral ou bilatéral
+
+- L'exemple (b) de l'exercice est un test unilatéral. 
+
+- Si `\(\mu_T\)` est l'effet du nouveau traitement et `\(\mu_R\)` celui du traitement de référence, `\(H_0\)` est `\(\mu_T \leq \mu_R\)` et `\(H_a\)` est `\(\mu_T &gt; \mu_R\)`. 
+
+--
+
+- L'exemple de l'humidimètre est un test bilatéral. `\(H_a\)`: `\(\mu \neq 50\)` est équivalente à l'union de deux hypothèse unilatérales: `\(\mu &lt; 50\)` ou `\(\mu &gt; 50\)`.
+
+- Le choix d'un test unilatéral ou bilatéral doit être fait à l'avance et dépend de la question qui nous intéresse.
+
+---
+
+# Exercice
+
+Quel serait un exemple d'hypothèse nulle et d'hypothèse alternative dans votre domaine de recherche?
+
+---
+
+# Hypothèse scientifique vs. statistique
+
+- Souvent, l'hypothèse alternative correspond à l'hypothèse du projet scientifique. Par exemple, on fait l'hypothèse que le traitement a un effet, donc on vérifie si cet effet peut être détecté (si l'hypothèse nulle peut être rejetée).
+
+--
+
+- L'hypothèse nulle peut aussi être basée sur les prédictions d'un modèle du système étudié. Dans ce cas, son rejet signifie que les observations sont incompatibles avec le modèle.
+
+---
+
+# Éléments d'un test d'hypothèse
+
+- Une fois l'hypothèse choisie, la construction d'un test statistique requiert:
+    * une statistique qui mesure l'écart des observations par rapport à l'hypothèse nulle;
+    * la distribution de cette statistique sous l'hypothèse nulle; et
+    * un seuil de signification.
+
+--
+
+- La valeur `\(p\)` est la probabilité d'obtenir un écart égal ou supérieur à celui observé, si l'hypothèse nulle était vraie. 
+
+--
+
+- Le seuil de signification `\(\alpha\)` est la probabilité qu'on considère assez petite pour rejeter l'hypothèse nulle si `\(p \leq \alpha\)`. 
+
+--
+
+- Pour des raisons historiques, le plus souvent `\(\alpha\)` = 0.05. `\(\alpha\)` doit être choisi avant l'analyse des données.
+
+---
+
+# Test unilatéral ou bilatéral
+
+- Pour un test bilatéral, on rejette une fraction `\(\alpha / 2\)` de chaque extrême de la distribution. 
+
+- Pour un test unilatéral, on rejette une fraction `\(\alpha\)` d'une extrême de la distribution.
+
+--
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+---
+
+class: inverse, middle
+
+# Types d'erreur et puissance d'un test
+
+---
+
+# Erreurs de type I et II
+
+Quatre scénarios possibles selon que `\(H_0\)` soit vraie ou fausse et qu'elle soit rejetée ou non:
+
+|            |  On ne rejette pas `\(H_0\)` | On rejette `\(H_0\)` |
+|----------- |--------------------------|------------------|
+| `\(H_0\)` vraie |    décision correcte     | erreur de type I |
+| `\(H_0\)` fausse|    erreur de type II     | décision correcte|
+
+
+--
+
+- `\(\alpha\)` est à la probabilité d'erreur de type I si `\(H_0\)` est vraie.
+
+- `\(\beta\)` est la probabilité d'erreur de type II si `\(H_a\)` est vraie. La **puissance** du test correspond à (1 - `\(\beta\)`).
+
+---
+
+# Question
+
+Dans notre exemple du début du cours, pourrions-nous calculer la puissance du test, soit la probabilité de détecter un biais de l'appareil avec l'échantillon de 9 mesures? De quelle information supplémentaire avons-nous besoin?
+
+---
+
+# Puissance d'un test
+
+- Le seuil de signification `\(\alpha\)` est fixé par l'analyste, mais la puissance d'un test dépend (entre autres) de la valeur réelle de l'effet. 
+
+--
+
+- Dans notre exemple, pour un `\(\alpha\)` et un plan d'expérience fixes, il est plus facile de détecter un grand biais qu'un plus petit biais.
+
+--
+
+- Pour calculer la puissance d'un test `\(t\)`: package **pwr** dans R.
+
+---
+
+# Puissance d'un test
+
+- Supposons que la statistique du test suit une distribution normale centrée réduite `\(z\)` (bonne approximation pour `\(n\)` élevé).
+
+- Supposons que le biais réel est 2 fois l'erreur-type.
+
+--
+
+- Avec `\(\alpha = 0.05\)` l'hypothèse nulle est rejetée si `\(F(z) &lt; 0.025\)` ou `\(F(z) &gt; 0.975\)` (prob. cumul.).
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+
+# Puissance d'un test
+
+- Moyenne de l'échantillon suit une distribution normale centrée sur `\(z = 2\)` (biais réel).
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+
+# Puissance d'un test
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+- Puissance du test: Probabilité que la moyenne obtenue soit plus grande que la valeur critique de `\(z\)` correspondant à `\(F(z) = 0.975\)`
+
+--
+
+
+```r
+1 - pnorm(qnorm(0.975), mean = 2)
+```
+
+```
+## [1] 0.5159678
+```
+
+---
+
+# Questions
+
+(a) Pour le même `\(\alpha\)`, la puissance d'un test unilatéral (hypothèse alternative: `\(\mu &gt; 50\)`) est-elle plus petite, égale ou plus grande à celle d'un test bilatéral?
+
+(b) Pour le test illustré, si on obtient un résultat significatif (rejet de l'hypothèse nulle), est-ce que le biais mesuré est un bon estimé du biais réel de l'appareil? Pourquoi?
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+
+# Puissance d'un test
+
+Si le biais réel est à `\(z = 0.5\)` (1/2 erreur-type).
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+--
+
+- Erreur de type M (magnitude) ou S (signe).
+
+---
+
+# Augmenter la puissance d'un test
+
+- Augmenter `\(\alpha\)`: la puissance augmente, mais aussi le nombre d'erreurs de type I (et de type S).
+
+--
+
+- Seule façon de réduire tous ces types d'erreurs: augmenter la taille de l'échantillon `\(n\)`.
+
+--
+
+- `\(n\)` doit être choisi en fonction de la magnitude de l'effet qu'on souhaite mesurer et de la variabilité des données. 
+
+--
+
+- Il ne faut *pas* calculer la puissance après coup à partir de l'effet mesuré.
+
+---
+
+class: inverse, middle
+
+# Applications du test t
+
+---
+
+# Moyenne comparée à une référence
+
+**Exemple**: Comparaison d'un échantillon de 9 valeurs d'humidité à une moyenne de référence de 50.
+
+
+```r
+humidite &lt;- c(47, 50, 48, 50, 54, 49, 56, 52, 51)
+t.test(humidite, mu = 50)
+```
+
+```
+## 
+## 	One Sample t-test
+## 
+## data:  humidite
+## t = 0.81511, df = 8, p-value = 0.4386
+## alternative hypothesis: true mean is not equal to 50
+## 95 percent confidence interval:
+##  48.57739 52.97816
+## sample estimates:
+## mean of x 
+##  50.77778
+```
+
+---
+
+# Question
+
+
+```
+## 
+## 	One Sample t-test
+## 
+## data:  humidite
+## t = 0.81511, df = 8, p-value = 0.4386
+## alternative hypothesis: true mean is not equal to 50
+## 95 percent confidence interval:
+##  48.57739 52.97816
+## sample estimates:
+## mean of x 
+##  50.77778
+```
+
+--
+
+1. Que signifie chacun des éléments de ce résultat de la fonction `t.test`?
+
+2. Quel est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de `\(\bar{x}\)` nous dit sur le résultat du test de l'hypothèse nulle `\(\mu = 50\)` avec un seuil `\(\alpha = 0.05\)`?
+
+---
+
+# Comparer deux moyennes
+
+- Jeu de données `InsectSprays` inclus avec R: nombre d'insectes (`count`) sur des placettes traitées avec différents insecticides (`spray`), 12 mesures indépendantes par produit. 
+
+--
+
+
+```r
+ggplot(InsectSprays, aes(x = spray, y = count)) + 
+    geom_boxplot()
+```
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+
+---
+
+# Comparer deux moyennes
+
+
+```r
+ggplot(InsectSprays, aes(x = spray, y = count)) + 
+    geom_boxplot()
+```
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+- Testons l'hypothèse nulle selon laquelle produits A et B ont la même efficacité: `\(\mu_A - \mu_B = 0\)`. 
+
+---
+
+# Différence entre deux moyennes
+
+Pour deux échantillons indépendants suivant chacun une distribution normale, la différence des moyennes `\(\bar{x}_A - \bar{x}_B\)` divisée par son erreur-type suit aussi une distribution `\(t\)`:
+
+`$$t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}$$`
+---
+
+# Différence entre deux moyennes
+
+La variance d'une différence entre deux variables aléatoires indépendantes est égale à la somme des variances des variables prises séparément.
+
+`$$\sigma_{\bar{x}_A - \bar{x}_B}^2 = \sigma_{\bar{x}_A}^2 + \sigma_{\bar{x}_B}^2$$`
+
+--
+
+&lt;br/&gt;
+`$$\sigma_{\bar{x}_A - \bar{x}_B} = \sqrt{\frac{s_A^2}{n_A} + \frac{s_B^2}{n_B}}$$`
+
+---
+
+# Différence entre deux moyennes
+
+Nombre de degrés de liberté donné par l'approximation de Welch:
+
+`$$df = \frac{\left(s_A^2 / n_A + s_B^2 / n_B \right)^2}{\frac{\left( s_A^2 / n_A \right) ^2}{n_A - 1} + \frac{\left( s_B^2/n_B \right)^2}{n_B - 1}}$$`
+
+---
+
+# Comparer deux moyennes
+
+
+```r
+library(dplyr)
+insectesAB &lt;- InsectSprays[InsectSprays$spray %in% c("A", "B"), ]
+t.test(count ~ spray, data = insectesAB)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  count by spray
+## t = -0.45352, df = 21.784, p-value = 0.6547
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -4.646182  2.979515
+## sample estimates:
+## mean in group A mean in group B 
+##        14.50000        15.33333
+```
+
+---
+
+# Comparer deux moyennes
+
+- Si on sait que la variance de chaque groupe est égale, on peut spécifier `var.equal = TRUE`.
+
+
+```r
+t.test(count ~ spray, data = insectesAB, var.equal = TRUE)
+```
+
+```
+## 
+## 	Two Sample t-test
+## 
+## data:  count by spray
+## t = -0.45352, df = 22, p-value = 0.6546
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -4.643994  2.977327
+## sample estimates:
+## mean in group A mean in group B 
+##        14.50000        15.33333
+```
+
+---
+
+# Comparer deux moyennes
+
+- Si on sait que la variance de chaque groupe est égale, on peut spécifier `var.equal = TRUE`.
+
+- Par défaut, `var.equal = FALSE`. Dans le doute, mieux vaut supposer que les variances sont différentes.
+
+---
+
+# Question
+
+Si on s'intéresse seulement au cas où l'insecticide B est plus efficace que A, quelle est l'hypothèse nulle et l'hypothèse alternative sur la valeur de `\(\bar{x}_A - \bar{x}_B\)`?
+
+---
+
+# Test t unilatéral
+
+Dans le cas où notre hypothèse alternative est `\(\bar{x}_A - \bar{x}_B &gt; 0\)`, on spécifie `alternative = "greater"`.
+
+
+```r
+t.test(count ~ spray, data = insectesAB, alternative = "greater")
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  count by spray
+## t = -0.45352, df = 21.784, p-value = 0.6727
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -3.989891       Inf
+## sample estimates:
+## mean in group A mean in group B 
+##        14.50000        15.33333
+```
+
+---
+
+# Moyennes de groupes appariés
+
+**Exemple**: Comparons les mesures d'humidité du sol prises par deux appareils aux mêmes 9 points sur une placette. `\(H_0\)`: même moyenne des mesures pour les deux appareils.
+
+
+```
+##   point mesureA mesureB
+## 1     1    50.0    49.6
+## 2     2    51.1    52.2
+## 3     3    48.0    48.3
+## 4     4    50.0    50.2
+## 5     5    51.1    52.0
+## 6     6    55.7    56.1
+## 7     7    54.3    54.5
+## 8     8    46.0    46.8
+## 9     9    50.7    51.7
+```
+
+---
+
+# Moyennes de groupes appariés
+
+Il s'agit de mesures appariées (une paire de mesures par point), donc nous spécifions `paired = TRUE`.
+
+
+```r
+t.test(humi$mesureA, humi$mesureB, paired = TRUE)
+```
+
+```
+## 
+## 	Paired t-test
+## 
+## data:  humi$mesureA and humi$mesureB
+## t = -3.0779, df = 8, p-value = 0.01516
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.8746025 -0.1253975
+## sample estimates:
+## mean of the differences 
+##                    -0.5
+```
+
+---
+
+# Moyennes de groupes appariés
+
+Ce test est équivalent à un test `\(t\)` pour un échantillon (comparaison du vecteur des différences à une valeur de référence 0).
+
+
+```r
+humi$diff &lt;- humi$mesureA - humi$mesureB
+t.test(humi$diff)
+```
+
+```
+## 
+## 	One Sample t-test
+## 
+## data:  humi$diff
+## t = -3.0779, df = 8, p-value = 0.01516
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  -0.8746025 -0.1253975
+## sample estimates:
+## mean of x 
+##      -0.5
+```
+
+---
+
+# Exercice
+
+.small[
+
+Comparez le test avec données appariées (haut) au résultat supposant des échantillons indépendants (bas).
+
+
+```
+## 
+## 	Paired t-test
+## 
+## data:  humi$mesureA and humi$mesureB
+## t = -3.0779, df = 8, p-value = 0.01516
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.8746025 -0.1253975
+## sample estimates:
+## mean of the differences 
+##                    -0.5
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  humi$mesureA and humi$mesureB
+## t = -0.3629, df = 16, p-value = 0.7214
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.420809  2.420809
+## sample estimates:
+## mean of x mean of y 
+##  50.76667  51.26667
+```
+
+]
+
+---
+
+# Exercice
+
+- Avec deux groupes appariés, le nombre de degrés de liberté est plus petit.
+
+- Néanmoins, la puissance augmente si l'expérience par paires aide à isoler l'effet du traitement.
+
+---
+
+# Suppositions du test t
+
+- Le test `\(t\)` requiert que:
+
+    * les observations soient indépendantes les unes des autres (pour les groupes appariées, les paires d'observations doivent être indépendantes); et
+    * les observations proviennent d'une distribution normale.
+    
+--
+
+- L'indépendance des observations dépend de l'échantillonnage ou du plan d'expérience (échantillonnage aléatoire ou assignation aléatoire des traitements).
+
+---
+
+# Normalité des données
+
+- Le test `\(t\)` est plutôt robuste (peu affecté par des déviations modérées de la distribution normale).
+
+--
+
+- On peut tester la normalité d'un échantillon (ex.: test de Shapiro-Wilk), mais cela est rarement utile.
+
+--
+
+- Le test `\(t\)` est moins fiable lorsque la distribution est fortement asymétrique ou comporte des valeurs extrêmes aberrantes (*outliers*). 
+
+    * Pour les cas d'asymétrie, considérer une transformation des données (ex.: logarithmique).
+    * On peut avoir recours à des méthodes moins sensibles aux valeurs extrêmes (plus robustes). 
+
+---
+
+# Autres options en alternative au test t
+
+Test de **Wilcoxon-Mann-Whitney**
+
+- Basé le rang des observations. 
+
+--
+
+- Pour le test bilatéral avec deux échantillons indépendants, `\(H_0\)`: pour deux éléments au hasard `\(x_A\)` et `\(x_B\)`, `\(P(x_A &gt; x_B)\)` et `\(P(x_A &lt; x_B)\)` sont égales. 
+--
+
+- Cette hypothèse nulle équivaut à affirmer que la médiane est la même pour les deux groupes.
+
+---
+
+# Autres options en alternative au test t
+
+Test de **Wilcoxon-Mann-Whitney**
+
+- Effectué par la fonction `wilcox.test` dans R.
+
+--
+
+- Moins sensible aux valeurs extrêmes (basé sur l'ordre des observations, pas leurs différences).
+
+--
+
+- Test non-paramétrique: ne fournit qu'une valeur `\(p\)`, sans estimer la taille de l'effet ou son intervalle de confiance. 
+
+- Pas conçu pour comparer deux échantillons de variance inégale.
+
+---
+
+# Autres options en alternative au test t
+
+- D'autres méthodes non-paramétriques sont basées sur un ré-échantillonnage des observations afin d'obtenir un intervalle de confiance. 
+
+--
+
+- Ce type de méthodes, dont le *bootstrap*, feront partie du cours avancé de statistiques (ECL 8202, offert à la session hiver).
+
+---
+
+# Rappel
+
+- Concepts généraux des tests d'hypothèse
+
+    * Hypothèse nulle et alternative
+    * Test unilatéral et bilatéral
+    * Statistique, distribution de référence et seuil de signification
+    * Puissance d'un test
+    
+--
+    
+- Utilisation du test t
+
+    * Comparer la moyenne d'un échantillon à une valeur de référence
+    * Comparer la moyenne de deux échantillons indépendants ou appariés
+    * Suppositions: indépendance des observations, distribution normale de la moyenne
+    
+---
+
+class: inverse, middle
+
+# Présentation et interprétation des tests d'hypothèse
+
+---
+
+# Éviter les tests inutiles
+
+- Pour justifier la présentation d'un test d'hypothèse, l'hypothèse nulle doit être plausible. 
+
+--
+
+- S'il n'y a aucun doute qu'une variable a un effet sur la réponse mesurée, il suffit d'estimer cet effet et indiquer son intervalle de confiance.
+
+---
+
+# La valeur `\(p\)` n'indique pas tout
+
+Les deux effets ci-dessous ont une valeur `\(p\)` = 0.01.
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+
+---
+
+# La valeur `\(p\)` n'indique pas tout
+
+Les deux effets ont le même intervalle de confiance, mais la distribution des observations est différente.
+
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+
+---
+
+# La valeur `\(p\)` n'indique pas tout
+
+En résumé, il faut communiquer au moins trois résultats d'un test statistique:
+ 
+- la probabilité que l'effet mesuré soit dû au hasard (valeur `\(p\)`);
+
+- l'estimé et l'intervalle de confiance de l'effet mesuré; et
+
+- la magnitude de l'effet comparée à la variance des données individuelles.
+
+---
+
+# Effet significatif vs. important
+
+- L'effet d'un traitement n'est jamais exactement zéro.
+
+--
+
+- Avec un échantillon assez grand et un seuil `\(\alpha\)` constant, on pourra toujours détecter un effet significatif.
+
+---
+
+# Effet significatif vs. important
+
+**Exemple**: Étude de Facebook (2014) manipulant la présence de nouvelles positives et négatives ( `\(n\)` ~700,000, taille de l'effet ~0.1%).
+
+&lt;img src="../images/fb1.PNG"&gt;
+&lt;img src="../images/fb2.PNG"&gt;
+
+---
+
+# Attention aux comparaisons multiples
+
+- Par définition, un test d'hypothèse réalisé avec `\(\alpha\)` = 0.05 va commettre une erreur de type I une fois sur 20. 
+
+- Lorsqu'on effectue plusieurs tests dans une même étude, la probabilité d'une erreur de type I augmente.
+
+--
+
+- Nous verrons certaines solutions au problème des comparaisons multiples lors des prochain cours.
+
+---
+
+# Attention aux comparaisons multiples
+
+- La publication d'une étude montrant avec `\(p &lt; 0.05\)` ne signifie pas que l'hypothèse nulle est définitivement rejetée.
+
+--
+
+- Faire preuve de scepticisme envers une étude montrant un effet plus grand que prévu si la taille de l'échantillon est faible. 
+
+--
+
+- La réplication du résultat significatif sur un autre site est un bon moyen de confirmer l'existence d'un effet.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
