@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="date" content="2019-09-18" />
+
+<title>Parameter estimation and hypothesis testing</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Parameter estimation and hypothesis testing</h1>
+<h4 class="date">September 18, 2019</h4>
+
+</div>
+
+
+<p>In this lab, you will apply the concepts seen during the last two classes.</p>
+<div id="flower-measurements-of-three-iris-species" class="section level2">
+<h2>1. Flower measurements of three iris species</h2>
+<p>For this exercise, we will use Edgar Anderson’s famous iris data set, which contains different measurements taken on 50 flowers of 3 iris species. This data frame is already loaded into R under the name <code>iris</code>.</p>
+<pre class="r"><code>data(iris)
+head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>We will first visualize some of the data. Using <em>ggplot2</em>, produce a scatter plot relating the length and width of the sepals (<code>Sepal.Length</code> and<code>Sepal.Width</code>), differentiating the points of each species by color.</li>
+</ol>
+<p>How would you calculate the mean of <code>Sepal.Width</code> for species <em>setosa</em> and its 95% confidence interval?</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>What quantities do you need for this calculation?</p></li>
+<li><p>Calculate the mean of <code>Sepal.Width</code> for species <em>setosa</em> and its standard error.</p></li>
+<li><p>During the class on statistical distributions, we saw the functions <code>rnorm</code>,<code>dnorm</code>, <code>pnorm</code> and<code>qnorm</code> which calculate values from the normal distribution. Similar functions exist for the <span class="math inline">\(t\)</span> distribution (<code>rt</code>,<code>dt</code>, <code>pt</code>,<code>qt</code>). Let’s use the function <code>qt(p, df)</code> to determine the interval corresponding to 95% of the probability. What values of <span class="math inline">\(p\)</span> (cumulative probability) should we use? How many degrees of freedom (<span class="math inline">\(df\)</span>) based on sample size <span class="math inline">\(n\)</span>?</p></li>
+<li><p>Calculate the 95% confidence interval for the mean calculated in (c). How can you interpret this interval?</p></li>
+</ol>
+</div>
+<div id="choice-of-sampling-methods" class="section level2">
+<h2>2. Choice of sampling methods</h2>
+<p>Imagine you want to determine the mean and standard deviation of the growth rate of yellow birch seedlings in a given region. Your sampling unit is a 1 m<span class="math inline">\(^2\)</span> quadrat where the annual growth of seedlings is measured. Which sampling method would you recommend for the placement of these quadrats according to the different scenarios presented, and why? You can choose stratified, cluster, systematic, or adaptive sampling.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>The stands of this species in the area are relatively similar but far apart.</p></li>
+<li><p>Growth could be strongly influenced by the north-south temperature gradient at the scale considered.</p></li>
+<li><p>The species is found in several distinct stand types covering different proportions of the territory (eg 70% type A, 25% type B, 5% type C).</p></li>
+<li><p>It is a rare species in the region and its distribution is little known.</p></li>
+</ol>
+</div>
+<div id="stratified-sampling-simulation" class="section level2">
+<h2>3. Stratified sampling simulation</h2>
+<p>For this exercise, we will compare simple and stratified sampling from simulated samples from the iris data frame.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Create a boxplot of the distribution of the petal length by species.</p></li>
+<li><p>Create two functions <code>iris_alea</code> and<code>iris_strat</code>. The first function chooses 30 random observations of <code>iris</code>, then returns the mean of <code>Petal.Length</code> for these observations. The second chooses 10 random observations from each of the three species, then returns the mean of <code>Petal.Length</code> (overall mean, not by species).</p></li>
+</ol>
+<p><em>Notes</em>:</p>
+<ul>
+<li><p>The <code>sample(x, size)</code> function in R simulates sampling a number of values (given by <em>size</em>) from the values in vector <em>x</em>.</p></li>
+<li><p>You can write these functions without arguments (empty parentheses after <code>function</code>), as in the example below.</p></li>
+</ul>
+<pre class="r"><code>iris_alea &lt;- function() {
+    # Insert function code here
+}</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Generate a vector of 1000 results of each function with <code>replicate</code>, as follows:</li>
+</ol>
+<pre class="r"><code>rep_alea &lt;- replicate(1000, iris_alea())
+rep_strat &lt;- replicate(1000, iris_strat())</code></pre>
+<p>Calculate the standard error of each mean (from the standard deviation of <code>rep_alea</code> and <code>rep_strat</code>). Before running the calculation, can you predict which method will be more precise and why?</p>
+</div>
+<div id="ozone-concentration-in-three-gardens" class="section level2">
+<h2>4. Ozone concentration in three gardens</h2>
+<p>For this exercise, we will use the <a href="gardens.csv">gardens.csv</a> dataset, which comes from Michael Crawley’s book <em>Statistics: An Introduction Using R</em>. These data represent ozone concentrations (in parts per 100 million or pphm) measured in three gardens (A, B and C) on different days.</p>
+<pre class="r"><code>gardens &lt;- read.csv(&quot;gardens.csv&quot;)</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Observe the distribution of ozone measurements in each garden. What type of graph could you use?</p></li>
+<li><p>What is the mean and standard deviation of the ozone concentration in each garden? Is the mean a good indicator of the “typical” value in each garden?</p></li>
+</ol>
+<p><em>Note</em>: The function <code>tapply(X, INDEX, FUN)</code> applies a function given by <em>FUN</em> to vector <em>X</em> separately for each factor given by <em>INDEX</em>. Therefore we can calculate the mean ozone concentration by garden with <code>tapply(gardens$Ozone, gardens$Garden, mean)</code>.</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li><p>From these data, test the null hypothesis that gardens A and B receive the same mean ozone concentration. What is your estimate of the difference between the mean and its 99% confidence interval? Does this test give a good idea of the difference between the two gardens? Explain your answer.</p></li>
+<li><p>Repeat the previous exercise for the null hypothesis that gardens A and C receive the same average ozone concentration. Comment on the difference between this result and the previous result.</p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
