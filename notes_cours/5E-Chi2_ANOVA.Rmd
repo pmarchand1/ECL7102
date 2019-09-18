@@ -1,6 +1,6 @@
 ---
 title: "Chi-squared test and ANOVA"
-date: "<br/>September 24, 2018"
+date: "<br/>September 23, 2019"
 output:
     html_document:
         self_contained: false
@@ -74,7 +74,13 @@ $$ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} $$
 
 The chi-squared statistic thus measures the sum of the deviations between the observed and expected frequencies (normalized by the expected value). When the $\hat{f_i}$ for each category are large enough (typically, 5 or more), this statistic roughly follows a $\chi^2_{k-1}$ distribution, where $k - 1 $is the number degrees of freedom.
 
-<img src="../images/khi_carre.PNG" width="600">
+**Reminder**: The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the $\chi^2$ is calculated from the deviations between observed and expected frequencies for $k$ categories. However, since the sum of the deviations must equal 0 (because the total of $f_i$ and $\hat{f_i}$ is the same) there are $k - 1$ independent deviations.
+
+$$ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} $$, thus $$\sum_{i=1}^k (f_i - \hat{f_i}) = 0$$
+
+Here is the distribution of $\chi^2_{k}$ for different values of $k$:
+
+![](../images/khi_carre.PNG)
 
 In R, the `pchisq(q, df)` function gives the probability of getting a value less than or equal to $q$ for a chi-squared distribution with $df$ degrees of freedom. Let's calculate this probability for our example.
 
@@ -102,18 +108,6 @@ Rather than manually calculating the statistic, we can use the `chisq.test` func
 ```{r}
 chisq.test(x, p = p)
 ```
-
-## Degrees of freedom
-
-The chi-squared distribution, like the $t$ distribution we used in the previous class, has a parameter for the number of degrees of freedom. The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the $\chi^2$ is calculated from the deviations between observed and expected frequencies for $k$ categories. However, since the sum of the deviations must equal 0 (because the total of $f_i$ and $\hat{f_i}$ is the same) there are $k - 1$ independent deviations.
-
-$$ \sum_{i=1}^n f_i = \sum_{i=1}^n \hat{f_i} $$, thus $$\sum_{i=1}^n (f_i - \hat{f_i}) = 0$$
-
-Similarly, the estimate of the standard deviation for a sample of size $n$:
-
-$$ s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2} $$
-
-has $n - 1$ degrees of freedom, since the sum of the deviations from the mean is zero. The $t$ statistic for a sample, which is based on this $s$ calculation, also has $n - 1$ degrees of freedom.
 
 
 # Test of association between two categorical variables
@@ -277,7 +271,7 @@ If the null hypothesis is correct and there are no systematic differences betwee
 
 If *MSA* and *MSE* are two estimators of the same variance under the null hypothesis, then their ratio $F = MSA / MSE$ follows the $F$ distribution. This distribution has two parameters ($d_1$ and $d_2$) corresponding to the degrees of freedom of *MSA* and *MSE*.
 
-<img src="../images/distr_f.png" width="600">
+![](../images/distr_f.PNG)
 
 Conversely, if the null hypothesis is false, the value of *MSA* is expected to be higher than *MSE*, since systematic differences between groups will be added to the random variations in sampling. It is therefore a one-sided test: the $p$-value is the probability of a $F$ ratio equal to or greater than the one observed in the data.
 

@@ -1,6 +1,6 @@
 ---
 title: "Tableaux de contingence et ANOVA"
-date: "<br/>24 septembre 2018"
+date: "<br/>23 septembre 2019"
 output:
     html_document:
         self_contained: false
@@ -75,7 +75,13 @@ $$ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} $$
 
 La statistique $\chi^2$ mesure donc la somme des déviations entre les fréquences observées et attendues (normalisées par la valeur attendue). Lorsque les $\hat{f_i}$ pour chaque catégorie sont assez grandes (typiquement, 5 ou plus), cette statistique suit approximativement une distribution $\chi^2_{k-1}$, où $k - 1$ est le nombre de degrés de liberté.
 
-<img src="../images/khi_carre.PNG" width="600">
+**Rappel**: Le nombre de degrés de liberté correspond au nombre de valeurs indépendantes utilisées pour le calcul d'une statistique. Ici, le $\chi^2$ est calculé à partir des déviations entre fréquence observée et fréquence attendue pour $k$ catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des $f_i$ et des $\hat{f_i}$ est le même) il y a $k - 1$ déviations indépendantes.
+
+$$ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} $$, donc $$\sum_{i=1}^k (f_i - \hat{f_i}) = 0$$
+
+Voici la distribution $\chi^2_{k}$ pour différentes valeurs de $k$:
+
+![](../images/khi_carre.PNG)
 
 Dans R, la fonction `pchisq(q, df)` donne la probabilité d'obtenir une valeur inférieure ou égale à $q$ pour une distribution $\chi^2$ avec $df$ degrés de liberté. Calculons cette probabilité pour notre exemple.
 
@@ -103,18 +109,6 @@ Plutôt que de calculer manuellement la statistique, nous pouvons utiliser la fo
 ```{r}
 chisq.test(x, p = p)
 ```
-
-## Degrés de liberté
-
-La distribution $\chi^2$, comme la distribution $t$ que nous avons utilisée au dernier cours, a pour paramètre le nombre de degrés de liberté. Les degrés de liberté correspondent au nombre de données indépendantes utilisées dans le calcul d'une statistique. Ici, le $\chi^2$ est calculé à partir des déviations entre fréquence observée et fréquence attendue pour $k$ catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des $f_i$ et des $\hat{f_i}$ est le même) il y a $k - 1$ déviations indépendantes.
-
-$$ \sum_{i=1}^n f_i = \sum_{i=1}^n \hat{f_i} $$, donc $$\sum_{i=1}^n (f_i - \hat{f_i}) = 0$$
-
-De façon similaire, l'estimation de l'écart-type d'un échantillon de taille $n$:
-
-$$ s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2} $$
-
-a $n - 1$ degrés de liberté, puisque la somme des écarts à la moyenne est de zéro. La statistique $t$ pour un échantillon, qui est base sur ce calcul de $s$, a aussi $n - 1$ degrés de liberté.
 
 
 # Test d'association entre deux variables catégorielles
@@ -280,7 +274,7 @@ Si l'hypothèse nulle est exacte et qu'il n'y a pas de différence systématique
 
 Si *MSA* et *MSE* sont deux estimateurs de la même variance selon l'hypothèse nulle, alors leur ratio $F = MSA / MSE$ suit la distribution $F$. Cette distribution comporte deux paramètres ($d_1$ et $d_2$) correspondant aux degrés de liberté de *MSA* et *MSE*. 
 
-<img src="../images/distr_f.png" width="600">
+![](../images/distr_f.PNG)
 
 
 En contrepartie, si l'hypothèse nulle est fausse, on s'attend à ce que la valeur de *MSA* soit plus élevée par rapport à *MSE*, puisque les différences systématiques entre groupes s'ajouteront aux variations aléatoires de l'échantillonnage. Il s'agit donc d'un test unilatéral: la valeur $p$ est la probabilité d'un ratio $F$ égal ou supérieur à celui observé dans nos données.

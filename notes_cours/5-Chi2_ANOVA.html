@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Tableaux de contingence et ANOVA</h1>
-<h4 class="date"><em><br/>24 septembre 2018</em></h4>
+<h4 class="date"><br/>23 septembre 2019</h4>
 
 </div>
 
@@ -229,11 +298,11 @@ div.tocify {
 <p>Au dernier cours, nous avons utilisé le test <span class="math inline">\(t\)</span> pour déterminer si la valeur moyenne d’une variable différait entre deux groupes. L’analyse de la variance (ANOVA) dont nous commencerons à discuter aujourd’hui permet d’étendre cette comparaison à plusieurs groupes.</p>
 <p>De façon plus générale, nous pourrions dire que le test <span class="math inline">\(t\)</span> et l’ANOVA portent sur l’effet de prédicteurs catégoriels (ex.: différents traitements) sur une réponse numérique. Un autre test que nous utiliserons ce cours-ci est le test du <span class="math inline">\(\chi^2\)</span>, qui vise à détecter une association entre deux variables catégorielles.</p>
 <p>Plus tard dans la session, nous nous concentrerons sur les modèles de régression. Ceux-ci ont une portée plus large puisqu’ils permettent de relier une variable réponse à des prédicteurs catégoriels et numériques. En particulier, nous verrons que le test <span class="math inline">\(t\)</span> et l’ANOVA sont des exemples de modèles de régression linéaire.</p>
-<table style="width:96%;">
+<table>
 <colgroup>
-<col width="31%" />
-<col width="36%" />
-<col width="27%" />
+<col width="33%" />
+<col width="37%" />
+<col width="28%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -365,7 +434,10 @@ div.tocify {
 <p>Pour une variable avec <span class="math inline">\(k\)</span> catégories, la valeur du <span class="math inline">\(\chi^2\)</span> (khi-carré) est calculée ainsi:</p>
 <p><span class="math display">\[ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} \]</span></p>
 <p>La statistique <span class="math inline">\(\chi^2\)</span> mesure donc la somme des déviations entre les fréquences observées et attendues (normalisées par la valeur attendue). Lorsque les <span class="math inline">\(\hat{f_i}\)</span> pour chaque catégorie sont assez grandes (typiquement, 5 ou plus), cette statistique suit approximativement une distribution <span class="math inline">\(\chi^2_{k-1}\)</span>, où <span class="math inline">\(k - 1\)</span> est le nombre de degrés de liberté.</p>
-<p><img src="../images/khi_carre.PNG" width="600"></p>
+<p><strong>Rappel</strong>: Le nombre de degrés de liberté correspond au nombre de valeurs indépendantes utilisées pour le calcul d’une statistique. Ici, le <span class="math inline">\(\chi^2\)</span> est calculé à partir des déviations entre fréquence observée et fréquence attendue pour <span class="math inline">\(k\)</span> catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des <span class="math inline">\(f_i\)</span> et des <span class="math inline">\(\hat{f_i}\)</span> est le même) il y a <span class="math inline">\(k - 1\)</span> déviations indépendantes.</p>
+<p><span class="math display">\[ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} \]</span>, donc <span class="math display">\[\sum_{i=1}^k (f_i - \hat{f_i}) = 0\]</span></p>
+<p>Voici la distribution <span class="math inline">\(\chi^2_{k}\)</span> pour différentes valeurs de <span class="math inline">\(k\)</span>:</p>
+<p><img src="../images/khi_carre.PNG" /></p>
 <p>Dans R, la fonction <code>pchisq(q, df)</code> donne la probabilité d’obtenir une valeur inférieure ou égale à <span class="math inline">\(q\)</span> pour une distribution <span class="math inline">\(\chi^2\)</span> avec <span class="math inline">\(df\)</span> degrés de liberté. Calculons cette probabilité pour notre exemple.</p>
 <pre class="r"><code># Données
 x &lt;- c(12, 17, 16, 18, 11, 26)
@@ -389,14 +461,6 @@ khi2</code></pre>
 ## 
 ## data:  x
 ## X-squared = 8.6, df = 5, p-value = 0.1261</code></pre>
-</div>
-<div id="degres-de-liberte" class="section level2">
-<h2>Degrés de liberté</h2>
-<p>La distribution <span class="math inline">\(\chi^2\)</span>, comme la distribution <span class="math inline">\(t\)</span> que nous avons utilisée au dernier cours, a pour paramètre le nombre de degrés de liberté. Les degrés de liberté correspondent au nombre de données indépendantes utilisées dans le calcul d’une statistique. Ici, le <span class="math inline">\(\chi^2\)</span> est calculé à partir des déviations entre fréquence observée et fréquence attendue pour <span class="math inline">\(k\)</span> catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des <span class="math inline">\(f_i\)</span> et des <span class="math inline">\(\hat{f_i}\)</span> est le même) il y a <span class="math inline">\(k - 1\)</span> déviations indépendantes.</p>
-<p><span class="math display">\[ \sum_{i=1}^n f_i = \sum_{i=1}^n \hat{f_i} \]</span>, donc <span class="math display">\[\sum_{i=1}^n (f_i - \hat{f_i}) = 0\]</span></p>
-<p>De façon similaire, l’estimation de l’écart-type d’un échantillon de taille <span class="math inline">\(n\)</span>:</p>
-<p><span class="math display">\[ s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2} \]</span></p>
-<p>a <span class="math inline">\(n - 1\)</span> degrés de liberté, puisque la somme des écarts à la moyenne est de zéro. La statistique <span class="math inline">\(t\)</span> pour un échantillon, qui est base sur ce calcul de <span class="math inline">\(s\)</span>, a aussi <span class="math inline">\(n - 1\)</span> degrés de liberté.</p>
 </div>
 </div>
 <div id="test-dassociation-entre-deux-variables-categorielles" class="section level1">
@@ -553,12 +617,12 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 </ul>
 <p>Notez que la somme des degrés de liberté est la même des deux côtés de l’équation: <span class="math inline">\(nl - 1 = (n-1)l + (l - 1)\)</span>.</p>
 <p>La somme des écarts au carré, les degrés de liberté et les écarts au carré moyens peuvent être présentés dans un tableau d’ANOVA.</p>
-<table style="width:32%;">
+<table style="width:100%;">
 <colgroup>
-<col width="2%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
+<col width="5%" />
+<col width="31%" />
+<col width="31%" />
+<col width="31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -598,7 +662,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p>La moyenne du carré des résidus (<em>MSE</em>) est un estimateur de la variance du modèle (<span class="math inline">\(\sigma^2\)</span>).</p>
 <p>Si l’hypothèse nulle est exacte et qu’il n’y a pas de différence systématique entre les groupes (autrement dit, tous les <span class="math inline">\(\alpha_i\)</span> sont égaux à 0 dans le modèle), alors la moyenne du carré des différences de groupe (<em>MSA</em>) est aussi un estimateur de <span class="math inline">\(\sigma^2\)</span>. En effet, selon l’hypothèse nulle, les différents groupes sont des échantillons indépendants de la même population. Dans ce cas, le terme <em>MSA</em> correspond à la variance de <span class="math inline">\(\bar{y_i}\)</span> multipliée par <span class="math inline">\(n\)</span> (le nombre d’observations par groupe). La variance d’une moyenne de <span class="math inline">\(n\)</span> observations est justement égale à <span class="math inline">\(\sigma^2 / n\)</span>, où <span class="math inline">\(\sigma^2\)</span> est la variance des observations individuelles.</p>
 <p>Si <em>MSA</em> et <em>MSE</em> sont deux estimateurs de la même variance selon l’hypothèse nulle, alors leur ratio <span class="math inline">\(F = MSA / MSE\)</span> suit la distribution <span class="math inline">\(F\)</span>. Cette distribution comporte deux paramètres (<span class="math inline">\(d_1\)</span> et <span class="math inline">\(d_2\)</span>) correspondant aux degrés de liberté de <em>MSA</em> et <em>MSE</em>.</p>
-<p><img src="../images/distr_f.png" width="600"></p>
+<p><img src="../images/distr_f.PNG" /></p>
 <p>En contrepartie, si l’hypothèse nulle est fausse, on s’attend à ce que la valeur de <em>MSA</em> soit plus élevée par rapport à <em>MSE</em>, puisque les différences systématiques entre groupes s’ajouteront aux variations aléatoires de l’échantillonnage. Il s’agit donc d’un test unilatéral: la valeur <span class="math inline">\(p\)</span> est la probabilité d’un ratio <span class="math inline">\(F\)</span> égal ou supérieur à celui observé dans nos données.</p>
 </div>
 <div id="suppositions-du-modele-danova" class="section level2">

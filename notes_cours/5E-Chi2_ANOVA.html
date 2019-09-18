@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-09-24" />
+<meta name="date" content="2019-09-23" />
 
 <title>Chi-squared test and ANOVA</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Chi-squared test and ANOVA</h1>
-<h4 class="date"><em><br/>September 24, 2018</em></h4>
+<h4 class="date"><br/>September 23, 2019</h4>
 
 </div>
 
@@ -230,11 +299,11 @@ div.tocify {
 <p>At the last class, we used the <span class="math inline">\(t\)</span>-test to determine if the mean value of a variable differed between two groups. The analysis of variance (ANOVA), which we will start discussing today, makes it possible to extend this comparison to several groups.</p>
 <p>More generally, we could say that the <span class="math inline">\(t\)</span>-test and ANOVA deal with the effect of categorical predictors (e.g. different treatments) on a numerical response. Another test that we will use in this class is the chi-squared test, which aims to detect an association between two categorical variables.</p>
 <p>Later this semester, we will focus on regression models. These are broader in scope because they link a response variable to categorical and numerical predictors. In particular, we will see that the <span class="math inline">\(t\)</span>-test and ANOVA are examples of linear regression models.</p>
-<table style="width:96%;">
+<table>
 <colgroup>
-<col width="31%" />
-<col width="36%" />
-<col width="27%" />
+<col width="33%" />
+<col width="37%" />
+<col width="28%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -366,7 +435,10 @@ div.tocify {
 <p>For a variable with <span class="math inline">\(k\)</span> categories, the value of the chi-squared (<span class="math inline">\(\chi^2\)</span>) statistic is calculated as:</p>
 <p><span class="math display">\[ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} \]</span></p>
 <p>The chi-squared statistic thus measures the sum of the deviations between the observed and expected frequencies (normalized by the expected value). When the <span class="math inline">\(\hat{f_i}\)</span> for each category are large enough (typically, 5 or more), this statistic roughly follows a <span class="math inline">\(\chi^2_{k-1}\)</span> distribution, where $k - 1 $is the number degrees of freedom.</p>
-<p><img src="../images/khi_carre.PNG" width="600"></p>
+<p><strong>Reminder</strong>: The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the <span class="math inline">\(\chi^2\)</span> is calculated from the deviations between observed and expected frequencies for <span class="math inline">\(k\)</span> categories. However, since the sum of the deviations must equal 0 (because the total of <span class="math inline">\(f_i\)</span> and <span class="math inline">\(\hat{f_i}\)</span> is the same) there are <span class="math inline">\(k - 1\)</span> independent deviations.</p>
+<p><span class="math display">\[ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} \]</span>, thus <span class="math display">\[\sum_{i=1}^k (f_i - \hat{f_i}) = 0\]</span></p>
+<p>Here is the distribution of <span class="math inline">\(\chi^2_{k}\)</span> for different values of <span class="math inline">\(k\)</span>:</p>
+<p><img src="../images/khi_carre.PNG" /></p>
 <p>In R, the <code>pchisq(q, df)</code> function gives the probability of getting a value less than or equal to <span class="math inline">\(q\)</span> for a chi-squared distribution with <span class="math inline">\(df\)</span> degrees of freedom. Let’s calculate this probability for our example.</p>
 <pre class="r"><code># Data
 x &lt;- c(12, 17, 16, 18, 11, 26)
@@ -390,14 +462,6 @@ khi2</code></pre>
 ## 
 ## data:  x
 ## X-squared = 8.6, df = 5, p-value = 0.1261</code></pre>
-</div>
-<div id="degrees-of-freedom" class="section level2">
-<h2>Degrees of freedom</h2>
-<p>The chi-squared distribution, like the <span class="math inline">\(t\)</span> distribution we used in the previous class, has a parameter for the number of degrees of freedom. The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the <span class="math inline">\(\chi^2\)</span> is calculated from the deviations between observed and expected frequencies for <span class="math inline">\(k\)</span> categories. However, since the sum of the deviations must equal 0 (because the total of <span class="math inline">\(f_i\)</span> and <span class="math inline">\(\hat{f_i}\)</span> is the same) there are <span class="math inline">\(k - 1\)</span> independent deviations.</p>
-<p><span class="math display">\[ \sum_{i=1}^n f_i = \sum_{i=1}^n \hat{f_i} \]</span>, thus <span class="math display">\[\sum_{i=1}^n (f_i - \hat{f_i}) = 0\]</span></p>
-<p>Similarly, the estimate of the standard deviation for a sample of size <span class="math inline">\(n\)</span>:</p>
-<p><span class="math display">\[ s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2} \]</span></p>
-<p>has <span class="math inline">\(n - 1\)</span> degrees of freedom, since the sum of the deviations from the mean is zero. The <span class="math inline">\(t\)</span> statistic for a sample, which is based on this <span class="math inline">\(s\)</span> calculation, also has <span class="math inline">\(n - 1\)</span> degrees of freedom.</p>
 </div>
 </div>
 <div id="test-of-association-between-two-categorical-variables" class="section level1">
@@ -554,12 +618,12 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 </ul>
 <p>Notice that the sum of the degrees of freedom is the same on both sides of the equation: <span class="math inline">\(nl - 1 = (n-1) l + (l - 1)\)</span>.</p>
 <p>The sum of squared deviations, degrees of freedom and mean squared deviations can be presented in an ANOVA table.</p>
-<table style="width:32%;">
+<table style="width:100%;">
 <colgroup>
-<col width="2%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
+<col width="5%" />
+<col width="31%" />
+<col width="31%" />
+<col width="31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -599,7 +663,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p>The mean of squared residuals (<em>MSE</em>) is an estimator of the variance in that model (<span class="math inline">\(\sigma^2\)</span>).</p>
 <p>If the null hypothesis is correct and there are no systematic differences between groups (that is, all <span class="math inline">\(\alpha_i\)</span> are equal to 0 in the model), then the mean of squared group differences (<em>MSA</em>) is also an estimator of <span class="math inline">\(\sigma^2\)</span>. Indeed, according to the null hypothesis, the different groups are independent samples of the same population. In this case, the term <em>MSA</em> corresponds to the variance of <span class="math inline">\(\bar{y_i}\)</span> multiplied by <span class="math inline">\(n\)</span> (the number of observations per group). The variance of a mean of <span class="math inline">\(n\)</span> observations is precisely equal to <span class="math inline">\(\sigma^2 / n\)</span>, where <span class="math inline">\(\sigma^2\)</span> is the variance of the individual observations.</p>
 <p>If <em>MSA</em> and <em>MSE</em> are two estimators of the same variance under the null hypothesis, then their ratio <span class="math inline">\(F = MSA / MSE\)</span> follows the <span class="math inline">\(F\)</span> distribution. This distribution has two parameters (<span class="math inline">\(d_1\)</span> and <span class="math inline">\(d_2\)</span>) corresponding to the degrees of freedom of <em>MSA</em> and <em>MSE</em>.</p>
-<p><img src="../images/distr_f.png" width="600"></p>
+<p><img src="../images/distr_f.PNG" /></p>
 <p>Conversely, if the null hypothesis is false, the value of <em>MSA</em> is expected to be higher than <em>MSE</em>, since systematic differences between groups will be added to the random variations in sampling. It is therefore a one-sided test: the <span class="math inline">\(p\)</span>-value is the probability of a <span class="math inline">\(F\)</span> ratio equal to or greater than the one observed in the data.</p>
 </div>
 <div id="assumptions-of-the-anova-model" class="section level2">
