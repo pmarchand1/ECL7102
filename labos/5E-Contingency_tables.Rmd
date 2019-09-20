@@ -1,10 +1,10 @@
 ---
 title: "Contingency tables"
-date: "September 26, 2018"
+date: "September 25, 2019"
 output: pdf_document
 ---
 
-Answers for this lab must be submitted before **October 3rd at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **October 2nd at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Floral selection of a bumblebee species
@@ -13,9 +13,9 @@ By following the foraging activity of bumblebees *Bombus impatiens* on a site, y
 
 | Genus | Number of visits | Proportions of the flowers of the site |
 |---------+ ---+ ------|
-| *Rubus* | 6 | 0.12 |
+| *Rubus* | 8 | 0.12 |
 | *Solidago* | 8 | 0.24 |
-| *Trifolium* | 20 | 0.33 |
+| *Trifolium* | 18 | 0.33 |
 | *Vaccinium* | 11 | 0.31 |
 
 The null hypothesis for this study is that *B. impatiens* visits each genus in proportion to its prevalence on the site.
@@ -32,8 +32,8 @@ On the same site as the previous exercise, you observe the foraging activity of 
 | | *Rubus* | *Solidago* | *Trifolium* | *Vaccinium* |
 |-+---------+------------+-------------+-------------|
 | *B. affinis* | 10 | 9 | 15 | 8 |
-| *B. impatiens* | 6 | 8 | 20 | 11 |
-| *B. ternarius* | 18 | 4 | 11 | 5 |
+| *B. impatiens* | 8 | 8 | 18 | 11 |
+| *B. ternarius* | 20 | 4 | 6 | 5 |
 
 a) What null hypothesis can you test from this table? What is the alternative hypothesis?
 
@@ -52,7 +52,8 @@ Here are three questions related to urban forestry. For which of these questions
 
 a) Does the mean age of trees in different neighborhoods of a city increase with the mean age of houses in the neighborhood?
 
-b) Does the presence of a large tree affect the energy cost of a home?
+b) Does the distribution of planted tree species differ between neighborhoods?
 
-c) Does the distribution of planted tree species differ between neighborhoods?
+c) Does the presence of a large tree affect the energy cost of a home?
+
 

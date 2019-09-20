@@ -1,10 +1,10 @@
 ---
 title: "Tableaux de contingence"
-date: "26 septembre 2018"
+date: "25 septembre 2019"
 output: pdf_document
 ---
 
-Ce laboratoire doit être remis le **3 octobre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **2 octobre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Sélection florale d'une espèce de bourdon
@@ -13,9 +13,9 @@ En suivant l'activité de butinage de bourdons fébriles (*Bombus impatiens*) su
 
 | Genre | Nombre de visites | Proportions des fleurs du site |
 |---------+---+------|
-| *Rubus* | 6 | 0.12 |
+| *Rubus* | 8 | 0.12 |
 | *Solidago* | 8 | 0.24 |
-| *Trifolium* | 20 | 0.33 |
+| *Trifolium* | 18 | 0.33 |
 | *Vaccinium* | 11 | 0.31 |
 
 L'hypothèse nulle pour cette étude est que *B. impatiens* visite chaque genre proportionnellement à sa prévalence sur le site.
@@ -32,8 +32,8 @@ Sur le même site que l'exercice précédent, vous observez l'activité de butin
 | | *Rubus* | *Solidago* | *Trifolium* | *Vaccinium* |
 |-+---------+------------+-------------+-------------|
 | *B. affinis* | 10 | 9 | 15 | 8 |
-| *B. impatiens* | 6 | 8 | 20 | 11 |
-| *B. ternarius* | 18 | 4 | 11 | 5 |
+| *B. impatiens* | 8 | 8 | 18 | 11 |
+| *B. ternarius* | 20 | 4 | 6 | 5 |
 
 a) Quelle hypothèse nulle pouvez-vous tester à partir de ce tableau? Quelle est l'hypothèse alternative?
 
@@ -52,9 +52,9 @@ Voici trois questions de foresterie urbaine. Pour laquelle de ces questions le t
 
 a) Est-ce que l'âge moyen des arbres dans différents quartiers d'une ville augmente avec l'âge moyen des maisons du quartier?
 
-b) La présence d'un grand arbre affecte-t-elle le coût en énergie d'une maison?
+b) Est-ce que la distribution des espèces d'arbres plantés diffère entre les quartiers?
 
-c) Est-ce que la distribution des espèces d'arbres plantés diffère entre les quartiers?
+c) La présence d'un grand arbre affecte-t-elle le coût en énergie d'une maison?
 
 
 
