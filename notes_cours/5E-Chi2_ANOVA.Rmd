@@ -80,7 +80,7 @@ $$ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} $$, thus $$\sum_{i=1}^k (f_i - \hat
 
 Here is the distribution of $\chi^2_{k}$ for different values of $k$:
 
-![](../images/khi_carre.PNG)
+![](../images/khi_carre.png)
 
 In R, the `pchisq(q, df)` function gives the probability of getting a value less than or equal to $q$ for a chi-squared distribution with $df$ degrees of freedom. Let's calculate this probability for our example.
 
@@ -271,7 +271,7 @@ If the null hypothesis is correct and there are no systematic differences betwee
 
 If *MSA* and *MSE* are two estimators of the same variance under the null hypothesis, then their ratio $F = MSA / MSE$ follows the $F$ distribution. This distribution has two parameters ($d_1$ and $d_2$) corresponding to the degrees of freedom of *MSA* and *MSE*.
 
-![](../images/distr_f.PNG)
+![](../images/distr_f.png)
 
 Conversely, if the null hypothesis is false, the value of *MSA* is expected to be higher than *MSE*, since systematic differences between groups will be added to the random variations in sampling. It is therefore a one-sided test: the $p$-value is the probability of a $F$ ratio equal to or greater than the one observed in the data.
 

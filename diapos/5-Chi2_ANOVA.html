@@ -1,884 +1,415 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Tableaux de contingence et ANOVA</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
-
-
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
-
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
-
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
-
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
-
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
-
-
-
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
-
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-
-  </style>
-
-    <style type="text/css">code{white-space: pre;}</style>
-
-    <link rel="stylesheet" href="styles.css"/>
-
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
-
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
-
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
-
-
-@media print {
-
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
-
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
-
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
-
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
-
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
-
-
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
-
-		overflow: visible !important;
-		display: block !important;
-
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
-
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
-    
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
-
-* {
-	-webkit-print-color-adjust: exact;
-}
-
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
-
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
-
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
-
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
-
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
-
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
-
-	overflow: visible;
-	display: block;
-
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
-
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
-
-.reveal .slides section {
-	page-break-after: always !important;
-
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
-
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
-
-	opacity: 1 !important;
-
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
-
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
-
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
-
-.reveal img {
-	box-shadow: none;
-}
-
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
-
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
-
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
-
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
-
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
-
-</script>
-
-
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
-
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">Tableaux de contingence et ANOVA</h1>
-    <h3 class="date"><br/>24 septembre 2018</h3>
-</section>
-
-<section id="plan-general" class="slide level2">
-<h2>Plan général</h2>
-<table style="width:96%;">
-<colgroup>
-<col style="width: 31%" />
-<col style="width: 36%" />
-<col style="width: 27%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>Réponse catégorielle</th>
-<th>Réponse numérique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Prédicteur catégoriel</td>
-<td>Test du <span class="math inline">\(\chi^2\)</span></td>
-<td>Test <span class="math inline">\(t\)</span> (2 catégories) ou ANOVA (plus de 2 catégories)</td>
-</tr>
-<tr class="even">
-<td>Prédicteur catégoriel ou numérique</td>
-<td>Régression logistique</td>
-<td>Régression linéaire</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Utiliser le test du <span class="math inline">\(\chi^2\)</span> pour comparer les fréquences d’une variable catégorielle à une distribution de référence, ou pour tester l’association entre deux variables catégorielles dans un tableau de contingence.</p></li>
-<li class="fragment"><p>Comprendre le principe de l’analyse de la variance et réaliser une ANOVA à un facteur.</p></li>
-<li class="fragment"><p>Déterminer les différences significatives entre traitements à partir du test des étendues de Tukey.</p></li>
-</ul>
-</section>
-<section><section id="test-du-chi2-de-pearson" class="titleslide slide level1"><h1>Test du <span class="math inline">\(\chi^2\)</span> de Pearson</h1></section><section id="comparer-les-frequences-dune-variable-a-une-distribution-de-reference" class="slide level2">
-<h2>Comparer les fréquences d’une variable à une distribution de référence</h2>
-<p><strong>Exemple</strong></p>
-<p>Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaque nombre a été obtenu est sa <em>fréquence</em> <span class="math inline">\(f\)</span>.</p>
-<table>
-<thead>
-<tr class="header">
-<th><span class="math inline">\(i\)</span></th>
-<th><span class="math inline">\(f_i\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>12</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>17</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>16</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>18</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>11</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>26</td>
-</tr>
-<tr class="odd">
-<td><strong>Total</strong></td>
-<td><strong>100</strong></td>
-</tr>
-</tbody>
-</table>
-</section><section id="comparer-les-frequences-dune-variable-a-une-distribution-de-reference-1" class="slide level2">
-<h2>Comparer les fréquences d’une variable à une distribution de référence</h2>
-<ul>
-<li>Hypothèse nulle: Dé est équilibré, donc <span class="math inline">\(p_i\)</span> = 1/6 pour <span class="math inline">\(i\)</span> de 1 à 6.</li>
-</ul>
-<ul>
-<li>Fréquence attendue (<span class="math inline">\(\hat{f_i}\)</span>): probabilité x total de lancers.</li>
-</ul>
-<table>
-<thead>
-<tr class="header">
-<th><span class="math inline">\(i\)</span></th>
-<th><span class="math inline">\(f_i\)</span></th>
-<th><span class="math inline">\(p_i\)</span></th>
-<th><span class="math inline">\(\hat{f_i}\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>12</td>
-<td>1/6</td>
-<td>16.7</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>17</td>
-<td>1/6</td>
-<td>16.7</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>16</td>
-<td>1/6</td>
-<td>16.7</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>18</td>
-<td>1/6</td>
-<td>16.7</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>11</td>
-<td>1/6</td>
-<td>16.7</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>26</td>
-<td>1/6</td>
-<td>16.7</td>
-</tr>
-<tr class="odd">
-<td><strong>Total</strong></td>
-<td><strong>100</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section><section id="calcul-du-chi2" class="slide level2">
-<h2>Calcul du <span class="math inline">\(\chi^2\)</span></h2>
-<ul>
-<li>Pour une variable avec <span class="math inline">\(k\)</span> catégories, la statistique <span class="math inline">\(\chi^2\)</span> (khi-carré) est la somme des déviations entre les fréquences observées et attendue, normalisées par la valeur attendue.</li>
-</ul>
-<p><span class="math display">\[ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} \]</span></p>
-<ul>
-<li>Si <span class="math inline">\(\hat{f_i}\)</span> au moins 5 par catégorie, <span class="math inline">\(\chi^2\)</span> suit approx. une distribution <span class="math inline">\(\chi^2\)</span> avec <span class="math inline">\(k-1\)</span> degrés de liberté.</li>
-</ul>
-</section><section id="distribution-chi2" class="slide level2">
-<h2>Distribution <span class="math inline">\(\chi^2\)</span></h2>
-<p><img src="../images/khi_carre.PNG" width="600"></p>
-</section><section id="test-du-chi2" class="slide level2">
-<h2>Test du <span class="math inline">\(\chi^2\)</span></h2>
-<p>Calculons la valeur du <span class="math inline">\(\chi^2\)</span> pour ces données et déterminons avec <code>pchisq</code> la probabilité d’une valeur inférieure ou égale à celle obtenue.</p>
-</section><section id="test-du-chi2-1" class="slide level2">
-<h2>Test du <span class="math inline">\(\chi^2\)</span></h2>
-<p>Calculons la valeur du <span class="math inline">\(\chi^2\)</span> pour ces données et déterminons avec <code>pchisq</code> la probabilité d’une valeur inférieure ou égale à celle obtenue.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Données</span>
-x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">12</span>, <span class="dv">17</span>, <span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">11</span>, <span class="dv">26</span>)
-n &lt;-<span class="st"> </span><span class="kw">sum</span>(x) <span class="co"># total</span>
-
-<span class="co"># Probabilités théoriques</span>
-p &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">6</span>, <span class="dv">6</span>)
-
-<span class="co"># Calcul du khi2</span>
-khi2 &lt;-<span class="st"> </span><span class="kw">sum</span>((x <span class="op">-</span><span class="st"> </span>n<span class="op">*</span>p)<span class="op">^</span><span class="dv">2</span> <span class="op">/</span><span class="st"> </span>(n<span class="op">*</span>p))
-khi2</code></pre></div>
-<pre><code>## [1] 8.6</code></pre>
-</section><section id="test-du-chi2-2" class="slide level2">
-<h2>Test du <span class="math inline">\(\chi^2\)</span></h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pchisq</span>(khi2, <span class="dt">df =</span> <span class="dv">5</span>)</code></pre></div>
-<pre><code>## [1] 0.8738776</code></pre>
-<p><strong>Question</strong>: Est-ce que notre test est unilatéral ou bilatéral? Quelle est sa valeur <span class="math inline">\(p\)</span>?</p>
-<ul>
-<li class="fragment">Il s’agit d’un test unilatéral; si le modèle est inexact, la somme des déviations sera plus grande que prévue. La valeur <span class="math inline">\(p\)</span> est <code>1 - pchisq(khi2, df = 5)</code> soit environ 0.126.</li>
-</ul>
-</section><section id="test-du-chi2-3" class="slide level2">
-<h2>Test du <span class="math inline">\(\chi^2\)</span></h2>
-<p>Plutôt que de calculer manuellement la statistique, nous pouvons utiliser la fonction <code>chisq.test</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">chisq.test</span>(x, <span class="dt">p =</span> p)</code></pre></div>
-<pre><code>## 
-##  Chi-squared test for given probabilities
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Tableaux de contingence et ANOVA</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Tableaux de contingence et ANOVA
+### <br/>23 septembre 2019
+
+---
+
+
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { font-size: 50% }
+
+th, td { padding: 5px; }
+&lt;/style&gt;
+
+# Plan général
+
+|                      | Réponse catégorielle    | Réponse numérique |
+|----------------------|:-------------------------:|:-------------------:|
+|Prédicteur catégoriel |  Test du `\(\chi^2\)`     | Test `\(t\)` (2 catégories) ou ANOVA (plus de 2 catégories) |
+|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |
+
+---
+
+# Objectifs
+
+- Utiliser le test du `\(\chi^2\)` pour comparer les fréquences d'une variable catégorielle à une distribution de référence, ou pour tester l'association entre deux variables catégorielles dans un tableau de contingence.
+
+- Comprendre le principe de l'analyse de la variance et réaliser une ANOVA à un facteur.
+
+- Déterminer les différences significatives entre traitements à partir du test des étendues de Tukey.
+
+---
+
+class: inverse, middle
+
+# Test du `\(\chi^2\)` de Pearson
+
+
+---
+
+# Fréquences comparées à une référence
+
+## Exemple
+
+Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaque nombre a été obtenu est sa *fréquence* `\(f\)`.
+
+| `\(i\)` | `\(f_i\)` |
+|:-----|:-------|
+| 1 | 12 |
+| 2 | 17 |
+| 3 | 16 |
+| 4 | 18 |
+| 5 | 11 |
+| 6 | 26 |
+|**Total** | **100** |
+
+---
+
+# Fréquences comparées à une référence
+
+- Hypothèse nulle: Dé est équilibré, donc `\(p_i\)` = 1/6 pour `\(i\)` de 1 à 6. 
+
+- Fréquence attendue ( `\(\hat{f_i}\)` ): probabilité x total de lancers.
+
+
+| `\(i\)` | `\(f_i\)` | `\(p_i\)` | `\(\hat{f_i}\)` |
+|:-----|:-------|-------:|-------------:|
+| 1 | 12 | 1/6 | 16.7 |
+| 2 | 17 | 1/6 | 16.7 |
+| 3 | 16 | 1/6 | 16.7 |
+| 4 | 18 | 1/6 | 16.7 |
+| 5 | 11 | 1/6 | 16.7 |
+| 6 | 26 | 1/6 | 16.7 |
+|**Total** | **100** | | |
+
+---
+
+# Calcul du `\(\chi^2\)`
+
+- Pour une variable avec `\(k\)` catégories, la statistique `\(\chi^2\)` (khi-carré) est la somme des déviations entre les fréquences observées et attendue, normalisées par la valeur attendue.
+
+`$$\chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}}$$`
+
+- Si `\(\hat{f_i}\)` au moins 5 par catégorie, `\(\chi^2\)` suit approx. une distribution `\(\chi^2\)` avec `\(k-1\)` degrés de liberté.
+
+---
+
+# Distribution `\(\chi^2\)`
+
+&lt;img src="../images/khi_carre.png"&gt;
+
+---
+
+# Test du `\(\chi^2\)`
+
+Calculons la valeur du `\(\chi^2\)` pour ces données et déterminons avec `pchisq` la probabilité d'une valeur inférieure ou égale à celle obtenue.
+
+--
+
+
+```r
+# Données
+x &lt;- c(12, 17, 16, 18, 11, 26)
+n &lt;- sum(x) # total
+
+# Probabilités théoriques
+p &lt;- rep(1/6, 6)
+
+# Calcul du khi2
+khi2 &lt;- sum((x - n*p)^2 / (n*p))
+khi2
+```
+
+```
+## [1] 8.6
+```
+
+---
+
+# Test du `\(\chi^2\)`
+
+
+```r
+pchisq(khi2, df = 5)
+```
+
+```
+## [1] 0.8738776
+```
+
+--
+
+**Question**: Est-ce que notre test est unilatéral ou bilatéral? Quelle est sa valeur `\(p\)`?
+
+--
+
+- Il s'agit d'un test unilatéral; si le modèle est inexact, la somme des déviations sera plus grande que prévue. La valeur `\(p\)` est `1 - pchisq(khi2, df = 5)` soit environ 0.126.
+
+---
+
+# Test du `\(\chi^2\)`
+
+Plutôt que de calculer manuellement la statistique, nous pouvons utiliser la fonction `chisq.test`.
+
+
+```r
+chisq.test(x, p = p)
+```
+
+```
+## 
+## 	Chi-squared test for given probabilities
 ## 
 ## data:  x
-## X-squared = 8.6, df = 5, p-value = 0.1261</code></pre>
-</section><section id="degres-de-liberte" class="slide level2">
-<h2>Degrés de liberté</h2>
-<ul>
-<li class="fragment"><p>La distribution <span class="math inline">\(\chi^2\)</span>, comme la distribution <span class="math inline">\(t\)</span>, dépend du nombre de degrés de liberté.</p></li>
-<li class="fragment"><p>Degrés de liberté: nombre de données <strong>indépendantes</strong> utilisées dans le calcul d’une statistique.</p></li>
-<li class="fragment"><p>Ex.: Le <span class="math inline">\(\chi^2\)</span> est calculé à partir des déviations entre <span class="math inline">\(f_i\)</span> et <span class="math inline">\(\hat{f_i}\)</span> pour <span class="math inline">\(k\)</span> catégories. Mais comme la somme des déviations doit être égale à 0, il y a <span class="math inline">\(k - 1\)</span> déviations indépendantes.</p></li>
-</ul>
-</section><section id="degres-de-liberte-1" class="slide level2">
-<h2>Degrés de liberté</h2>
-<ul>
-<li>Ex.: Le <span class="math inline">\(\chi^2\)</span> est calculé à partir des déviations entre <span class="math inline">\(f_i\)</span> et <span class="math inline">\(\hat{f_i}\)</span> pour <span class="math inline">\(k\)</span> catégories. Mais comme la somme des déviations doit être égale à 0, il y a <span class="math inline">\(k - 1\)</span> déviations indépendantes.</li>
-</ul>
-<p><span class="math display">\[ \sum_{i=1}^n f_i = \sum_{i=1}^n \hat{f_i} \]</span> donc <span class="math display">\[\sum_{i=1}^n (f_i - \hat{f_i}) = 0\]</span></p>
-</section><section id="degres-de-liberte-2" class="slide level2">
-<h2>Degrés de liberté</h2>
-<ul>
-<li>L’estimation de l’écart-type d’un échantillon de taille <span class="math inline">\(n\)</span> :</li>
-</ul>
-<p><span class="math display">\[ s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2} \]</span></p>
-<p>a <span class="math inline">\(n - 1\)</span> degrés de liberté, puisque la somme des écarts à la moyenne est de zéro.</p>
-<ul>
-<li class="fragment">La statistique <span class="math inline">\(t\)</span> pour un échantillon, qui est base sur ce calcul de <span class="math inline">\(s\)</span>, a aussi <span class="math inline">\(n - 1\)</span> degrés de liberté.</li>
-</ul>
-</section></section>
-<section><section id="test-dassociation-entre-deux-variables-categorielles" class="titleslide slide level1"><h1>Test d’association entre deux variables catégorielles</h1></section><section id="tableau-de-contingence" class="slide level2">
-<h2>Tableau de contingence</h2>
-<p><strong>Exemple</strong></p>
-<p>On compte le nombre d’arbres morts et vivants de trois espèces de conifères dans une placette suite à une épidémie de tordeuse des bourgeons de l’épinette.</p>
-<p><br/></p>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th>ABBA</th>
-<th>PIGL</th>
-<th>PIMA</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>mort</td>
-<td>29</td>
-<td>11</td>
-<td>12</td>
-</tr>
-<tr class="even">
-<td>vivant</td>
-<td>31</td>
-<td>29</td>
-<td>38</td>
-</tr>
-</tbody>
-</table>
-<p>(ABBA: sapin baumier; PIGL: épinette blanche; PIMA: épinette noire)</p>
-<ul>
-<li class="fragment">Quelle serait l’hypothèse nulle ici?</li>
-</ul>
-</section><section id="calcul-du-chi2-avec-deux-variables" class="slide level2">
-<h2>Calcul du <span class="math inline">\(\chi^2\)</span> avec deux variables</h2>
-<p><span class="math display">\[ \chi^2 = \sum_{i = 1}^r \sum_{j = 1}^c \frac{(f_{ij} - \hat{f_{ij}})^2}{\hat{f_{ij}}} \]</span></p>
-<ul>
-<li class="fragment"><p><span class="math inline">\(r\)</span> et <span class="math inline">\(c\)</span> réfèrent au nombre de rangées et de colonnes du tableau, respectivement.</p></li>
-<li class="fragment"><p>Comment déterminer les fréquences attendues <span class="math inline">\(\hat{f_{ij}}\)</span>?</p></li>
-</ul>
-</section><section id="calcul-du-chi2-avec-deux-variables-1" class="slide level2">
-<h2>Calcul du <span class="math inline">\(\chi^2\)</span> avec deux variables</h2>
-<ul>
-<li>Calculons d’abord le total des observations dans chaque rangée et colonne, ainsi que le grand total.</li>
-</ul>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th>ABBA</th>
-<th>PIGL</th>
-<th>PIMA</th>
-<th>Total</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>mort</td>
-<td>29</td>
-<td>11</td>
-<td>12</td>
-<td>52</td>
-</tr>
-<tr class="even">
-<td>vivant</td>
-<td>31</td>
-<td>29</td>
-<td>38</td>
-<td>98</td>
-</tr>
-<tr class="odd">
-<td>Total</td>
-<td>60</td>
-<td>40</td>
-<td>50</td>
-<td>150</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li class="fragment"><p>Nous estimons que la probabilité de la rangée <span class="math inline">\(i\)</span> est le total de cette rangée (<span class="math inline">\(N_i\)</span>) divisé par le grand total (<span class="math inline">\(N\)</span>): <span class="math inline">\(\hat{p_i} = N_i / N\)</span></p></li>
-<li class="fragment"><p>Même chose pour la colonne <span class="math inline">\(j\)</span>: <span class="math inline">\(\hat{p_j} = N_j / N\)</span></p></li>
-</ul>
-</section><section id="calcul-du-chi2-avec-deux-variables-2" class="slide level2">
-<h2>Calcul du <span class="math inline">\(\chi^2\)</span> avec deux variables</h2>
-<ul>
-<li>La probabilité conjointe de deux variables indépendantes est le produit des probabilités des variables prises séparément.</li>
-</ul>
-<ul>
-<li>Ex.: <em>Pr(sapin ET vivant) = Pr(sapin) x Pr(vivant)</em>.</li>
-</ul>
-<ul>
-<li>Donc, sous l’hypothèse nulle, les fréquences attendues sont calculées ainsi:</li>
-</ul>
-<p><span class="math display">\[ \hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}\]</span></p>
-</section><section id="test-dassociation-entre-deux-variables" class="slide level2">
-<h2>Test d’association entre deux variables</h2>
-<ul>
-<li class="fragment"><p>Sous l’hypothèse nulle (variables indépendantes), la statistique <span class="math inline">\(\chi^2\)</span> suit une distribution <span class="math inline">\(\chi^2\)</span> avec <span class="math inline">\((r - 1) \times (c - 1)\)</span> degrés de libertés.</p></li>
-<li class="fragment"><p>Si nous choisissons un seuil de signification <span class="math inline">\(\alpha = 0.05\)</span>, y a-t-il une association significative entre ces variables?</p></li>
-</ul>
-</section><section id="test-dassociation-entre-deux-variables-1" class="slide level2">
-<h2>Test d’association entre deux variables</h2>
-<ul>
-<li>Sous l’hypothèse nulle (variables indépendantes), la statistique <span class="math inline">\(\chi^2\)</span> suit une distribution <span class="math inline">\(\chi^2\)</span> avec <span class="math inline">\((r - 1) \times (c - 1)\)</span> degrés de libertés.</li>
-</ul>
-<ul>
-<li>Si nous choisissons un seuil de signification <span class="math inline">\(\alpha = 0.05\)</span>, y a-t-il une association significative entre ces variables?</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">chisq.test</span>(survie)</code></pre></div>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
+## X-squared = 8.6, df = 5, p-value = 0.1261
+```
+
+---
+
+# Degrés de liberté
+
+- La distribution `\(\chi^2\)`, comme la distribution `\(t\)`, dépend du nombre de degrés de liberté. 
+
+- Le `\(\chi^2\)` est calculé à partir des déviations entre `\(f_i\)` et `\(\hat{f_i}\)` pour `\(k\)` catégories. Mais comme la somme des déviations doit être égale à 0, il y a `\(k - 1\)` déviations indépendantes.
+
+--
+
+`$$\sum_{i=1}^n f_i = \sum_{i=1}^n \hat{f_i}$$`
+donc
+
+`$$\sum_{i=1}^n (f_i - \hat{f_i}) = 0$$`
+
+---
+
+class: inverse, middle
+
+# Test d'association entre deux variables catégorielles
+
+---
+
+# Tableau de contingence
+
+## Exemple
+
+On compte le nombre d'arbres morts et vivants de trois espèces de conifères dans une placette suite à une épidémie de tordeuse des bourgeons de l'épinette. 
+
+
+
+| | ABBA | PIGL | PIMA |
+|-|------:|------:|------:|
+| mort | 29 | 11 | 12 |
+| vivant | 31 | 29 | 38 |
+
+(ABBA: sapin baumier; PIGL: épinette blanche; PIMA: épinette noire)
+
+--
+
+- Quelle serait l'hypothèse nulle ici?
+
+---
+
+# Calcul du `\(\chi^2\)` avec deux variables
+
+`$$\chi^2 = \sum_{i = 1}^r \sum_{j = 1}^c \frac{(f_{ij} - \hat{f_{ij}})^2}{\hat{f_{ij}}}$$`
+
+- `\(r\)` et `\(c\)` réfèrent au nombre de rangées et de colonnes du tableau, respectivement.
+
+--
+
+- Comment déterminer les fréquences attendues `\(\hat{f_{ij}}\)`?
+
+---
+
+# Calcul du `\(\chi^2\)` avec deux variables
+
+- Calculons d'abord le total des observations dans chaque rangée et colonne, ainsi que le grand total.
+
+| | ABBA | PIGL | PIMA | Total |
+|-|------:|------:|------:|-------:|
+| mort | 29 | 11 | 12 | 52 |
+| vivant | 31 | 29 | 38 | 98 |
+| Total | 60 | 40 | 50 | 150 |
+
+--
+
+- Nous estimons que la probabilité de la rangée `\(i\)` est le total de cette rangée `\(N_i\)` divisé par le grand total `\(N\)`:  `\(\hat{p_i} = N_i / N\)` 
+
+--
+
+- Même chose pour la colonne `\(j\)`: `\(\hat{p_j} = N_j / N\)`
+
+---
+
+# Calcul du `\(\chi^2\)` avec deux variables
+
+- La probabilité conjointe de deux variables indépendantes est le produit des probabilités des variables prises séparément.
+
+- Ex.: *Pr(sapin ET vivant) = Pr(sapin) x Pr(vivant)*. 
+
+--
+
+- Donc, sous l'hypothèse nulle, les fréquences attendues sont calculées ainsi:
+
+`$$\hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}$$`
+
+---
+
+# Test d'association entre deux variables
+
+- Sous l'hypothèse nulle (variables indépendantes), la statistique `\(\chi^2\)` suit une distribution `\(\chi^2\)` avec `\((r - 1) \times (c - 1)\)` degrés de libertés. 
+
+- Si nous choisissons un seuil de signification `\(\alpha = 0.05\)`, y a-t-il une association significative entre ces variables?
+
+--
+
+
+```r
+chisq.test(survie)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
 ## 
 ## data:  survie
-## X-squared = 8.3669, df = 2, p-value = 0.01525</code></pre>
-</section><section id="resultat-du-test-dassociation-dans-r" class="slide level2">
-<h2>Résultat du test d’association dans R</h2>
-<ul>
-<li>Fréquences attendues (<code>khi2$expected</code>) et résidus (<code>khi2$residuals</code>).</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">khi2 &lt;-<span class="st"> </span><span class="kw">chisq.test</span>(survie)
-khi2<span class="op">$</span>expected</code></pre></div>
-<pre><code>##        ABBA     PIGL     PIMA
+## X-squared = 8.3669, df = 2, p-value = 0.01525
+```
+
+---
+
+# Résultat du test d'association dans R
+
+- Fréquences attendues (`khi2$expected`) et résidus (`khi2$residuals`).
+
+
+```r
+khi2 &lt;- chisq.test(survie)
+khi2$expected
+```
+
+```
+##        ABBA     PIGL     PIMA
 ## mort   20.8 13.86667 17.33333
-## vivant 39.2 26.13333 32.66667</code></pre>
-</section><section id="resultat-du-test-dassociation-dans-r-1" class="slide level2">
-<h2>Résultat du test d’association dans R</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">khi2<span class="op">$</span>residuals</code></pre></div>
-<pre><code>##             ABBA       PIGL       PIMA
+## vivant 39.2 26.13333 32.66667
+```
+
+---
+
+# Résultat du test d'association dans R
+
+
+```r
+khi2$residuals
+```
+
+```
+##             ABBA       PIGL       PIMA
 ## mort    1.797969 -0.7698235 -1.2810252
-## vivant -1.309697  0.5607636  0.9331389</code></pre>
-<ul>
-<li>Les résidus correspondent aux déviations normalisées:</li>
-</ul>
-<p><span class="math display">\[ \frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}} \]</span></p>
-</section><section id="resultat-du-test-dassociation-dans-r-2" class="slide level2">
-<h2>Résultat du test d’association dans R</h2>
-<ul>
-<li class="fragment"><p>Excès de sapins morts (résidu positif), donc le taux de mortalité des sapins est plus élevé que prévu par l’hypothèse nulle.</p></li>
-<li class="fragment"><p>Pour les épinettes, le taux de mortalité est plus faible.</p></li>
-<li class="fragment"><p>Le rejet de l’hypothèse nulle (indépendance entre la mortalité et l’espèce) ne nous dit pas entre quelles espèces le taux de mortalité varie significativement.</p></li>
-</ul>
-</section><section id="utilisation-des-tests-du-chi2" class="slide level2">
-<h2>Utilisation des tests du <span class="math inline">\(\chi^2\)</span></h2>
-<ul>
-<li class="fragment"><p>Le test du <span class="math inline">\(\chi^2\)</span> doit toujours être réalisé sur les fréquences (nombre d’observations), pas sur les proportions.</p></li>
-<li class="fragment"><p>Le test devient moins exact pour une petite taille d’échantillon.</p></li>
-<li class="fragment"><p>Si une des <span class="math inline">\(\hat{f_{ij}}\)</span> &lt; 5, il est préférable d’utiliser un test qui calcule les probabilités exactes des tableaux de contingence, comme le test de Fisher (<code>fisher.test</code> dans R).</p></li>
-</ul>
-</section><section id="test-de-fisher-pour-petits-echantillons" class="slide level2">
-<h2>Test de Fisher pour petits échantillons</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tab &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">2</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
-tab</code></pre></div>
-<pre><code>##      [,1] [,2]
+## vivant -1.309697  0.5607636  0.9331389
+```
+
+- Les résidus correspondent aux déviations normalisées:
+
+`$$\frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}}$$`
+
+---
+
+# Résultat du test d'association dans R
+
+
+```r
+khi2$residuals
+```
+
+```
+##             ABBA       PIGL       PIMA
+## mort    1.797969 -0.7698235 -1.2810252
+## vivant -1.309697  0.5607636  0.9331389
+```
+
+- Excès de sapins morts (résidu positif), donc le taux de mortalité des sapins est plus élevé que prévu par l'hypothèse nulle.
+
+- Pour les épinettes, le taux de mortalité est plus faible.
+
+--
+
+- Le rejet de l'hypothèse nulle (indépendance entre la mortalité et l'espèce) ne nous dit pas entre quelles espèces le taux de mortalité varie significativement.
+
+---
+
+# Utilisation des tests du `\(\chi^2\)`
+
+- Le test du `\(\chi^2\)` doit toujours être réalisé sur les fréquences (nombre d'observations), pas sur les proportions.
+
+--
+
+- Le test devient moins exact pour une petite taille d'échantillon. 
+
+--
+
+- Si une des `\(\hat{f_{ij}}\)` &lt; 5, il est préférable d'utiliser un test qui calcule les probabilités exactes des tableaux de contingence, comme le test de Fisher (`fisher.test` dans R).
+
+---
+
+# Test de Fisher pour petits échantillons
+
+
+```r
+tab &lt;- matrix(c(4, 6, 8, 2), nrow = 2)
+tab
+```
+
+```
+##      [,1] [,2]
 ## [1,]    4    8
-## [2,]    6    2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">chisq.test</span>(tab)</code></pre></div>
-<pre><code>## Warning in chisq.test(tab): Chi-squared approximation may be incorrect</code></pre>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
+## [2,]    6    2
+```
+
+```r
+chisq.test(tab)
+```
+
+```
+## Warning in chisq.test(tab): Chi-squared approximation may be incorrect
+```
+
+```
+## 
+## 	Pearson's Chi-squared test with Yates' continuity correction
 ## 
 ## data:  tab
-## X-squared = 1.875, df = 1, p-value = 0.1709</code></pre>
-</section><section id="test-de-fisher-pour-petits-echantillons-1" class="slide level2">
-<h2>Test de Fisher pour petits échantillons</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tab &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">2</span>), <span class="dt">nrow =</span> <span class="dv">2</span>)
-tab</code></pre></div>
-<pre><code>##      [,1] [,2]
+## X-squared = 1.875, df = 1, p-value = 0.1709
+```
+
+---
+
+# Test de Fisher pour petits échantillons
+
+.small[
+
+
+```r
+tab &lt;- matrix(c(4, 6, 8, 2), nrow = 2)
+tab
+```
+
+```
+##      [,1] [,2]
 ## [1,]    4    8
-## [2,]    6    2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fisher.test</span>(tab)</code></pre></div>
-<pre><code>## 
-##  Fisher&#39;s Exact Test for Count Data
+## [2,]    6    2
+```
+
+```r
+fisher.test(tab)
+```
+
+```
+## 
+## 	Fisher's Exact Test for Count Data
 ## 
 ## data:  tab
 ## p-value = 0.1698
@@ -887,223 +418,357 @@ tab</code></pre></div>
 ##  0.01252647 1.65925396
 ## sample estimates:
 ## odds ratio 
-##  0.1841181</code></pre>
-</section></section>
-<section><section id="analyse-de-la-variance-anova" class="titleslide slide level1"><h1>Analyse de la variance (ANOVA)</h1></section><section id="analyse-de-la-variance-anova-1" class="slide level2">
-<h2>Analyse de la variance (ANOVA)</h2>
-<ul>
-<li class="fragment"><p>Sert à comparer la moyenne d’une variable entre plusieurs (&gt;2) groupes.</p></li>
-<li class="fragment"><p>Basée sur le ratio de la variation entre les groupes et de la variation des observations à l’intérieur de chaque groupe.</p></li>
-<li class="fragment"><p>Hypothèse nulle: les observations de chaque groupe proviennent de populations avec la même moyenne.</p></li>
-</ul>
-</section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<p>Prenons les 10 premières observations de chaque espèce dans le jeu de données <code>iris</code>.</p>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-10-1.png" width="576" /></p>
-</section><section id="modele-danova-a-un-facteur" class="slide level2">
-<h2>Modèle d’ANOVA à un facteur</h2>
-<ul>
-<li>On mesure la variable <span class="math inline">\(y\)</span> pour <span class="math inline">\(l\)</span> groupes de <span class="math inline">\(n\)</span> observations.</li>
-</ul>
-<ul>
-<li>Résidu <span class="math inline">\(\epsilon_{ik}\)</span>: Différence entre une observation <span class="math inline">\(k\)</span> du groupe <span class="math inline">\(i\)</span> (<span class="math inline">\(y_{ik}\)</span>) et la moyenne du groupe (<span class="math inline">\(\mu_i\)</span>).</li>
-</ul>
-<p><span class="math display">\[ y_{ik} = \mu_i + \epsilon_{ik} \]</span></p>
-</section><section id="modele-danova-a-un-facteur-1" class="slide level2">
-<h2>Modèle d’ANOVA à un facteur</h2>
-<p><span class="math display">\[ y_{ik} = \mu_i + \epsilon_{ik} \]</span></p>
-<ul>
-<li>On suppose que les résidus sont distribués normalement avec une moyenne de 0 et une écart-type fixe.</li>
-</ul>
-<p><span class="math display">\[ \epsilon_{ik} \sim N(0, \sigma) \]</span></p>
-<ul>
-<li class="fragment">Hypothèse nulle: <span class="math inline">\(\mu_i\)</span> est la même pour tous les groupes.</li>
-</ul>
-</section><section id="modele-danova-a-un-facteur-2" class="slide level2">
-<h2>Modèle d’ANOVA à un facteur</h2>
-<ul>
-<li>Expression équivalente en fonction de la moyenne globale <span class="math inline">\(\mu\)</span> et d’effets de groupe <span class="math inline">\(\alpha_i\)</span>.</li>
-</ul>
-<p><span class="math display">\[ y_{ik} = \mu + \alpha_i + \epsilon_{ik} \]</span></p>
-<ul>
-<li class="fragment">Hypothèse nulle: Tous les <span class="math inline">\(\alpha_i\)</span> = 0.</li>
-</ul>
-</section><section id="somme-des-ecarts-au-carre" class="slide level2">
-<h2>Somme des écarts au carré</h2>
-<ul>
-<li>Si <span class="math inline">\(\bar{y}\)</span> est la moyenne de toutes les observations et <span class="math inline">\(\bar{y_i}\)</span> est la moyenne des observations du groupe <span class="math inline">\(i\)</span>, alors:</li>
-</ul>
-<p><span class="math display">\[ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l \sum_{k = i}^n (\bar{y_i} - \bar{y})^2 \]</span></p>
-<ul>
-<li>Puisque le dernier terme ne dépend pas de <span class="math inline">\(k\)</span>, on peut ré-écrire l’équation:</li>
-</ul>
-<p><span class="math display">\[ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2 \]</span></p>
-</section><section id="somme-des-ecarts-au-carre-1" class="slide level2">
-<h2>Somme des écarts au carré</h2>
-<p><span class="math display">\[ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2 \]</span></p>
-<p><em>SST</em> = <em>SSE</em> + <em>SSA</em></p>
-<ul>
-<li class="fragment"><em>SST</em>: Carré de l’écart total (<em>total sum of squares</em>)</li>
-<li class="fragment"><em>SSE</em>: Carré de l’écart résiduel (<em>error sum of squares</em>)</li>
-<li class="fragment"><em>SSA</em>: Carré de l’écart des groupes du facteur A</li>
-</ul>
-</section><section id="ecarts-au-carre-moyens" class="slide level2">
-<h2>Écarts au carré moyens</h2>
-<p>On divise chaque somme des carrés par le nombre de degrés de liberté (<span class="math inline">\(df\)</span>) approprié.</p>
-<ul>
-<li class="fragment">Pour <em>SST</em>, <span class="math inline">\(df = nl - 1\)</span> (somme des écarts est zéro).</li>
-<li class="fragment">Pour <em>SSE</em>, <span class="math inline">\(df = (n-1)l\)</span> (<span class="math inline">\(n-1\)</span> écarts indépendants par groupe).</li>
-<li class="fragment">Pour <em>SSA</em>, <span class="math inline">\(df = l - 1\)</span>.</li>
-</ul>
-</section><section id="tableau-danalyse-de-la-variance" class="slide level2">
-<h2>Tableau d’analyse de la variance</h2>
-<table style="width:32%;">
-<colgroup>
-<col style="width: 2%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Composante</th>
-<th>Somme des carrés (SS)</th>
-<th>Degrés de liberté (df)</th>
-<th>Carré moyen (MS)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Facteur A</td>
-<td><span class="math inline">\(SSA = \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(l - 1\)</span></td>
-<td><span class="math inline">\(MSA = \frac{SSA}{l - 1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Résidu</td>
-<td><span class="math inline">\(SSE = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2\)</span></td>
-<td><span class="math inline">\((n-1)l\)</span></td>
-<td><span class="math inline">\(MSE = \frac{SSE}{(n-1)l}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Total</td>
-<td><span class="math inline">\(SST = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(nl - 1\)</span></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section><section id="statistique-f" class="slide level2">
-<h2>Statistique <span class="math inline">\(F\)</span></h2>
-<p>Modèle d’ANOVA à un facteur</p>
-<p><span class="math display">\[ y_{ik} = \mu + \alpha_i + \epsilon_{ik} \]</span></p>
-<p><span class="math display">\[ \epsilon_{ik} \sim N(0, \sigma) \]</span></p>
-<ul>
-<li class="fragment"><p>La moyenne du carré des résidus (<em>MSE</em>) est un estimateur de la variance <span class="math inline">\(\sigma^2\)</span>.</p></li>
-<li class="fragment"><p>Si l’hypothèse nulle est exacte, la moyenne du carré des différences de groupe (<em>MSA</em>) est aussi un estimateur de <span class="math inline">\(\sigma^2\)</span>.</p></li>
-</ul>
-</section><section id="statistique-f-1" class="slide level2">
-<h2>Statistique <span class="math inline">\(F\)</span></h2>
-<p><span class="math inline">\(MSA = \frac{n}{l-1} \sum_{i = 1}^l (\bar{y_i} - \bar{y})^2\)</span></p>
-<ul>
-<li class="fragment"><p>La <em>MSA</em> est égale à la variance de <span class="math inline">\(\bar{y_i}\)</span> multiplée par <span class="math inline">\(n\)</span>.</p></li>
-<li class="fragment"><p>Si l’hypothèse nulle est vraie, alors la variance de <span class="math inline">\(\bar{y_i}\)</span> est égale à <span class="math inline">\(\sigma^2 / n\)</span>.</p></li>
-<li class="fragment"><p>Puisque <em>MSA</em> et <em>MSE</em> estiment la même variance selon l’hypothèse nulle, leur ratio <span class="math inline">\(F = MSA / MSE\)</span> suit une distribution <span class="math inline">\(F\)</span> avec degrés de liberté <span class="math inline">\(d_1 = l - 1\)</span> et <span class="math inline">\(d_2 = (n-1)l\)</span>.</p></li>
-</ul>
-</section><section id="distribution-f" class="slide level2">
-<h2>Distribution <span class="math inline">\(F\)</span></h2>
-<p><img src="../images/distr_f.png" width="600"></p>
-</section><section id="statistique-f-2" class="slide level2">
-<h2>Statistique <span class="math inline">\(F\)</span></h2>
-<ul>
-<li class="fragment"><p>Si l’hypothèse nulle est fausse, <em>MSA</em> sera plus élevée par rapport à <em>MSE</em>.</p></li>
-<li class="fragment"><p>Le test de l’ANOVA est unilatéral: la valeur <span class="math inline">\(p\)</span> est la probabilité d’un ratio <span class="math inline">\(F\)</span> égal ou supérieur à celui observé.</p></li>
-</ul>
-</section><section id="suppositions-du-modele-danova" class="slide level2">
-<h2>Suppositions du modèle d’ANOVA</h2>
-<ul>
-<li class="fragment"><p>Les résidus sont indépendants.</p></li>
-<li class="fragment"><p>Les résidus suivent une distribution normale.</p></li>
-<li class="fragment"><p>La variance de cette distribution est la même pour chaque groupe.</p></li>
-</ul>
-</section><section id="suppositions-du-modele-danova-1" class="slide level2">
-<h2>Suppositions du modèle d’ANOVA</h2>
-<p>Les résidus sont indépendants.</p>
-<ul>
-<li class="fragment">L’indépendance des résidus implique que les autres variables qui influençent la réponse sont distribuées de façon semblable dans chaque groupe.</li>
-</ul>
-<p>Les résidus suivent une distribution normale.</p>
-<ul>
-<li class="fragment">Comme le test <span class="math inline">\(t\)</span>, l’ANOVA n’est pas trop sensible aux déviations de la normalité.</li>
-</ul>
-<p>La variance de cette distribution est la même pour chaque groupe.</p>
-<ul>
-<li class="fragment">Contrairement au test <span class="math inline">\(t\)</span>, l’égalité des variances (<strong>homoscédasticité</strong>) est essentielle.</li>
-</ul>
-</section><section id="echantillon-equilibre" class="slide level2">
-<h2>Échantillon équilibré</h2>
-<ul>
-<li class="fragment"><p>Un échantillon équilibré a le même nombre d’observations dans chaque groupe.</p></li>
-<li class="fragment"><p>Les calculs présentés ici sont seulement valides pour un échantillon équilibré.</p></li>
-<li class="fragment"><p>Pour les échantillons non-équilibrés dans R, il faut utiliser la fonction de régression linéaire.</p></li>
-</ul>
-</section></section>
-<section><section id="exemples-danova-a-un-facteur" class="titleslide slide level1"><h1>Exemples d’ANOVA à un facteur</h1></section><section id="largeur-des-sepales-diris-par-espece" class="slide level2">
-<h2>Largeur des sépales d’iris par espèce</h2>
-<p>La fonction <code>aov</code> dans R requiert une formule <code>response ~ predicteur</code> et le nom du tableau de données.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anova1 &lt;-<span class="st"> </span><span class="kw">aov</span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> iris_ech) 
-<span class="kw">summary</span>(anova1)</code></pre></div>
-<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
+##  0.1841181
+```
+]
+
+---
+
+class: inverse, middle
+
+# Analyse de la variance (ANOVA)
+
+---
+
+# Analyse de la variance (ANOVA)
+
+- Sert à comparer la moyenne d'une variable entre plusieurs (&gt;2) groupes. 
+
+- Basée sur le ratio de la variation entre les groupes et de la variation des observations à l'intérieur de chaque groupe.
+
+- Hypothèse nulle: les observations de chaque groupe proviennent de populations avec la même moyenne.
+
+---
+
+# Exemple
+
+Prenons les 10 premières observations de chaque espèce dans le jeu de données `iris`. 
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+
+# Modèle d'ANOVA à un facteur
+
+- On mesure la variable `\(y\)` pour `\(l\)` groupes de `\(n\)` observations. 
+
+--
+
+`$$y_{ik} = \mu_i + \epsilon_{ik}$$`
+
+- Résidu `\(\epsilon_{ik}\)`:  Différence entre une observation `\(k\)` du groupe `\(i\)` ( `\(y_{ik}\)` ) et la moyenne du groupe ( `\(\mu_i\)` ).
+
+---
+
+# Modèle d'ANOVA à un facteur
+
+`$$y_{ik} = \mu_i + \epsilon_{ik}$$`
+
+- On suppose que les résidus sont distribués normalement avec une moyenne de 0 et une écart-type fixe.
+
+`$$\epsilon_{ik} \sim N(0, \sigma)$$` 
+
+--
+
+- Hypothèse nulle: `\(\mu_i\)` est la même pour tous les groupes.
+
+---
+
+# Modèle d'ANOVA à un facteur
+
+- Expression équivalente en fonction de la moyenne globale `\(\mu\)` et d'effets de groupe `\(\alpha_i\)`.
+
+`$$y_{ik} = \mu + \alpha_i + \epsilon_{ik}$$`
+
+- Hypothèse nulle: Tous les `\(\alpha_i\)` = 0.
+
+---
+
+# Somme des écarts au carré
+
+- Si `\(\bar{y}\)` est la moyenne de toutes les observations et `\(\bar{y_i}\)` est la moyenne  des observations du groupe `\(i\)`, alors:
+
+`$$\sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l \sum_{k = i}^n (\bar{y_i} - \bar{y})^2$$`
+
+--
+
+- Puisque le dernier terme ne dépend pas de `\(k\)`, on peut ré-écrire l'équation ainsi:
+
+
+`$$\sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2$$`
+---
+
+# Somme des écarts au carré
+
+`$$\sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2$$`
+
+--
+
+*SST* = *SSE* + *SSA*
+
+- *SST*: Carré de l'écart total (*total sum of squares*)
+- *SSE*: Carré de l'écart résiduel (*error sum of squares*)
+- *SSA*: Carré de l'écart des groupes du facteur A
+
+---
+
+# Écarts au carré moyens
+
+On divise chaque somme des carrés par le nombre de degrés de liberté `\(df\)` approprié.
+
+- Pour *SST*, la somme des écarts est zéro, `\(df = nl - 1\)`.
+
+--
+
+- Pour *SSE*, il y a `\(n-1\)` écarts indépendants par groupe, donc `\(df = (n-1)l\)`.
+
+--
+
+- Pour *SSA*, `\(df = l - 1\)`.
+
+---
+
+# Tableau d'analyse de la variance
+
+| Composante | Somme des carrés (SS) |
+|-|------|
+| Facteur A | `\(SSA = \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2\)` |
+| Résidu | `\(SSE = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2\)` |
+| Total | `\(SST = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2\)` |
+
+---
+
+
+# Tableau d'analyse de la variance
+
+| Composante | Somme des carrés (SS) | Deg. lib. (df) |
+|-|------|------|
+| Facteur A | `\(SSA = \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2\)` | `\(l - 1\)` |
+| Résidu | `\(SSE = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2\)` | `\((n-1)l\)` |
+| Total | `\(SST = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2\)` | `\(nl - 1\)` |
+
+---
+
+
+# Tableau d'analyse de la variance
+
+| Composante | Somme des carrés (SS) | Deg. lib. (df) | Carré moyen (MS) |
+|-|------|------|------|
+| Facteur A | `\(SSA = \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2\)` | `\(l - 1\)` | `\(MSA = \frac{SSA}{l - 1}\)` |
+| Résidu | `\(SSE = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2\)` | `\((n-1)l\)` | `\(MSE = \frac{SSE}{(n-1)l}\)`  |
+| Total | `\(SST = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2\)` | `\(nl - 1\)` | |
+
+---
+
+# Statistique `\(F\)`
+
+Modèle d'ANOVA à un facteur
+
+`$$y_{ik} = \mu + \alpha_i + \epsilon_{ik}$$`
+
+`$$\epsilon_{ik} \sim N(0, \sigma)$$`
+
+--
+
+- La moyenne du carré des résidus (*MSE*) est un estimateur de la variance `\(\sigma^2\)`. 
+
+--
+
+- Si l'hypothèse nulle est exacte, la moyenne du carré des différences de groupe (*MSA*) est aussi un estimateur de `\(\sigma^2\)`.
+
+---
+
+# Statistique `\(F\)`
+
+`\(MSA = \frac{n}{l-1} \sum_{i = 1}^l (\bar{y_i} - \bar{y})^2\)` 
+
+- La *MSA* est égale à la variance de `\(\bar{y_i}\)` multiplée par `\(n\)`.
+
+--
+
+- Si l'hypothèse nulle est vraie, alors la variance de `\(\bar{y_i}\)` est égale à `\(\sigma^2 / n\)`.
+
+--
+
+- Puisque *MSA* et *MSE* estiment la même variance selon l'hypothèse nulle, leur ratio `\(F = MSA / MSE\)` suit une distribution `\(F\)` avec degrés de liberté `\(d_1 = l - 1\)` et `\(d_2 = (n-1)l\)`.
+
+---
+
+# Distribution `\(F\)`
+
+&lt;img src="../images/distr_f.png"&gt;
+
+---
+
+# Statistique `\(F\)`
+
+- Si l'hypothèse nulle est fausse, *MSA* sera plus élevée par rapport à *MSE*.
+
+- Le test de l'ANOVA est unilatéral: la valeur `\(p\)` est la probabilité d'un ratio `\(F\)` égal ou supérieur à celui observé.
+
+---
+
+# Suppositions du modèle d'ANOVA
+
+- Les résidus sont indépendants.
+
+- Les résidus suivent une distribution normale.
+
+- La variance de cette distribution est la même pour chaque groupe.
+
+---
+
+# Suppositions du modèle d'ANOVA
+
+Les résidus sont indépendants.
+
+- L'indépendance des résidus implique que les autres variables qui influençent la réponse sont distribuées de façon semblable dans chaque groupe.
+
+--
+
+Les résidus suivent une distribution normale.
+
+- Comme le test `\(t\)`, l'ANOVA n'est pas trop sensible aux déviations de la normalité.
+
+--
+
+La variance de cette distribution est la même pour chaque groupe.
+
+- Contrairement au test `\(t\)`, l'égalité des variances (**homoscédasticité**) est essentielle.
+
+---
+
+# Échantillon équilibré
+
+- Un échantillon équilibré a le même nombre d'observations dans chaque groupe.
+
+- Les calculs présentés ici sont seulement valides pour un échantillon équilibré.
+
+- Pour les échantillons non-équilibrés dans R, il faut utiliser la fonction de régression linéaire.
+
+---
+
+class: inverse, middle
+
+# Exemples d'ANOVA à un facteur
+
+---
+
+# Largeur des sépales d'iris par espèce
+
+
+```r
+anova1 &lt;- aov(Sepal.Width ~ Species, data = iris_ech) 
+summary(anova1)
+```
+
+```
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
 ## Species      2  1.118  0.5590   5.179 0.0125 *
 ## Residuals   27  2.914  0.1079                 
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<ul>
-<li class="fragment">La fonction <code>summary</code> affiche le tableau d’ANOVA.</li>
-</ul>
-</section><section id="graphiques-de-diagnostic" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(anova1)</code></pre></div>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-13-1.png" width="576" /></p>
-</section><section id="graphiques-de-diagnostic-1" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<p>Résidus vs. moyennes estimées: vérifier l’absence de tendance et l’égalité des variances.</p>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-14-1.png" width="576" /></p>
-</section><section id="graphiques-de-diagnostic-2" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<p>Diagramme quantile-quantile: vérifier la normalité.</p>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-15-1.png" width="576" /></p>
-</section><section id="coefficients-de-lanova-moyennes-de-groupes" class="slide level2">
-<h2>Coefficients de l’ANOVA (moyennes de groupes)</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(anova1)</code></pre></div>
-<pre><code>##       (Intercept) Speciesversicolor  Speciesvirginica 
-##              3.31             -0.44             -0.37</code></pre>
-<ul>
-<li class="fragment"><p><code>(Intercept)</code> est la moyenne du premier groupe (ici, l’espèce <em>setosa</em>).</p></li>
-<li class="fragment"><p>Les autres coefficients indiquent la différence chaque autre groupe et le premier.</p>
-<ul>
-<li class="fragment">Ex.: La moyenne de l’espèce <em>versicolor</em> est 3.31 - 0.44 = 2.87</li>
-</ul></li>
-<li class="fragment"><p>Le résultat ne nous dit pas lesquelles de ces différences sont significatives.</p></li>
-</ul>
-</section><section id="anova-avec-2-groupes" class="slide level2">
-<h2>ANOVA avec 2 groupes</h2>
-<p>Avec deux groupes, l’ANOVA est équivalente à un test <span class="math inline">\(t\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
-iris_2sp &lt;-<span class="st"> </span><span class="kw">filter</span>(iris_ech, Species <span class="op">!=</span><span class="st"> &quot;setosa&quot;</span>)
-anova2 &lt;-<span class="st"> </span><span class="kw">aov</span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> iris_2sp)
-<span class="kw">summary</span>(anova2)</code></pre></div>
-<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+--
+
+- La fonction `aov` dans R requiert une formule `response ~ predicteur` et le nom du tableau de données.
+
+- La fonction `summary` affiche le tableau d'ANOVA.
+
+---
+
+# Graphiques de diagnostic
+
+
+```r
+plot(anova1)
+```
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+
+---
+
+# Graphiques de diagnostic
+
+Résidus vs. moyennes estimées: vérifier l'absence de tendance et l'égalité des variances.
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+
+---
+
+# Graphiques de diagnostic
+
+Diagramme quantile-quantile: vérifier la normalité.
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+---
+
+# Coefficients de l'ANOVA
+
+
+```r
+coef(anova1)
+```
+
+```
+##       (Intercept) Speciesversicolor  Speciesvirginica 
+##              3.31             -0.44             -0.37
+```
+
+- `(Intercept)` est la moyenne du premier groupe (ici, l'espèce *setosa*).
+
+--
+
+- Les autres coefficients indiquent la différence chaque autre groupe et le premier. 
+
+    * Ex.: La moyenne de l'espèce *versicolor* est 3.31 - 0.44 = 2.87 
+    
+--
+
+- Le résultat ne nous dit pas lesquelles de ces différences sont significatives.
+
+---
+
+# ANOVA avec 2 groupes
+
+Avec deux groupes, l'ANOVA est équivalente à un test `\(t\)`.
+
+
+```r
+iris_2sp &lt;- iris_ech[iris_ech$Species != "setosa", ]
+anova2 &lt;- aov(Sepal.Width ~ Species, data = iris_2sp)
+summary(anova2)
+```
+
+```
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
 ## Species      1 0.0245  0.0245   0.214   0.65
-## Residuals   18 2.0650  0.1147</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(anova2)</code></pre></div>
-<pre><code>##      (Intercept) Speciesvirginica 
-##             2.87             0.07</code></pre>
-</section><section id="anova-avec-2-groupes-1" class="slide level2">
-<h2>ANOVA avec 2 groupes</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t.test</span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> iris_2sp, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## 
-##  Two Sample t-test
+## Residuals   18 2.0650  0.1147
+```
+
+```r
+coef(anova2)
+```
+
+```
+##      (Intercept) Speciesvirginica 
+##             2.87             0.07
+```
+
+---
+
+# ANOVA avec 2 groupes
+
+
+```r
+t.test(Sepal.Width ~ Species, data = iris_2sp, var.equal = TRUE)
+```
+
+```
+## 
+## 	Two Sample t-test
 ## 
 ## data:  Sepal.Width by Species
 ## t = -0.46212, df = 18, p-value = 0.6495
@@ -1112,62 +777,118 @@ anova2 &lt;-<span class="st"> </span><span class="kw">aov</span>(Sepal.Width <sp
 ##  -0.3882356  0.2482356
 ## sample estimates:
 ## mean in group versicolor  mean in group virginica 
-##                     2.87                     2.94</code></pre>
-<ul>
-<li class="fragment">La valeur <span class="math inline">\(p\)</span> et l’estimation des moyennes par espèce sont les mêmes pour les deux tests.</li>
-</ul>
-</section><section id="nombre-dinsectes-selon-linsecticide" class="slide level2">
-<h2>Nombre d’insectes selon l’insecticide</h2>
-<p>Tableau de données <code>InsectSprays</code> dans R</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(InsectSprays, <span class="kw">aes</span>(<span class="dt">x =</span> spray, <span class="dt">y =</span> count)) <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">geom_boxplot</span>()</code></pre></div>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-19-1.png" width="576" /></p>
-</section><section id="graphiques-de-diagnostic-3" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anova3 &lt;-<span class="st"> </span><span class="kw">aov</span>(count <span class="op">~</span><span class="st"> </span>spray, InsectSprays)
-<span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))
-<span class="kw">plot</span>(anova3, <span class="dt">which =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</code></pre></div>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-20-1.png" width="576" /></p>
-</section><section id="nombre-dinsectes-selon-linsecticide-1" class="slide level2">
-<h2>Nombre d’insectes selon l’insecticide</h2>
-<ul>
-<li class="fragment"><p>Variance plus élevée pour les groupes avec une moyenne plus élevées</p></li>
-<li class="fragment"><p>Caractéristique fréquente des données de comptage</p></li>
-</ul>
-</section><section id="transformation-racine-carree" class="slide level2">
-<h2>Transformation racine carrée</h2>
-<ul>
-<li>Prendre la racine carrée (<code>sqrt</code>) de la réponse peut rendre les variances plus homogènes.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anova3_racine &lt;-<span class="st"> </span><span class="kw">aov</span>(<span class="kw">sqrt</span>(count) <span class="op">~</span><span class="st"> </span>spray, InsectSprays)</code></pre></div>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-22-1.png" width="576" /></p>
-</section><section id="transformation-racine-carree-1" class="slide level2">
-<h2>Transformation racine carrée</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(anova3_racine)</code></pre></div>
-<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)    
+##                     2.87                     2.94
+```
+
+- La valeur `\(p\)` et l'estimation des moyennes par espèce sont les mêmes pour les deux tests.
+
+---
+
+# Nombre d'insectes selon l'insecticide
+
+Tableau de données `InsectSprays` dans R
+
+
+```r
+ggplot(InsectSprays, aes(x = spray, y = count)) + 
+    geom_boxplot()
+```
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+
+---
+
+# Graphiques de diagnostic
+
+
+```r
+anova3 &lt;- aov(count ~ spray, InsectSprays)
+par(mfrow = c(1, 2))
+plot(anova3, which = 1:2)
+```
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+
+---
+
+# Nombre d'insectes selon l'insecticide
+
+- Variance plus élevée pour les groupes avec une moyenne plus élevées
+
+- Caractéristique fréquente des données de comptage
+
+---
+
+# Transformation racine carrée
+
+- Prendre la racine carrée (`sqrt`) de la réponse peut rendre les variances plus homogènes.
+
+
+```r
+anova3_racine &lt;- aov(sqrt(count) ~ spray, InsectSprays)
+```
+
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+
+---
+
+# Transformation racine carrée
+
+
+```r
+summary(anova3_racine)
+```
+
+```
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)    
 ## spray        5  88.44  17.688    44.8 &lt;2e-16 ***
 ## Residuals   66  26.06   0.395                   
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<ul>
-<li class="fragment"><p>Note: transformation logarithmique n’est pas possible lorsque les données incluent des 0.</p></li>
-<li class="fragment"><p>Autre option: choisir un modèle non basé sur une distribution normale des résidus (modèle linéaire généralisé).</p></li>
-</ul>
-</section></section>
-<section><section id="comparaisons-multiples-entre-les-groupes" class="titleslide slide level1"><h1>Comparaisons multiples entre les groupes</h1></section><section id="test-des-etendues-de-tukey" class="slide level2">
-<h2>Test des étendues de Tukey</h2>
-<ul>
-<li class="fragment"><p>Rejet de l’hypothèse nulle de l’ANOVA: improbable que tous les groupes aient la même moyenne.</p></li>
-<li class="fragment"><p>Ne dit pas entre quels groupes la moyenne diffère significativement.</p></li>
-<li class="fragment"><p>Test des étendues de Tukey: comme un test <span class="math inline">\(t\)</span> entre chaque paire de groupes, mais tient compte des comparaisons multiples.</p></li>
-</ul>
-</section><section id="test-des-etendues-de-tukey-1" class="slide level2">
-<h2>Test des étendues de Tukey</h2>
-<p>Fonction <code>TukeyHSD</code> (pour Honest Significant Difference) dans R</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anova1 &lt;-<span class="st"> </span><span class="kw">aov</span>(Sepal.Width <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> iris_ech) 
-tukey1 &lt;-<span class="st"> </span><span class="kw">TukeyHSD</span>(anova1)
-tukey1</code></pre></div>
-<pre><code>##   Tukey multiple comparisons of means
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+--
+
+- Note: transformation logarithmique n'est pas possible lorsque les données incluent des 0.
+
+- Autre option: choisir un modèle non basé sur une distribution normale des résidus (modèle linéaire généralisé).
+
+---
+
+
+class: inverse, middle
+
+# Comparaisons multiples entre les groupes
+
+---
+
+# Test des étendues de Tukey
+
+- Rejet de l'hypothèse nulle de l'ANOVA: improbable que tous les groupes aient la même moyenne.
+
+--
+
+- Ne dit pas entre quels groupes la moyenne diffère significativement.
+
+--
+
+- Test des étendues de Tukey: comme un test `\(t\)` entre chaque paire de groupes, mais tient compte des comparaisons multiples.
+
+---
+
+# Test des étendues de Tukey
+
+Fonction `TukeyHSD` (pour Honest Significant Difference) dans R
+
+
+```r
+anova1 &lt;- aov(Sepal.Width ~ Species, data = iris_ech) 
+tukey1 &lt;- TukeyHSD(anova1)
+tukey1
+```
+
+```
+##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
 ## 
 ## Fit: aov(formula = Sepal.Width ~ Species, data = iris_ech)
@@ -1176,98 +897,162 @@ tukey1</code></pre></div>
 ##                       diff        lwr          upr     p adj
 ## versicolor-setosa    -0.44 -0.8042735 -0.075726495 0.0155401
 ## virginica-setosa     -0.37 -0.7342735 -0.005726495 0.0459626
-## virginica-versicolor  0.07 -0.2942735  0.434273505 0.8829240</code></pre>
-<ul>
-<li class="fragment">Il y a une différence significative entre <em>setosa</em> et les deux autres espèces.</li>
-</ul>
-</section><section id="test-des-etendues-de-tukey-2" class="slide level2">
-<h2>Test des étendues de Tukey</h2>
-<ul>
-<li>La fonction <code>plot</code> présente un graphique des intervalles de confiance du test de Tukey.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(tukey1)</code></pre></div>
-<p><img src="5-Chi2_ANOVA_files/figure-revealjs/unnamed-chunk-26-1.png" width="576" /></p>
-</section><section id="test-des-etendues-de-tukey-3" class="slide level2">
-<h2>Test des étendues de Tukey</h2>
-<ul>
-<li class="fragment"><p>Seuil de signification <span class="math inline">\(\alpha\)</span> fixe la probabilité d’erreur de type I pour l’ensemble des comparaisons.</p></li>
-<li class="fragment"><p>Chacune des comparaisons doit avoir un seuil <span class="math inline">\(\alpha\)</span> &lt; 0.05.</p></li>
-<li class="fragment"><p>Plus on fait de comparaisons, plus la probabilité d’erreur de type II augmente (la puissance diminue).</p></li>
-<li class="fragment"><p>L’ANOVA a une plus grande puissance que des comparaisons multiples; il est possible de rejeter l’hypothèse nulle puis que <code>TukeyHSD</code> ne détecte aucune différence significative.</p></li>
-</ul>
-</section></section>
-<section><section id="resume" class="titleslide slide level1"><h1>Résumé</h1></section><section id="test-du-chi2-4" class="slide level2">
-<h2>Test du <span class="math inline">\(\chi^2\)</span></h2>
-<ul>
-<li class="fragment"><p>Tableau de contingence: tabulation croisée des fréquences de deux variables catégorielles.</p></li>
-<li class="fragment"><p>Test du <span class="math inline">\(\chi^2\)</span>: comparer une variable catégorielle à une distribution de référence, ou vérifier l’indépendance de deux variables catégorielles.</p></li>
-<li class="fragment"><p>Si fréquences attendues sont très faibles (&lt; 5), utiliser un test exact comme le test de Fisher.</p></li>
-</ul>
-</section><section id="anova" class="slide level2">
-<h2>ANOVA</h2>
-<ul>
-<li class="fragment"><p>Vise à déterminer si des échantillons provenant de différents groupes (ex.: traitements) sont distribués avec la même moyenne.</p></li>
-<li class="fragment"><p>Suppose que les résidus dans chaque groupe sont indépendants et suivent une distribution normale avec la même variance.</p></li>
-<li class="fragment"><p>Si l’hypothèse nulle est rejetée, le test des étendues de Tukey sert à identifier les différences significatives entre groupes.</p></li>
-</ul>
-</section><section id="horaire-des-prochaines-semaines" class="slide level2">
-<h2>Horaire des prochaines semaines</h2>
-<ul>
-<li>26 septembre: Laboratoire à remettre le 3 octobre</li>
-<li>1er octobre: Cours annulé</li>
-<li>3 octobre: Cours (ANOVA - suite et régression linéaire)</li>
-<li>8 octobre: Congé</li>
-<li>10 octobre: Laboratoire à remettre le 17 octobre</li>
-</ul>
-</section></section>
-    </div>
-  </div>
+## virginica-versicolor  0.07 -0.2942735  0.434273505 0.8829240
+```
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+--
 
-  <script>
+- Il y a une différence significative entre *setosa* et les deux autres espèces.
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+---
+
+# Test des étendues de Tukey
+
+- La fonction `plot` présente un graphique des intervalles de confiance du test de Tukey.
 
 
+```r
+plot(tukey1)
+```
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
+
+---
+
+# Test des étendues de Tukey
+
+- Seuil de signification `\(\alpha\)` fixe la probabilité d'erreur de type I pour l'ensemble des comparaisons.
+
+--
+
+- Chacune des comparaisons doit avoir un seuil `\(\alpha\)` &lt; 0.05. 
+
+--
+
+- Plus on fait de comparaisons, plus la probabilité d'erreur de type II augmente (la puissance diminue).
+
+--
+
+- L'ANOVA a une plus grande puissance que des comparaisons multiples; il est possible de rejeter l'hypothèse nulle puis que `TukeyHSD` ne détecte aucune différence significative.
+
+---
+
+# Résumé
+
+## Test du `\(\chi^2\)`
+
+- Tableau de contingence: tabulation croisée des fréquences de deux variables catégorielles.
+
+--
+
+- Test du `\(\chi^2\)`: comparer une variable catégorielle à une distribution de référence, ou vérifier l'indépendance de deux variables catégorielles.
+
+--
+
+- Si fréquences attendues sont très faibles (&lt; 5), utiliser un test exact comme le test de Fisher.
+
+--
+
+# Résumé
+
+## ANOVA
+
+- Vise à déterminer si des échantillons provenant de différents groupes (ex.: traitements) sont distribués avec la même moyenne.
+
+--
+
+- Suppose que les résidus dans chaque groupe sont indépendants et suivent une distribution normale avec la même variance.
+
+--
+
+- Si l'hypothèse nulle est rejetée, le test des étendues de Tukey sert à identifier les différences significatives entre groupes.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>

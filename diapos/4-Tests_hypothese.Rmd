@@ -402,6 +402,34 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 ---
 
+# Question éclair
+
+Lesquelles des affirmations suivantes sont exactes?
+
+a) La valeur $p$ est la probabilité que l'hypothèse nulle soit vraie.
+
+b) Plus le seuil de signification $\alpha$ est petit, plus il est difficile de rejeter l'hypothèse nulle.
+
+c) Pour un test $t$ à un échantillon, si on rejette l'hypothèse nulle $\mu = 10$ avec un seuil $\alpha = 0.01$, alors l'intervalle de confiance à 99% de $\bar{x}$ ne contient pas la valeur 10.
+
+d) Pour le test $t$ comparant deux échantillons avec l'hypothèse nulle $\mu_A = \mu_B$, une valeur $p$ plus petite signifie que la différence entre les moyennes est plus élevée.
+
+---
+
+# Question éclair
+
+Lesquelles des affirmations suivantes sont exactes?
+
+a) La valeur $p$ est la probabilité que l'hypothèse nulle soit vraie. **Faux, la valeur *p* est la probabilité d'avoir observé une valeur plus extrême de la statistique du test *si* l'hypothèse nulle est vraie.**
+
+b) Plus le seuil de signification $\alpha$ est petit, plus il est difficile de rejeter l'hypothèse nulle. **Vrai.**
+
+c) Pour un test $t$ à un échantillon, si on rejette l'hypothèse nulle $\mu = 10$ avec un seuil $\alpha = 0.01$, alors l'intervalle de confiance à 99% de $\bar{x}$ ne contient pas la valeur 10. **Vrai.**
+
+d) Pour le test $t$ comparant deux échantillons avec l'hypothèse nulle $\mu_A = \mu_B$, une valeur $p$ plus petite signifie que la différence entre les moyennes est plus élevée. **Faux, cela dépend aussi de la variabilité des données et de la taille de l'échantillon.**
+
+---
+
 # Comparer deux moyennes
 
 ```{r, fig.dim = c(6, 4)}

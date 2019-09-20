@@ -81,7 +81,7 @@ $$ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} $$, donc $$\sum_{i=1}^k (f_i - \hat
 
 Voici la distribution $\chi^2_{k}$ pour différentes valeurs de $k$:
 
-![](../images/khi_carre.PNG)
+![](../images/khi_carre.png)
 
 Dans R, la fonction `pchisq(q, df)` donne la probabilité d'obtenir une valeur inférieure ou égale à $q$ pour une distribution $\chi^2$ avec $df$ degrés de liberté. Calculons cette probabilité pour notre exemple.
 
@@ -274,7 +274,7 @@ Si l'hypothèse nulle est exacte et qu'il n'y a pas de différence systématique
 
 Si *MSA* et *MSE* sont deux estimateurs de la même variance selon l'hypothèse nulle, alors leur ratio $F = MSA / MSE$ suit la distribution $F$. Cette distribution comporte deux paramètres ($d_1$ et $d_2$) correspondant aux degrés de liberté de *MSA* et *MSE*. 
 
-![](../images/distr_f.PNG)
+![](../images/distr_f.png)
 
 
 En contrepartie, si l'hypothèse nulle est fausse, on s'attend à ce que la valeur de *MSA* soit plus élevée par rapport à *MSE*, puisque les différences systématiques entre groupes s'ajouteront aux variations aléatoires de l'échantillonnage. Il s'agit donc d'un test unilatéral: la valeur $p$ est la probabilité d'un ratio $F$ égal ou supérieur à celui observé dans nos données.

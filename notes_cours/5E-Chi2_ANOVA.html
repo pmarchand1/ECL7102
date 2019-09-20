@@ -438,7 +438,7 @@ div.tocify {
 <p><strong>Reminder</strong>: The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the <span class="math inline">\(\chi^2\)</span> is calculated from the deviations between observed and expected frequencies for <span class="math inline">\(k\)</span> categories. However, since the sum of the deviations must equal 0 (because the total of <span class="math inline">\(f_i\)</span> and <span class="math inline">\(\hat{f_i}\)</span> is the same) there are <span class="math inline">\(k - 1\)</span> independent deviations.</p>
 <p><span class="math display">\[ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} \]</span>, thus <span class="math display">\[\sum_{i=1}^k (f_i - \hat{f_i}) = 0\]</span></p>
 <p>Here is the distribution of <span class="math inline">\(\chi^2_{k}\)</span> for different values of <span class="math inline">\(k\)</span>:</p>
-<p><img src="../images/khi_carre.PNG" /></p>
+<p><img src="../images/khi_carre.png" /></p>
 <p>In R, the <code>pchisq(q, df)</code> function gives the probability of getting a value less than or equal to <span class="math inline">\(q\)</span> for a chi-squared distribution with <span class="math inline">\(df\)</span> degrees of freedom. Let’s calculate this probability for our example.</p>
 <pre class="r"><code># Data
 x &lt;- c(12, 17, 16, 18, 11, 26)
@@ -663,7 +663,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p>The mean of squared residuals (<em>MSE</em>) is an estimator of the variance in that model (<span class="math inline">\(\sigma^2\)</span>).</p>
 <p>If the null hypothesis is correct and there are no systematic differences between groups (that is, all <span class="math inline">\(\alpha_i\)</span> are equal to 0 in the model), then the mean of squared group differences (<em>MSA</em>) is also an estimator of <span class="math inline">\(\sigma^2\)</span>. Indeed, according to the null hypothesis, the different groups are independent samples of the same population. In this case, the term <em>MSA</em> corresponds to the variance of <span class="math inline">\(\bar{y_i}\)</span> multiplied by <span class="math inline">\(n\)</span> (the number of observations per group). The variance of a mean of <span class="math inline">\(n\)</span> observations is precisely equal to <span class="math inline">\(\sigma^2 / n\)</span>, where <span class="math inline">\(\sigma^2\)</span> is the variance of the individual observations.</p>
 <p>If <em>MSA</em> and <em>MSE</em> are two estimators of the same variance under the null hypothesis, then their ratio <span class="math inline">\(F = MSA / MSE\)</span> follows the <span class="math inline">\(F\)</span> distribution. This distribution has two parameters (<span class="math inline">\(d_1\)</span> and <span class="math inline">\(d_2\)</span>) corresponding to the degrees of freedom of <em>MSA</em> and <em>MSE</em>.</p>
-<p><img src="../images/distr_f.PNG" /></p>
+<p><img src="../images/distr_f.png" /></p>
 <p>Conversely, if the null hypothesis is false, the value of <em>MSA</em> is expected to be higher than <em>MSE</em>, since systematic differences between groups will be added to the random variations in sampling. It is therefore a one-sided test: the <span class="math inline">\(p\)</span>-value is the probability of a <span class="math inline">\(F\)</span> ratio equal to or greater than the one observed in the data.</p>
 </div>
 <div id="assumptions-of-the-anova-model" class="section level2">
