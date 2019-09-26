@@ -1,6 +1,6 @@
 ---
 title: "ANOVA à deux facteurs et blocs complets aléatoires"
-date: "<br/>3 octobre 2018"
+date: "<br/>30 septembre 2019"
 output:
     html_document:
         self_contained: false
@@ -391,7 +391,7 @@ Reprenons le modèle de régression: $y = \beta_0 + \beta_1 T_1 + \beta_2 T_2$ a
 - Catégorie 1 ($T_1 = 1, T_2 = 0$): $\mu_1 = \beta_0 + \beta_1$
 - Catégorie 2 ($T_1 = 0, T_2 = 1$): $\mu_2 = \beta_0 + \beta_2$
 - Catégorie 3 ($T_1 = -1, T_2 = -1$): $\mu_3 = \beta_0 - \beta_1 - \beta_2$
-- Moyenne générale: $\mu = (\mu_1 + \mu2 + \mu_3)/3 = \beta_0$
+- Moyenne générale: $\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0$
 
 L'ordonnée à l'origine correspond donc à la moyenne générale tandis que les coefficients correspondent à la différence entre la moyenne de chaque catégorie et la moyenne générale. L'effet de la dernière catégorie peut être déterminé en prenant l'opposé de la somme des autres effets, donc $-(\beta_1 + \beta_2)$ ici.
 

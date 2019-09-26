@@ -8,6 +8,7 @@
 3. [Statistical models, parameters and estimators](notes_cours/3E-Statistical_models.html) ([PDF](notes_cours/3E-Statistical_models.pdf))
 4. [Hypothesis testing](notes_cours/4E-Hypothesis_testing.html) ([PDF](notes_cours/4E-Hypothesis_testing.pdf))
 5. [Chi-squared test and ANOVA](notes_cours/5E-Chi2_ANOVA.html) ([PDF](notes_cours/5E-Chi2_ANOVA.pdf))
+6. [Two-way ANOVA and randomized complete blocks](notes_cours/6E-Two_way_ANOVA.html) ([PDF](notes_cours/6E-Two_way_ANOVA.pdf))
 
 ## Labs
 

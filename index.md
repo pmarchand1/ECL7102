@@ -8,6 +8,7 @@
 3. [Modèles statistiques, paramètres et estimateurs](notes_cours/3-Modèles_statistiques.html) ([PDF](notes_cours/3-Modèles_statistiques.pdf))
 4. [Tests d'hypothèse](notes_cours/4-Tests_hypothese.html) ([PDF](notes_cours/4-Tests_hypothese.pdf))
 5. [Tableaux de contingence et ANOVA](notes_cours/5-Chi2_ANOVA.html) ([PDF](notes_cours/5-Chi2_ANOVA.pdf))
+6. [ANOVA à deux facteurs et blocs complets aléatoires](notes_cours/6-ANOVA_2_facteurs.html) ([PDF](notes_cours/6-ANOVA_2_facteurs.pdf))
 
 ## Laboratoires
 

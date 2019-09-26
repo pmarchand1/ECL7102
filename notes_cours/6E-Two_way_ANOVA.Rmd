@@ -1,6 +1,6 @@
 ---
 title: "Two-way ANOVA and randomized complete blocks"
-date: "<br/>October 3, 2018"
+date: "<br/>September 30, 2019"
 output:
     html_document:
         self_contained: false
@@ -390,7 +390,7 @@ Let's consider the regression model: $y = \beta_0 + \beta_1 T_1 + \beta_2 T_2$ w
 - Category 1 ($T_1 = 1, T_2 = 0$): $\mu_1 = \beta_0 + \beta_1$
 - Category 2 ($T_1 = 0, T_2 = 1$): $\mu_2 = \beta_0 + \beta_2$
 - Category 3 ($T_1 = -1, T_2 = -1$): $\mu_3 = \beta_0 - \beta_1 - \beta_2$
-- Grand mean: $\mu = (\mu_1 + \mu2 + \mu_3)/3 = \beta_0$
+- Grand mean: $\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0$
 
 The intercept thus corresponds to the grand mean while the coefficients are the difference between the mean of each category and the grand mean. The effect of the last category can be determined by taking the opposite of the sum of the other effects, so $-(\beta_1 + \beta_2)$ here.
 

@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">ANOVA à deux facteurs et blocs complets aléatoires</h1>
-<h4 class="date"><em><br/>3 octobre 2018</em></h4>
+<h4 class="date"><br/>30 septembre 2019</h4>
 
 </div>
 
@@ -263,12 +332,12 @@ str(growth)</code></pre>
 <div id="tableau-danova-a-deux-facteurs-sans-interaction" class="section level2">
 <h2>Tableau d’ANOVA à deux facteurs sans interaction</h2>
 <p>Voici le tableau d’ANOVA correspondant à ce modèle si on a <span class="math inline">\(l\)</span> traitements du facteur A, <span class="math inline">\(m\)</span> traitements du facteur B et <span class="math inline">\(n\)</span> réplicats pour chaque combinaison des traitements (donc <span class="math inline">\(lmn\)</span> observations totales).</p>
-<table style="width:32%;">
+<table style="width:100%;">
 <colgroup>
-<col width="2%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
+<col width="5%" />
+<col width="31%" />
+<col width="31%" />
+<col width="31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -403,12 +472,12 @@ levels(antibiot$Concentration)</code></pre>
 <p><span class="math display">\[ \hat{\gamma_{ij}} = (\bar{y_{ij}} - \bar{y}) - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y}) \]</span> En simplifiant: <span class="math display">\[ \hat{\gamma_{ij}} = \bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y} \]</span></p>
 <p>Dans cette équation, <span class="math inline">\(\bar{y_{ij}}\)</span> est la moyenne des observations qui font partie à la fois du groupe <span class="math inline">\(i\)</span> du facteur A et du groupe <span class="math inline">\(j\)</span> du facteur B. Le résidu du modèle pour une observation <span class="math inline">\(y_{ijk}\)</span> est égal à <span class="math inline">\(y_{ijk} - \bar{y_{ij}}\)</span>.</p>
 <p>En incluant l’interaction, le tableau d’ANOVA à deux facteurs prend la forme suivante:</p>
-<table style="width:32%;">
+<table style="width:100%;">
 <colgroup>
-<col width="2%" />
-<col width="9%" />
-<col width="9%" />
-<col width="9%" />
+<col width="5%" />
+<col width="31%" />
+<col width="31%" />
+<col width="31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -583,7 +652,7 @@ str(pigs)</code></pre>
 <h2>Codage d’une variable catégorielle</h2>
 <p>L’équation suivante décrit un modèle linéaire pour la relation entre un prédicteur numérique <span class="math inline">\(x\)</span> et une réponse numérique <span class="math inline">\(y\)</span>. La valeur de <span class="math inline">\(y\)</span> dépend d’un terme constant (<span class="math inline">\(\beta_0\)</span>), d’un terme proportionnel à <span class="math inline">\(x\)</span> (<span class="math inline">\(\beta_1 x\)</span>) et d’un résidu aléatoire pour chaque observation (<span class="math inline">\(\epsilon\)</span>).</p>
 <p><span class="math display">\[ y = \beta_0 + \beta_1 x + \epsilon \]</span></p>
-<p>Dans ce cas, <span class="math inline">\(\beta_0\)</span> est l’ordonnée à l’origine (en anglais, <em>intercept</em>) du graphique de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>, la valeur moyenne de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x = 0\)</span>.</p>
+<p>Dans ce cas, <span class="math inline">\(\beta_0\)</span> est l’ordonnée à l’origine (en anglais, <em>intercept</em>) du graphique de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>, la valeur moyenne de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x = 0\)</span>.</p>
 <p>Imaginons une expérience avec un groupe témoin et deux traitements (<span class="math inline">\(T_1\)</span> et <span class="math inline">\(T_2\)</span>). Pour représenter ces données dans un modèle de régression, nous créons deux variables:</p>
 <ul>
 <li><span class="math inline">\(T_1\)</span> = 1 pour les observations qui ont reçu le traitement 1, 0 pour les autres.</li>
@@ -700,7 +769,7 @@ contrasts(growth$diet)</code></pre>
 <li>Catégorie 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_1 = \beta_0 + \beta_1\)</span></li>
 <li>Catégorie 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_2 = \beta_0 + \beta_2\)</span></li>
 <li>Catégorie 3 (<span class="math inline">\(T_1 = -1, T_2 = -1\)</span>): <span class="math inline">\(\mu_3 = \beta_0 - \beta_1 - \beta_2\)</span></li>
-<li>Moyenne générale: <span class="math inline">\(\mu = (\mu_1 + \mu2 + \mu_3)/3 = \beta_0\)</span></li>
+<li>Moyenne générale: <span class="math inline">\(\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0\)</span></li>
 </ul>
 <p>L’ordonnée à l’origine correspond donc à la moyenne générale tandis que les coefficients correspondent à la différence entre la moyenne de chaque catégorie et la moyenne générale. L’effet de la dernière catégorie peut être déterminé en prenant l’opposé de la somme des autres effets, donc <span class="math inline">\(-(\beta_1 + \beta_2)\)</span> ici.</p>
 <p>Voici le résultat de la régression linéaire avec ces nouveaux contrastes.</p>
