@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Estimation de paramètres et tests d’hypothèse</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Estimation de paramètres et tests d’hypothèse</h1>
+<h4 class="date">18 septembre 2019</h4>
+
+</div>
+
+
+<p>Dans ce laboratoire, vous appliquerez les concepts vus lors des deux derniers cours.</p>
+<div id="caracteristiques-des-fleurs-de-trois-especes-diris" class="section level2">
+<h2>1. Caractéristiques des fleurs de trois espèces d’iris</h2>
+<p>Pour cet exercice, nous utiliserons le célèbre jeu de données des iris d’Edgar Anderson, qui contient différentes mesures (en cm) prises sur 50 fleurs de 3 espèces d’iris. Ce tableau de données est déjà chargé dans R sous le nom <code>iris</code>.</p>
+<pre class="r"><code>data(iris)
+head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Nous allons d’abord visualiser une partie des données. À l’aide de <em>ggplot2</em>, produisez un nuage de points reliant la longueur et la largeur des sépales (<code>Sepal.Length</code> et <code>Sepal.Width</code>), en différenciant les points de chaque espèce par couleur.</li>
+</ol>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+    geom_point()</code></pre>
+<p><img src="3R-Estimation_tests_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Comment procéderiez-vous pour calculer la moyenne de <code>Sepal.Width</code> pour l’espèce <em>setosa</em> et son intervalle de confiance à 95%?</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>De quelles quantités avez-vous besoin pour ce calcul?</li>
+</ol>
+<p><strong>La moyenne, l’erreur-type (qui dépend de l’écart-type et du nombre de points) et les probabilités de la distribution <span class="math inline">\(t\)</span> à <span class="math inline">\(p\)</span> = 0.025 et <span class="math inline">\(p\)</span> = 0.975.</strong></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Déterminez la moyenne de <code>Sepal.Width</code> pour l’espèce <em>setosa</em> et son erreur-type.</li>
+</ol>
+<pre class="r"><code>setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
+
+moy &lt;- mean(setosa$Sepal.Width)
+n &lt;- nrow(setosa)
+err_type &lt;- sd(setosa$Sepal.Width) / sqrt(n)
+
+c(moy, err_type)</code></pre>
+<pre><code>## [1] 3.4280000 0.0536078</code></pre>
+<p>Si vous n’êtes pas certains si la fonction de calcul de l’écart-type dans R (<code>sd</code>) utilise le dénominateur <span class="math inline">\(n\)</span> ou <span class="math inline">\(n - 1\)</span>, comment pouvez-vous le vérifier? (<em>Comment trouver de l’aide pour une fonction?</em>)</p>
+<p><strong>Utiliser l’instruction <code>?sd</code> dans R.</strong></p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Durant le cours sur les distributions statistiques, nous avons vu les fonctions <code>rnorm</code>, <code>dnorm</code>, <code>pnorm</code> et <code>qnorm</code> qui permettent de calculer des valeurs à partir de la distribution normale. Des fonctions similaires existent pour la distribution <span class="math inline">\(t\)</span> (<code>rt</code>, <code>dt</code>, <code>pt</code>, <code>qt</code>).</li>
+</ol>
+<p>Quelle fonction nous permet d’obtenir la valeur de la variable <span class="math inline">\(t\)</span> pour une probabilité cumulative <span class="math inline">\(p\)</span> donnée?</p>
+<p>Utilisons la fonction <code>qt(p, df)</code> pour déterminer l’intervalle correspondant à 95% de la probabilité. Quelles valeurs de <span class="math inline">\(p\)</span> (la probabilité cumulative) utiliser? Quel nombre de degrés de liberté (<span class="math inline">\(df\)</span>) en fonction de la taille de l’échantillon <span class="math inline">\(n\)</span>?</p>
+<p><strong><span class="math inline">\(p =\)</span> 0.025 et 0.975, <span class="math inline">\(df = n - 1\)</span>.</strong></p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Calculez l’intervalle de confiance à 95% pour la moyenne calculée en (c). Comment interprétez-vous cet intervalle?</li>
+</ol>
+<pre class="r"><code>ic_min &lt;- moy + qt(0.025, df = n - 1) * err_type
+ic_max &lt;- moy + qt(0.975, df = n - 1) * err_type
+
+c(ic_min, ic_max)</code></pre>
+<pre><code>## [1] 3.320271 3.535729</code></pre>
+<p><strong>En répétant l’échantillonnage de 50 iris dans cette population de l’espèce <em>setosa</em> à plusieurs reprises, dans 95% des cas l’intervalle de confiance autour de la moyenne de l’échantillon contiendrait la valeur moyenne de la population.</strong></p>
+</div>
+<div id="choix-des-methodes-dechantillonnage" class="section level2">
+<h2>2. Choix des méthodes d’échantillonnage</h2>
+<p>Vous souhaitez déterminer la moyenne et l’écart-type du taux de croissance des semis de bouleau jaune dans une région donnée. Votre unité d’échantillonnage est un quadrat de 1 m<span class="math inline">\(^2\)</span> où la croissance annuelle des semis est mesurée. Quelle méthode d’échantilonnage préconiserez-vous pour le placement de ces quadrats selon les différents scénarios présentés, et pourquoi? Vous pouvez choisir un échantilonnage stratifié, par grappe, systématique, ou adaptatif.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Les peuplements de cette espèce dans la région sont relativement semblables mais très éloignés l’un de l’autre.</li>
+</ol>
+<p><strong>Par grappe, pour réduire le temps de déplacement et échantillonner davantage dans un petit nombre de peuplements.</strong></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>La croissance pourrait être fortement influencée par le gradient de température nord-sud à l’échelle considérée.</li>
+</ol>
+<p><strong>Systématique, pour répartir les unités d’échantilonnage le long du gradient.</strong></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>L’espèce se retrouve dans plusieurs types de peuplement distincts couvrant des proportions différentes du territoire (ex.: 70% type A, 25% type B, 5% type C).</li>
+</ol>
+<p><strong>Stratifié, pour assurer que tous les types de peuplement soient adéquatement échantillonnés.</strong></p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>C’est une espèce rare dans la région et sa distibution est peu connue.</li>
+</ol>
+<p><strong>Adaptatif, pour concentrer l’effort autour des points où l’espèce est déjà détectée.</strong></p>
+</div>
+<div id="simulation-dechantillonnage-stratifie" class="section level2">
+<h2>3. Simulation d’échantillonnage stratifié</h2>
+<p>Pour cet exercice, nous comparerons l’échantillonnage simple et stratifié à partir d’échantillons simulés du tableau de données <code>iris</code>.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Créez un graphique de boîtes à moustaches montrant la distribution des 50 longueurs de pétales (<em>Petal.Length</em>) pour chaque espèce.</li>
+</ol>
+<pre class="r"><code>ggplot(iris, aes(x = Species, y = Petal.Length)) + 
+    geom_boxplot()</code></pre>
+<p><img src="3R-Estimation_tests_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Créez deux fonctions <code>iris_alea</code> et <code>iris_strat</code>. La première fonction choisit 30 observations au hasard d’<code>iris</code>, puis retourne la moyenne de <em>Petal.Length</em> pour ces observations. La deuxième choisit 10 observations au hasard de chacune des trois espèces, plus retourne la moyenne de <em>Petal.Length</em> pour les 30 observations.</li>
+</ol>
+<p><em>Notes</em>:</p>
+<ul>
+<li><p>La fonction <code>sample(x, size)</code> dans R simule l’échantillonnage d’un nombre de valeurs égal à <em>size</em> parmi celles du vecteur <em>x</em>.</p></li>
+<li><p>Vous pouvez écrire ces fonctions sans arguments (parenthèses vides après <code>function</code>), comme dans l’exemple ci-dessous.</p></li>
+</ul>
+<pre class="r"><code>iris_alea &lt;- function() {
+    # Insérer code de la fonction ici
+}</code></pre>
+<pre class="r"><code>iris_alea &lt;- function() {
+    samp &lt;- sample(iris$Petal.Length, 30)
+    mean(samp)
+}
+
+iris_strat &lt;- function() {
+    samp1 &lt;- sample(iris$Petal.Length[iris$Species == &quot;setosa&quot;], 10)
+    samp2 &lt;- sample(iris$Petal.Length[iris$Species == &quot;versicolor&quot;], 10)
+    samp3 &lt;- sample(iris$Petal.Length[iris$Species == &quot;virginica&quot;], 10)
+    samp &lt;- c(samp1, samp2, samp3)
+    mean(samp)
+}
+
+iris_alea()</code></pre>
+<pre><code>## [1] 3.69</code></pre>
+<pre class="r"><code>iris_strat()</code></pre>
+<pre><code>## [1] 3.736667</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Générez un vecteur 1000 résultats de chaque fonction avec <code>replicate</code>, comme suit:</li>
+</ol>
+<pre class="r"><code>rep_alea &lt;- replicate(1000, iris_alea())
+rep_strat &lt;- replicate(1000, iris_strat())</code></pre>
+<p>Notez qu’il est important d’inclure les parenthèses vides pour appeler la fonction.</p>
+<p>Calculez l’erreur-type de chaque moyenne (à partir des écarts-type de <code>rep_alea</code> et <code>rep_strat</code>). Avant de faire le calcul, pouvez-vous deviner quelle méthode sera la plus précise? Pour quelle raison?</p>
+<pre class="r"><code>sd(rep_alea)</code></pre>
+<pre><code>## [1] 0.2891924</code></pre>
+<pre class="r"><code>sd(rep_strat)</code></pre>
+<pre><code>## [1] 0.06787014</code></pre>
+<p><strong>L’erreur-type de la moyenne stratifiée (écart-type de rep_strat) est environ 4 fois plus faible que celle de la moyenne aléatoire (écart-type de rep_alea), soit 0.07 contre 0.29. Cela est dû au fait que la longueur des pétales est plus variable entre les espèces qu’à l’intérieur d’une espèce.</strong></p>
+</div>
+<div id="concentration-dozone-dans-trois-jardins" class="section level2">
+<h2>4. Concentration d’ozone dans trois jardins</h2>
+<p>Pour cet exercice, nous utiliserons le tableau de données <a href="gardens.csv">gardens.csv</a>, qui provient du manuel <em>Statistics: An Introduction Using R</em> de Michael Crawley. Ces données représentent les concentrations d’ozone (en parties par 100 millions ou pphm) mesurées dans trois jardins (A, B et C) lors de différentes journées.</p>
+<pre class="r"><code>gardens &lt;- read.csv(&quot;gardens.csv&quot;)</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Observez la distribution des mesures d’ozone dans chaque jardin et indiquez la moyenne. Quel type de graphique pourriez-vous utiliser?</li>
+</ol>
+<p><strong>Voici une option avec des boîtes à moustaches:</strong></p>
+<pre class="r"><code>library(ggplot2)
+ggplot(gardens, aes(x = Garden, y = Ozone)) +
+    geom_boxplot()</code></pre>
+<p><img src="3R-Estimation_tests_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><strong>Voici les points individuels avec <code>geom_jitter</code>. il s’agit d’un <code>geom_point</code> qui espace les points aléatoirement sur l’axe des <em>x</em> pour différencier les points avec le même <em>y</em>:</strong></p>
+<pre class="r"><code>ggplot(gardens, aes(x = Garden, y = Ozone)) +
+    geom_jitter(width = 0.2)</code></pre>
+<p><img src="3R-Estimation_tests_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><strong>L’argument <em>width</em> de <code>geom_jitter</code> détermine comment les points sont dispersés sur l’axe des <em>x</em>. Il devrait être assez grand pour voir tous les points, mais pas trop pour conserver la séparation entre les groupes.</strong></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Calculez la moyenne et l’écart-type de la concentration d’ozone dans chaque jardin. Que remarquez-vous? Est-ce que la moyenne est une bonne indicatrice de la valeur “typique” dans chaque jardin?</li>
+</ol>
+<p><em>Note</em>: La fonction <code>tapply(X, INDEX, FUN)</code> applique la fonction <em>FUN</em> à <em>X</em> pour chaque valeur du facteur <em>INDEX</em>. Donc la moyenne de la concentration d’ozone par jardin peut être calculée avec <code>tapply(gardens$Ozone, gardens$Garden, mean)</code>.</p>
+<pre class="r"><code>tapply(gardens$Ozone, gardens$Garden, mean)</code></pre>
+<pre><code>## A B C 
+## 3 5 5</code></pre>
+<pre class="r"><code>tapply(gardens$Ozone, gardens$Garden, sd)</code></pre>
+<pre><code>##        A        B        C 
+## 1.154701 1.154701 3.771236</code></pre>
+<p><strong>Le jardin C a un écart-type beaucoup plus élevé. Mais surtout, la moyenne de 5 n’est pas une valeur typique, puisqu’on a 7 points entre 1 et 4, et 3 entre 10 et 11.</strong></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>À partir de ces données, testez l’hypothèse nulle selon laquelle les jardins A et B reçoivent la même concentration d’ozone en moyenne. Quel est votre estimé de la différence entre les moyennes et son intervalle de confiance à 99%? Est-ce que ce test donne une bonne idée de la différence entre les deux jardins? Expliquez votre réponse.</li>
+</ol>
+<pre class="r"><code>gardensAB &lt;- gardens[gardens$Garden != &quot;C&quot;, ]
+t.test(Ozone ~ Garden, data = gardensAB, conf.level = 0.99)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  Ozone by Garden
+## t = -3.873, df = 18, p-value = 0.001115
+## alternative hypothesis: true difference in means is not equal to 0
+## 99 percent confidence interval:
+##  -3.4864203 -0.5135797
+## sample estimates:
+## mean in group A mean in group B 
+##               3               5</code></pre>
+<p><strong>L’estimé <span class="math inline">\(\mu_A - \mu_B\)</span> est de -2 avec un intervalle de confiance (-3.5, -0.5). L’hypothèse nulle est rejetée.</strong></p>
+<p><strong>Comme on a vu plus haut, les deux jardins ont une distribution semblable de concentration d’ozone, sauf que la moyenne du jardin B est plus élevé. Donc ici, le test <span class="math inline">\(t\)</span> comparant les moyennes décrit bien la différence entre les deux.</strong></p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Répétez l’exercice précédent pour l’hypothèse nulle selon laquelle les jardins A et C reçoivent la même concentration d’ozone en moyenne. Commentez sur la différence entre ce résultat et le résultat précédent.</li>
+</ol>
+<pre class="r"><code>gardensAC &lt;- gardens[gardens$Garden != &quot;B&quot;, ]
+t.test(Ozone ~ Garden, data = gardensAC, conf.level = 0.99)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  Ozone by Garden
+## t = -1.6036, df = 10.673, p-value = 0.138
+## alternative hypothesis: true difference in means is not equal to 0
+## 99 percent confidence interval:
+##  -5.897603  1.897603
+## sample estimates:
+## mean in group A mean in group C 
+##               3               5</code></pre>
+<p><strong>L’estimé <span class="math inline">\(\mu_A - \mu_C\)</span> est de -2 avec un intervalle de confiance (-5.9, 1.9). L’hypothèse nulle n’est pas rejetée.</strong></p>
+<p><strong>La différence entre les moyennes de A et C est la même que la différence entre les moyennes de A et B, mais le jardin C a une plus grande variance, ce qui explique pourquoi la différence n’est pas significative. Toutefois, comme nous avons vu plus tôt, la moyenne ne décrit pas bien les données du jardin C et la distribution est très loin d’être normale. Dans ce cas-ci, le test <span class="math inline">\(t\)</span> n’est probablement pas une bonne façon de décrire la différence entre les groupes.</strong></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

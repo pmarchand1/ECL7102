@@ -14,6 +14,7 @@
 
 1. [Introduction to R - Part 1](labos/1E-IntroR_part1.html) ([PDF](labos/1E-IntroR_part1.pdf) - [Data](labos/cours1_kejimkujik.csv))
 2. [Introduction to R - Part 2](labos/2E-IntroR_part2.html) ([PDF](labos/2E-IntroR_part2.pdf) - [Worksheet](labos/2E-worksheet.R) - [Data 1](labos/cours1_kejimkujik.csv) - [Data 2](labos/codes_especes.csv))
-3. [Parameter estimation and hypothesis testing](labos/3E-Estimation_tests.html) ([PDF](labos/3E-Estimation_tests.pdf) - [Data](labos/gardens.csv))
+3. [Parameter estimation and hypothesis testing](labos/3RE-Estimation_tests.html) ([PDF](labos/3E-Estimation_tests.pdf) - [Data](labos/gardens.csv))
 5. [Contingency tables](labos/5E-Contingency_tables.pdf)
+6. [Analysis of variance](labos/6E-ANOVA.pdf) ([Data 1](labos/sablefish.csv) - [Data 2](labos/woodstain.csv))
 

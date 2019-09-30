@@ -1,10 +1,10 @@
 ---
 title: "Analysis of variance"
-date: "October 10, 2018"
+date: "October 2, 2019"
 output: pdf_document
 ---
 
-Answers for this lab must be submitted before **October 24th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **October 9th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Sablefish catches in Alaska
@@ -38,7 +38,7 @@ Analyze the results of this experiment with a two-way ANOVA, then answer the que
 
 a) Is there a statistically significant difference ($\alpha$ = 0.05) between different pre-treatments and different stains? Are the effects of the two factors additive, or is there an interaction?
 
-b) If one of the two factors or their interaction has a significant effect, how could you estimate the fraction of the total variance due to this effect?
+b) If one of the two factors or their interaction has a significant effect, how could you estimate the fraction of the total variance due to that effect?
 
 c) If one of the two factors or their interaction has a significant effect, what is the estimate of the average difference in water resistance between treatments? What is its 95% confidence interval?
 
@@ -58,6 +58,6 @@ b) Choose one of the two variables (*HeadWt* or *VitC*) that best fits the ANOVA
 
 c) Perform a new two-way ANOVA for the same model as in (b), but without interaction (additive model). Save the result in an `an3_add` variable. Display the summary of the linear model equivalent to this ANOVA with the code: `summary (lm (an3_add))`. How do you interpret each of the coefficients of the linear model?
 
-d) (Bonus) How is the $t$-test reported for each coefficient in the table in (c) different from the results of Tukey's range test, obtained with `TukeyHSD(an3_add)`?
+d) How is the $t$-test reported for each coefficient in the table in (c) different from the results of Tukey's range test, obtained with `TukeyHSD(an3_add)`?
 
 

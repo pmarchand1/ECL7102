@@ -1,684 +1,224 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>ANOVA à deux facteurs et blocs complets aléatoires</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
-
-
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
-
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
-
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
-
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
-
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
-
-
-
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
-
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-
-  </style>
-
-    <style type="text/css">code{white-space: pre;}</style>
-
-    <link rel="stylesheet" href="styles.css"/>
-
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
-
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
-
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
-
-
-@media print {
-
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
-
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
-
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
-
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
-
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
-
-
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
-
-		overflow: visible !important;
-		display: block !important;
-
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
-
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
-    
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
-
-* {
-	-webkit-print-color-adjust: exact;
-}
-
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
-
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
-
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
-
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
-
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
-
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
-
-	overflow: visible;
-	display: block;
-
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
-
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
-
-.reveal .slides section {
-	page-break-after: always !important;
-
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
-
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
-
-	opacity: 1 !important;
-
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
-
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
-
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
-
-.reveal img {
-	box-shadow: none;
-}
-
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
-
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
-
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
-
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
-
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
-
-</script>
-
-
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
-
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">ANOVA à deux facteurs et blocs complets aléatoires</h1>
-    <h3 class="date"><br/>3 octobre 2018</h3>
-</section>
-
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Effectuer une analyse de variance à deux facteurs (deux variables catégorielles).</p></li>
-<li class="fragment"><p>Déterminer si deux facteurs ont des effets additifs ou une interaction.</p></li>
-<li class="fragment"><p>Appliquer l’ANOVA à une expérience réalisée en blocs complets aléatoires.</p></li>
-<li class="fragment"><p>Reformuler le modèle d’ANOVA comme modèle de régression linéaire en codant les variables catégorielles au moyen de contrastes.</p></li>
-</ul>
-</section>
-<section id="rappel-anova-a-un-facteur" class="slide level2">
-<h2>Rappel: ANOVA à un facteur</h2>
-<p><span class="math display">\[ y_{ik} = \mu + \alpha_i + \epsilon_{ik} \]</span></p>
-<p><span class="math display">\[ \epsilon_{ik} \sim N(0, \sigma) \]</span></p>
-<ul>
-<li class="fragment"><span class="math inline">\(y_{ik}\)</span> est la réponse de l’individu <span class="math inline">\(k\)</span> du groupe <span class="math inline">\(i\)</span>.</li>
-<li class="fragment"><span class="math inline">\(\mu\)</span> est la moyenne générale de la réponse.</li>
-<li class="fragment"><span class="math inline">\(\alpha_i\)</span> est la différence entre la moyenne du groupe <span class="math inline">\(i\)</span> et la moyenne générale.</li>
-<li class="fragment"><span class="math inline">\(\epsilon_{ik}\)</span> est le résidu, qui suit une distribution normale.</li>
-</ul>
-</section>
-<section id="anova-a-deux-facteurs-sans-interaction" class="slide level2">
-<h2>ANOVA à deux facteurs sans interaction</h2>
-<h3 id="exemple">Exemple</h3>
-<p>Gain de poids de 48 animaux suivant trois types de régime avec quatre types de supplément. Quatre réplicats pour chacune des 12 combinaisons des deux facteurs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">growth &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/growth.csv&quot;</span>)
-<span class="kw">str</span>(growth)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    48 obs. of  3 variables:
-##  $ supplement: Factor w/ 4 levels &quot;agrimore&quot;,&quot;control&quot;,..: 3 3 3 3 2 2 2 2 4 4 ...
-##  $ diet      : Factor w/ 3 levels &quot;barley&quot;,&quot;oats&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
-##  $ gain      : num  17.4 16.8 18.1 15.8 17.7 ...</code></pre>
-</section>
-<section id="anova-a-deux-facteurs-sans-interaction-1" class="slide level2">
-<h2>ANOVA à deux facteurs sans interaction</h2>
-<h3 id="exemple-1">Exemple</h3>
-<p><img src="6-ANOVA_2_facteurs_files/figure-revealjs/unnamed-chunk-2-1.png" width="576" /></p>
-</section>
-<section id="modele-danova-a-deux-facteurs-sans-interaction" class="slide level2">
-<h2>Modèle d’ANOVA à deux facteurs (sans interaction)</h2>
-<p>Dans ce modèle, les effets sont <strong>additifs</strong>. L’effet combiné d’un régime et d’un supplément est la somme des deux effets pris séparément.</p>
-<p><span class="math display">\[ y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk} \]</span></p>
-<ul>
-<li class="fragment"><span class="math inline">\(y_{ijk}\)</span> est la réponse de l’individu <span class="math inline">\(k\)</span> suivant le régime <span class="math inline">\(i\)</span> avec le supplément <span class="math inline">\(j\)</span>.</li>
-<li class="fragment"><span class="math inline">\(\alpha_i\)</span> est l’effet du traitement <span class="math inline">\(i\)</span> du facteur A (régime).</li>
-<li class="fragment"><span class="math inline">\(\beta_j\)</span> est l’effet du traitement <span class="math inline">\(j\)</span> du facteur B (supplément).</li>
-</ul>
-</section>
-<section id="modele-danova-a-deux-facteurs-sans-interaction-1" class="slide level2">
-<h2>Modèle d’ANOVA à deux facteurs (sans interaction)</h2>
-<h3 id="estimation-des-coefficients">Estimation des coefficients</h3>
-<ul>
-<li class="fragment"><p>Moyenne générale: <span class="math inline">\(\hat{\mu} = \bar{y}\)</span></p></li>
-<li class="fragment"><p>Effet du traitement <span class="math inline">\(i\)</span> du facteur A: <span class="math inline">\(\hat{\alpha_i} = \bar{y_i} - \bar{y}\)</span></p></li>
-<li class="fragment"><p>Effet du traitement <span class="math inline">\(j\)</span> du facteur B: <span class="math inline">\(\hat{\beta_j} = \bar{y_j} - \bar{y}\)</span></p></li>
-<li class="fragment">Résidu: <span class="math inline">\(y_{ijk} - \bar{y} - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y})\)</span>
-<ul>
-<li class="fragment">en simplifiant: <span class="math inline">\(y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y}\)</span></li>
-</ul></li>
-</ul>
-</section>
-<section id="tableau-danova-a-deux-facteurs-sans-interaction" class="slide level2">
-<h2>Tableau d’ANOVA à deux facteurs sans interaction</h2>
-<p>On a <span class="math inline">\(l\)</span> traitements du facteur A, <span class="math inline">\(m\)</span> traitements du facteur B et <span class="math inline">\(n\)</span> réplicats pour chaque combinaison des traitements (<span class="math inline">\(lmn\)</span> observations totales).</p>
-<table style="width:32%;">
-<colgroup>
-<col style="width: 2%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Composante</th>
-<th>Somme des carrés (SS)</th>
-<th>Degrés de liberté (df)</th>
-<th>Carré moyen (MS)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Facteur A</td>
-<td><span class="math inline">\(SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(l - 1\)</span></td>
-<td><span class="math inline">\(MSA = \frac{SSA}{l - 1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Facteur B</td>
-<td><span class="math inline">\(SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(m - 1\)</span></td>
-<td><span class="math inline">\(MSB = \frac{SSB}{m - 1}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Résidu</td>
-<td><span class="math inline">\(SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y})^2\)</span></td>
-<td><span class="math inline">\(lmn - l - m + 1\)</span></td>
-<td><span class="math inline">\(MSE = \frac{SSE}{lmn - l - m + 1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Total</td>
-<td><span class="math inline">\(SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(lmn - 1\)</span></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li class="fragment">Nombre de degrés de liberté pour la MSE: nombre total d’observations, moins 1 degré de liberté par moyenne estimée.</li>
-</ul>
-</section>
-<section id="tableau-danova-a-deux-facteurs-sans-interaction-1" class="slide level2">
-<h2>Tableau d’ANOVA à deux facteurs sans interaction</h2>
-<p>On a <span class="math inline">\(l\)</span> traitements du facteur A, <span class="math inline">\(m\)</span> traitements du facteur B et <span class="math inline">\(n\)</span> réplicats pour chaque combinaison des traitements (<span class="math inline">\(lmn\)</span> observations totales).</p>
-<table style="width:32%;">
-<colgroup>
-<col style="width: 2%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Composante</th>
-<th>Somme des carrés (SS)</th>
-<th>Degrés de liberté (df)</th>
-<th>Carré moyen (MS)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Facteur A</td>
-<td><span class="math inline">\(SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(l - 1\)</span></td>
-<td><span class="math inline">\(MSA = \frac{SSA}{l - 1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Facteur B</td>
-<td><span class="math inline">\(SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(m - 1\)</span></td>
-<td><span class="math inline">\(MSB = \frac{SSB}{m - 1}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Résidu</td>
-<td><span class="math inline">\(SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y})^2\)</span></td>
-<td><span class="math inline">\(lmn - l - m + 1\)</span></td>
-<td><span class="math inline">\(MSE = \frac{SSE}{lmn - l - m + 1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Total</td>
-<td><span class="math inline">\(SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(lmn - 1\)</span></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>Un test <span class="math inline">\(F\)</span> séparé pour chaque facteur, basé sur <span class="math inline">\(MSA/MSE\)</span> ou <span class="math inline">\(MSB/MSE\)</span>.</li>
-</ul>
-</section>
-<section id="exemple---croissance-animale" class="slide level2">
-<h2>Exemple - Croissance animale</h2>
-<p>Dans R, un modèle à deux facteurs additifs est représenté par l’équation <code>reponse ~ facteurA + facteurB</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aov_growth_add &lt;-<span class="st"> </span><span class="kw">aov</span>(gain <span class="op">~</span><span class="st"> </span>diet <span class="op">+</span><span class="st"> </span>supplement, <span class="dt">data =</span> growth)</code></pre></div>
-<p>Vérifions d’abord les graphiques de diagnostic, puis les résultats sommaires de l’ANOVA.</p>
-</section>
-<section id="graphiques-de-diagnostic" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<p><img src="6-ANOVA_2_facteurs_files/figure-revealjs/unnamed-chunk-4-1.png" width="576" /></p>
-</section>
-<section id="tableau-danova" class="slide level2">
-<h2>Tableau d’ANOVA</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(aov_growth_add)</code></pre></div>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>ANOVA à deux facteurs et blocs complets aléatoires</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# ANOVA à deux facteurs et blocs complets aléatoires
+### <br/>30 septembre 2019
+
+---
+
+
+
+
+&lt;style type="text/css"&gt;
+.small { font-size: 70% }
+&lt;/style&gt;
+
+# Question éclair
+
+![](../images/question_eclair_cours6.png)
+
+Ces graphiques de diagnostic ont été produits à partir du résultat d’une ANOVA comparant une variable réponse en fonction de 8 différents traitements. Qu’est-ce que chaque graphique nous indique sur le respect ou non des suppositions du modèle d’ANOVA?
+
+---
+
+# Objectifs
+
+- Effectuer une analyse de variance à deux facteurs (deux variables catégorielles).
+
+- Déterminer si deux facteurs ont des effets additifs ou une interaction.
+
+- Appliquer l'ANOVA à une expérience réalisée en blocs complets aléatoires.
+
+- Reformuler le modèle d'ANOVA comme modèle de régression linéaire en codant les variables catégorielles au moyen de contrastes.
+
+---
+
+# Rappel: ANOVA à un facteur
+
+`$$y_{ik} = \mu + \alpha_i + \epsilon_{ik}$$`
+
+`$$\epsilon_{ik} \sim N(0, \sigma)$$`
+
+- `\(y_{ik}\)` est la réponse de l'individu `\(k\)` du groupe `\(i\)`. 
+- `\(\mu\)` est la moyenne générale de la réponse.
+- `\(\alpha_i\)` est la différence entre la moyenne du groupe `\(i\)` et la moyenne générale.
+- `\(\epsilon_{ik}\)` est le résidu, qui suit une distribution normale.
+
+---
+
+# ANOVA à deux facteurs sans interaction
+
+## Exemple
+
+Gain de poids de 48 animaux suivant trois types de régime avec quatre types de supplément. Quatre réplicats pour chacune des 12 combinaisons des deux facteurs.
+
+
+```r
+growth &lt;- read.csv("../donnees/growth.csv")
+str(growth)
+```
+
+```
+## 'data.frame':	48 obs. of  3 variables:
+##  $ supplement: Factor w/ 4 levels "agrimore","control",..: 3 3 3 3 2 2 2 2 4 4 ...
+##  $ diet      : Factor w/ 3 levels "barley","oats",..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ gain      : num  17.4 16.8 18.1 15.8 17.7 ...
+```
+
+---
+
+# ANOVA à deux facteurs sans interaction
+
+## Exemple
+
+![](6-ANOVA_2_facteurs_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+---
+
+# Modèle d'ANOVA à deux facteurs
+
+Dans ce modèle, les effets sont **additifs**. L'effet combiné d'un régime et d'un supplément est la somme des deux effets pris séparément.
+
+`$$y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk}$$`
+
+--
+
+- `\(y_{ijk}\)` est la réponse de l'individu `\(k\)` suivant le régime `\(i\)` avec le supplément `\(j\)`. 
+
+--
+
+- `\(\alpha_i\)` est l'effet du traitement `\(i\)` du facteur A (régime).
+
+--
+
+- `\(\beta_j\)` est l'effet du traitement `\(j\)` du facteur B (supplément).
+
+---
+
+# Estimation des coefficients
+
+- Moyenne générale: `\(\hat{\mu} = \bar{y}\)`
+
+- Effet du traitement `\(i\)` du facteur A: `\(\hat{\alpha_i} = \bar{y_i} - \bar{y}\)`
+
+- Effet du traitement `\(j\)` du facteur B: `\(\hat{\beta_j} = \bar{y_j} - \bar{y}\)`
+
+--
+
+- Résidu: `\(y_{ijk} - \bar{y} - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y})\)`
+
+--
+    + en simplifiant: `\(y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y}\)`
+
+---
+
+# Tableau d'ANOVA à deux facteurs
+
+.small[
+
+On a `\(l\)` traitements du facteur A, `\(m\)` traitements du facteur B et `\(n\)` réplicats pour chaque combinaison des traitements, donc `\(lmn\)` observations totales.
+
+| Composante | Somme des carrés (SS) | Degrés de liberté (df) | Carré moyen (MS) |
+|-|------|------|------|
+| Facteur A | `\(SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2\)` | `\(l - 1\)` | `\(MSA = \frac{SSA}{l - 1}\)` |
+| Facteur B | `\(SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2\)` | `\(m - 1\)` | `\(MSB = \frac{SSB}{m - 1}\)` |
+| Résidu | `\(SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y})^2\)` | `\(lmn - l - m + 1\)` | `\(MSE = \frac{SSE}{lmn - l - m + 1}\)`  |
+| Total | `\(SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2\)` | `\(lmn - 1\)` | |
+
+]
+
+--
+
+.small[
+
+- Nombre de degrés de liberté pour la MSE: nombre total d'observations, moins 1 degré de liberté par moyenne estimée.
+
+]
+
+---
+
+# Tableau d'ANOVA à deux facteurs
+
+.small[
+
+On a `\(l\)` traitements du facteur A, `\(m\)` traitements du facteur B et `\(n\)` réplicats pour chaque combinaison des traitements ($lmn$ observations totales).
+
+| Composante | Somme des carrés (SS) | df | Carré moyen (MS) |
+|-|------|------|------|
+| Facteur A | `\(SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2\)` | `\(l - 1\)` | `\(MSA = \frac{SSA}{l - 1}\)` |
+| Facteur B | `\(SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2\)` | `\(m - 1\)` | `\(MSB = \frac{SSB}{m - 1}\)` |
+| Résidu | `\(SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_i} - \bar{y_j} + \bar{y})^2\)` | `\(lmn - l - m + 1\)` | `\(MSE = \frac{SSE}{lmn - l - m + 1}\)`  |
+| Total | `\(SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2\)` | `\(lmn - 1\)` | |
+
+- Un test `\(F\)` séparé pour chaque facteur, basé sur `\(MSA/MSE\)` ou `\(MSB/MSE\)`.
+
+]
+
+---
+
+
+# Exemple - Croissance animale
+
+Dans R, un modèle à deux facteurs additifs est représenté par l'équation `reponse ~ facteurA + facteurB`.
+
+
+```r
+aov_growth_add &lt;- aov(gain ~ diet + supplement, data = growth)
+```
+
+Vérifions d'abord les graphiques de diagnostic, puis les résultats sommaires de l'ANOVA.
+
+---
+
+# Graphiques de diagnostic
+
+![](6-ANOVA_2_facteurs_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+
+# Tableau d'ANOVA
+
+
+```r
+summary(aov_growth_add)
+```
+
+```
+##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## diet         2 287.17  143.59   92.36 4.20e-16 ***
 ## supplement   3  91.88   30.63   19.70 3.98e-08 ***
 ## Residuals   42  65.30    1.55                     
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<ul>
-<li class="fragment">Les deux facteurs ont un effet très significatif.</li>
-</ul>
-</section>
-<section id="test-de-tukey" class="slide level2">
-<h2>Test de Tukey</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TukeyHSD</span>(aov_growth_add)</code></pre></div>
-<pre><code>##   Tukey multiple comparisons of means
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+--
+
+- Les deux facteurs ont un effet très significatif. 
+
+---
+
+# Test de Tukey
+
+.small[
+
+
+```r
+TukeyHSD(aov_growth_add)
+```
+
+```
+##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
 ## 
 ## Fit: aov(formula = gain ~ diet + supplement, data = growth)
@@ -696,188 +236,255 @@ document.getElementsByTagName('head')[0].appendChild(style);
 ## supersupp-agrimore  -0.7273521 -2.0889849  0.6342806 0.4888738
 ## supergain-control   -0.6847581 -2.0463909  0.6768746 0.5400389
 ## supersupp-control    1.9693484  0.6077156  3.3309811 0.0020484
-## supersupp-supergain  2.6541065  1.2924737  4.0157392 0.0000307</code></pre>
-</section>
-<section id="coefficient-de-determination" class="slide level2">
-<h2>Coefficient de détermination</h2>
-<ul>
-<li class="fragment"><p>Pour l’ANOVA à deux facteurs, on a la relation: <span class="math inline">\(SST = SSA + SSB + SSE\)</span>.</p></li>
-<li class="fragment"><p>Ratios <span class="math inline">\(SSA/SST\)</span> et <span class="math inline">\(SSB/SST\)</span> sont les fractions de la variance totale de la réponse expliquées par le facteur A et le facteur B, respectivement.</p></li>
-<li class="fragment"><p>Le ratio <span class="math inline">\(SSE/SST\)</span> est la fraction de la variance inexpliquée par le modèle (erreur résiduelle).</p></li>
-</ul>
-</section>
-<section id="coefficient-de-determination-1" class="slide level2">
-<h2>Coefficient de détermination</h2>
-<p>Dans notre exemple, <span class="math inline">\(SST = 287.17 + 91.88 + 65.30 = 444.35\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(aov_growth_add)</code></pre></div>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## supersupp-supergain  2.6541065  1.2924737  4.0157392 0.0000307
+```
+
+]
+
+---
+
+# Coefficient de détermination
+
+- Pour l'ANOVA à deux facteurs, on a la relation: `\(SST = SSA + SSB + SSE\)`. 
+
+--
+
+- Ratios `\(SSA/SST\)` et `\(SSB/SST\)` sont les fractions de la variance totale de la réponse expliquées par le facteur A et le facteur B, respectivement.
+
+--
+
+- Le ratio `\(SSE/SST\)` est la fraction de la variance inexpliquée par le modèle (erreur résiduelle).
+
+---
+
+# Coefficient de détermination
+
+Dans notre exemple, `\(SST = 287.17 + 91.88 + 65.30 = 444.35\)`.
+
+
+```r
+summary(aov_growth_add)
+```
+
+```
+##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## diet         2 287.17  143.59   92.36 4.20e-16 ***
 ## supplement   3  91.88   30.63   19.70 3.98e-08 ***
 ## Residuals   42  65.30    1.55                     
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<ul>
-<li class="fragment"><span class="math inline">\(SSA/SST = 0.647\)</span></li>
-<li class="fragment"><span class="math inline">\(SSB/SST = 0.207\)</span></li>
-<li class="fragment"><span class="math inline">\(SSE/SST = 0.147\)</span></li>
-</ul>
-</section>
-<section id="coefficient-de-determination-2" class="slide level2">
-<h2>Coefficient de détermination</h2>
-<p>La fraction de la variance expliquée par les facteurs inclus dans le modèle est égale à:</p>
-<p><span class="math display">\[ R^2 = 1 - \frac{SSE}{SST}\]</span></p>
-<ul>
-<li class="fragment"><span class="math inline">\(R^2\)</span> se nomme <strong>coefficient de détermination</strong>. Dans l’exemple précédent, <span class="math inline">\(R^2 = 0.853\)</span>.</li>
-</ul>
-</section>
-<section id="coefficient-de-determination-3" class="slide level2">
-<h2>Coefficient de détermination</h2>
-<ul>
-<li class="fragment">Dans le cours sur les tests d’hypothèse, il était recommandé de présenter trois types de résultats suite à un test:
-<ul>
-<li class="fragment">la probabilité que l’effet mesuré soit dû au hasard (valeur <span class="math inline">\(p\)</span>);</li>
-<li class="fragment">l’estimé et l’intervalle de confiance de l’effet mesuré; et</li>
-<li class="fragment">la magnitude de l’effet comparée à la variance des données individuelles.</li>
-</ul></li>
-<li class="fragment">Le coefficient de détermination <span class="math inline">\(R^2\)</span> répond à la troisième question: Quelle partie de la variation observée est due à l’effet des traitements ou prédicteurs mesurés?</li>
-</ul>
-</section>
-<section id="note" class="slide level2">
-<h2>Note</h2>
-<ul>
-<li class="fragment"><p>Quand on parle de l’<em>effet</em> d’un prédicteur ou de la fraction de la variance <em>expliquée</em>, cela ne signifie pas toujours qu’il existe une relation de cause à effet.</p></li>
-<li class="fragment">Notre capacité à interpréter une association statistique (ou une corrélation) comme représentant un lien de cause à effet dépend des contrôles établis lors du plan expérimental, ex.:
-<ul>
-<li class="fragment">variation indépendante des facteurs;</li>
-<li class="fragment">utilisation d’un groupe témoin;</li>
-<li class="fragment">assignation aléatoire des traitements.</li>
-</ul></li>
-</ul>
-</section>
-<section id="anova-a-deux-facteurs-avec-interaction" class="slide level2">
-<h2>ANOVA à deux facteurs avec interaction</h2>
-<h3 id="exemple-2">Exemple</h3>
-<p>Surface bactérienne (en mm<span class="math inline">\(^2\)</span>) en fonction de l’humidité et de la concentration d’antibiotique.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># fileEncoding = &quot;UTF-8&quot; permet de lire les accents correctement</span>
-antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/antibiot.csv&quot;</span>, <span class="dt">fileEncoding =</span> <span class="st">&quot;UTF-8&quot;</span>)
-<span class="kw">str</span>(antibiot)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    30 obs. of  3 variables:
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+--
+
+- `\(SSA/SST = 0.647\)`
+- `\(SSB/SST = 0.207\)`
+- `\(SSE/SST = 0.147\)`
+
+---
+
+# Coefficient de détermination
+
+La fraction de la variance expliquée par les facteurs inclus dans le modèle est égale à:
+
+`$$R^2 = 1 - \frac{SSE}{SST}$$`
+--
+
+- `\(R^2\)` se nomme **coefficient de détermination**. Dans l'exemple précédent, `\(R^2 = 0.853\)`. 
+
+---
+
+# Coefficient de détermination
+
+- Dans le cours sur les tests d'hypothèse, il était recommandé de présenter trois types de résultats suite à un test:
+
+    + la probabilité que l'effet mesuré soit dû au hasard (valeur `\(p\)`);
+    + l'estimé et l'intervalle de confiance de l'effet mesuré; et
+    + la magnitude de l'effet comparée à la variance des données individuelles.
+    
+--
+
+- Le coefficient de détermination `\(R^2\)` répond à la troisième question: Quelle partie de la variation observée est due à l'effet des traitements ou prédicteurs mesurés?
+
+---
+
+# Note
+
+- Quand on parle de l'*effet* d'un prédicteur ou de la fraction de la variance *expliquée*, cela ne signifie pas toujours qu'il existe une relation de cause à effet.
+
+--
+
+- Notre capacité à interpréter une association statistique (ou une corrélation) comme représentant un lien de cause à effet dépend des contrôles établis lors du plan expérimental, ex.:
+    + variation indépendante des facteurs;
+    + utilisation d'un groupe témoin;
+    + assignation aléatoire des traitements.
+
+---
+
+# ANOVA à deux facteurs avec interaction
+
+## Exemple
+
+Surface bactérienne (en mm&lt;sup&gt;2&lt;/sup&gt;) en fonction de l'humidité et de la concentration d'antibiotique.
+
+
+```r
+# fileEncoding = "UTF-8" permet de lire les accents correctement
+antibiot &lt;- read.csv("../donnees/antibiot.csv", fileEncoding = "UTF-8")
+str(antibiot)
+```
+
+```
+## 'data.frame':	30 obs. of  3 variables:
 ##  $ Surface      : num  2.1 2.73 1.86 2.36 2.2 ...
-##  $ Humidité     : Factor w/ 2 levels &quot;humide&quot;,&quot;sec&quot;: 2 2 2 2 2 2 2 2 2 2 ...
-##  $ Concentration: Factor w/ 3 levels &quot;élevée&quot;,&quot;faible&quot;,..: 2 2 2 2 2 3 3 3 3 3 ...</code></pre>
-</section>
-<section id="reordonner-un-facteur" class="slide level2">
-<h2>Réordonner un facteur</h2>
-<p>Quand R importe un jeu de données avec <code>read.csv</code>, les colonnes non-numériques sont importées comme facteurs avec un ordre de catégories (ou de niveaux, <code>levels</code>) déterminé par l’ordre alphabétique.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(antibiot<span class="op">$</span>Concentration)</code></pre></div>
-<pre><code>## [1] &quot;élevée&quot;  &quot;faible&quot;  &quot;modérée&quot;</code></pre>
-<p>On peut spécifier un autre ordre avec la fonction <code>factor</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">antibiot<span class="op">$</span>Concentration &lt;-<span class="st"> </span><span class="kw">factor</span>(antibiot<span class="op">$</span>Concentration, 
-                                 <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;faible&quot;</span>, <span class="st">&quot;modérée&quot;</span>, <span class="st">&quot;élevée&quot;</span>))
-<span class="kw">levels</span>(antibiot<span class="op">$</span>Concentration)</code></pre></div>
-<pre><code>## [1] &quot;faible&quot;  &quot;modérée&quot; &quot;élevée&quot;</code></pre>
-</section>
-<section id="exemple---antibiotique" class="slide level2">
-<h2>Exemple - Antibiotique</h2>
-<p>Est-ce qu’un modèle avec des effets additifs de la concentration d’antibiotique et de l’humidité serait approprié ici?</p>
-<p><img src="6-ANOVA_2_facteurs_files/figure-revealjs/unnamed-chunk-11-1.png" width="576" /></p>
-</section>
-<section id="estimation-de-linteraction" class="slide level2">
-<h2>Estimation de l’interaction</h2>
-<p>Pour représenter l’interaction, on ajoute un terme <span class="math inline">\(\gamma_{ij}\)</span> au modèle d’ANOVA.</p>
-<p><span class="math display">\[ y_{ijk} = \mu + \alpha_i + \beta_j + \gamma_{ij} + \epsilon_{ijk} \]</span></p>
-<ul>
-<li class="fragment">Effet <span class="math inline">\(\gamma_{ij}\)</span>: différence entre l’effet moyen des traitements <span class="math inline">\(i\)</span> et <span class="math inline">\(j\)</span> appliqués ensemble, et la somme des effet moyens de ces deux traitements pris séparément.</li>
-</ul>
-</section>
-<section id="estimation-de-linteraction-1" class="slide level2">
-<h2>Estimation de l’interaction</h2>
-<p><span class="math display">\[ \hat{\gamma_{ij}} = (\bar{y_{ij}} - \bar{y}) - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y}) \]</span></p>
-<p>En simplifiant: <span class="math display">\[ \hat{\gamma_{ij}} = \bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y} \]</span></p>
-<ul>
-<li class="fragment"><p>Dans cette équation, <span class="math inline">\(\bar{y_{ij}}\)</span> est la moyenne des observations qui font partie à la fois du groupe <span class="math inline">\(i\)</span> du facteur A et du groupe <span class="math inline">\(j\)</span> du facteur B.</p></li>
-<li class="fragment"><p>Le résidu du modèle pour une observation <span class="math inline">\(y_{ijk}\)</span> est égal à <span class="math inline">\(y_{ijk} - \bar{y_{ij}}\)</span>.</p></li>
-</ul>
-</section>
-<section id="tableau-danova-avec-interaction" class="slide level2">
-<h2>Tableau d’ANOVA avec interaction</h2>
-<table style="width:32%;">
-<colgroup>
-<col style="width: 2%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Composante</th>
-<th>Somme des carrés (SS)</th>
-<th>Degrés de liberté (df)</th>
-<th>Carré moyen (MS)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Facteur A</td>
-<td><span class="math inline">\(SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(l - 1\)</span></td>
-<td><span class="math inline">\(MSA = \frac{SSA}{l - 1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Facteur B</td>
-<td><span class="math inline">\(SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(m - 1\)</span></td>
-<td><span class="math inline">\(MSB = \frac{SSB}{m - 1}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Interaction AB</td>
-<td><span class="math inline">\(SSI = \sum_{i = 1}^l \sum_{j = 1}^m n (\bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y})^2\)</span></td>
-<td><span class="math inline">\((l - 1)(m - 1)\)</span></td>
-<td><span class="math inline">\(MSI = \frac{SSI}{(l-1)(m-1)}\)</span></td>
-</tr>
-<tr class="even">
-<td>Résidu</td>
-<td><span class="math inline">\(SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_{ij}})^2\)</span></td>
-<td><span class="math inline">\(lm(n - 1)\)</span></td>
-<td><span class="math inline">\(MSE = \frac{SSE}{lm(n-1)}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Total</td>
-<td><span class="math inline">\(SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2\)</span></td>
-<td><span class="math inline">\(lmn - 1\)</span></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li class="fragment">L’interaction a sa propre statistique <span class="math inline">\(F\)</span> égale au ratio <span class="math inline">\(MSI/MSE\)</span>. (Hypothèse nulle: effets additifs, aucune interaction.)</li>
-</ul>
-</section>
-<section id="application" class="slide level2">
-<h2>Application</h2>
-<p>En R, pour spécifier une interaction dans la formule du modèle, on place un symbole de multiplication <code>*</code> entre les deux variables au lieu du <code>+</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aov_antibio &lt;-<span class="st"> </span><span class="kw">aov</span>(Surface <span class="op">~</span><span class="st"> </span>Concentration <span class="op">*</span><span class="st"> </span>Humidité, antibiot)</code></pre></div>
-</section>
-<section id="graphiques-de-diagnostic-1" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<p><img src="6-ANOVA_2_facteurs_files/figure-revealjs/unnamed-chunk-13-1.png" width="576" /></p>
-</section>
-<section id="tableau-danova-1" class="slide level2">
-<h2>Tableau d’ANOVA</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(aov_antibio)</code></pre></div>
-<pre><code>##                        Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+##  $ Humidité     : Factor w/ 2 levels "humide","sec": 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Concentration: Factor w/ 3 levels "élevée","faible",..: 2 2 2 2 2 3 3 3 3 3 ...
+```
+
+---
+
+# Réordonner un facteur
+
+Quand R importe un jeu de données avec `read.csv`, les colonnes non-numériques sont importées comme facteurs avec un ordre de catégories (ou de niveaux, `levels`) déterminé par l'ordre alphabétique.
+
+
+```r
+levels(antibiot$Concentration)
+```
+
+```
+## [1] "élevée"  "faible"  "modérée"
+```
+
+--
+
+On peut spécifier un autre ordre avec la fonction `factor`.
+
+
+```r
+antibiot$Concentration &lt;- factor(antibiot$Concentration, 
+                                 levels = c("faible", "modérée", "élevée"))
+levels(antibiot$Concentration)
+```
+
+```
+## [1] "faible"  "modérée" "élevée"
+```
+
+---
+
+# Exemple - Antibiotique
+
+Est-ce qu'un modèle avec des effets additifs de la concentration d'antibiotique et de l'humidité serait approprié ici?
+
+![](6-ANOVA_2_facteurs_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+
+# Estimation de l'interaction
+
+Pour représenter l'interaction, on ajoute un terme `\(\gamma_{ij}\)` au modèle d'ANOVA.
+
+`$$y_{ijk} = \mu + \alpha_i + \beta_j + \gamma_{ij} + \epsilon_{ijk}$$`
+
+--
+
+- Effet `\(\gamma_{ij}\)`: différence entre l'effet moyen des traitements `\(i\)` et `\(j\)` appliqués ensemble, et la somme des effet moyens de ces deux traitements pris séparément.
+
+---
+
+# Estimation de l'interaction
+
+`$$\hat{\gamma_{ij}} = (\bar{y_{ij}} - \bar{y}) - (\bar{y_i} - \bar{y}) - (\bar{y_j} - \bar{y})$$`
+
+--
+
+En simplifiant:
+`$$\hat{\gamma_{ij}} = \bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y}$$`
+
+--
+
+- Dans cette équation, `\(\bar{y_{ij}}\)` est la moyenne des observations qui font partie à la fois du groupe `\(i\)` du facteur A et du groupe `\(j\)` du facteur B. 
+
+--
+
+- Le résidu du modèle pour une observation `\(y_{ijk}\)` est égal à `\(y_{ijk} - \bar{y_{ij}}\)`.
+
+---
+
+# Tableau d'ANOVA avec interaction
+
+.small[
+
+| Composante | Somme des carrés (SS) | df | Carré moyen (MS) |
+|-|------|------|------|
+| Facteur A | `\(SSA = \sum_{i = 1}^l mn (\bar{y_i} - \bar{y})^2\)` | `\(l - 1\)` | `\(MSA = \frac{SSA}{l - 1}\)` |
+| Facteur B | `\(SSB = \sum_{j = 1}^m ln (\bar{y_j} - \bar{y})^2\)` | `\(m - 1\)` | `\(MSB = \frac{SSB}{m - 1}\)` |
+| Interaction AB | `\(SSI = \sum_{i = 1}^l \sum_{j = 1}^m n (\bar{y_{ij}} - \bar{y_i} - \bar{y_j} + \bar{y})^2\)` | `\((l - 1)(m - 1)\)` | `\(MSI = \frac{SSI}{(l-1)(m-1)}\)`  |
+| Résidu | `\(SSE = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y_{ij}})^2\)` | `\(lm(n - 1)\)` | `\(MSE = \frac{SSE}{lm(n-1)}\)`  |
+| Total | `\(SST = \sum_{i = 1}^l \sum_{j = 1}^m \sum_{k = i}^n (y_{ijk} - \bar{y})^2\)` | `\(lmn - 1\)` | |
+
+]
+
+--
+
+.small[
+
+- L'interaction a sa propre statistique `\(F\)` égale au ratio `\(MSI/MSE\)`. (Hypothèse nulle: effets additifs, aucune interaction.)
+
+]
+
+---
+
+# Application
+
+En R, pour spécifier une interaction dans la formule du modèle, on place un symbole de multiplication `*` entre les deux variables au lieu du `+`.
+
+
+```r
+aov_antibio &lt;- aov(Surface ~ Concentration * Humidité, antibiot)
+```
+
+---
+
+# Graphiques de diagnostic
+
+![](6-ANOVA_2_facteurs_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+
+---
+
+# Tableau d'ANOVA
+
+
+```r
+summary(aov_antibio)
+```
+
+```
+##                        Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## Concentration           2  15.93   7.965    71.5 7.76e-11 ***
 ## Humidité                1  20.23  20.228   181.6 1.09e-12 ***
 ## Concentration:Humidité  2  36.40  18.199   163.4 1.05e-14 ***
 ## Residuals              24   2.67   0.111                     
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-</section>
-<section id="test-de-tukey-1" class="slide level2">
-<h2>Test de Tukey</h2>
-<p>Avec 6 groupes, il y a 15 comparaisons possibles pour l’interaction.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TukeyHSD</span>(aov_antibio)</code></pre></div>
-<pre><code>##   Tukey multiple comparisons of means
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+---
+
+# Test de Tukey
+
+.small[
+
+Avec 6 groupes, il y a 15 comparaisons possibles pour l'interaction. 
+
+
+```r
+TukeyHSD(aov_antibio)
+```
+
+```
+##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
 ## 
 ## Fit: aov(formula = Surface ~ Concentration * Humidité, data = antibiot)
@@ -908,95 +515,175 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## élevée:sec-élevée:humide      1.43238312  0.779715574  2.0850507 0.0000070
 ## modérée:sec-faible:sec        0.04124099 -0.611426550  0.6939085 0.9999549
 ## élevée:sec-faible:sec         0.81892385  0.166256308  1.4715914 0.0082690
-## élevée:sec-modérée:sec        0.77768286  0.125015314  1.4303504 0.0131278</code></pre>
-</section>
-<section id="exemple---croissance-animale-1" class="slide level2">
-<h2>Exemple - Croissance animale</h2>
-<p>Dans le cas du jeu de données sur la croissance animale <code>growth</code>, l’interaction n’est pas significative:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aov_growth_inter &lt;-<span class="st"> </span><span class="kw">aov</span>(gain <span class="op">~</span><span class="st"> </span>diet <span class="op">*</span><span class="st"> </span>supplement, growth)
-<span class="kw">summary</span>(aov_growth_inter)</code></pre></div>
-<pre><code>##                 Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## élevée:sec-modérée:sec        0.77768286  0.125015314  1.4303504 0.0131278
+```
+
+]
+
+---
+
+# Exemple - Croissance animale
+
+Dans le cas du jeu de données sur la croissance animale `growth`, l'interaction n'est pas significative:
+
+
+```r
+aov_growth_inter &lt;- aov(gain ~ diet * supplement, growth)
+summary(aov_growth_inter)
+```
+
+```
+##                 Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## diet             2 287.17  143.59   83.52 3.00e-14 ***
 ## supplement       3  91.88   30.63   17.82 2.95e-07 ***
 ## diet:supplement  6   3.41    0.57    0.33    0.917    
 ## Residuals       36  61.89    1.72                     
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-</section>
-<section id="doit-on-toujours-estimer-linteraction" class="slide level2">
-<h2>Doit-on toujours estimer l’interaction?</h2>
-<ul>
-<li class="fragment"><p>Principal désavantage du modèle avec interaction: il faut estimer plus de paramètres.</p></li>
-<li class="fragment">On a besoin d’un nombre suffisant d’observations avec la même valeur des deux facteurs (réplicats).
-<ul>
-<li class="fragment">Pour les jeux de données montrés ici, il y a 4 ou 5 réplicats par combinaison des deux facteurs.</li>
-</ul></li>
-<li class="fragment"><p>Il est impossible d’estimer l’interaction s’il n’y a qu’une observation pour chaque combinaison de facteurs.</p></li>
-</ul>
-</section>
-<section id="experience-par-blocs" class="slide level2">
-<h2>Expérience par blocs</h2>
-<ul>
-<li class="fragment"><p>Blocs complets aléatoires: les unités d’observation sont divisées en blocs, les traitements sont assignés aléatoirement dans chaque bloc.</p></li>
-<li class="fragment"><p>Ce type de plan est avantageux lorsque les conditions dans chaque bloc sont plus homogènes qu’entre les blocs.</p></li>
-<li class="fragment"><p>Équivalent d’une expérience à échantillons appariés pour plus de deux traitements.</p></li>
-</ul>
-</section>
-<section id="exemple-3" class="slide level2">
-<h2>Exemple</h2>
-<p>Expérience mesurant le poids de cobayes selon quatre régimes. Vingt individus divisés en cinq blocs (ex.: cinq portées).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pigs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/pigs.csv&quot;</span>)
-<span class="kw">str</span>(pigs)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    20 obs. of  3 variables:
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+---
+
+# Doit-on toujours estimer l'interaction?
+
+- Principal désavantage du modèle avec interaction: il faut estimer plus de paramètres.
+
+--
+
+- On a besoin d'un nombre suffisant d'observations avec la même valeur des deux facteurs (réplicats). 
+    + Pour les jeux de données montrés ici, il y a 4 ou 5 réplicats par combinaison des deux facteurs.
+    
+--
+
+- Il est impossible d'estimer l'interaction s'il n'y a qu'une observation pour chaque combinaison de facteurs.
+
+---
+
+# Expérience par blocs
+
+- Blocs complets aléatoires: les unités d'observation sont divisées en blocs, les traitements sont assignés aléatoirement dans chaque bloc.
+
+--
+
+- Ce type de plan est avantageux lorsque les conditions dans chaque bloc sont plus homogènes qu'entre les blocs.
+
+--
+
+- Équivalent d'une expérience à échantillons appariés pour plus de deux traitements.
+
+---
+
+# Exemple
+
+Expérience mesurant le poids de cobayes selon quatre régimes. Vingt individus divisés en cinq blocs (ex.: cinq portées).
+
+
+```r
+pigs &lt;- read.csv("../donnees/pigs.csv")
+str(pigs)
+```
+
+```
+## 'data.frame':	20 obs. of  3 variables:
 ##  $ Block : int  1 1 1 1 2 2 2 2 3 3 ...
 ##  $ Diet  : int  1 2 3 4 1 2 3 4 1 2 ...
-##  $ Weight: num  1.5 2.7 2.1 1.3 1.4 2.9 2.2 1 1.4 2.1 ...</code></pre>
-<p><em>Block</em> et <em>Diet</em> sont des variables catégorielles même si elles sont représentées par des nombres. Il faut donc convertir ces variables en facteurs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pigs &lt;-<span class="st"> </span><span class="kw">mutate</span>(pigs, <span class="dt">Block =</span> <span class="kw">as.factor</span>(Block), <span class="dt">Diet =</span> <span class="kw">as.factor</span>(Diet))</code></pre></div>
-</section>
-<section id="modele-danova-pour-blocs-complets-aleatoires" class="slide level2">
-<h2>Modèle d’ANOVA pour blocs complets aléatoires</h2>
-<p>Même modèle qu’ANOVA à deux facteurs sans interaction. (On suppose que les effets du bloc et du des traitements sont additifs).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aov_pigs &lt;-<span class="st"> </span><span class="kw">aov</span>(Weight <span class="op">~</span><span class="st"> </span>Diet <span class="op">+</span><span class="st"> </span>Block, <span class="dt">data =</span> pigs)</code></pre></div>
-<p><img src="6-ANOVA_2_facteurs_files/figure-revealjs/unnamed-chunk-20-1.png" width="576" /></p>
-</section>
-<section id="tableau-danova-2" class="slide level2">
-<h2>Tableau d’ANOVA</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(aov_pigs)</code></pre></div>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+##  $ Weight: num  1.5 2.7 2.1 1.3 1.4 2.9 2.2 1 1.4 2.1 ...
+```
+
+--
+
+*Block* et *Diet* sont des variables catégorielles même si elles sont représentées par des nombres. Il faut donc convertir ces variables en facteurs.
+
+
+```r
+pigs &lt;- mutate(pigs, Block = as.factor(Block), Diet = as.factor(Diet))
+```
+
+---
+
+# Modèle d'ANOVA pour blocs complets aléatoires
+
+Même modèle qu'ANOVA à deux facteurs sans interaction. (On suppose que les effets du bloc et du des traitements sont additifs).
+
+
+```r
+aov_pigs &lt;- aov(Weight ~ Diet + Block, data = pigs)
+```
+
+![](6-ANOVA_2_facteurs_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+
+---
+
+# Tableau d'ANOVA
+
+
+```r
+summary(aov_pigs)
+```
+
+```
+##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## Diet         3  8.154  2.7178  41.866 1.24e-06 ***
 ## Block        4  0.393  0.0982   1.513     0.26    
 ## Residuals   12  0.779  0.0649                     
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<ul>
-<li class="fragment"><p>L’interprétation du modèle est différente que pour l’ANOVA à deux facteurs.</p></li>
-<li class="fragment"><p>Les blocs ne sont pas un prédicteur, mais servent à réduire la variance résiduelle pour faciliter la détection d’effets des traitements (ici, les régimes).</p></li>
-</ul>
-</section>
-<section id="effets-fixes-ou-aleatoires" class="slide level2">
-<h2>Effets fixes ou aléatoires</h2>
-<ul>
-<li class="fragment"><p>Dans le modèle présenté ici, les effet des blocs sont fixes. Ils sont estimés séparément pour chaque bloc.</p></li>
-<li class="fragment"><p>On pourrait aussi modéliser des observations groupées en terme d’une distribution des effets de blocs. Il s’agirait alors d’effets aléatoires.</p></li>
-<li class="fragment"><p>Les effets aléatoires feront partie des modèles mixtes que nous verrons plus tard dans la session.</p></li>
-</ul>
-</section>
-<section id="regression-lineaire-et-contrastes" class="slide level2">
-<h2>Régression linéaire et contrastes</h2>
-<ul>
-<li>Le modèle d’ANOVA est un exemple de régression linéaire.</li>
-</ul>
-<ul>
-<li>On peut estimer les paramètres de ce modèle avec <code>lm</code> au lieu de <code>aov</code> dans R.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lm_growth_supp &lt;-<span class="st"> </span><span class="kw">lm</span>(gain <span class="op">~</span><span class="st"> </span>supplement, <span class="dt">data =</span> growth)</code></pre></div>
-</section>
-<section id="resultats-de-la-regression-lineaire" class="slide level2">
-<h2>Résultats de la régression linéaire</h2>
-<p>Le tableau de résultats pour <code>lm</code> met davantage l’accent sur l’estimation des effets (dans la section <em>Coefficients</em>).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(lm_growth_supp)</code></pre></div>
-<pre><code>## 
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+--
+
+- L'interprétation du modèle est différente que pour l'ANOVA à deux facteurs.
+
+- Les blocs ne sont pas un prédicteur, mais servent à réduire la variance résiduelle pour faciliter la détection d'effets des traitements (ici, les régimes). 
+
+---
+
+# Effets fixes ou aléatoires
+
+- Dans le modèle présenté ici, les effet des blocs sont fixes. Ils sont estimés séparément pour chaque bloc.
+
+--
+
+- On pourrait aussi modéliser des observations groupées en terme d'une distribution des effets de blocs. Il s'agirait alors d'effets aléatoires.
+
+--
+
+- Les effets aléatoires feront partie des modèles mixtes que nous verrons plus tard dans la session.
+
+---
+
+class: inverse, middle
+
+# Régression linéaire et contrastes
+
+---
+
+# Régression linéaire
+
+- Le modèle d'ANOVA est un exemple de régression linéaire.
+
+--
+
+- On peut estimer les paramètres de ce modèle avec `lm` au lieu de `aov` dans R.
+
+
+```r
+lm_growth_supp &lt;- lm(gain ~ supplement, data = growth)
+```
+
+---
+
+# Résultats de la régression linéaire
+
+Le tableau de résultats pour `lm` met davantage l'accent sur l'estimation des effets (dans la section *Coefficients*).
+
+
+```r
+summary(lm_growth_supp)
+```
+
+```
+## 
 ## Call:
 ## lm(formula = gain ~ supplement, data = growth)
 ## 
@@ -1011,15 +698,24 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## supplementsupergain  -3.3815     1.1555  -2.926  0.00541 ** 
 ## supplementsupersupp  -0.7274     1.1555  -0.629  0.53228    
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 2.83 on 44 degrees of freedom
-## Multiple R-squared:  0.2068, Adjusted R-squared:  0.1527 
-## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614</code></pre>
-</section>
-<section id="resultats-de-la-regression-lineaire-1" class="slide level2">
-<h2>Résultats de la régression linéaire</h2>
-<pre><code>## 
+## Multiple R-squared:  0.2068,	Adjusted R-squared:  0.1527 
+## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614
+```
+
+--
+
+- "Residual standard error" est la racine carrée de la `\(MSE\)` (moyenne des résidus au carré) de l'ANOVA. Le test `\(F\)` correspond à l'ANOVA.
+
+---
+
+# Résultats de la régression linéaire
+
+
+```
+## 
 ## Call:
 ## lm(formula = gain ~ supplement, data = growth)
 ## 
@@ -1034,58 +730,48 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## supplementsupergain  -3.3815     1.1555  -2.926  0.00541 ** 
 ## supplementsupersupp  -0.7274     1.1555  -0.629  0.53228    
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 2.83 on 44 degrees of freedom
-## Multiple R-squared:  0.2068, Adjusted R-squared:  0.1527 
-## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614</code></pre>
-<ul>
-<li class="fragment">“Residual standard error” est la racine carrée de la <span class="math inline">\(MSE\)</span> (moyenne des résidus au carré) de l’ANOVA. Le test <span class="math inline">\(F\)</span> correspond à l’ANOVA.</li>
-</ul>
-</section>
-<section id="resultats-de-la-regression-lineaire-2" class="slide level2">
-<h2>Résultats de la régression linéaire</h2>
-<pre><code>## 
-## Call:
-## lm(formula = gain ~ supplement, data = growth)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -5.1309 -2.2142 -0.2459  1.7644  5.9339 
-## 
-## Coefficients:
-##                     Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)          23.0953     0.8170  28.267  &lt; 2e-16 ***
-## supplementcontrol    -2.6967     1.1555  -2.334  0.02423 *  
-## supplementsupergain  -3.3815     1.1555  -2.926  0.00541 ** 
-## supplementsupersupp  -0.7274     1.1555  -0.629  0.53228    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 2.83 on 44 degrees of freedom
-## Multiple R-squared:  0.2068, Adjusted R-squared:  0.1527 
-## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614</code></pre>
-<ul>
-<li><span class="math inline">\(R^2\)</span> est le coefficient de détermination.</li>
-</ul>
-</section>
-<section id="anova-dun-modele-de-regression-lineaire" class="slide level2">
-<h2>ANOVA d’un modèle de régression linéaire</h2>
-<p>On peut retrouver le tableau d’ANOVA avec la fonction <code>anova</code> appliquée au résultat de <code>lm</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(lm_growth_supp)</code></pre></div>
-<pre><code>## Analysis of Variance Table
+## Multiple R-squared:  0.2068,	Adjusted R-squared:  0.1527 
+## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614
+```
+
+- `\(R^2\)` est le coefficient de détermination.
+
+---
+
+# ANOVA d'un modèle de régression linéaire
+
+On peut retrouver le tableau d'ANOVA avec la fonction `anova` appliquée au résultat de `lm`.
+
+
+```r
+anova(lm_growth_supp)
+```
+
+```
+## Analysis of Variance Table
 ## 
 ## Response: gain
 ##            Df Sum Sq Mean Sq F value  Pr(&gt;F)  
 ## supplement  3  91.88 30.6270  3.8233 0.01614 *
 ## Residuals  44 352.47  8.0106                  
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-</section>
-<section id="coefficients-du-modele-lineaire" class="slide level2">
-<h2>Coefficients du modèle linéaire</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(lm_growth_supp)</code></pre></div>
-<pre><code>## 
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+---
+
+# Coefficients du modèle linéaire
+
+
+```r
+summary(lm_growth_supp)
+```
+
+```
+## 
 ## Call:
 ## lm(formula = gain ~ supplement, data = growth)
 ## 
@@ -1100,82 +786,143 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## supplementsupergain  -3.3815     1.1555  -2.926  0.00541 ** 
 ## supplementsupersupp  -0.7274     1.1555  -0.629  0.53228    
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 2.83 on 44 degrees of freedom
-## Multiple R-squared:  0.2068, Adjusted R-squared:  0.1527 
-## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614</code></pre>
-</section>
-<section id="modele-lineaire-avec-predicteur-numerique" class="slide level2">
-<h2>Modèle linéaire avec prédicteur numérique</h2>
-<p>Modèle avec un prédicteur numérique <span class="math inline">\(x\)</span> et une réponse numérique <span class="math inline">\(y\)</span>.</p>
-<p><span class="math display">\[ y = \beta_0 + \beta_1 x + \epsilon \]</span></p>
-<ul>
-<li class="fragment"><span class="math inline">\(\beta_0\)</span> est l’ordonnée à l’origine (<em>intercept</em>) du graphique de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>, soit la valeur moyenne de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x = 0\)</span>.</li>
-</ul>
-</section>
-<section id="codage-dune-variable-categorielle" class="slide level2">
-<h2>Codage d’une variable catégorielle</h2>
-<p>Imaginons une expérience avec un groupe témoin et deux traitements. Créons deux variables numériques:</p>
-<ul>
-<li><span class="math inline">\(T_1\)</span> = 1 si l’individu a reçu le traitement 1, 0 sinon.</li>
-<li><span class="math inline">\(T_2\)</span> = 1 si l’individu a reçu le traitement 2, 0 sinon.</li>
-</ul>
-<p>Nous obtenons donc le modèle:</p>
-<p><span class="math display">\[y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon\]</span></p>
-</section>
-<section id="codage-dune-variable-categorielle-1" class="slide level2">
-<h2>Codage d’une variable catégorielle</h2>
-<ul>
-<li class="fragment">En remplaçant les valeurs de <span class="math inline">\(T_1\)</span> et <span class="math inline">\(T_2\)</span>, calculons la moyenne de <span class="math inline">\(y\)</span> pour chaque groupe:
-<ul>
-<li class="fragment">Groupe témoin (<span class="math inline">\(T_1 = 0, T_2 = 0\)</span>): <span class="math inline">\(\mu_{tém} = \beta_0\)</span></li>
-<li class="fragment">Traitement 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_{tr1} = \beta_0 + \beta_1\)</span></li>
-<li class="fragment">Traitement 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_{tr2} = \beta_0 + \beta_2\)</span></li>
-</ul></li>
-<li class="fragment"><p>L’ordonnée à l’origine est égale à la moyenne du groupe témoin.</p></li>
-<li class="fragment"><p>Les autres coefficients représentent la différence entre chaque traitement et le groupe témoin.</p></li>
-<li class="fragment"><p>C’est le codage utilisé par défaut dans R.</p></li>
-</ul>
-</section>
-<section id="contrastes" class="slide level2">
-<h2>Contrastes</h2>
-<ul>
-<li class="fragment"><p>En statistiques, un <em>contraste</em> est une variable numérique définie à partir d’un variable catégorielle (ou facteur) qui représente une comparaison entre catégories.</p></li>
-<li class="fragment"><p>Pour un facteur avec <span class="math inline">\(k\)</span> catégories, on peut définir <span class="math inline">\(k - 1\)</span> contrastes indépendants.</p></li>
-</ul>
-</section>
-<section id="contrastes-1" class="slide level2">
-<h2>Contrastes</h2>
-<p>Dans R, la fonction <code>contrasts</code> affiche la matrice des contrastes associés à un facteur.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">contrasts</span>(growth<span class="op">$</span>supplement)</code></pre></div>
-<pre><code>##           control supergain supersupp
+## Multiple R-squared:  0.2068,	Adjusted R-squared:  0.1527 
+## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614
+```
+
+---
+
+# Modèle linéaire avec prédicteur numérique
+
+Modèle avec un prédicteur numérique `\(x\)` et une réponse numérique `\(y\)`.
+
+`$$y = \beta_0 + \beta_1 x + \epsilon$$` 
+
+--
+
+- `\(\beta_0\)` est l'ordonnée à l'origine (*intercept*) du graphique de `\(y\)` vs. `\(x\)`, soit la valeur moyenne de `\(y\)` lorsque `\(x = 0\)`. 
+
+---
+
+# Codage d'une variable catégorielle
+
+Imaginons une expérience avec un groupe témoin et deux traitements. Créons deux variables numériques: 
+
+--
+
+&gt;- `\(T_1\)` = 1 si l'individu a reçu le traitement 1, 0 sinon.
+&gt;- `\(T_2\)` = 1 si l'individu a reçu le traitement 2, 0 sinon.
+
+--
+
+Nous obtenons donc le modèle: 
+
+`$$y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon$$`
+
+---
+
+# Codage d'une variable catégorielle
+
+- En remplaçant les valeurs de `\(T_1\)` et `\(T_2\)`, calculons la moyenne de `\(y\)` pour chaque groupe:
+
+--
+
+    + Groupe témoin ($T_1 = 0, T_2 = 0$): `\(\mu_{tém} = \beta_0\)`
+    
+--
+
+    + Traitement 1 ($T_1 = 1, T_2 = 0$): `\(\mu_{tr1} = \beta_0 + \beta_1\)`
+    
+-- 
+
+    + Traitement 2 ($T_1 = 0, T_2 = 1$): `\(\mu_{tr2} = \beta_0 + \beta_2\)`
+    
+--
+
+- L'ordonnée à l'origine est égale à la moyenne du groupe témoin.
+
+--
+
+- Les autres coefficients représentent la différence entre chaque traitement et le groupe témoin.
+
+--
+
+- C'est le codage utilisé par défaut dans R.
+
+---
+
+# Contrastes
+
+- En statistiques, un *contraste* est une variable numérique définie à partir d'un variable catégorielle (ou facteur) qui représente une comparaison entre catégories. 
+
+--
+
+- Pour un facteur avec `\(k\)` catégories, on peut définir `\(k - 1\)` contrastes indépendants. 
+
+---
+
+# Contrastes
+
+Dans R, la fonction `contrasts` affiche la matrice des contrastes associés à un facteur.
+
+
+```r
+contrasts(growth$supplement)
+```
+
+```
+##           control supergain supersupp
 ## agrimore        0         0         0
 ## control         1         0         0
 ## supergain       0         1         0
-## supersupp       0         0         1</code></pre>
-<ul>
-<li class="fragment"><p>Les colonnes de cette matrice correspondent aux contrastes.</p></li>
-<li class="fragment"><p>Le premier traitement <code>agrimore</code> a une valeur de 0 pour chaque contraste.</p></li>
-</ul>
-</section>
-<section id="contrastes-2" class="slide level2">
-<h2>Contrastes</h2>
-<p>On peut changer le groupe de référence avec la fonction <code>relevel</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">growth<span class="op">$</span>supplement &lt;-<span class="st"> </span><span class="kw">relevel</span>(growth<span class="op">$</span>supplement, <span class="dt">ref =</span> <span class="st">&quot;control&quot;</span>)
-<span class="kw">contrasts</span>(growth<span class="op">$</span>supplement)</code></pre></div>
-<pre><code>##           agrimore supergain supersupp
+## supersupp       0         0         1
+```
+
+--
+
+- Les colonnes de cette matrice correspondent aux contrastes.
+
+--
+
+- Le premier traitement `agrimore` a une valeur de 0 pour chaque contraste. 
+
+---
+
+# Contrastes
+
+On peut changer le groupe de référence avec la fonction `relevel`.
+
+
+```r
+growth$supplement &lt;- relevel(growth$supplement, ref = "control")
+contrasts(growth$supplement)
+```
+
+```
+##           agrimore supergain supersupp
 ## control          0         0         0
 ## agrimore         1         0         0
 ## supergain        0         1         0
-## supersupp        0         0         1</code></pre>
-</section>
-<section id="contrastes-3" class="slide level2">
-<h2>Contrastes</h2>
-<p>Les coefficients indiquent maintenant la différence avec le groupe témoin. Le test <span class="math inline">\(F\)</span> et le <span class="math inline">\(R^2\)</span> ne changent pas.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lm_growth_supp &lt;-<span class="st"> </span><span class="kw">lm</span>(gain <span class="op">~</span><span class="st"> </span>supplement, <span class="dt">data =</span> growth)
-<span class="kw">summary</span>(lm_growth_supp)</code></pre></div>
-<pre><code>## 
+## supersupp        0         0         1
+```
+
+---
+
+# Contrastes
+
+Les coefficients indiquent maintenant la différence avec le groupe témoin. Le test `\(F\)` et le `\(R^2\)` ne changent pas.
+
+
+```r
+lm_growth_supp &lt;- lm(gain ~ supplement, data = growth)
+summary(lm_growth_supp)
+```
+
+```
+## 
 ## Call:
 ## lm(formula = gain ~ supplement, data = growth)
 ## 
@@ -1190,17 +937,25 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## supplementsupergain  -0.6848     1.1555  -0.593   0.5565    
 ## supplementsupersupp   1.9693     1.1555   1.704   0.0954 .  
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 2.83 on 44 degrees of freedom
-## Multiple R-squared:  0.2068, Adjusted R-squared:  0.1527 
-## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614</code></pre>
-</section>
-<section id="modele-de-regression-avec-deux-facteurs" class="slide level2">
-<h2>Modèle de régression avec deux facteurs</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lm_growth &lt;-<span class="st"> </span><span class="kw">lm</span>(gain <span class="op">~</span><span class="st"> </span>diet <span class="op">+</span><span class="st"> </span>supplement, <span class="dt">data =</span> growth)
-<span class="kw">summary</span>(lm_growth)</code></pre></div>
-<pre><code>## 
+## Multiple R-squared:  0.2068,	Adjusted R-squared:  0.1527 
+## F-statistic: 3.823 on 3 and 44 DF,  p-value: 0.01614
+```
+
+---
+
+# Modèle de régression avec deux facteurs
+
+
+```r
+lm_growth &lt;- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth)
+```
+
+```
+## 
 ## Call:
 ## lm(formula = gain ~ diet + supplement, data = growth)
 ## 
@@ -1217,72 +972,120 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## supplementsupergain  -0.6848     0.5090  -1.345 0.185772    
 ## supplementsupersupp   1.9693     0.5090   3.869 0.000375 ***
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 1.247 on 42 degrees of freedom
-## Multiple R-squared:  0.8531, Adjusted R-squared:  0.8356 
-## F-statistic: 48.76 on 5 and 42 DF,  p-value: &lt; 2.2e-16</code></pre>
-<ul>
-<li class="fragment">Pourquoi l’effet des suppléments devient plus significatif quand on ajoute les régimes?</li>
-</ul>
-</section>
-<section id="modele-de-regression-avec-deux-facteurs-1" class="slide level2">
-<h2>Modèle de régression avec deux facteurs</h2>
-<p>Voici les contrastes pour le facteur <code>diet</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">contrasts</span>(growth<span class="op">$</span>diet)</code></pre></div>
-<pre><code>##        oats wheat
+## Multiple R-squared:  0.8531,	Adjusted R-squared:  0.8356 
+## F-statistic: 48.76 on 5 and 42 DF,  p-value: &lt; 2.2e-16
+```
+
+--
+
+- Pourquoi l'effet des suppléments devient plus significatif quand on ajoute les régimes?
+
+---
+
+# Modèle de régression avec deux facteurs
+
+- Pourquoi l'`Intercept` a-t-il changé entre les deux tableaux (était 20.4 dans le modèle à un faceur)?
+
+--
+
+Voici les contrastes pour le facteur `diet`:
+
+
+```r
+contrasts(growth$diet)
+```
+
+```
+##        oats wheat
 ## barley    0     0
 ## oats      1     0
-## wheat     0     1</code></pre>
-<ul>
-<li class="fragment">Pourquoi l’<code>Intercept</code> a-t-il changé entre les deux tableaux (était 20.4 dans le modèle à un faceur)?</li>
-</ul>
-</section>
-<section id="modifier-le-type-de-contrastes" class="slide level2">
-<h2>Modifier le type de contrastes</h2>
-<ul>
-<li>Le type de contrastes utilisé par défaut dans R est un codage de traitement (<code>contr.treatment</code>).</li>
-</ul>
-<ul>
-<li>Essayons un codage d’effet (<code>contr.sum</code>) pour le régime.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">contrasts</span>(growth<span class="op">$</span>diet) &lt;-<span class="st"> &quot;contr.sum&quot;</span>
-<span class="kw">contrasts</span>(growth<span class="op">$</span>diet)</code></pre></div>
-<pre><code>##        [,1] [,2]
+## wheat     0     1
+```
+
+---
+
+# Modifier le type de contrastes
+
+- Le type de contrastes utilisé par défaut dans R est un codage de traitement (`contr.treatment`).
+
+--
+
+- Essayons un codage d'effet (`contr.sum`) pour le régime.
+
+
+```r
+contrasts(growth$diet) &lt;- "contr.sum"
+contrasts(growth$diet)
+```
+
+```
+##        [,1] [,2]
 ## barley    1    0
 ## oats      0    1
-## wheat    -1   -1</code></pre>
-</section>
-<section id="codage-deffet" class="slide level2">
-<h2>Codage d’effet</h2>
-<ul>
-<li class="fragment"><p>Chaque contraste prend la valeur de 1 pour une des catégories, sauf la dernière catégorie qui prend une valeur de -1 pour tous les contrastes.</p></li>
-<li class="fragment"><p>La somme de chaque colonne est zéro, donc la moyenne de chaque contraste sur l’ensemble des catégories est zéro.</p></li>
-</ul>
-</section>
-<section id="codage-deffet-1" class="slide level2">
-<h2>Codage d’effet</h2>
-<p>Dans le modèle de régression: <span class="math inline">\(y = \beta_0 + \beta_1 T_1 + \beta_2 T_2\)</span> avec codage d’effet:</p>
-<ul>
-<li class="fragment"><p>Catégorie 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_1 = \beta_0 + \beta_1\)</span></p></li>
-<li class="fragment"><p>Catégorie 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_2 = \beta_0 + \beta_2\)</span></p></li>
-<li class="fragment"><p>Catégorie 3 (<span class="math inline">\(T_1 = -1, T_2 = -1\)</span>): <span class="math inline">\(\mu_3 = \beta_0 - \beta_1 - \beta_2\)</span></p></li>
-<li class="fragment"><p>Moyenne générale: <span class="math inline">\(\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0\)</span></p></li>
-</ul>
-</section>
-<section id="codage-deffet-2" class="slide level2">
-<h2>Codage d’effet</h2>
-<ul>
-<li class="fragment"><p>L’ordonnée à l’origine donne à la moyenne générale.</p></li>
-<li class="fragment"><p>Les autres coefficients donnent la différence entre la moyenne de la catégorie et la moyenne générale.</p></li>
-<li class="fragment"><p>L’effet de la dernière catégorie est l’opposé de la somme des autres effets, donc <span class="math inline">\(-(\beta_1 + \beta_2)\)</span> ici.</p></li>
-</ul>
-</section>
-<section id="resultat-avec-nouveaux-contrastes" class="slide level2">
-<h2>Résultat avec nouveaux contrastes</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lm_growth &lt;-<span class="st"> </span><span class="kw">lm</span>(gain <span class="op">~</span><span class="st"> </span>diet <span class="op">+</span><span class="st"> </span>supplement, <span class="dt">data =</span> growth)
-<span class="kw">summary</span>(lm_growth)</code></pre></div>
-<pre><code>## 
+## wheat    -1   -1
+```
+
+---
+
+# Codage d'effet
+
+- Chaque contraste prend la valeur de 1 pour une des catégories, sauf la dernière catégorie qui prend une valeur de -1 pour tous les contrastes.
+
+--
+
+- La somme de chaque colonne est zéro, donc la moyenne de chaque contraste sur l'ensemble des catégories est zéro.
+
+---
+
+# Codage d'effet
+
+Dans le modèle de régression: `\(y = \beta_0 + \beta_1 T_1 + \beta_2 T_2\)` avec codage d'effet:
+
+--
+
+- Catégorie 1 ($T_1 = 1, T_2 = 0$): `\(\mu_1 = \beta_0 + \beta_1\)`
+
+--
+
+- Catégorie 2 ($T_1 = 0, T_2 = 1$): `\(\mu_2 = \beta_0 + \beta_2\)`
+
+--
+
+- Catégorie 3 ($T_1 = -1, T_2 = -1$): `\(\mu_3 = \beta_0 - \beta_1 - \beta_2\)`
+
+--
+
+- Moyenne générale: `\(\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0\)`
+
+---
+
+# Codage d'effet
+
+- L'ordonnée à l'origine donne à la moyenne générale.
+
+--
+
+- Les autres coefficients donnent la différence entre la moyenne de la catégorie et la moyenne générale. 
+
+--
+
+- L'effet de la dernière catégorie est l'opposé de la somme des autres effets, donc `\(-(\beta_1 + \beta_2)\)` ici.
+
+---
+
+# Résultat avec nouveaux contrastes
+
+
+```r
+lm_growth &lt;- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth)
+```
+
+```
+## 
 ## Call:
 ## lm(formula = gain ~ diet + supplement, data = growth)
 ## 
@@ -1299,84 +1102,141 @@ antibiot &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span cl
 ## supplementsupergain -0.68476    0.50903  -1.345 0.185772    
 ## supplementsupersupp  1.96935    0.50903   3.869 0.000375 ***
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 1.247 on 42 degrees of freedom
-## Multiple R-squared:  0.8531, Adjusted R-squared:  0.8356 
-## F-statistic: 48.76 on 5 and 42 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>Que signifient les coefficients dans ce tableau? Quel est l’effet du troisième régime (<code>wheat</code>)?</p>
-</section>
-<section id="contrastes-avec-plusieurs-facteurs" class="slide level2">
-<h2>Contrastes avec plusieurs facteurs</h2>
-<ul>
-<li class="fragment"><p>On peut utiliser différents codages pour différents facteurs dans la même régression.</p></li>
-<li class="fragment"><p>Le codage de traitement (défaut) est utile pour comparer les catégories à une catégorie de référence.</p></li>
-<li class="fragment"><p>Le codage d’effet (<code>contr.sum</code>) est utile pour comparer le catégories à la réponse moyenne.</p></li>
-<li class="fragment"><p>Si les deux facteurs avaient un codage d’effet, l’ordonnée à l’origine serait égale à la moyenne générale (tous les régimes et suppléments).</p></li>
-</ul>
-</section>
-<section id="resume" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>L’ANOVA à deux facteurs permet d’évaluer l’effet de deux variables catégorielles (ex.: deux types de traitement) et de déterminer si ces effets sont additifs ou s’il y a une interaction.</p></li>
-<li class="fragment"><p>Une expérience à blocs complets aléatoires s’analyse comme une ANOVA à deux facteurs sans interaction. La division en blocs permet de contrôler une partie de la variation pour mieux estimer l’effet des traitements.</p></li>
-</ul>
-</section>
-<section id="resume-1" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Le modèle d’ANOVA est un exemple de régression linéaire. Les variables catégorielles sont représentées dans un modèle de régression au moyen de contrastes.</p></li>
-<li class="fragment"><p>Nous avons vu deux des types de contrastes possibles dans R: le codage de traitement (option par défaut) compare l’effet de chaque catégorie à une catégorie de référence, tandis que le codage d’effet compare l’effet de chaque catégorie à la moyenne de toutes les catégories.</p></li>
-</ul>
-</section>
-    </div>
-  </div>
+## Multiple R-squared:  0.8531,	Adjusted R-squared:  0.8356 
+## F-statistic: 48.76 on 5 and 42 DF,  p-value: &lt; 2.2e-16
+```
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+--
 
-  <script>
+Que signifient les coefficients dans ce tableau? Quel est l'effet du troisième régime (`wheat`)?
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+---
 
+# Contrastes avec plusieurs facteurs
 
+- On peut utiliser différents codages pour différents facteurs dans la même régression.
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+--
+
+- Le codage de traitement (défaut) est utile pour comparer les catégories à une catégorie de référence.
+
+--
+
+- Le codage d'effet (`contr.sum`) est utile pour comparer le catégories à la réponse moyenne.
+
+--
+
+- Si les deux facteurs avaient un codage d'effet, l'ordonnée à l'origine serait égale à la moyenne générale (tous les régimes et suppléments).
+
+---
+
+# Résumé
+
+- L'ANOVA à deux facteurs permet d'évaluer l'effet de deux variables catégorielles (ex.: deux types de traitement) et de déterminer si ces effets sont additifs ou s'il y a une interaction.
+
+--
+
+- Une expérience à blocs complets aléatoires s'analyse comme une ANOVA à deux facteurs sans interaction. La division en blocs permet de contrôler une partie de la variation pour mieux estimer l'effet des traitements.
+
+---
+
+# Résumé
+
+- Le modèle d'ANOVA est un exemple de régression linéaire. Les variables catégorielles sont représentées dans un modèle de régression au moyen de contrastes. 
+
+--
+
+- Nous avons vu deux des types de contrastes possibles dans R: le codage de traitement (option par défaut) compare l'effet de chaque catégorie à une catégorie de référence, tandis que le codage d'effet compare l'effet de chaque catégorie à la moyenne de toutes les catégories.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>

@@ -1,10 +1,10 @@
 ---
 title: "Analyse de la variance"
-date: "10 octobre 2018"
+date: "2 octobre 2019"
 output: pdf_document
 ---
 
-Ce laboratoire doit être remis le **24 octobre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **9 octobre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Prises de charbonnier en Alaska
@@ -58,6 +58,6 @@ b) Choisissez l'une des deux variables (*HeadWt* ou *VitC*) qui correspond le mi
 
 c) Effectuez une nouvelle ANOVA à deux facteurs pour le même modèle qu'en (b), mais sans interaction (modèle additif). Enregistrez le résultat dans une variable `an3_add`. Affichez le sommaire du modèle linéaire équivalent à cette ANOVA avec le code: `summary(lm(an3_add))`. Comment interprétez-vous chacun des coefficients du modèle linéaire? 
 
-d) (*Bonus*) En quoi le test $t$ rapporté pour chaque coefficient dans le tableau obtenu en (c) diffère-t-il du test des étendues de Tukey, obtenu avec `TukeyHSD(an3_add)`?
+d) En quoi le test $t$ rapporté pour chaque coefficient dans le tableau obtenu en (c) diffère-t-il du test des étendues de Tukey, obtenu avec `TukeyHSD(an3_add)`?
 
 
