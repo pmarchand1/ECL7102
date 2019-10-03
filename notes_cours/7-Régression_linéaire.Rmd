@@ -1,7 +1,8 @@
 ---
 title: "Régression linéaire"
-date: "<br/>15 octobre 2018"
+date: "<br/>7 octobre 2019"
 output:
+    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs
@@ -50,7 +51,7 @@ La régression linéaire simple désigne le cas où il y a un seul prédicteur n
 
 $$ y = \beta_0 + \beta_1 x + \epsilon $$ 
 
-Rappelons-nous que $\beta_0$ et $\beta_1$ sont les *coefficients* de la régression qui seront estimés à partir des données, tandis que $\epsilon$ est le *résidu* aléatoire qui suit une distribution normale centrée sur zéro: $N(0, \sigma)$. 
+Rappelons-nous que $\beta_0$ et $\beta_1$ sont les *coefficients* de la régression qui seront estimés à partir des données, tandis que $\epsilon$ est le *résidu* aléatoire qui suit une distribution normale autour de zéro: $N(0, \sigma)$. 
 
 Le modèle signifie que pour une valeur de $x$ donnée, la réponse $y$ suit une distribution normale de moyenne $\mu = \beta_0 + \beta_1 x$ et d'écart-type $\sigma$. L'*ordonnée à l'origine* $\beta_0$ est la valeur moyenne de $y$ lorsque $x = 0$, tandis que la *pente* $\beta_1$ est la différence moyenne de $y$ entre deux observations qui diffèrent par 1 unité de $x$.
 
@@ -89,21 +90,25 @@ Ici, $\bar{x}$ et $\bar{y}$ représentent les moyennes de $x$ et $y$, respective
 
 L'estimateur de l'ordonnée à l'origine $\beta_0$ est égal à:
 
-$$\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}$$  
+$$\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}$$ 
 
-Cette équation montre aussi que la droite de régression estimée passe par le point $(\bar{x}, \bar{y})$, le "centre de gravité" du nuage de points de $x$ et $y$.
+Notez qu'en réarrangeant les termes de cette dernière équation:
+
+$$\bar{y} = \hat{\beta_0} + \hat{\beta_1} \bar{x}$$
+
+On constate que la droite de régression estimée passe par le point $(\bar{x}, \bar{y})$, le "centre de gravité" du nuage de points de $x$ et $y$.
 
 
 ## Interprétations des résultats
 
-En effectuant la régression sur l'exemple ci-dessus, nous obtenons:
+En effectuant la régression pour l'exemple ci-dessus, nous obtenons:
 
 ```{r}
 mod <- lm(plant.growth.rate ~ soil.moisture.content, data = pgr)
 summary(mod)
 ```
 
-Le tableau des coefficients inclut l'ordonnée à l'origine `(Intercept)` et l'effet de chaque prédicteur. Si les suppositions du modèle sont respectées (voir section ci-dessous), chaque estimé $\hat{\beta}$ suit une distribution normale centrée sur la valeur du paramètre $\beta$, avec une l'erreur-type indiquée dans le tableau. Ceci permet d'effectuer un test $t$ pour l'hypothèse nulle $\beta = 0$, avec une valeur $p$ indiquée dans la dernière colonne.
+Le tableau des coefficients inclut l'ordonnée à l'origine `(Intercept)` et l'effet de chaque prédicteur. Si les suppositions du modèle sont respectées (voir section ci-dessous), chaque estimé $\hat{\beta}$ suit une distribution normale qui a pour moyenne la valeur du paramètre $\beta$, avec l'erreur-type indiquée dans le tableau. Ceci permet d'effectuer un test $t$ pour l'hypothèse nulle $\beta = 0$, avec une valeur $p$ indiquée dans la dernière colonne.
 
 Sous le tableau, `Residual standard error` correspond à l'écart-type des résidus du modèle, calculé avec 48 degrés de liberté (50 observations - 2 paramètres estimés).
 
@@ -113,7 +118,7 @@ sqrt(sum(mod$residuals^2) / 48)
 
 Comme pour l'ANOVA, le coefficient de détermination ($R^2$) représente la fraction de la variance expliquée par le modèle.
 
-$$ R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2} $$
+$$R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}$$
 
 Le numérateur est la somme des résidus au carré, car $\hat{y_k} = \hat{\beta_0} + \hat{\beta_1} x_k$ est la valeur attendue (moyenne) pour $y_k$ selon le modèle.
 
@@ -141,7 +146,7 @@ La dernière ligne du sommaire est un test $F$ semblable à l'ANOVA. Lorsque nou
 
 ## Intervalle de confiance et intervalle de prédiction
 
-Pour afficher la droite de régression sur un nuage de points entre $x$ et $y$ avec son intervalle de confiance, nous pouvons utiliser la fonction `geom_smooth` du package *ggplot2*, avec la méthode `lm` (modèle linéaire).
+Pour afficher la droite de régression entre $x$ et $y$ avec son intervalle de confiance, nous pouvons utiliser la fonction `geom_smooth` du package *ggplot2*, avec la méthode `lm` (modèle linéaire).
 
 ```{r}
 ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
@@ -512,13 +517,13 @@ Comparez les erreurs-types des coefficients du troisième modèle par rapport à
 vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))
 ```
 
-S'il faut ne conserver qu'une seule des deux variables du modèle, laquelle choisir? Nous discuterons des problèmes de comparaison et de sélection de modèles lors du prochain cours.
+S'il faut ne conserver qu'une seule des deux variables du modèle, laquelle choisir? Nous discuterons de ce problème dans le cours sur la sélection de modèles.
 
 # Résumé
 
 - La fonction `lm` effectue l'ajustement d'un modèle de régression linéaire dans R.
 
-- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une variation de 1 du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
+- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une variation unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
 
 - Pour un modèle sans interaction, l'effet d'une variable catégorielle peut être représenté par une translation de la droite de régression entre les traitements. 
 

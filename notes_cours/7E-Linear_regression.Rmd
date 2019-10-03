@@ -1,6 +1,6 @@
 ---
 title: "Linear regression"
-date: "<br/>October 15, 2018"
+date: "<br/>October 7, 2019"
 output:
     html_document:
         self_contained: false
@@ -91,7 +91,11 @@ The estimator for the intercept $\beta_0$ is equal to:
 
 $$\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}$$  
 
-This equation also shows that the estimated regression line goes through the point $(\bar{x}, \bar{y})$, the "center of mass" for the scatterplot of $x$ and $y$.
+By rearranging this last equation:
+
+$$\bar{y} = \hat{\beta_0} + \hat{\beta_1} \bar{x}$$
+
+We see that the estimated regression line goes through the point $(\bar{x}, \bar{y})$, the "center of mass" for the scatterplot of $x$ and $y$.
 
 
 ## Interpreting the results
@@ -103,7 +107,7 @@ mod <- lm(plant.growth.rate ~ soil.moisture.content, data = pgr)
 summary(mod)
 ```
 
-The coefficient table includes the intercept and the effect of each predictor. If the assumptions of the model are respected (see section below), each estimated $\hat{\beta}$ follows a normal distribution centered on the value of the parameter $\beta$, with a standard error as shown in the table. This allows us to run a $t$-test for the null hypothesis $\beta = 0$, with a value $p$ indicated in the last column.
+The coefficient table includes the intercept and the effect of each predictor. If the assumptions of the model are respected (see section below), each estimated $\hat{\beta}$ follows a normal distribution with a mean equal to the value of the parameter $\beta$, and a standard error as shown in the table. This allows us to run a $t$-test for the null hypothesis $\beta = 0$, with a value $p$ indicated in the last column.
 
 Under that table, `Residual standard error` is the standard deviation of model residuals calculated with 48 degrees of freedom (50 observations - 2 estimated parameters).
 
@@ -113,7 +117,7 @@ sqrt(sum(mod$residuals^2) / 48)
 
 As in ANOVA, the coefficient of determination ($R^2$) represents the fraction of total variance explained by the model.
 
-$$ R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2} $$
+$$R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}$$
 
 The numerator is the sum of squared residuals, since $\hat{y_k} = \hat{\beta_0} + \hat{\beta_1} x_k$ is the expected value (mean) $y_k$ according to the model.
 
@@ -510,7 +514,7 @@ Compare the standard errors of the coefficients of the third model with those fo
 vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))
 ```
 
-If you need to keep only one of the two variables of the model, which one to choose? We will discuss model comparison and selection issues in the next class.
+If you need to keep only one of the two variables of the model, which one to choose? We will discuss this problem during the class on model selection.
 
 # Summary
 

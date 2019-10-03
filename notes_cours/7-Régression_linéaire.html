@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression linéaire</h1>
-<h4 class="date"><em><br/>15 octobre 2018</em></h4>
+<h4 class="date"><br/>7 octobre 2019</h4>
 
 </div>
 
@@ -249,7 +318,7 @@ div.tocify {
 <h1>Régression linéaire simple</h1>
 <p>La régression linéaire simple désigne le cas où il y a un seul prédicteur numérique (<span class="math inline">\(x\)</span>).</p>
 <p><span class="math display">\[ y = \beta_0 + \beta_1 x + \epsilon \]</span></p>
-<p>Rappelons-nous que <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span> sont les <em>coefficients</em> de la régression qui seront estimés à partir des données, tandis que <span class="math inline">\(\epsilon\)</span> est le <em>résidu</em> aléatoire qui suit une distribution normale centrée sur zéro: <span class="math inline">\(N(0, \sigma)\)</span>.</p>
+<p>Rappelons-nous que <span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span> sont les <em>coefficients</em> de la régression qui seront estimés à partir des données, tandis que <span class="math inline">\(\epsilon\)</span> est le <em>résidu</em> aléatoire qui suit une distribution normale autour de zéro: <span class="math inline">\(N(0, \sigma)\)</span>.</p>
 <p>Le modèle signifie que pour une valeur de <span class="math inline">\(x\)</span> donnée, la réponse <span class="math inline">\(y\)</span> suit une distribution normale de moyenne <span class="math inline">\(\mu = \beta_0 + \beta_1 x\)</span> et d’écart-type <span class="math inline">\(\sigma\)</span>. L’<em>ordonnée à l’origine</em> <span class="math inline">\(\beta_0\)</span> est la valeur moyenne de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x = 0\)</span>, tandis que la <em>pente</em> <span class="math inline">\(\beta_1\)</span> est la différence moyenne de <span class="math inline">\(y\)</span> entre deux observations qui diffèrent par 1 unité de <span class="math inline">\(x\)</span>.</p>
 <div id="methode-des-moindres-carres" class="section level2">
 <h2>Méthode des moindres carrés</h2>
@@ -261,7 +330,7 @@ str(pgr)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    50 obs. of  2 variables:
 ##  $ soil.moisture.content: num  0.47 0.541 1.698 0.826 0.857 ...
 ##  $ plant.growth.rate    : num  21.3 27 39 30.2 37.1 ...</code></pre>
-<p>Graphiquement, l’estimation des coefficients de la régression linéaire consiste à trouver la droite qui passe le plus “près” des points du graphique de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>.</p>
+<p>Graphiquement, l’estimation des coefficients de la régression linéaire consiste à trouver la droite qui passe le plus “près” des points du graphique de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>.</p>
 <pre class="r"><code>ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
     geom_point() +
     geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
@@ -275,12 +344,14 @@ str(pgr)</code></pre>
 <p>Ici, <span class="math inline">\(\bar{x}\)</span> et <span class="math inline">\(\bar{y}\)</span> représentent les moyennes de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>, respectivement, pour l’ensemble des observations.</p>
 <p>L’estimateur de l’ordonnée à l’origine <span class="math inline">\(\beta_0\)</span> est égal à:</p>
 <p><span class="math display">\[\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}\]</span></p>
-<p>Cette équation montre aussi que la droite de régression estimée passe par le point <span class="math inline">\((\bar{x}, \bar{y})\)</span>, le “centre de gravité” du nuage de points de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>.</p>
+<p>Notez qu’en réarrangeant les termes de cette dernière équation:</p>
+<p><span class="math display">\[\bar{y} = \hat{\beta_0} + \hat{\beta_1} \bar{x}\]</span></p>
+<p>On constate que la droite de régression estimée passe par le point <span class="math inline">\((\bar{x}, \bar{y})\)</span>, le “centre de gravité” du nuage de points de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>.</p>
 </div>
 </div>
 <div id="interpretations-des-resultats" class="section level2">
 <h2>Interprétations des résultats</h2>
-<p>En effectuant la régression sur l’exemple ci-dessus, nous obtenons:</p>
+<p>En effectuant la régression pour l’exemple ci-dessus, nous obtenons:</p>
 <pre class="r"><code>mod &lt;- lm(plant.growth.rate ~ soil.moisture.content, data = pgr)
 summary(mod)</code></pre>
 <pre><code>## 
@@ -301,12 +372,12 @@ summary(mod)</code></pre>
 ## Residual standard error: 4.019 on 48 degrees of freedom
 ## Multiple R-squared:  0.7648, Adjusted R-squared:  0.7599 
 ## F-statistic: 156.1 on 1 and 48 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>Le tableau des coefficients inclut l’ordonnée à l’origine <code>(Intercept)</code> et l’effet de chaque prédicteur. Si les suppositions du modèle sont respectées (voir section ci-dessous), chaque estimé <span class="math inline">\(\hat{\beta}\)</span> suit une distribution normale centrée sur la valeur du paramètre <span class="math inline">\(\beta\)</span>, avec une l’erreur-type indiquée dans le tableau. Ceci permet d’effectuer un test <span class="math inline">\(t\)</span> pour l’hypothèse nulle <span class="math inline">\(\beta = 0\)</span>, avec une valeur <span class="math inline">\(p\)</span> indiquée dans la dernière colonne.</p>
+<p>Le tableau des coefficients inclut l’ordonnée à l’origine <code>(Intercept)</code> et l’effet de chaque prédicteur. Si les suppositions du modèle sont respectées (voir section ci-dessous), chaque estimé <span class="math inline">\(\hat{\beta}\)</span> suit une distribution normale qui a pour moyenne la valeur du paramètre <span class="math inline">\(\beta\)</span>, avec l’erreur-type indiquée dans le tableau. Ceci permet d’effectuer un test <span class="math inline">\(t\)</span> pour l’hypothèse nulle <span class="math inline">\(\beta = 0\)</span>, avec une valeur <span class="math inline">\(p\)</span> indiquée dans la dernière colonne.</p>
 <p>Sous le tableau, <code>Residual standard error</code> correspond à l’écart-type des résidus du modèle, calculé avec 48 degrés de liberté (50 observations - 2 paramètres estimés).</p>
 <pre class="r"><code>sqrt(sum(mod$residuals^2) / 48)</code></pre>
 <pre><code>## [1] 4.019094</code></pre>
 <p>Comme pour l’ANOVA, le coefficient de détermination (<span class="math inline">\(R^2\)</span>) représente la fraction de la variance expliquée par le modèle.</p>
-<p><span class="math display">\[ R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2} \]</span></p>
+<p><span class="math display">\[R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}\]</span></p>
 <p>Le numérateur est la somme des résidus au carré, car <span class="math inline">\(\hat{y_k} = \hat{\beta_0} + \hat{\beta_1} x_k\)</span> est la valeur attendue (moyenne) pour <span class="math inline">\(y_k\)</span> selon le modèle.</p>
 <pre class="r"><code>r2 &lt;- 1 - sum(mod$residuals^2) / sum((pgr$plant.growth.rate - mean(pgr$plant.growth.rate))^2)
 r2</code></pre>
@@ -323,7 +394,7 @@ all.equal(cor_pgr, sqrt(r2))</code></pre>
 </div>
 <div id="intervalle-de-confiance-et-intervalle-de-prediction" class="section level2">
 <h2>Intervalle de confiance et intervalle de prédiction</h2>
-<p>Pour afficher la droite de régression sur un nuage de points entre <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> avec son intervalle de confiance, nous pouvons utiliser la fonction <code>geom_smooth</code> du package <em>ggplot2</em>, avec la méthode <code>lm</code> (modèle linéaire).</p>
+<p>Pour afficher la droite de régression entre <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> avec son intervalle de confiance, nous pouvons utiliser la fonction <code>geom_smooth</code> du package <em>ggplot2</em>, avec la méthode <code>lm</code> (modèle linéaire).</p>
 <pre class="r"><code>ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
     geom_point() + 
     geom_smooth(method = &quot;lm&quot;)</code></pre>
@@ -650,7 +721,7 @@ summary(mod_hills_inter)</code></pre>
 <li><span class="math inline">\(\beta_0\)</span> est la valeur de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x_1 = 0\)</span> et <span class="math inline">\(x_2 = 0\)</span>;</li>
 <li><span class="math inline">\(\beta_1\)</span> est l’effet sur <span class="math inline">\(y\)</span> d’une augmentation d’une unité de <span class="math inline">\(x_1\)</span> si <span class="math inline">\(x_2 = 0\)</span>;</li>
 <li><span class="math inline">\(\beta_2\)</span> est l’effet sur <span class="math inline">\(y\)</span> d’une augmentation d’une unité de <span class="math inline">\(x_2\)</span> si <span class="math inline">\(x_1 = 0\)</span>;</li>
-<li><span class="math inline">\(\beta_{12}\)</span> représente à la fois l’augmentation de la pente de la relation <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x_1\)</span> lorsque <span class="math inline">\(x_2\)</span> augmente d’une unité, et l’augmentation de la pente de la relation <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x_2\)</span> lorsque <span class="math inline">\(x_1\)</span> augmente d’une unité.</li>
+<li><span class="math inline">\(\beta_{12}\)</span> représente à la fois l’augmentation de la pente de la relation <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x_1\)</span> lorsque <span class="math inline">\(x_2\)</span> augmente d’une unité, et l’augmentation de la pente de la relation <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x_2\)</span> lorsque <span class="math inline">\(x_1\)</span> augmente d’une unité.</li>
 </ul>
 </div>
 <div id="collinearite" class="section level2">
@@ -749,14 +820,14 @@ summary(msleep2)</code></pre>
 <pre class="r"><code>vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))</code></pre>
 <pre><code>##   bodywt  brainwt 
 ## 14.67386 14.67386</code></pre>
-<p>S’il faut ne conserver qu’une seule des deux variables du modèle, laquelle choisir? Nous discuterons des problèmes de comparaison et de sélection de modèles lors du prochain cours.</p>
+<p>S’il faut ne conserver qu’une seule des deux variables du modèle, laquelle choisir? Nous discuterons de ce problème dans le cours sur la sélection de modèles.</p>
 </div>
 </div>
 <div id="resume" class="section level1">
 <h1>Résumé</h1>
 <ul>
 <li><p>La fonction <code>lm</code> effectue l’ajustement d’un modèle de régression linéaire dans R.</p></li>
-<li><p>Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l’effet d’une variation de 1 du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.</p></li>
+<li><p>Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l’effet d’une variation unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.</p></li>
 <li><p>Pour un modèle sans interaction, l’effet d’une variable catégorielle peut être représenté par une translation de la droite de régression entre les traitements.</p></li>
 <li><p>Le facteur d’inflation de la variance (VIF) indique si la valeur d’un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé rend difficile l’estimation des coefficients pour les prédicteurs corrélés.</p></li>
 <li><p>L’intervalle de confiance d’une droite de régression représente l’incertitude sur la valeur moyenne de <span class="math inline">\(y\)</span> pour des valeurs données des prédicteurs. L’intervalle de prédiction représente l’incertitude sur la valeur d’une observation future de <span class="math inline">\(y\)</span>, connaissant la valeur des prédicteurs.</p></li>
