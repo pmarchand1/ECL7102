@@ -18,4 +18,5 @@
 3. [Parameter estimation and hypothesis testing](labos/3RE-Estimation_tests.html) ([PDF](labos/3E-Estimation_tests.pdf) - [Data](labos/gardens.csv))
 5. [Contingency tables](labos/5E-Contingency_tables.pdf)
 6. [Analysis of variance](labos/6E-ANOVA.pdf) (Data [1](labos/sablefish.csv) [2](labos/woodstain.csv))
+7. [Linear regression](labos/7E-Linear_regression.html) ([PDF](labos/7E-Linear_regression.pdf) - Données [1](labos/sardinella.csv) [2](labos/britain_species.csv))
 
