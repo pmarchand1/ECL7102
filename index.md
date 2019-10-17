@@ -10,6 +10,7 @@
 5. [Tableaux de contingence et ANOVA](notes_cours/5-Chi2_ANOVA.html) ([PDF](notes_cours/5-Chi2_ANOVA.pdf))
 6. [ANOVA à deux facteurs et blocs complets aléatoires](notes_cours/6-ANOVA_2_facteurs.html) ([PDF](notes_cours/6-ANOVA_2_facteurs.pdf) - Données [1](donnees/growth.csv) [2](donnees/antibiot.csv) [3](donnees/pigs.csv))
 7. [Régression linéaire](notes_cours/7-Régression_linéaire.html) ([PDF](notes_cours/7-Régression_linéaire.pdf) - Données [1](donnees/plant_growth_rate.csv) [2](donnees/compensation.csv))
+8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html) ([PDF](notes_cours/8-Sélection_modèles.pdf))
 
 ## Laboratoires
 
@@ -18,4 +19,4 @@
 3. [Estimation de paramètres et tests d'hypothèse](labos/3R-Estimation_tests.html) ([PDF](labos/3-Estimation_tests.pdf) - [Données](labos/gardens.csv))
 5. [Tableaux de contingence](labos/5-Tableaux_contingence.pdf)
 6. [Analyse de la variance](labos/6-ANOVA.pdf) (Données [1](labos/sablefish.csv) [2](labos/woodstain.csv))
-7. [Régression linéaire](labos/7-Régression_linéaire.html) ([PDF](labos/7-Régression_linéaire.pdf) - Données [1](labos/sardinella.csv) [2](labos/britain_species.csv))
+7. [Régression linéaire](labos/7R-Régression_linéaire.html) ([PDF](labos/7-Régression_linéaire.pdf) - Données [1](labos/sardinella.csv) [2](labos/britain_species.csv))

@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Évaluation et sélection de modèles</h1>
-<h4 class="date"><em><br/>22 octobre 2018</em></h4>
+<h4 class="date"><br/>21 octobre 2019</h4>
 
 </div>
 
@@ -237,10 +306,7 @@ div.tocify {
 <h1>Types d’erreurs des modèles</h1>
 <div id="exemple" class="section level2">
 <h2>Exemple</h2>
-<div class="figure">
-<img src="../images/polatouche.jpg" />
-
-</div>
+<p><img src="../images/polatouche.jpg" /></p>
 <p>Supposons que nous souhaitons estimer la densité de population du grand polatouche (<em>Glaucomys sabrinus</em>) en fonction de différentes variables, incluant:</p>
 <ul>
 <li>le type de peuplement (feuillu, résineux, mixte);</li>
@@ -259,10 +325,7 @@ div.tocify {
 <div id="modele-trop-complexe-surajustement-et-variance" class="section level2">
 <h2>Modèle trop complexe: surajustement et variance</h2>
 <p>En contrepartie, un modèle avec trop de paramètres risque de mesurer des associations entre variables qui ne sont pas des effets généralisables, mais plutôt des coïncidences du jeu de données utilisé. Dans ce cas, il y a surajustement du modèle aux données (<em>overfitting</em>). De façon générale, plus un modèle inclut de prédicteurs, plus l’échantillon doit être grand pour estimer les effets avec la même précision. D’un point de vue graphique, l’étendue combinée de <span class="math inline">\(m\)</span> prédicteurs crée une “surface” à <span class="math inline">\(m\)</span> dimensions; plus ce nombre de dimensions est élevé, plus il faut de points pour bien couvrir l’étendue des valeurs possibles (voir l’illustration ci-dessous).</p>
-<div class="figure">
-<img src="../images/densite_pred.png" />
-
-</div>
+<p><img src="../images/densite_pred.png" /></p>
 <p>L’erreur liée au surajustement est aléatoire (dépend des coïncidences de l’échantillonnage) et diminue en augmentant la taille de l’échantillon, donc elle est souvent nommée <em>variance</em>.</p>
 </div>
 <div id="autre-exemple-ajuster-une-fonction-polynomiale" class="section level2">
@@ -278,10 +341,7 @@ div.tocify {
 <li><p>Un modèle qui comporte davantage de paramètres ajustables approxime cette fonction avec moins de biais (erreur systématique), mais plus de variance (sensibilité aux variations aléatoires des données). L’erreur totale est minimisée à un certain nombre de paramètres.</p></li>
 <li><p>Avec un échantillon plus grand, le biais reste le même, mais la variance diminue. Non seulement l’erreur totale diminue pour tous les modèles, mais le nombre optimal de paramètres (qui minimise l’erreur totale) augmente, comme le montre le graphique ci-dessous.</p></li>
 </ul>
-<div class="figure">
-<img src="../images/biais_variance.png" />
-
-</div>
+<p><img src="../images/biais_variance.png" /></p>
 </div>
 <div id="prediction-et-explication" class="section level2">
 <h2>Prédiction et explication</h2>
@@ -305,7 +365,7 @@ div.tocify {
 <p>Si deux modèles ne diffèrent que par un prédicteur, ex.: <code>y ~ x1 + x2</code> et <code>y ~ x1 + x2 + x3</code>, on peut choisir le modèle plus complexe si l’effet du nouveau prédicteur <code>x3</code> est significatif. Nous avons déjà utilisé cette technique pour déterminer s’il fallait inclure ou non l’interaction dans un modèle d’ANOVA à deux facteurs.</p>
 <p>Il existe des méthodes séquentielles (<em>stepwise</em>) pour choisir entre plus de deux modèles en ajoutant ou supprimant une variable à la fois. Ces méthodes seront présentées avec plus de détail plus loin. Pour l’instant, notons que la sélection de modèles basée sur les tests de significativité comporte plusieurs inconvénients.</p>
 <ul>
-<li><p>La valeur <span class="math inline">\(p\)</span> mesure la probabilité d’obtenir les résultats observés selon l’hypothèse nulle, pas le pouvoir prédictif du modèle. Elle nous aide donc à répondre à des questions comme “L’effet du prédicteur <span class="math inline">\(x_3\)</span> est-il significativement différent de zéro?”, mais pas: “Quel est le meilleur modèle entre <span class="math inline">\(y \sim x_1 + x_2\)</span> et <span class="math inline">\(y \sim x_3\)</span>?</p></li>
+<li><p>La valeur <span class="math inline">\(p\)</span> mesure la probabilité d’obtenir les résultats observés selon l’hypothèse nulle, pas le pouvoir prédictif du modèle. Elle nous aide donc à répondre à des questions comme “L’effet du prédicteur <span class="math inline">\(x_3\)</span> est-il significativement différent de zéro?”, mais pas: "Quel est le meilleur modèle entre <span class="math inline">\(y \sim x_1 + x_2\)</span> et <span class="math inline">\(y \sim x_3\)</span>?</p></li>
 <li><p>Le seuil de significativité pour l’inclusion d’une variable (ex.: <span class="math inline">\(\alpha = 0.05\)</span>) est arbitraire.</p></li>
 <li><p>Avec les méthodes séquentielles, il faut considérer l’augmentation de la probabilité d’erreur de type I (problème des comparaisons multiples).</p></li>
 </ul>

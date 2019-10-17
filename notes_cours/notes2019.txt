@@ -1,0 +1,11 @@
+(vérifier notation dans le cours: indices et coefs ANOVA 5-6 vs. régression 6-7 vs. modèles mixtes, alpha et beta aussi dans tests hyp, aussi multivarié: x ou y)
+
+
+hyp: distr. t, somme de var. indép.
+chi2_ANOVA: degrés liberté (rappel), prod. de variables indép., distr. du chi^2, dist. F, qq.plot
+ANOVA 2: R^2, effets fixes et aléatoires, contrastes
+RegLin: moindres carrés, coefficients, intervalle de confiance / prédiction,
+        effet de levier, interaction, normalisation, collinéarité
+[Sél.modèles: biais vs. variance, validation croisée, vraisemblance]
+Logistique: distr.binom., logit, déviance
+Poisson: distr.Poisson, surdispersion

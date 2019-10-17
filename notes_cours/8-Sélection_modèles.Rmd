@@ -1,6 +1,6 @@
 ---
 title: "Évaluation et sélection de modèles"
-date: "<br/>22 octobre 2018"
+date: "<br/>21 octobre 2019"
 output:
     html_document:
         self_contained: false

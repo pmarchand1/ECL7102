@@ -1,6 +1,6 @@
 ---
 title: "Model evaluation and selection"
-date: "<br/>October 22, 2018"
+date: "<br/>October 21, 2019"
 output:
     html_document:
         self_contained: false

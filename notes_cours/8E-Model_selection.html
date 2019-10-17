@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-10-22" />
+<meta name="date" content="2019-10-21" />
 
 <title>Model evaluation and selection</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Model evaluation and selection</h1>
-<h4 class="date"><em><br/>October 22, 2018</em></h4>
+<h4 class="date"><br/>October 21, 2019</h4>
 
 </div>
 
@@ -238,10 +307,7 @@ div.tocify {
 <h1>Types of model errors</h1>
 <div id="example" class="section level2">
 <h2>Example</h2>
-<div class="figure">
-<img src="../images/polatouche.jpg" />
-
-</div>
+<p><img src="../images/polatouche.jpg" /></p>
 <p>Suppose we want to estimate the population density of the northern flying squirrel (<em>Glaucomys sabrinus</em>) according to different variables, such as:</p>
 <ul>
 <li>the type of stand (hardwood, coniferous, mixed);</li>
@@ -260,10 +326,7 @@ div.tocify {
 <div id="model-too-complex-overfitting-and-variance" class="section level2">
 <h2>Model too complex: overfitting and variance</h2>
 <p>In return, a model with too many parameters may measure associations between variables that are not generalizable effects, but rather coincidences of the dataset used. In that case, the model <em>overfits</em> the data. In general, the more predictors a model includes, the larger the sample needed to estimate effects with the same accuracy. From a graphical point of view, the combined range of <span class="math inline">\(m\)</span> predictors creates a “surface” in <span class="math inline">\(m\)</span> dimensions; the larger the number of dimensions, the more points it takes to fully cover the range of possible values (see illustration below).</p>
-<div class="figure">
-<img src="../images/densite_pred_en.png" />
-
-</div>
+<p><img src="../images/densite_pred_en.png" /></p>
 <p>The error due to overfitting is random (depends on sampling coincidences) and decreases by increasing the sample size, so it is often called a <em>variance</em>.</p>
 </div>
 <div id="another-example-fitting-a-polynomial-function" class="section level2">
@@ -279,10 +342,7 @@ div.tocify {
 <li><p>A model that has more adjustable parameters approximates this function with less bias (systematic error), but more variance (sensitivity to random variations in data). The total error is minimized as some number of parameters.</p></li>
 <li><p>With a larger sample, the bias remains the same, but the variance decreases. Not only does the total error decrease for all models, but the optimal number of parameters (which minimizes the total error) increases, as shown in the graph below.</p></li>
 </ul>
-<div class="figure">
-<img src="../images/biais_variance_en.png" />
-
-</div>
+<p><img src="../images/biais_variance_en.png" /></p>
 </div>
 <div id="prediction-and-explanation" class="section level2">
 <h2>Prediction and explanation</h2>
@@ -306,8 +366,8 @@ div.tocify {
 <p>If two models only differ by one predictor, e.g.: <code>y ~ x1 + x2</code> and <code>y ~ x1 + x2 + x3</code>, we can choose the more complex model if the effect of the new predictor <code>x3</code> is significant. We have already used this technique to determine whether or not to include the interaction term in a two-factor ANOVA model.</p>
 <p>There are sequential methods (<em>stepwise</em>) that choose between more than two models by adding or removing one variable at a time. These methods will be presented in more detail later. For the moment, note that the selection of models based on significance tests has several disadvantages.</p>
 <ul>
-<li><p>The <span class="math inline">\(p\)</span>-value measures the probability of obtaining the observed results according to the null hypothesis, not the predictive power of the model. Therefore, it helps us answer questions like: “Is the effect of <span class="math inline">\(x_3\)</span> significantly different from zero?”, but not: “What is the best model between <span class="math inline">\(y \sim x_1 + x_2\)</span> and <span class="math inline">\(y \sim x_3\)</span>?</p></li>
-<li><p>The significance threshold for the inclusion of a variable (e.g. <span class="math inline">\(\alpha = 0.05\)</span>) is arbitrary.</p></li>
+<li><p>The <span class="math inline">\(p\)</span>-value measures the probability of obtaining the observed results according to the null hypothesis, not the predictive power of the model. Therefore, it helps us answer questions like: “Is the effect of <span class="math inline">\(x_3\)</span> significantly different from zero?”, but not: "What is the best model between <span class="math inline">\(y \sim x_1 + x_2\)</span> and <span class="math inline">\(y \sim x_3\)</span>?</p></li>
+<li><p>The significance threshold for the inclusion of a variable (e.g. <span class="math inline">\(\alpha = 0.05\)</span>) is arbitrary.</p></li>
 <li><p>With sequential methods, we must consider the increase in the probability of type I error (problem of multiple comparisons).</p></li>
 </ul>
 </div>
@@ -523,7 +583,7 @@ iles_nouv</code></pre>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
-<p>Burnham, K.P and Anderson, D.R. (2002) <em>Model selection and multimodel inference : a practical information-theoretic approach</em>, 2nd ed. Springer-Verlag, New York.</p>
+<p>Burnham, K.P and Anderson, D.R. (2002) <em>Model selection and multimodel inference : a practical information-theoretic approach</em>, 2nd ed. Springer-Verlag, New York.</p>
 <p>Anderson, D.R. and Burnham, K.P. (2002) Avoiding pitfalls when using information-theoretic methods. <em>The Journal of Wildlife Management</em> 66: 912-918.</p>
 </div>
 
