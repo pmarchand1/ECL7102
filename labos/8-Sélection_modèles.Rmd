@@ -1,10 +1,10 @@
 ---
 title: "Sélection de modèles"
-date: "24 octobre 2018"
+date: "23 octobre 2019"
 output: pdf_document
 ---
 
-Ce laboratoire doit être remis le **7 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **6 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Biomasse racinaire en fonction de l'environnement
@@ -18,7 +18,7 @@ str(enviro)
 
 a) Estimez les paramètres du modèle incluant les trois prédicteurs: `biomass ~ altitude + temperature + rainfall`. L'inclusion des trois prédicteurs dans le même modèle cause-t-elle des problèmes? Justifiez votre réponse.
 
-b) En tenant compte de votre résultat en (a), proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Créez un tableau comparant ces modèles selon leur AICc.
+b) Proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Évitez d'inclure des prédicteurs fortement corrélés dans le même modèle. Créez un tableau comparant ces modèles selon leur AICc.
 
 c) Quel est le meilleur modèle pour prédire la biomasse racinaire à un nouveau site semblable à ceux échantillonnés? Serait-ce utile de faire des prédictions moyennes à partir de plusieurs modèles ici? Justifiez votre réponse.
 
@@ -36,7 +36,7 @@ str(migr)
 Nous cherchons à prédire la date d'arrivée en Europe (*migDate*, mesurée en jours à partir du 1er avril) en fonction des prédicteurs suivants:
 
 - Latitude du site de reproduction en Europe (*latBreed*)
-- Latitude du site d'hivernage en Afrique (*latWntr*). *Note*: La latitude est positive au nord de l'équateur.
+- Latitude du site d'hivernage en Afrique (*latWntr*). *Note*: La latitude est positive au nord de l'équateur, négative au sud.
 - Si l'espèce niche dans des cavités existantes (*nestSite*, 0=non, 1=oui)
 - Si l'espèce mue au site d'hivernage (*moult*, 0=non, 1=oui)
 
@@ -56,7 +56,7 @@ b) Comparez avec l'AICc les modèles incluant les combinaisons suivantes des 4 p
 - latWntr + nestSite + moult
 - latBreed + latWntr + nestSite + moult (modèle complet)
 
-Combien de modèles ont un $\Delta AIC \le 2$? Selon les poids d'Akaike, quelle est la probabilité qu'un de ces modèles soit le meilleur modèle?
+Combien de modèles ont un $\Delta AIC \le 2$? Selon les poids d'Akaike, quelle est la probabilité qu'un ou l'autre de ces modèles soit le meilleur modèle?
 
 c) Chargez le jeu de données `migr_test.csv` qui contient les données de 10 autres espèces de l'étude de Rubolini et al.
 

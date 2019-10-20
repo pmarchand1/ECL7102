@@ -20,4 +20,5 @@
 5. [Contingency tables](labos/5E-Contingency_tables.pdf)
 6. [Analysis of variance](labos/6E-ANOVA.pdf) (Data [1](labos/sablefish.csv) [2](labos/woodstain.csv))
 7. [Linear regression](labos/7RE-Linear_regression.html) ([PDF](labos/7E-Linear_regression.pdf) - Données [1](labos/sardinella.csv) [2](labos/britain_species.csv))
+8. [Model selection](labos/8E-Model_selection.pdf) (Data [1](labos/environment.csv) [2(a)](labos/migration.csv) - [2(c)](labos/migr_test.csv))
 

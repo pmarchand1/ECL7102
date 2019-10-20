@@ -1,10 +1,10 @@
 ---
 title: "Model selection"
-date: "October 24, 2018"
+date: "October 23, 2019"
 output: pdf_document
 ---
 
-Answers for this lab must be submitted before **November 7th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **November 6th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Root biomass as a function of the environment
@@ -18,7 +18,7 @@ str(enviro)
 
 a) Estimate the parameters of the model including the three predictors: `biomass ~ altitude + temperature + rainfall`. Does the inclusion of the three predictors in the same model cause problems? Justify your answer.
 
-b) Taking into account your result in (a), propose several alternative models for this dataset, including the null model (0 predictor) and models with 1 or 2 predictors (without interactions). Create a table comparing these models according to their AICc.
+b) Propose several alternative models for this dataset, including the null model (0 predictor) and models with 1 or 2 predictors (without interactions). Avoid using highly correlated predictors in the same model. Create a table comparing these models according to their AICc.
 
 c) What is the best model for predicting root biomass at a new site similar to those sampled? Would it be useful to make average predictions from several models here? Justify your answer.
 
@@ -35,7 +35,7 @@ str(migr)
 We are looking to predict the date of arrival in Europe (*migDate*, measured in days from April 1st) based on the following predictors:
 
 - Latitude of the breeding site in Europe (*latBreed*)
-- Latitude of the wintering site in Africa (*latWntr*). *Note*: Latitude is positive north of the equator.
+- Latitude of the wintering site in Africa (*latWntr*). *Note*: Latitude is positive if north of the equator, negative if south.
 - Whether the species nests in existing cavities (*nestSite*, 0 = no, 1 = yes)
 - Whether the species moults at the wintering site (*moult*, 0 = no, 1 = yes)
 
@@ -55,7 +55,7 @@ b) Using AICc, compare models including each of the following combinations of th
 - latWntr + nestSite + moult
 - latBreed + latWntr + nestSite + moult (complete model)
 
-How many models have a $\Delta AIC \le 2$? According to the Akaike weights, what is the probability that one of these models is the best model?
+How many models have a $\Delta AIC \le 2$? According to the Akaike weights, what is the probability that either one of these models is the best model?
 
 c) Load the dataset `migr_test.csv` which contains the data of 10 other species from the Rubolini et al.
 
