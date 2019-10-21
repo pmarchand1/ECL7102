@@ -2,7 +2,6 @@
 title: "Régression linéaire"
 date: "<br/>7 octobre 2019"
 output:
-    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs

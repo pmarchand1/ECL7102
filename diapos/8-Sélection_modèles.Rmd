@@ -1,14 +1,13 @@
 ---
 title: "Évaluation et sélection de modèles"
-date: "<br/>22 octobre 2018"
+date: "<br/>21 octobre 2019"
 output: 
-    revealjs::revealjs_presentation:
-        self_contained: false
-        lib_dir: libs
-        theme: night
-        transition: none
-        css: styles.css
-        incremental: true
+  xaringan::moon_reader:
+    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
@@ -18,15 +17,20 @@ library(ggplot2)
 library(cowplot)
 ```
 
-## Notes sur les évaluations à venir
 
-- Laboratoire sur l'ANOVA dû ce mercredi.
+```{css, echo = FALSE}
+.pull-left {
+  float: left;
+  width: 25%;
+}
+.pull-right {
+  float: right;
+  width: 70%;
+}
+```
 
-- Prochain laboratoire (sélection de modèles) disponible mercredi, à remettre le 7 novembre.
 
-- Articles pour la critique d'article disponibles sur Moodle mercredi, avec un formulaire pour indiquer votre équipe et votre choix.
-
-## Objectifs
+# Objectifs
 
 - Identifier les problèmes liés au sous-ajustement et surajustement de modèles.
 
@@ -36,55 +40,84 @@ library(cowplot)
 
 - Combiner les prédictions de plusieurs modèles.
 
+---
+
+class: inverse, middle
 
 # Types d'erreurs des modèles
 
-## Exemple
+---
 
-<div style= "float: right">![](../images/polatouche.jpg)</div>
+# Exemple
+
+.pull-left[
+
+![](../images/polatouche.jpg)
+
+]
+
+.pull-right[
 
 À partir de données d'un nombre limité de sites (ex.: 40 peuplements), nous souhaitons estimer la densité de population du grand polatouche en fonction de différentes variables, incluant: 
 
->- le type de peuplement (feuillu, résineux, mixte); 
->- l'âge du peuplement; 
->- les températures moyennes du mois le plus froid et le plus chaud; 
->- la surface de forêt continue autour du peuplement; 
->- la présence ou absence d'autres espèces de petits mammifères. 
+- le type de peuplement (feuillu, résineux, mixte); 
+- l'âge du peuplement; 
+- les températures moyennes du mois le plus froid et le plus chaud; 
+- la surface de forêt continue autour du peuplement; 
+- la présence ou absence d'autres espèces de petits mammifères. 
  
-## Exemple
+]
+ 
+---
+ 
+# Exemple
 
 Quels sont les avantages et désavantages: 
 
->- d'un modèle incluant le nombre maximal de prédicteurs et 
->- d'un modèle incluant un nombre réduit (ex.: 1 ou 2) prédicteurs? 
+- d'un modèle incluant le nombre maximal de prédicteurs et 
+- d'un modèle incluant un nombre réduit (ex.: 1 ou 2) prédicteurs? 
 
 Quelle est la différence entre le type d'erreurs commises dans chaque cas?
 
-## Modèle trop simple
+---
+
+# Modèle trop simple
 
 - Omet des prédicteurs qui ont un effet sur la variable étudiée.
 
 - Dans ce cas, le modèle est sous-ajusté (*underfit*).
 
+--
+
 - Par exemple, si le polatouche est davantage associé aux conifères, un modèle ignorant ce facteur va sous-estimer sa densité dans les peuplements résineux.
+
+--
 
 - Erreur systématique et indépendante du nombre d'observations (biais).
 
-## Modèle trop complexe
+---
+
+# Modèle trop complexe
 
 - Détecte des associations entre variables qui sont des coïncidences du jeu de données particulier. 
 
 - Dans ce cas, le modèle est surajusté aux données (*overfit*). 
 
+--
+
 - Plus un modèle inclut de prédicteurs, plus l'échantillon doit être grand pour estimer les effets avec la même précision. 
 
 - Erreur aléatoire diminuant avec le nombre d'observations (variance).
 
-## Effet du nombre de prédicteurs
+---
+
+# Effet du nombre de prédicteurs
 
 ![](../images/densite_pred.png)
 
-## Autre exemple: ajuster une fonction polynomiale
+---
+
+# Autre exemple: modèle polynomial
 
 ```{r, echo = FALSE}
 pgr <- read.csv("../donnees/plant_growth_rate.csv")
@@ -113,170 +146,275 @@ p4 <- ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
 plot_grid(p1, p2, p4)
 ```
 
-## Sources d'erreur et complexité des modèles
+---
+
+# Effet du nombre de paramètres
 
 - On ne connait pas la fonction exacte reliant la réponse du modèle aux prédicteurs.
 
+--
+
 - Plus de paramètres: on approxime cette fonction avec moins de biais, mais plus de variance (sensibilité au "bruit" des données). Compromis atteint à un certain nombre de paramètres.
+
+--
 
 - Avec un échantillon plus grand, le nombre optimal de paramètres augmente.
 
-## Sources d'erreur et complexité des modèles
+---
+
+# Effet du nombre de paramètres
 
 ![](../images/biais_variance.png)
 
-## Prédiction et explication
+---
+
+# Prédiction et explication
 
 - Pour ce cours, nous mettons l'accent sur la capacité prédictive des modèles: quel modèle prédira le mieux la réponse pour de nouvelles observations, indépendantes de celles utilisées pour estimer les paramètres du modèle? 
+
+--
 
 - Si le but est plutôt d'identifier les causes de la variable réponse (explication), il demeure utile de limiter la complexité des modèles.
 
 - Principe de parcimonie ou "rasoir d'Ockham": il est préférable d'utiliser le minimum de causes nécessaires pour expliquer un phénomène.
 
+---
+
+class: inverse, middle
 
 # Critères de comparaison des modèles
 
-## Coefficient de détermination ($R^2$)
+---
 
->- Fraction de la variance totale de la réponse est expliquée par le modèle.
+# Coefficient de détermination (R<sup>2</sup>)
 
->- Deux versions rapportés dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
+- Fraction de la variance totale de la réponse est expliquée par le modèle.
 
->- $R^2$ "multiple" basé sur la somme des écarts carrés résiduels et totaux:
+--
 
-$$ R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})^2} $$
+- Deux versions rapportés dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
 
->- Cette valeur augmente toujours lorsqu'on ajoute un nouveau prédicteur; favorise les modèles plus complexes.
+--
 
-## Coefficient de détermination ($R^2$)
+- $R^2$ "multiple" basé sur la somme des écarts carrés résiduels et totaux:
+
+$$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})^2}$$
+
+--
+
+- Cette valeur augmente toujours lorsqu'on ajoute un nouveau prédicteur; favorise les modèles plus complexes.
+
+---
+
+# Coefficient de détermination (R<sup>2</sup>)
 
 - La version ajustée du $R^2$ divise chaque somme des écarts carrés par le nombre de degrés de liberté approprié. 
 
+--
+
 - Le $R^2$ ajusté peut diminuer pour un modèle plus complexe; c'est un estimateur moins biaisé du $R^2$ de la population. 
+
+--
 
 - L'une ou l'autre version du $R^2$ convient pour comparer deux modèles linéaires comprenant le même nombre de paramètres ajustables. 
 
 - Le $R^2$ ajusté ne pénalise pas les modèles plus complexes autant que l'AIC.
 
-## Tests de significativité
+---
+
+# Tests de significativité
 
 - Si deux modèles ne diffèrent que par un prédicteur, ex.: `y ~ x1 + x2` et `y ~ x1 + x2 + x3`, on peut choisir le modèle plus complexe si l'effet du nouveau prédicteur `x3` est significatif.
 
+--
+
 - Nous avons déjà utilisé cette méthode pour déterminer s'il fallait inclure ou non l'interaction dans un modèle d'ANOVA à deux facteurs. 
+
+--
 
 - Il existe des méthodes séquentielles (*stepwise*) pour choisir entre plusieurs modèles en ajoutant ou supprimant une variable à la fois.
 
-## Tests de significativité
+---
+
+# Tests de significativité
 
 ### Inconvénients
 
 - La valeur $p$ mesure la probabilité d'obtenir les résultats observés selon l'hypothèse nulle, pas le pouvoir prédictif du modèle.
 
+--
+
 - Le seuil de significativité pour l'inclusion d'une variable (ex.: $\alpha = 0.05$) est arbitraire. 
+--
 
-- Avec les méthodes séquentielles, il faut considérer l'augmentation de la probabilité d'erreur de type I (problème des comparaisons multiples). 
+- Avec les méthodes séquentielles, il faut considérer l'augmentation de la probabilité d'erreur de type I (problème des comparaisons multiples).
 
-## Ensemble de validation
+---
+
+# Ensemble de validation
 
 - Évaluer un modèle d'après son erreur de prédiction (ex.: $\sum (y_i - \hat{y_i})^2$) pour un jeu de données *différent* de celui utilisé pour estimer les paramètres.
 
+--
+
 - En pratique, séparer un jeu de données en un ensemble pour la calibration des modèles (*training set*) et un ensemble pour la validation (*validation set*). 
+
+--
 
 - Méthode très courante pour de grands jeux de données. La majorité des observations (ex.: 70-80%) font partie de l'ensemble de calibration.
 
 - Pas efficace si on a peu de données.
 
-## Validation croisée
+---
+
+# Validation croisée
 
 - Diviser aléatoirement les observations en groupes et mesurer l'erreur de prédiction des observations d'un groupe selon un modèle ajusté au reste des observations. 
 
+--
+
 - Ex.: Pour une seule observation par groupe (*leave-one-out cross-validation*), on calcule $\sum (y_i - \hat{y_i})^2$ où chaque valeur prédite $\hat{y_i}$ vient du modèle ajusté sans l'observation $i$. 
 
-- Requiert de réajuster chaque modèle considéré $n$ fois ($n$ est le nombre d'observations).
+--
 
-## Validation croisée
+- Requiert de réajuster chaque modèle considéré $n$ fois ( $n$ est le nombre d'observations).
+
+---
+
+# Validation croisée
 
 - Si $n$ est grand, on peut diviser les observations en $k$ groupes (*k-fold cross-validation*), par exemple $k$ = 10, ajuster chaque modèle $k$ fois en laissant une fraction $1/k$ des observations de côté.
 
+--
+
 - Packages pour la validation croisée dans R, incluant **cvTools**.
 
+---
+
+class: inverse, middle
 
 # Comparaison de modèles avec l'AIC
 
-## Origine
+---
+
+# Origine
 
 - Le critère d'information d'Akaike (AIC) est basé sur la théorie de l'information. 
 
-- L'AIC approxime la perte d'information encourue en estimant la "vraie"" fonction déterminant la réponse, $f$, par un modèle $g$ donné.
+--
+
+- L'AIC approxime la perte d'information encourue en estimant la "vraie" fonction déterminant la réponse, $f$, par un modèle $g$ donné.
+
+--
 
 - L'AIC mesure cette perte d'information à une constante près. La valeur absolue de l'AIC n'a aucune signification, tout ce qui compte c'est la différence d'AIC entre modèles.
 
-## Définition de l'AIC
+---
 
-$$ AIC = -2 \log(L) + 2 K $$
+# Définition de l'AIC
 
->- $L$ est la fonction de vraisemblance (*likelihood*).
->- $K$ est le nombre de paramètres estimés par le modèle.
->- Plus l'AIC est petit, plus le modèle est bon.
+$$AIC = -2 \log(L) + 2 K$$
 
-## Vraisemblance
+- $L$ est la fonction de vraisemblance (*likelihood*).
+- $K$ est le nombre de paramètres estimés par le modèle.
+- Plus l'AIC est petit, plus le modèle est bon.
+
+---
+
+# Vraisemblance
+
+$$AIC = -2 \log(L) + 2 K$$
 
 - $L(\theta | y)$ correspond à la probabilité des observations de $y$ selon la valeur des paramètres $\theta$ du modèle.
 
+--
+
 - Estimation des paramètres par le **maximum de vraisemblance**: équivalente à la méthode des moindre carrés pour des modèles linéaires.
 
-## Nombre de paramètres estimés
+---
+
+# Nombre de paramètres estimés
+
+$$AIC = -2 \log(L) + 2 K$$
 
 - Comme $R^2$, la vraisemblance tend à augmenter avec chaque paramètre ajouté au modèle. 
 
-- Le deuxième terme de l'AIC ($2K$) pénalise les modèles plus complexes. 
+--
+
+- Le deuxième terme de l'AIC ( $2K$ ) pénalise les modèles plus complexes. 
+
+--
 
 - Pour un modèle linéaire, $K$ doit compter l'ordonnée à l'origine ainsi que l'estimé de la variance des résidus, $\sigma^2$. 
     - Pour le modèle $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$, $K = 4$.
     
+--
+
 - L'AIC aurait pu être défini comme $-\log(L) + K$. Le facteur de 2 a été ajouté pour des raisons historiques.
 
-## AIC et validation croisée
+---
+
+# AIC et validation croisée
 
 - Comparaison des modèles avec l'AIC est équivalente à un type de validation croisée (*leave-one-out cross-validation*). 
 
 - L'AIC estime donc le pouvoir prédictif des modèles sur de nouvelles données, sans avoir à répéter l'ajustement du modèle.
 
-## AICc pour petits échantillons
+---
 
->- Si $n$ est petit par rapport au nombre de paramètres estimés ($n/K$ < 40), on remplace l'AIC par l'AICc, qui inclut une correction supplémentaire.
+# AICc pour petits échantillons
 
-$$ AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right) $$
+- Si $n$ est petit par rapport au nombre de paramètres estimés (si $n/K$ < 40), on remplace l'AIC par l'AICc, qui inclut une correction supplémentaire.
 
->- $n / (n-K-1) > 1$, donc le deuxième terme de l'AICc est un peu plus grand que $2K$, mais la différence entre les deux diminue à mesure que $n$ augmente.
+$$AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right)$$
 
->- Il faut utiliser la même mesure (AIC ou AICc) pour tous les modèles comparés.
+--
 
-## Classification des modèles avec l'AIC
+- $n / (n-K-1) > 1$, donc le deuxième terme de l'AICc est un peu plus grand que $2K$, mais la différence entre les deux diminue à mesure que $n$ augmente.
+
+--
+
+- Il faut utiliser la même mesure (AIC ou AICc) pour tous les modèles comparés.
+
+---
+
+# Classification des modèles avec l'AIC
 
 - Après avoir calculé l'AIC (ou AICc) pour tous les modèles, on les classe en fonction de la différence entre leur AIC et le minimum des AIC (i.e. celui du meilleur modèle): $\Delta AIC = AIC - \min AIC$. 
 
 - Pour le meilleur modèle, $\Delta AIC = 0$.
 
-## Rapport de plausibilité
+---
 
->- Il n'est pas certain que le meilleur modèle identifié par l'AIC serait le même avec un échantillon différent.
+# Rapport de plausibilité
 
->- On peut calculer le rapport de plausibilité (*evidence ratio*) de chaque modèle vs. celui avec un AIC minimal. 
+- Il n'est pas certain que le meilleur modèle identifié par l'AIC serait le même avec un échantillon différent.
 
-$$ e^{-\frac{\Delta AIC}{2} } $$
+--
 
->- Par exemple, $\Delta AIC = 2$ correspond à un ratio de ~0.37 (~3 fois moins probable); $\Delta AIC = 10$ correspond à un ratio de ~0.0067 (~150 fois moins probable).
+- On peut calculer le rapport de plausibilité (*evidence ratio*) de chaque modèle vs. celui avec un AIC minimal. 
 
-## Poids d'Akaike
+$$e^{-\frac{\Delta AIC}{2} }$$
 
->- On peut normaliser les rapports de plausibilité par leur somme pour obtenir le poids d'Akaike $w_i$ d'un modèle $i$.
+--
 
-$$ w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j}{2}}}$$
+- Par exemple, $\Delta AIC = 2$ correspond à un ratio de ~0.37 (~3 fois moins probable); $\Delta AIC = 10$ correspond à un ratio de ~0.0067 (~150 fois moins probable).
 
->- La somme des $w_i$ est égale à 1. Ces poids représentent la probabilité quun modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
+---
 
-## Exemple
+# Poids d'Akaike
+
+- On peut normaliser les rapports de plausibilité par leur somme pour obtenir le poids d'Akaike $w_i$ d'un modèle $i$.
+
+$$w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j}{2}}}$$
+
+--
+
+- La somme des $w_i$ est égale à 1. Ces poids représentent la probabilité quun modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
+
+---
+
+# Exemple
 
 Jeu de données de Johnson et Simberloff sur le nombre d'espèces de plantes vasculaires de différentes îles britanniques, vu au dernier laboratoire.
 
@@ -285,43 +423,74 @@ iles <- read.csv("../donnees/britain_species.csv")
 str(iles)
 ```
 
-## Conseils et points à surveiller
+---
+
+# Conseils et points à surveiller
 
 - Tous les modèles à comparer doivent avoir la même variable réponse.
 
+--
+
 - Tous les modèles doivent êtres basés sur le même nombre d'observations. Attention aux valeurs manquantes (`NA`)!
+
+--
 
 - Dans l'exemple précédent, tous les modèles étaient nichés (*nested*). L'AIC peut aussi comparer des modèles non-nichés.
 
+--
+
 - L'AIC ne nous dit pas si le "meilleur" modèle est bien ajusté aux données. 
     - Pour un cas où tous les modèles sont nichés, il suffit de vérifier l'ajustement du modèle le plus complexe. 
+    
+---
 
-## Conseils et points à surveiller
+# Conseils et points à surveiller
 
 - Dans l'exemple, les deux prédicteurs du meilleur modèle selon l'AIC (`log_area` et `lat`) étaient aussi les deux prédicteurs avec un effet significatif dans le modèle complet. Cela n'est pas toujours le cas. 
+
+--
 
 - Il faut éviter de se fier aux valeurs $p$ et aux intervalles de confiance des paramètres du meilleur modèle choisi par l'AIC. 
     - Les résultats extraits d'un seul modèle ne tiennent pas compte du fait que nous avons comparé plusieurs modèles.
     - Les valeurs $p$ et les intervalles de confiance du modèle choisi sont trop optimistes.
 
-# Comment choisir l'ensemble de modèles à comparer?
+---
+
+# Choix des modèles à comparer
 
 - Il est préférable de choisir un ensemble de modèles restreint basé sur la connaissance du sujet et des hypothèses scientifiques intéressantes.
 
+--
+
 - Le nombre de modèles possibles augmente rapidemenet avec le nombre de prédicteurs considérés: $2^k$ modèles possibles avec $k$ prédicteurs, sans compter les interactions. Ex.: 8 modèles pour 3 prédicteurs, 128 pour 7 prédicteurs.
 
-## Algorithmes de sélection séquentielle
+---
+
+# Algorithmes de sélection séquentielle
 
 Ces algorithmes (*forward*, *backward* ou *stepwise*) visent à trouver le meilleur modèle selon l'AIC sans avoir à les estimer tous (ex.: fonction `stepAIC` dans R).
+
+--
 
 Exemple de sélection par addition (*forward selection*):
 
 1. Calculer l'AIC du modèle nul (0 prédicteur);
+
+--
+
 2. Évaluer les modèles à 1 prédicteur (`y ~ x1`, `y ~ x2`, etc.), choisir le meilleur s'il l'AIC est inférieur au modèle nul.
+
+--
+
 3. Évaluer tous les modèles avec 2 prédicteurs incluant le 1er prédicteur choisi à l'étape 2, ...
+
+--
+
 4. Arrêter si aucun des modèles plus complexes n'améliore l'AIC.
 
-## Algorithmes de sélection séquentielle
+---
+
+# Algorithmes de sélection séquentielle
 
 ### Inconvénients
 
@@ -331,45 +500,54 @@ Exemple de sélection par addition (*forward selection*):
 
 - Ces méthodes encouragent la comparaison d'un très grand nombre de modèles (déconseillé).
 
+---
 
-## Prédictions multi-modèles
+# Prédictions multi-modèles
 
->- Pour prédire la valeur de la réponse, on peut utiliser le modèle avec l'AIC le plus bas.
+- Pour prédire la valeur de la réponse, on peut utiliser le modèle avec l'AIC le plus bas.
 
->- Pour une prédiction plus précise, on peut prendre la *moyenne pondérée* des valeurs prédites par les différents modèles, avec une pondération basée sur les poids d'Akaike:
+--
+
+- Pour une prédiction plus précise, on peut prendre la *moyenne pondérée* des valeurs prédites par les différents modèles, avec une pondération basée sur les poids d'Akaike:
 
 $$ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} $$ 
 
->- Dans le package *AICcmodavg*, la fonction `modavgPred` calcule les prédictions multi-modèles de cette façon.
+--
 
-## Questions de révision
+- Dans le package *AICcmodavg*, la fonction `modavgPred` calcule les prédictions multi-modèles de cette façon.
 
->- Quelles erreurs sont associées à des modèles trop simples (peu de paramètres ajustables) ou trop complexes (beaucoup de paramètres)?
+---
 
->- Comment mesure-t-on le pouvoir prédictif d'un modèle?
-
->- Que signifie la valeur de l'AIC d'un modèle?
-
->- À quoi servent les poids d'Akaike?
-
-## Résumé
+# Résumé
 
 - La sélection de modèles est un compromis entre biais (sous-ajustement) et variance (surajustement).
 
+--
+
 - Le pouvoir prédictif d'un modèle est déterminé en comparant ses prédictions à de nouvelles observations, indépendantes de celles utilisées pour estimer les paramètres du modèle.
+
+--
 
 - L'AIC (ou l'AICc, pour de petits échantillons) est basé sur la vraisemblance du modèle, avec une pénalité pour les modèles comprenant un plus grand nombre de paramètres. 
 
-## Résumé
+---
+
+# Résumé
 
 - L'AIC approxime bien la capacité de prédiction relative de différents modèles et peut donc servir à classer ceux-ci.
 
+--
+
 - La valeur absolue de l'AIC n'a aucune signification. Seules les différences d'AIC entre modèles basés sur les mêmes observations peuvent être interprétées.
+
+--
 
 - Les poids d'Akaike, calculés à partir des différences d'AIC entre modèles, estiment la probabilité que chaque modèle soit identifié comme le meilleur modèle si on répétait l'échantillonnage. Ces poids servent aussi à faire la moyenne pondérée des prédictions de différents modèles.
 
-## Références
+---
 
->- Burnham, K.P et Anderson, D.R. (2002) *Model selection and multimodel inference : a practical information-theoretic approach*, 2e éd. Springer-Verlag, New York. 
+# Références
 
->- Anderson, D.R. et Burnham, K.P. (2002) Avoiding pitfalls when using information-theoretic methods. *The Journal of Wildlife Management* 66: 912-918. (inclus dans le dossier *Articles de référence* sur Moodle)
+- Burnham, K.P et Anderson, D.R. (2002) *Model selection and multimodel inference : a practical information-theoretic approach*, 2e éd. Springer-Verlag, New York. 
+
+- Anderson, D.R. et Burnham, K.P. (2002) Avoiding pitfalls when using information-theoretic methods. *The Journal of Wildlife Management* 66: 912-918. (inclus dans le dossier *Articles de référence* sur Moodle)

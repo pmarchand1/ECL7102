@@ -1,865 +1,630 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Évaluation et sélection de modèles</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Évaluation et sélection de modèles</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Évaluation et sélection de modèles
+### <br/>21 octobre 2019
+
+---
 
 
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
 
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
+
+&lt;style type="text/css"&gt;
+.pull-left {
+  float: left;
+  width: 25%;
 }
-</style>
-
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
-
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
+.pull-right {
+  float: right;
+  width: 70%;
+}
+&lt;/style&gt;
 
 
+# Objectifs
 
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
+- Identifier les problèmes liés au sous-ajustement et surajustement de modèles.
 
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
+- Connaître les avantages et inconvénients de différentes méthodes visant à évaluer l'ajustement de modèles.
 
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
+- Utiliser l'AIC pour comparer différents modèles.
 
+- Combiner les prédictions de plusieurs modèles.
 
-  </style>
+---
 
-    <style type="text/css">code{white-space: pre;}</style>
+class: inverse, middle
 
-    <link rel="stylesheet" href="styles.css"/>
+# Types d'erreurs des modèles
 
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
+---
 
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
+# Exemple
 
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
+.pull-left[
 
+![](../images/polatouche.jpg)
 
-@media print {
+]
 
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
+.pull-right[
 
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
+À partir de données d'un nombre limité de sites (ex.: 40 peuplements), nous souhaitons estimer la densité de population du grand polatouche en fonction de différentes variables, incluant: 
 
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
+- le type de peuplement (feuillu, résineux, mixte); 
+- l'âge du peuplement; 
+- les températures moyennes du mois le plus froid et le plus chaud; 
+- la surface de forêt continue autour du peuplement; 
+- la présence ou absence d'autres espèces de petits mammifères. 
+ 
+]
+ 
+---
+ 
+# Exemple
 
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
+Quels sont les avantages et désavantages: 
 
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
+- d'un modèle incluant le nombre maximal de prédicteurs et 
+- d'un modèle incluant un nombre réduit (ex.: 1 ou 2) prédicteurs? 
 
+Quelle est la différence entre le type d'erreurs commises dans chaque cas?
 
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
+---
 
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
+# Modèle trop simple
 
-		overflow: visible !important;
-		display: block !important;
+- Omet des prédicteurs qui ont un effet sur la variable étudiée.
 
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
+- Dans ce cas, le modèle est sous-ajusté (*underfit*).
 
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
+--
 
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
+- Par exemple, si le polatouche est davantage associé aux conifères, un modèle ignorant ce facteur va sous-estimer sa densité dans les peuplements résineux.
 
-		opacity: 1 !important;
+--
 
-		page-break-after: always !important;
+- Erreur systématique et indépendante du nombre d'observations (biais).
 
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
+---
 
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
+# Modèle trop complexe
 
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
+- Détecte des associations entre variables qui sont des coïncidences du jeu de données particulier. 
 
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
+- Dans ce cas, le modèle est surajusté aux données (*overfit*). 
 
-	.reveal section small {
-		font-size: 0.8em;
-	}
+--
 
-}  
-</script>
+- Plus un modèle inclut de prédicteurs, plus l'échantillon doit être grand pour estimer les effets avec la même précision. 
 
+- Erreur aléatoire diminuant avec le nombre d'observations (variance).
 
-<script id="pdf-css" type="application/dynamic-css">
+---
+
+# Effet du nombre de prédicteurs
+
+![](../images/densite_pred.png)
+
+---
+
+# Autre exemple: modèle polynomial
+
+![](8-Sélection_modèles_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+
+# Effet du nombre de paramètres
+
+- On ne connait pas la fonction exacte reliant la réponse du modèle aux prédicteurs.
+
+--
+
+- Plus de paramètres: on approxime cette fonction avec moins de biais, mais plus de variance (sensibilité au "bruit" des données). Compromis atteint à un certain nombre de paramètres.
+
+--
+
+- Avec un échantillon plus grand, le nombre optimal de paramètres augmente.
+
+---
+
+# Effet du nombre de paramètres
+
+![](../images/biais_variance.png)
+
+---
+
+# Prédiction et explication
+
+- Pour ce cours, nous mettons l'accent sur la capacité prédictive des modèles: quel modèle prédira le mieux la réponse pour de nouvelles observations, indépendantes de celles utilisées pour estimer les paramètres du modèle? 
+
+--
+
+- Si le but est plutôt d'identifier les causes de la variable réponse (explication), il demeure utile de limiter la complexité des modèles.
+
+- Principe de parcimonie ou "rasoir d'Ockham": il est préférable d'utiliser le minimum de causes nécessaires pour expliquer un phénomène.
+
+---
+
+class: inverse, middle
+
+# Critères de comparaison des modèles
+
+---
+
+# Coefficient de détermination (R&lt;sup&gt;2&lt;/sup&gt;)
+
+- Fraction de la variance totale de la réponse est expliquée par le modèle.
+
+--
+
+- Deux versions rapportés dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
+
+--
+
+- `\(R^2\)` "multiple" basé sur la somme des écarts carrés résiduels et totaux:
+
+`$$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})^2}$$`
+
+--
+
+- Cette valeur augmente toujours lorsqu'on ajoute un nouveau prédicteur; favorise les modèles plus complexes.
+
+---
+
+# Coefficient de détermination (R&lt;sup&gt;2&lt;/sup&gt;)
+
+- La version ajustée du `\(R^2\)` divise chaque somme des écarts carrés par le nombre de degrés de liberté approprié. 
+
+--
+
+- Le `\(R^2\)` ajusté peut diminuer pour un modèle plus complexe; c'est un estimateur moins biaisé du `\(R^2\)` de la population. 
+
+--
+
+- L'une ou l'autre version du `\(R^2\)` convient pour comparer deux modèles linéaires comprenant le même nombre de paramètres ajustables. 
+
+- Le `\(R^2\)` ajusté ne pénalise pas les modèles plus complexes autant que l'AIC.
+
+---
+
+# Tests de significativité
+
+- Si deux modèles ne diffèrent que par un prédicteur, ex.: `y ~ x1 + x2` et `y ~ x1 + x2 + x3`, on peut choisir le modèle plus complexe si l'effet du nouveau prédicteur `x3` est significatif.
+
+--
+
+- Nous avons déjà utilisé cette méthode pour déterminer s'il fallait inclure ou non l'interaction dans un modèle d'ANOVA à deux facteurs. 
+
+--
+
+- Il existe des méthodes séquentielles (*stepwise*) pour choisir entre plusieurs modèles en ajoutant ou supprimant une variable à la fois.
+
+---
+
+# Tests de significativité
+
+### Inconvénients
+
+- La valeur `\(p\)` mesure la probabilité d'obtenir les résultats observés selon l'hypothèse nulle, pas le pouvoir prédictif du modèle.
+
+--
+
+- Le seuil de significativité pour l'inclusion d'une variable (ex.: `\(\alpha = 0.05\)`) est arbitraire. 
+--
+
+- Avec les méthodes séquentielles, il faut considérer l'augmentation de la probabilité d'erreur de type I (problème des comparaisons multiples).
+
+---
+
+# Ensemble de validation
+
+- Évaluer un modèle d'après son erreur de prédiction (ex.: `\(\sum (y_i - \hat{y_i})^2\)`) pour un jeu de données *différent* de celui utilisé pour estimer les paramètres.
+
+--
+
+- En pratique, séparer un jeu de données en un ensemble pour la calibration des modèles (*training set*) et un ensemble pour la validation (*validation set*). 
+
+--
+
+- Méthode très courante pour de grands jeux de données. La majorité des observations (ex.: 70-80%) font partie de l'ensemble de calibration.
+
+- Pas efficace si on a peu de données.
+
+---
+
+# Validation croisée
+
+- Diviser aléatoirement les observations en groupes et mesurer l'erreur de prédiction des observations d'un groupe selon un modèle ajusté au reste des observations. 
+
+--
+
+- Ex.: Pour une seule observation par groupe (*leave-one-out cross-validation*), on calcule `\(\sum (y_i - \hat{y_i})^2\)` où chaque valeur prédite `\(\hat{y_i}\)` vient du modèle ajusté sans l'observation `\(i\)`. 
+
+--
+
+- Requiert de réajuster chaque modèle considéré `\(n\)` fois ( `\(n\)` est le nombre d'observations).
+
+---
+
+# Validation croisée
+
+- Si `\(n\)` est grand, on peut diviser les observations en `\(k\)` groupes (*k-fold cross-validation*), par exemple `\(k\)` = 10, ajuster chaque modèle `\(k\)` fois en laissant une fraction `\(1/k\)` des observations de côté.
+
+--
+
+- Packages pour la validation croisée dans R, incluant **cvTools**.
+
+---
+
+class: inverse, middle
+
+# Comparaison de modèles avec l'AIC
+
+---
+
+# Origine
+
+- Le critère d'information d'Akaike (AIC) est basé sur la théorie de l'information. 
+
+--
+
+- L'AIC approxime la perte d'information encourue en estimant la "vraie" fonction déterminant la réponse, `\(f\)`, par un modèle `\(g\)` donné.
+
+--
+
+- L'AIC mesure cette perte d'information à une constante près. La valeur absolue de l'AIC n'a aucune signification, tout ce qui compte c'est la différence d'AIC entre modèles.
+
+---
+
+# Définition de l'AIC
+
+`$$AIC = -2 \log(L) + 2 K$$`
+
+- `\(L\)` est la fonction de vraisemblance (*likelihood*).
+- `\(K\)` est le nombre de paramètres estimés par le modèle.
+- Plus l'AIC est petit, plus le modèle est bon.
+
+---
+
+# Vraisemblance
+
+`$$AIC = -2 \log(L) + 2 K$$`
+
+- `\(L(\theta | y)\)` correspond à la probabilité des observations de `\(y\)` selon la valeur des paramètres `\(\theta\)` du modèle.
+
+--
+
+- Estimation des paramètres par le **maximum de vraisemblance**: équivalente à la méthode des moindre carrés pour des modèles linéaires.
+
+---
+
+# Nombre de paramètres estimés
+
+`$$AIC = -2 \log(L) + 2 K$$`
+
+- Comme `\(R^2\)`, la vraisemblance tend à augmenter avec chaque paramètre ajouté au modèle. 
+
+--
+
+- Le deuxième terme de l'AIC ( `\(2K\)` ) pénalise les modèles plus complexes. 
+
+--
+
+- Pour un modèle linéaire, `\(K\)` doit compter l'ordonnée à l'origine ainsi que l'estimé de la variance des résidus, `\(\sigma^2\)`. 
+    - Pour le modèle `\(y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon\)`, `\(K = 4\)`.
     
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
+--
 
-* {
-	-webkit-print-color-adjust: exact;
-}
+- L'AIC aurait pu être défini comme `\(-\log(L) + K\)`. Le facteur de 2 a été ajouté pour des raisons historiques.
 
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
+---
 
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
+# AIC et validation croisée
 
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
+- Comparaison des modèles avec l'AIC est équivalente à un type de validation croisée (*leave-one-out cross-validation*). 
 
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
+- L'AIC estime donc le pouvoir prédictif des modèles sur de nouvelles données, sans avoir à répéter l'ajustement du modèle.
 
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
+---
 
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
+# AICc pour petits échantillons
 
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
+- Si `\(n\)` est petit par rapport au nombre de paramètres estimés (si `\(n/K\)` &lt; 40), on remplace l'AIC par l'AICc, qui inclut une correction supplémentaire.
 
-	overflow: visible;
-	display: block;
+`$$AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right)$$`
 
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
+--
 
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
+- `\(n / (n-K-1) &gt; 1\)`, donc le deuxième terme de l'AICc est un peu plus grand que `\(2K\)`, mais la différence entre les deux diminue à mesure que `\(n\)` augmente.
 
-.reveal .slides section {
-	page-break-after: always !important;
+--
 
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
+- Il faut utiliser la même mesure (AIC ou AICc) pour tous les modèles comparés.
 
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
+---
 
-	opacity: 1 !important;
+# Classification des modèles avec l'AIC
 
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
+- Après avoir calculé l'AIC (ou AICc) pour tous les modèles, on les classe en fonction de la différence entre leur AIC et le minimum des AIC (i.e. celui du meilleur modèle): `\(\Delta AIC = AIC - \min AIC\)`. 
 
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
+- Pour le meilleur modèle, `\(\Delta AIC = 0\)`.
 
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
+---
 
-.reveal img {
-	box-shadow: none;
-}
+# Rapport de plausibilité
 
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
+- Il n'est pas certain que le meilleur modèle identifié par l'AIC serait le même avec un échantillon différent.
 
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
+--
 
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
+- On peut calculer le rapport de plausibilité (*evidence ratio*) de chaque modèle vs. celui avec un AIC minimal. 
 
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
+`$$e^{-\frac{\Delta AIC}{2} }$$`
 
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
+--
 
-</script>
+- Par exemple, `\(\Delta AIC = 2\)` correspond à un ratio de ~0.37 (~3 fois moins probable); `\(\Delta AIC = 10\)` correspond à un ratio de ~0.0067 (~150 fois moins probable).
+
+---
+
+# Poids d'Akaike
+
+- On peut normaliser les rapports de plausibilité par leur somme pour obtenir le poids d'Akaike `\(w_i\)` d'un modèle `\(i\)`.
+
+`$$w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j}{2}}}$$`
+
+--
+
+- La somme des `\(w_i\)` est égale à 1. Ces poids représentent la probabilité quun modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
+
+---
+
+# Exemple
+
+Jeu de données de Johnson et Simberloff sur le nombre d'espèces de plantes vasculaires de différentes îles britanniques, vu au dernier laboratoire.
 
 
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
+```r
+iles &lt;- read.csv("../donnees/britain_species.csv")
+str(iles)
+```
 
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">Évaluation et sélection de modèles</h1>
-    <h3 class="date"><br/>22 octobre 2018</h3>
-</section>
-
-<section id="notes-sur-les-evaluations-a-venir" class="slide level2">
-<h2>Notes sur les évaluations à venir</h2>
-<ul>
-<li class="fragment"><p>Laboratoire sur l’ANOVA dû ce mercredi.</p></li>
-<li class="fragment"><p>Prochain laboratoire (sélection de modèles) disponible mercredi, à remettre le 7 novembre.</p></li>
-<li class="fragment"><p>Articles pour la critique d’article disponibles sur Moodle mercredi, avec un formulaire pour indiquer votre équipe et votre choix.</p></li>
-</ul>
-</section>
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Identifier les problèmes liés au sous-ajustement et surajustement de modèles.</p></li>
-<li class="fragment"><p>Connaître les avantages et inconvénients de différentes méthodes visant à évaluer l’ajustement de modèles.</p></li>
-<li class="fragment"><p>Utiliser l’AIC pour comparer différents modèles.</p></li>
-<li class="fragment"><p>Combiner les prédictions de plusieurs modèles.</p></li>
-</ul>
-</section>
-<section><section id="types-derreurs-des-modeles" class="titleslide slide level1"><h1>Types d’erreurs des modèles</h1></section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<div style="float: right">
-<img src="../images/polatouche.jpg" />
-</div>
-<p>À partir de données d’un nombre limité de sites (ex.: 40 peuplements), nous souhaitons estimer la densité de population du grand polatouche en fonction de différentes variables, incluant:</p>
-<ul>
-<li>le type de peuplement (feuillu, résineux, mixte);</li>
-<li>l’âge du peuplement;</li>
-<li>les températures moyennes du mois le plus froid et le plus chaud;</li>
-<li>la surface de forêt continue autour du peuplement;</li>
-<li>la présence ou absence d’autres espèces de petits mammifères.</li>
-</ul>
-</section><section id="exemple-1" class="slide level2">
-<h2>Exemple</h2>
-<p>Quels sont les avantages et désavantages:</p>
-<ul>
-<li>d’un modèle incluant le nombre maximal de prédicteurs et</li>
-<li>d’un modèle incluant un nombre réduit (ex.: 1 ou 2) prédicteurs?</li>
-</ul>
-<p>Quelle est la différence entre le type d’erreurs commises dans chaque cas?</p>
-</section><section id="modele-trop-simple" class="slide level2">
-<h2>Modèle trop simple</h2>
-<ul>
-<li class="fragment"><p>Omet des prédicteurs qui ont un effet sur la variable étudiée.</p></li>
-<li class="fragment"><p>Dans ce cas, le modèle est sous-ajusté (<em>underfit</em>).</p></li>
-<li class="fragment"><p>Par exemple, si le polatouche est davantage associé aux conifères, un modèle ignorant ce facteur va sous-estimer sa densité dans les peuplements résineux.</p></li>
-<li class="fragment"><p>Erreur systématique et indépendante du nombre d’observations (biais).</p></li>
-</ul>
-</section><section id="modele-trop-complexe" class="slide level2">
-<h2>Modèle trop complexe</h2>
-<ul>
-<li class="fragment"><p>Détecte des associations entre variables qui sont des coïncidences du jeu de données particulier.</p></li>
-<li class="fragment"><p>Dans ce cas, le modèle est surajusté aux données (<em>overfit</em>).</p></li>
-<li class="fragment"><p>Plus un modèle inclut de prédicteurs, plus l’échantillon doit être grand pour estimer les effets avec la même précision.</p></li>
-<li class="fragment"><p>Erreur aléatoire diminuant avec le nombre d’observations (variance).</p></li>
-</ul>
-</section><section id="effet-du-nombre-de-predicteurs" class="slide level2">
-<h2>Effet du nombre de prédicteurs</h2>
-<p><img src="../images/densite_pred.png" /></p>
-</section><section id="autre-exemple-ajuster-une-fonction-polynomiale" class="slide level2">
-<h2>Autre exemple: ajuster une fonction polynomiale</h2>
-<p><img src="8-Sélection_modèles_files/figure-revealjs/unnamed-chunk-1-1.png" width="576" /></p>
-</section><section id="sources-derreur-et-complexite-des-modeles" class="slide level2">
-<h2>Sources d’erreur et complexité des modèles</h2>
-<ul>
-<li class="fragment"><p>On ne connait pas la fonction exacte reliant la réponse du modèle aux prédicteurs.</p></li>
-<li class="fragment"><p>Plus de paramètres: on approxime cette fonction avec moins de biais, mais plus de variance (sensibilité au “bruit” des données). Compromis atteint à un certain nombre de paramètres.</p></li>
-<li class="fragment"><p>Avec un échantillon plus grand, le nombre optimal de paramètres augmente.</p></li>
-</ul>
-</section><section id="sources-derreur-et-complexite-des-modeles-1" class="slide level2">
-<h2>Sources d’erreur et complexité des modèles</h2>
-<p><img src="../images/biais_variance.png" /></p>
-</section><section id="prediction-et-explication" class="slide level2">
-<h2>Prédiction et explication</h2>
-<ul>
-<li class="fragment"><p>Pour ce cours, nous mettons l’accent sur la capacité prédictive des modèles: quel modèle prédira le mieux la réponse pour de nouvelles observations, indépendantes de celles utilisées pour estimer les paramètres du modèle?</p></li>
-<li class="fragment"><p>Si le but est plutôt d’identifier les causes de la variable réponse (explication), il demeure utile de limiter la complexité des modèles.</p></li>
-<li class="fragment"><p>Principe de parcimonie ou “rasoir d’Ockham”: il est préférable d’utiliser le minimum de causes nécessaires pour expliquer un phénomène.</p></li>
-</ul>
-</section></section>
-<section><section id="criteres-de-comparaison-des-modeles" class="titleslide slide level1"><h1>Critères de comparaison des modèles</h1></section><section id="coefficient-de-determination-r2" class="slide level2">
-<h2>Coefficient de détermination (<span class="math inline">\(R^2\)</span>)</h2>
-<ul>
-<li>Fraction de la variance totale de la réponse est expliquée par le modèle.</li>
-</ul>
-<ul>
-<li>Deux versions rapportés dans le résultat de <code>lm</code>: <em>Multiple R-squared</em> et <em>Adjusted R-squared</em>.</li>
-</ul>
-<ul>
-<li><span class="math inline">\(R^2\)</span> “multiple” basé sur la somme des écarts carrés résiduels et totaux:</li>
-</ul>
-<p><span class="math display">\[ R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})^2} \]</span></p>
-<ul>
-<li>Cette valeur augmente toujours lorsqu’on ajoute un nouveau prédicteur; favorise les modèles plus complexes.</li>
-</ul>
-</section><section id="coefficient-de-determination-r2-1" class="slide level2">
-<h2>Coefficient de détermination (<span class="math inline">\(R^2\)</span>)</h2>
-<ul>
-<li class="fragment"><p>La version ajustée du <span class="math inline">\(R^2\)</span> divise chaque somme des écarts carrés par le nombre de degrés de liberté approprié.</p></li>
-<li class="fragment"><p>Le <span class="math inline">\(R^2\)</span> ajusté peut diminuer pour un modèle plus complexe; c’est un estimateur moins biaisé du <span class="math inline">\(R^2\)</span> de la population.</p></li>
-<li class="fragment"><p>L’une ou l’autre version du <span class="math inline">\(R^2\)</span> convient pour comparer deux modèles linéaires comprenant le même nombre de paramètres ajustables.</p></li>
-<li class="fragment"><p>Le <span class="math inline">\(R^2\)</span> ajusté ne pénalise pas les modèles plus complexes autant que l’AIC.</p></li>
-</ul>
-</section><section id="tests-de-significativite" class="slide level2">
-<h2>Tests de significativité</h2>
-<ul>
-<li class="fragment"><p>Si deux modèles ne diffèrent que par un prédicteur, ex.: <code>y ~ x1 + x2</code> et <code>y ~ x1 + x2 + x3</code>, on peut choisir le modèle plus complexe si l’effet du nouveau prédicteur <code>x3</code> est significatif.</p></li>
-<li class="fragment"><p>Nous avons déjà utilisé cette méthode pour déterminer s’il fallait inclure ou non l’interaction dans un modèle d’ANOVA à deux facteurs.</p></li>
-<li class="fragment"><p>Il existe des méthodes séquentielles (<em>stepwise</em>) pour choisir entre plusieurs modèles en ajoutant ou supprimant une variable à la fois.</p></li>
-</ul>
-</section><section id="tests-de-significativite-1" class="slide level2">
-<h2>Tests de significativité</h2>
-<h3 id="inconvenients">Inconvénients</h3>
-<ul>
-<li class="fragment"><p>La valeur <span class="math inline">\(p\)</span> mesure la probabilité d’obtenir les résultats observés selon l’hypothèse nulle, pas le pouvoir prédictif du modèle.</p></li>
-<li class="fragment"><p>Le seuil de significativité pour l’inclusion d’une variable (ex.: <span class="math inline">\(\alpha = 0.05\)</span>) est arbitraire.</p></li>
-<li class="fragment"><p>Avec les méthodes séquentielles, il faut considérer l’augmentation de la probabilité d’erreur de type I (problème des comparaisons multiples).</p></li>
-</ul>
-</section><section id="ensemble-de-validation" class="slide level2">
-<h2>Ensemble de validation</h2>
-<ul>
-<li class="fragment"><p>Évaluer un modèle d’après son erreur de prédiction (ex.: <span class="math inline">\(\sum (y_i - \hat{y_i})^2\)</span>) pour un jeu de données <em>différent</em> de celui utilisé pour estimer les paramètres.</p></li>
-<li class="fragment"><p>En pratique, séparer un jeu de données en un ensemble pour la calibration des modèles (<em>training set</em>) et un ensemble pour la validation (<em>validation set</em>).</p></li>
-<li class="fragment"><p>Méthode très courante pour de grands jeux de données. La majorité des observations (ex.: 70-80%) font partie de l’ensemble de calibration.</p></li>
-<li class="fragment"><p>Pas efficace si on a peu de données.</p></li>
-</ul>
-</section><section id="validation-croisee" class="slide level2">
-<h2>Validation croisée</h2>
-<ul>
-<li class="fragment"><p>Diviser aléatoirement les observations en groupes et mesurer l’erreur de prédiction des observations d’un groupe selon un modèle ajusté au reste des observations.</p></li>
-<li class="fragment"><p>Ex.: Pour une seule observation par groupe (<em>leave-one-out cross-validation</em>), on calcule <span class="math inline">\(\sum (y_i - \hat{y_i})^2\)</span> où chaque valeur prédite <span class="math inline">\(\hat{y_i}\)</span> vient du modèle ajusté sans l’observation <span class="math inline">\(i\)</span>.</p></li>
-<li class="fragment"><p>Requiert de réajuster chaque modèle considéré <span class="math inline">\(n\)</span> fois (<span class="math inline">\(n\)</span> est le nombre d’observations).</p></li>
-</ul>
-</section><section id="validation-croisee-1" class="slide level2">
-<h2>Validation croisée</h2>
-<ul>
-<li class="fragment"><p>Si <span class="math inline">\(n\)</span> est grand, on peut diviser les observations en <span class="math inline">\(k\)</span> groupes (<em>k-fold cross-validation</em>), par exemple <span class="math inline">\(k\)</span> = 10, ajuster chaque modèle <span class="math inline">\(k\)</span> fois en laissant une fraction <span class="math inline">\(1/k\)</span> des observations de côté.</p></li>
-<li class="fragment"><p>Packages pour la validation croisée dans R, incluant <strong>cvTools</strong>.</p></li>
-</ul>
-</section></section>
-<section><section id="comparaison-de-modeles-avec-laic" class="titleslide slide level1"><h1>Comparaison de modèles avec l’AIC</h1></section><section id="origine" class="slide level2">
-<h2>Origine</h2>
-<ul>
-<li class="fragment"><p>Le critère d’information d’Akaike (AIC) est basé sur la théorie de l’information.</p></li>
-<li class="fragment"><p>L’AIC approxime la perte d’information encourue en estimant la “vraie”&quot; fonction déterminant la réponse, <span class="math inline">\(f\)</span>, par un modèle <span class="math inline">\(g\)</span> donné.</p></li>
-<li class="fragment"><p>L’AIC mesure cette perte d’information à une constante près. La valeur absolue de l’AIC n’a aucune signification, tout ce qui compte c’est la différence d’AIC entre modèles.</p></li>
-</ul>
-</section><section id="definition-de-laic" class="slide level2">
-<h2>Définition de l’AIC</h2>
-<p><span class="math display">\[ AIC = -2 \log(L) + 2 K \]</span></p>
-<ul>
-<li><span class="math inline">\(L\)</span> est la fonction de vraisemblance (<em>likelihood</em>).</li>
-<li><span class="math inline">\(K\)</span> est le nombre de paramètres estimés par le modèle.</li>
-<li>Plus l’AIC est petit, plus le modèle est bon.</li>
-</ul>
-</section><section id="vraisemblance" class="slide level2">
-<h2>Vraisemblance</h2>
-<ul>
-<li class="fragment"><p><span class="math inline">\(L(\theta | y)\)</span> correspond à la probabilité des observations de <span class="math inline">\(y\)</span> selon la valeur des paramètres <span class="math inline">\(\theta\)</span> du modèle.</p></li>
-<li class="fragment"><p>Estimation des paramètres par le <strong>maximum de vraisemblance</strong>: équivalente à la méthode des moindre carrés pour des modèles linéaires.</p></li>
-</ul>
-</section><section id="nombre-de-parametres-estimes" class="slide level2">
-<h2>Nombre de paramètres estimés</h2>
-<ul>
-<li class="fragment"><p>Comme <span class="math inline">\(R^2\)</span>, la vraisemblance tend à augmenter avec chaque paramètre ajouté au modèle.</p></li>
-<li class="fragment"><p>Le deuxième terme de l’AIC (<span class="math inline">\(2K\)</span>) pénalise les modèles plus complexes.</p></li>
-<li class="fragment">Pour un modèle linéaire, <span class="math inline">\(K\)</span> doit compter l’ordonnée à l’origine ainsi que l’estimé de la variance des résidus, <span class="math inline">\(\sigma^2\)</span>.
-<ul>
-<li class="fragment">Pour le modèle <span class="math inline">\(y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon\)</span>, <span class="math inline">\(K = 4\)</span>.</li>
-</ul></li>
-<li class="fragment"><p>L’AIC aurait pu être défini comme <span class="math inline">\(-\log(L) + K\)</span>. Le facteur de 2 a été ajouté pour des raisons historiques.</p></li>
-</ul>
-</section><section id="aic-et-validation-croisee" class="slide level2">
-<h2>AIC et validation croisée</h2>
-<ul>
-<li class="fragment"><p>Comparaison des modèles avec l’AIC est équivalente à un type de validation croisée (<em>leave-one-out cross-validation</em>).</p></li>
-<li class="fragment"><p>L’AIC estime donc le pouvoir prédictif des modèles sur de nouvelles données, sans avoir à répéter l’ajustement du modèle.</p></li>
-</ul>
-</section><section id="aicc-pour-petits-echantillons" class="slide level2">
-<h2>AICc pour petits échantillons</h2>
-<ul>
-<li>Si <span class="math inline">\(n\)</span> est petit par rapport au nombre de paramètres estimés (<span class="math inline">\(n/K\)</span> &lt; 40), on remplace l’AIC par l’AICc, qui inclut une correction supplémentaire.</li>
-</ul>
-<p><span class="math display">\[ AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right) \]</span></p>
-<ul>
-<li><span class="math inline">\(n / (n-K-1) &gt; 1\)</span>, donc le deuxième terme de l’AICc est un peu plus grand que <span class="math inline">\(2K\)</span>, mais la différence entre les deux diminue à mesure que <span class="math inline">\(n\)</span> augmente.</li>
-</ul>
-<ul>
-<li>Il faut utiliser la même mesure (AIC ou AICc) pour tous les modèles comparés.</li>
-</ul>
-</section><section id="classification-des-modeles-avec-laic" class="slide level2">
-<h2>Classification des modèles avec l’AIC</h2>
-<ul>
-<li class="fragment"><p>Après avoir calculé l’AIC (ou AICc) pour tous les modèles, on les classe en fonction de la différence entre leur AIC et le minimum des AIC (i.e. celui du meilleur modèle): <span class="math inline">\(\Delta AIC = AIC - \min AIC\)</span>.</p></li>
-<li class="fragment"><p>Pour le meilleur modèle, <span class="math inline">\(\Delta AIC = 0\)</span>.</p></li>
-</ul>
-</section><section id="rapport-de-plausibilite" class="slide level2">
-<h2>Rapport de plausibilité</h2>
-<ul>
-<li>Il n’est pas certain que le meilleur modèle identifié par l’AIC serait le même avec un échantillon différent.</li>
-</ul>
-<ul>
-<li>On peut calculer le rapport de plausibilité (<em>evidence ratio</em>) de chaque modèle vs. celui avec un AIC minimal.</li>
-</ul>
-<p><span class="math display">\[ e^{-\frac{\Delta AIC}{2} } \]</span></p>
-<ul>
-<li>Par exemple, <span class="math inline">\(\Delta AIC = 2\)</span> correspond à un ratio de ~0.37 (~3 fois moins probable); <span class="math inline">\(\Delta AIC = 10\)</span> correspond à un ratio de ~0.0067 (~150 fois moins probable).</li>
-</ul>
-</section><section id="poids-dakaike" class="slide level2">
-<h2>Poids d’Akaike</h2>
-<ul>
-<li>On peut normaliser les rapports de plausibilité par leur somme pour obtenir le poids d’Akaike <span class="math inline">\(w_i\)</span> d’un modèle <span class="math inline">\(i\)</span>.</li>
-</ul>
-<p><span class="math display">\[ w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j}{2}}}\]</span></p>
-<ul>
-<li>La somme des <span class="math inline">\(w_i\)</span> est égale à 1. Ces poids représentent la probabilité quun modèle soit le meilleur selon l’AIC si on répétait l’échantillonnage.</li>
-</ul>
-</section><section id="exemple-2" class="slide level2">
-<h2>Exemple</h2>
-<p>Jeu de données de Johnson et Simberloff sur le nombre d’espèces de plantes vasculaires de différentes îles britanniques, vu au dernier laboratoire.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iles &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/britain_species.csv&quot;</span>)
-<span class="kw">str</span>(iles)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    42 obs. of  7 variables:
-##  $ island      : Factor w/ 42 levels &quot;Ailsa&quot;,&quot;Anglesey&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+```
+## 'data.frame':	42 obs. of  7 variables:
+##  $ island      : Factor w/ 42 levels "Ailsa","Anglesey",..: 1 2 3 4 5 6 7 8 9 10 ...
 ##  $ area        : num  0.8 712.5 429.4 18.4 31.1 ...
 ##  $ elevation   : int  340 127 874 384 226 1343 210 103 143 393 ...
 ##  $ soil_types  : int  1 3 4 2 1 16 1 3 1 1 ...
 ##  $ latitude    : num  55.3 53.3 55.6 57 60.1 54.3 57.1 56.6 56.1 56.9 ...
 ##  $ dist_britain: num  14 0.2 5.2 77.4 201.6 ...
-##  $ species     : int  75 855 577 409 177 1666 300 443 482 453 ...</code></pre>
-</section><section id="conseils-et-points-a-surveiller" class="slide level2">
-<h2>Conseils et points à surveiller</h2>
-<ul>
-<li class="fragment"><p>Tous les modèles à comparer doivent avoir la même variable réponse.</p></li>
-<li class="fragment"><p>Tous les modèles doivent êtres basés sur le même nombre d’observations. Attention aux valeurs manquantes (<code>NA</code>)!</p></li>
-<li class="fragment"><p>Dans l’exemple précédent, tous les modèles étaient nichés (<em>nested</em>). L’AIC peut aussi comparer des modèles non-nichés.</p></li>
-<li class="fragment">L’AIC ne nous dit pas si le “meilleur” modèle est bien ajusté aux données.
-<ul>
-<li class="fragment">Pour un cas où tous les modèles sont nichés, il suffit de vérifier l’ajustement du modèle le plus complexe.</li>
-</ul></li>
-</ul>
-</section><section id="conseils-et-points-a-surveiller-1" class="slide level2">
-<h2>Conseils et points à surveiller</h2>
-<ul>
-<li class="fragment"><p>Dans l’exemple, les deux prédicteurs du meilleur modèle selon l’AIC (<code>log_area</code> et <code>lat</code>) étaient aussi les deux prédicteurs avec un effet significatif dans le modèle complet. Cela n’est pas toujours le cas.</p></li>
-<li class="fragment">Il faut éviter de se fier aux valeurs <span class="math inline">\(p\)</span> et aux intervalles de confiance des paramètres du meilleur modèle choisi par l’AIC.
-<ul>
-<li class="fragment">Les résultats extraits d’un seul modèle ne tiennent pas compte du fait que nous avons comparé plusieurs modèles.</li>
-<li class="fragment">Les valeurs <span class="math inline">\(p\)</span> et les intervalles de confiance du modèle choisi sont trop optimistes.</li>
-</ul></li>
-</ul>
-</section></section>
-<section><section id="comment-choisir-lensemble-de-modeles-a-comparer" class="titleslide slide level1"><h1>Comment choisir l’ensemble de modèles à comparer?</h1></section><section id="algorithmes-de-selection-sequentielle" class="slide level2">
-<h2>Algorithmes de sélection séquentielle</h2>
-<p>Ces algorithmes (<em>forward</em>, <em>backward</em> ou <em>stepwise</em>) visent à trouver le meilleur modèle selon l’AIC sans avoir à les estimer tous (ex.: fonction <code>stepAIC</code> dans R).</p>
-<p>Exemple de sélection par addition (<em>forward selection</em>):</p>
-<ol type="1">
-<li class="fragment">Calculer l’AIC du modèle nul (0 prédicteur);</li>
-<li class="fragment">Évaluer les modèles à 1 prédicteur (<code>y ~ x1</code>, <code>y ~ x2</code>, etc.), choisir le meilleur s’il l’AIC est inférieur au modèle nul.</li>
-<li class="fragment">Évaluer tous les modèles avec 2 prédicteurs incluant le 1er prédicteur choisi à l’étape 2, …</li>
-<li class="fragment">Arrêter si aucun des modèles plus complexes n’améliore l’AIC.</li>
-</ol>
-</section><section id="algorithmes-de-selection-sequentielle-1" class="slide level2">
-<h2>Algorithmes de sélection séquentielle</h2>
-<h3 id="inconvenients-1">Inconvénients</h3>
-<ul>
-<li class="fragment"><p>Pas de garantie de trouver le modèle avec l’AIC minimal.</p></li>
-<li class="fragment"><p>On ne sait pas si plusieurs autres modèles sont presque aussi probables.</p></li>
-<li class="fragment"><p>Ces méthodes encouragent la comparaison d’un très grand nombre de modèles (déconseillé).</p></li>
-</ul>
-</section><section id="predictions-multi-modeles" class="slide level2">
-<h2>Prédictions multi-modèles</h2>
-<ul>
-<li>Pour prédire la valeur de la réponse, on peut utiliser le modèle avec l’AIC le plus bas.</li>
-</ul>
-<ul>
-<li>Pour une prédiction plus précise, on peut prendre la <em>moyenne pondérée</em> des valeurs prédites par les différents modèles, avec une pondération basée sur les poids d’Akaike:</li>
-</ul>
-<p><span class="math display">\[ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} \]</span></p>
-<ul>
-<li>Dans le package <em>AICcmodavg</em>, la fonction <code>modavgPred</code> calcule les prédictions multi-modèles de cette façon.</li>
-</ul>
-</section><section id="questions-de-revision" class="slide level2">
-<h2>Questions de révision</h2>
-<ul>
-<li>Quelles erreurs sont associées à des modèles trop simples (peu de paramètres ajustables) ou trop complexes (beaucoup de paramètres)?</li>
-</ul>
-<ul>
-<li>Comment mesure-t-on le pouvoir prédictif d’un modèle?</li>
-</ul>
-<ul>
-<li>Que signifie la valeur de l’AIC d’un modèle?</li>
-</ul>
-<ul>
-<li>À quoi servent les poids d’Akaike?</li>
-</ul>
-</section><section id="resume" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>La sélection de modèles est un compromis entre biais (sous-ajustement) et variance (surajustement).</p></li>
-<li class="fragment"><p>Le pouvoir prédictif d’un modèle est déterminé en comparant ses prédictions à de nouvelles observations, indépendantes de celles utilisées pour estimer les paramètres du modèle.</p></li>
-<li class="fragment"><p>L’AIC (ou l’AICc, pour de petits échantillons) est basé sur la vraisemblance du modèle, avec une pénalité pour les modèles comprenant un plus grand nombre de paramètres.</p></li>
-</ul>
-</section><section id="resume-1" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>L’AIC approxime bien la capacité de prédiction relative de différents modèles et peut donc servir à classer ceux-ci.</p></li>
-<li class="fragment"><p>La valeur absolue de l’AIC n’a aucune signification. Seules les différences d’AIC entre modèles basés sur les mêmes observations peuvent être interprétées.</p></li>
-<li class="fragment"><p>Les poids d’Akaike, calculés à partir des différences d’AIC entre modèles, estiment la probabilité que chaque modèle soit identifié comme le meilleur modèle si on répétait l’échantillonnage. Ces poids servent aussi à faire la moyenne pondérée des prédictions de différents modèles.</p></li>
-</ul>
-</section><section id="references" class="slide level2">
-<h2>Références</h2>
-<ul>
-<li>Burnham, K.P et Anderson, D.R. (2002) <em>Model selection and multimodel inference : a practical information-theoretic approach</em>, 2e éd. Springer-Verlag, New York.</li>
-</ul>
-<ul>
-<li>Anderson, D.R. et Burnham, K.P. (2002) Avoiding pitfalls when using information-theoretic methods. <em>The Journal of Wildlife Management</em> 66: 912-918. (inclus dans le dossier <em>Articles de référence</em> sur Moodle)</li>
-</ul>
-</section></section>
-    </div>
-  </div>
+##  $ species     : int  75 855 577 409 177 1666 300 443 482 453 ...
+```
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+---
 
-  <script>
+# Conseils et points à surveiller
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+- Tous les modèles à comparer doivent avoir la même variable réponse.
 
+--
 
+- Tous les modèles doivent êtres basés sur le même nombre d'observations. Attention aux valeurs manquantes (`NA`)!
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+--
+
+- Dans l'exemple précédent, tous les modèles étaient nichés (*nested*). L'AIC peut aussi comparer des modèles non-nichés.
+
+--
+
+- L'AIC ne nous dit pas si le "meilleur" modèle est bien ajusté aux données. 
+    - Pour un cas où tous les modèles sont nichés, il suffit de vérifier l'ajustement du modèle le plus complexe. 
+    
+---
+
+# Conseils et points à surveiller
+
+- Dans l'exemple, les deux prédicteurs du meilleur modèle selon l'AIC (`log_area` et `lat`) étaient aussi les deux prédicteurs avec un effet significatif dans le modèle complet. Cela n'est pas toujours le cas. 
+
+--
+
+- Il faut éviter de se fier aux valeurs `\(p\)` et aux intervalles de confiance des paramètres du meilleur modèle choisi par l'AIC. 
+    - Les résultats extraits d'un seul modèle ne tiennent pas compte du fait que nous avons comparé plusieurs modèles.
+    - Les valeurs `\(p\)` et les intervalles de confiance du modèle choisi sont trop optimistes.
+
+---
+
+# Comment choisir l'ensemble de modèles à comparer?
+
+- Il est préférable de choisir un ensemble de modèles restreint basé sur la connaissance du sujet et des hypothèses scientifiques intéressantes.
+
+--
+
+- Le nombre de modèles possibles augmente rapidemenet avec le nombre de prédicteurs considérés: `\(2^k\)` modèles possibles avec `\(k\)` prédicteurs, sans compter les interactions. Ex.: 8 modèles pour 3 prédicteurs, 128 pour 7 prédicteurs.
+
+---
+
+# Algorithmes de sélection séquentielle
+
+Ces algorithmes (*forward*, *backward* ou *stepwise*) visent à trouver le meilleur modèle selon l'AIC sans avoir à les estimer tous (ex.: fonction `stepAIC` dans R).
+
+Exemple de sélection par addition (*forward selection*):
+
+1. Calculer l'AIC du modèle nul (0 prédicteur);
+
+--
+
+2. Évaluer les modèles à 1 prédicteur (`y ~ x1`, `y ~ x2`, etc.), choisir le meilleur s'il l'AIC est inférieur au modèle nul.
+
+--
+
+3. Évaluer tous les modèles avec 2 prédicteurs incluant le 1er prédicteur choisi à l'étape 2, ...
+
+--
+
+4. Arrêter si aucun des modèles plus complexes n'améliore l'AIC.
+
+---
+
+# Algorithmes de sélection séquentielle
+
+### Inconvénients
+
+- Pas de garantie de trouver le modèle avec l'AIC minimal.
+
+- On ne sait pas si plusieurs autres modèles sont presque aussi probables.
+
+- Ces méthodes encouragent la comparaison d'un très grand nombre de modèles (déconseillé).
+
+---
+
+# Prédictions multi-modèles
+
+- Pour prédire la valeur de la réponse, on peut utiliser le modèle avec l'AIC le plus bas.
+
+--
+
+- Pour une prédiction plus précise, on peut prendre la *moyenne pondérée* des valeurs prédites par les différents modèles, avec une pondération basée sur les poids d'Akaike:
+
+$$ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} $$ 
+
+--
+
+- Dans le package *AICcmodavg*, la fonction `modavgPred` calcule les prédictions multi-modèles de cette façon.
+
+---
+
+# Résumé
+
+- La sélection de modèles est un compromis entre biais (sous-ajustement) et variance (surajustement).
+
+--
+
+- Le pouvoir prédictif d'un modèle est déterminé en comparant ses prédictions à de nouvelles observations, indépendantes de celles utilisées pour estimer les paramètres du modèle.
+
+--
+
+- L'AIC (ou l'AICc, pour de petits échantillons) est basé sur la vraisemblance du modèle, avec une pénalité pour les modèles comprenant un plus grand nombre de paramètres. 
+
+---
+
+# Résumé
+
+- L'AIC approxime bien la capacité de prédiction relative de différents modèles et peut donc servir à classer ceux-ci.
+
+--
+
+- La valeur absolue de l'AIC n'a aucune signification. Seules les différences d'AIC entre modèles basés sur les mêmes observations peuvent être interprétées.
+
+--
+
+- Les poids d'Akaike, calculés à partir des différences d'AIC entre modèles, estiment la probabilité que chaque modèle soit identifié comme le meilleur modèle si on répétait l'échantillonnage. Ces poids servent aussi à faire la moyenne pondérée des prédictions de différents modèles.
+
+---
+
+# Références
+
+- Burnham, K.P et Anderson, D.R. (2002) *Model selection and multimodel inference : a practical information-theoretic approach*, 2e éd. Springer-Verlag, New York. 
+
+- Anderson, D.R. et Burnham, K.P. (2002) Avoiding pitfalls when using information-theoretic methods. *The Journal of Wildlife Management* 66: 912-918. (inclus dans le dossier *Articles de référence* sur Moodle)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>
