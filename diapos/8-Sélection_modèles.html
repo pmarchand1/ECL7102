@@ -31,6 +31,22 @@ class: center, middle, inverse, title-slide
 }
 &lt;/style&gt;
 
+# Question éclair
+
+Voici les coefficients d'une régression de la masse foliaire `\(F\)` (en grammes) d'une espèce de plantes mesurée sur plusieurs placettes en fonction de la température moyenne `\(T\)` (en Celsius) et de la densité `\(D\)` (en plantes/m&lt;sup&gt;2&lt;/sup&gt;). 
+
+Coefficient | Estimé
+------------|-------
+(Intercept) | 240
+T | -10
+D | 8
+T:D | 2
+
+(a) Quelle est l'équation correspondant à ce modèle? 
+
+(b) Selon ce modèle, la température a-t-elle un effet positif ou négatif sur la masse foliaire, pour une placette avec 1 plante/m&lt;sup&gt;2&lt;/sup&gt;? Est-ce la même chose pour une placette avec 10 plantes/m&lt;sup&gt;2&lt;/sup&gt;?
+
+---
 
 # Objectifs
 
@@ -445,7 +461,7 @@ str(iles)
 
 ---
 
-# Comment choisir l'ensemble de modèles à comparer?
+# Choix des modèles à comparer
 
 - Il est préférable de choisir un ensemble de modèles restreint basé sur la connaissance du sujet et des hypothèses scientifiques intéressantes.
 
@@ -458,6 +474,8 @@ str(iles)
 # Algorithmes de sélection séquentielle
 
 Ces algorithmes (*forward*, *backward* ou *stepwise*) visent à trouver le meilleur modèle selon l'AIC sans avoir à les estimer tous (ex.: fonction `stepAIC` dans R).
+
+--
 
 Exemple de sélection par addition (*forward selection*):
 

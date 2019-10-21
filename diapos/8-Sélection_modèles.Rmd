@@ -29,6 +29,22 @@ library(cowplot)
 }
 ```
 
+# Question éclair
+
+Voici les coefficients d'une régression de la masse foliaire $F$ (en grammes) d'une espèce de plantes mesurée sur plusieurs placettes en fonction de la température moyenne $T$ (en Celsius) et de la densité $D$ (en plantes/m<sup>2</sup>). 
+
+Coefficient | Estimé
+------------|-------
+(Intercept) | 240
+T | -10
+D | 8
+T:D | 2
+
+(a) Quelle est l'équation correspondant à ce modèle? 
+
+(b) Selon ce modèle, la température a-t-elle un effet positif ou négatif sur la masse foliaire, pour une placette avec 1 plante/m<sup>2</sup>? Est-ce la même chose pour une placette avec 10 plantes/m<sup>2</sup>?
+
+---
 
 # Objectifs
 
