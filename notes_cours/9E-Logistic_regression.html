@@ -10,6 +10,7 @@
 
 
 
+<meta name="date" content="2019-11-04" />
 
 <title>Logistic regression</title>
 
@@ -72,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Logistic regression</h1>
-<h4 class="date"><em><br/>November 5, 2018</em></h4>
+<h4 class="date"><br/>November 4, 2019</h4>
 
 </div>
 
@@ -228,7 +298,7 @@ div.tocify {
 <h1>Objectives</h1>
 <ul>
 <li><p>Know the components of a generalized linear model.</p></li>
-<li><p>Use logistic regression to model a binary response, a binomial response (number of successes and failures) or proportions.</p></li>
+<li><p>Use logistic regression to model a binary response (e.g. presence/absence), a binomial response (e.g. number of presences and absences) or proportions.</p></li>
 <li><p>Interpret the results of a logistic regression and visualize the effects of the predictors.</p></li>
 </ul>
 </div>
@@ -266,19 +336,19 @@ div.tocify {
 </ul>
 <div id="binomial-distribution" class="section level2">
 <h2>Binomial distribution</h2>
-<p>Consider <span class="math inline">\(n\)</span> independent repetitions of an experiment that can end in a success (1) or a failure (0), with a probability of success <span class="math inline">\(p\)</span> for each repetition. In this case, the number of successes <span class="math inline">\(y\)</span> follows a binomial distribution: <span class="math inline">\(y \sim B(n, p)\)</span>. According to this distribution, the probability of obtaining <span class="math inline">\(y\)</span> success and <span class="math inline">\(n-y\)</span> failures is:</p>
+<p>Consider <span class="math inline">\(n\)</span> independent repetitions of an experiment that can result in the presence (1) or absence (0) of an event, with the same probability of presence <span class="math inline">\(p\)</span> for each repetition. In this case, the number of presences <span class="math inline">\(y\)</span> follows a binomial distribution: <span class="math inline">\(y \sim B(n, p)\)</span>. According to this distribution, the probability of obtaining <span class="math inline">\(y\)</span> presences and <span class="math inline">\(n-y\)</span> absences is:</p>
 <p><span class="math display">\[ \frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y} \]</span></p>
-<p>To understand this formula, take for example the sequence of successes and failures 01001 (<span class="math inline">\(n = 5\)</span> and <span class="math inline">\(y = 2\)</span>). The probability of getting 0 on the first try is <span class="math inline">\(1-p\)</span>, the probability of getting 1 on the second try is <span class="math inline">\(p\)</span>, and so on. The probability of a sequence of independent tries is the product of the probabilities of each try, therefore <span class="math inline">\(p^2 (1-p)^3\)</span>, which corresponds to the $p^y (1-p)^{n-y} $ of the binomial distribution formula. However, this is the probability of a single sequence of 2 successes and 3 failures. Each of the other possible sequences (11000, 00110, etc.) has the same probability. This number of possible sequences is equal to <span class="math inline">\(n! / y! (n-y)!\)</span>, where <span class="math inline">\(!\)</span> represents the factorial operation.</p>
-<p>The mean <em>number</em> of successes is <span class="math inline">\(np\)</span>, with a variance equal to <span class="math inline">\(np(1-p)\)</span>. The mean <em>proportion</em> of successes is <span class="math inline">\(p\)</span> with a variance of <span class="math inline">\(p(1-p)/n\)</span>.</p>
+<p>To understand this formula, take for example the result sequence 01001 (<span class="math inline">\(n = 5\)</span> and <span class="math inline">\(y = 2\)</span>). The probability of getting 0 on the first try is <span class="math inline">\(1-p\)</span>, the probability of getting 1 on the second try is <span class="math inline">\(p\)</span>, and so on. The probability of a sequence of independent tries is the product of the probabilities of each try, therefore <span class="math inline">\(p^2 (1-p)^3\)</span>, which corresponds to the <span class="math inline">\(p^y (1-p)^{n-y}\)</span> of the binomial distribution formula. However, this is the probability of a single sequence of two 1s and three 0s. Each of the other possible sequences (11000, 00110, etc.) has the same probability. This number of possible sequences is equal to <span class="math inline">\(n! / y! (n-y)!\)</span>, where <span class="math inline">\(!\)</span> represents the factorial operation.</p>
+<p>The mean <em>number</em> of presences is <span class="math inline">\(np\)</span>, with a variance equal to <span class="math inline">\(np(1-p)\)</span>. The mean <em>proportion</em> of presences is <span class="math inline">\(p\)</span> with a variance of <span class="math inline">\(p(1-p)/n\)</span>.</p>
 <p>The binomial distribution with a single trial (<span class="math inline">\(n = 1\)</span>) is called the Bernoulli distribution, with a mean of <span class="math inline">\(p\)</span> and a variance equal to <span class="math inline">\(p(1-p)\)</span>.</p>
-<p>In R, the functions for calculating quantities from the binomial distribution have the <code>binom</code> suffix. For example, the probability of obtaining 2 successes over 5 trials, with a probability of success of 0.3, is equal to:</p>
+<p>In R, the functions for calculating quantities from the binomial distribution have the <code>binom</code> suffix. For example, the probability of obtaining 2 presences over 5 trials, with a probability of presence of 0.3, is equal to:</p>
 <pre class="r"><code>dbinom(2, 5, 0.3)</code></pre>
 <pre><code>## [1] 0.3087</code></pre>
 <p>Check the help topic <code>?Binomial</code> for more details.</p>
 </div>
 <div id="logit-link" class="section level2">
 <h2>Logit link</h2>
-<p>To link the probability of success <span class="math inline">\(p\)</span> of the binomial distribution to a linear predictor <span class="math inline">\(\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i\)</span>, the most commonly used link is the logit function.</p>
+<p>To link the probability of presence <span class="math inline">\(p\)</span> of the binomial distribution to a linear predictor <span class="math inline">\(\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i\)</span>, the most commonly used link is the logit function.</p>
 <p><span class="math display">\[ \eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right) \]</span></p>
 <p>By inverting this equation, we obtain an expression for <span class="math inline">\(p\)</span> as a function of <span class="math inline">\(\eta\)</span>.</p>
 <p><span class="math display">\[ p = \frac{1}{1 + e^{-\eta}} \]</span></p>
@@ -289,7 +359,7 @@ div.tocify {
 <li>If <span class="math inline">\(\eta = 0\)</span>, <span class="math inline">\(p = 0.5\)</span> (50% probability).</li>
 <li>The function is symmetrical about its central point: <span class="math inline">\(p(-\eta) = 1 - p(\eta)\)</span>.</li>
 <li>The probability approaches 0 when <span class="math inline">\(\eta\)</span> takes very negative values and approaches 1 when <span class="math inline">\(\eta\)</span> takes very positive values, without ever reaching those extremes.</li>
-<li>The slope of the curve is more pronounced in the center and flatter (tending towards 0) at the ends. From a regression point of view, this means that the effect of the explanatory variables (contained in <span class="math inline">\(\eta\)</span>) on the probability of success is greater when the probability is close to 50%.</li>
+<li>The slope of the curve is more pronounced in the center and flatter (tending towards 0) at the ends. From a regression point of view, this means that the effect of the explanatory variables (contained in <span class="math inline">\(\eta\)</span>) on the probability of presence is greater when that probability is close to 50%.</li>
 </ul>
 <p>In summary, the logistic regression is based on the following model:</p>
 <ul>
@@ -301,13 +371,13 @@ div.tocify {
 </div>
 <div id="interpreting-the-coefficients" class="section level2">
 <h2>Interpreting the coefficients</h2>
-<p>The graph below shows the probability <span class="math inline">\(p\)</span> for a logistic regression model with one predictor <span class="math inline">\(x\)</span>, with coefficients <span class="math inline">\(\beta_0 = -1\)</span> and <span class="math inline">\(\beta_1\)</span> = 0.4, i.e. <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span>.</p>
+<p>The graph below shows the probability <span class="math inline">\(p\)</span> for a logistic regression model with one predictor <span class="math inline">\(x\)</span>, with coefficients <span class="math inline">\(\beta_0 = -1\)</span> and <span class="math inline">\(\beta_1\)</span> = 0.4, i.e. <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span>.</p>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-3-1.png" width="384" /></p>
 <p>The intercept <span class="math inline">\(\beta_0\)</span> is equal to logit(<span class="math inline">\(p\)</span>) when <span class="math inline">\(x = 0\)</span>. To calculate the corresponding value of <span class="math inline">\(p\)</span>, we can define an inverse logit (<code>invlogit</code>) function.</p>
 <pre class="r"><code>invlogit &lt;- function(x) 1/(1+exp(-x))
 invlogit(-1)</code></pre>
 <pre><code>## [1] 0.2689414</code></pre>
-<p>The value of <span class="math inline">\(x\)</span> for which the linear predictor is zero (here, <span class="math inline">\(-1 + 0.4x = 0\)</span> gives <span class="math inline">\(x = 2.5\)</span>) is associated with a probability <span class="math inline">\(p = 0.5\)</span>. It is at this point of the curve that the slope of <span class="math inline">\(p\)</span> vs. <span class="math inline">\(x\)</span> is maximal: this maximum slope, indicated by a blue line in the graph, is equal to <span class="math inline">\(\beta_1 / 4\)</span>, where <span class="math inline">\(\beta_1\)</span> is the coefficient of <span class="math inline">\(x\)</span> in the linear predictor. Here, since <span class="math inline">\(\beta_1 = 0.4\)</span>, we can say that when <span class="math inline">\(x\)</span> increases by 1, the probability <span class="math inline">\(p\)</span> increases by a maximum of 0.1 (or 10%).</p>
+<p>The value of <span class="math inline">\(x\)</span> for which the linear predictor is zero (here, <span class="math inline">\(-1 + 0.4x = 0\)</span> gives <span class="math inline">\(x = 2.5\)</span>) is associated with a probability <span class="math inline">\(p = 0.5\)</span>. It is at this point of the curve that the slope of <span class="math inline">\(p\)</span> vs. <span class="math inline">\(x\)</span> is maximal: this maximum slope, indicated by a blue line in the graph, is equal to <span class="math inline">\(\beta_1 / 4\)</span>, where <span class="math inline">\(\beta_1\)</span> is the coefficient of <span class="math inline">\(x\)</span> in the linear predictor. Here, since <span class="math inline">\(\beta_1 = 0.4\)</span>, we can say that when <span class="math inline">\(x\)</span> increases by 1, the probability <span class="math inline">\(p\)</span> increases by a maximum of 0.1 (or 10%).</p>
 </div>
 </div>
 <div id="logistic-regression-with-r" class="section level1">
@@ -315,7 +385,7 @@ invlogit(-1)</code></pre>
 <p>In R, logistic regression can be used for three types of responses:</p>
 <ul>
 <li>a binary variable encoded by logical values (FALSE, TRUE), numerical values (0, 1) or a factor (the first level of the factor corresponds to 0, the others to 1);</li>
-<li>a binomial variable described by two columns (number of successes, number of failures);</li>
+<li>a binomial variable described by two columns (number of presences, number of absences);</li>
 <li>a variable indicating a proportion between 0 and 1.</li>
 </ul>
 <p>We will see examples of the three cases in this class.</p>
@@ -376,7 +446,7 @@ summary(mod)</code></pre>
 summary(wells_nouv$pred)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ## -1.5602 -0.3600  0.2518  0.2238  0.8823  1.8583</code></pre>
-<p>These values are not between 0 and 1 because by default, <code>predict</code> returns the values of the linear predictor <span class="math inline">\(\eta\)</span> (corresponding to the <code>type = &quot;link&quot;</code> argument). To obtain the predictions on the scale of the response (here, probabilities), we must specify <code>type = &quot;response&quot;</code>.</p>
+<p>These values are not between 0 and 1 because by default, <code>predict</code> returns the values of the linear predictor <span class="math inline">\(\eta\)</span> (corresponding to the <code>type = "link"</code> argument). To obtain the predictions on the scale of the response (here, probabilities), we must specify <code>type = "response"</code>.</p>
 <pre class="r"><code>wells_nouv$prob_pred &lt;- predict(mod, wells_nouv, type = &quot;response&quot;)
 
 ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance))) +
@@ -408,7 +478,7 @@ ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
 <pre class="r"><code>library(arm)
 binnedplot(fitted(mod), residuals(mod, type = &quot;response&quot;))</code></pre>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p><strong>Note</strong>: There are different definitions of residuals for a generalized linear model, so you need to specify which type to use in the <code>residuals</code> function. For this graph, we use the residuals on the response scale (<code>type = &quot;response&quot;</code>), which are the differences between observed and predicted responses (<span class="math inline">\(y - \hat{y}\)</span>).</p>
+<p><strong>Note</strong>: There are different definitions of residuals for a generalized linear model, so you need to specify which type to use in the <code>residuals</code> function. For this graph, we use the residuals on the response scale (<code>type = "response"</code>), which are the differences between observed and predicted responses (<span class="math inline">\(y - \hat{y}\)</span>).</p>
 <p>By default, <code>binnedplot</code> chooses the number of groups based on a compromise to have enough points per group (so that the mean response is precise) and enough groups (to see the trend if there is one). When the number of cases <span class="math inline">\(n &gt; 100\)</span>, the number of groups chosen is about <span class="math inline">\(\sqrt{n}\)</span>.</p>
 <p>The graph produced by <code>binnedplot</code> also indicates a 95% prediction interval (gray lines) for the averaged residuals. Thus, if the binomial model is good, about 95% of the residuals should be within this range. Here, this is the case of 52 residuals out of 54, or 96%.</p>
 </div>
@@ -434,7 +504,7 @@ r2_tjur</code></pre>
 </div>
 <div id="binomial-logistic-regression" class="section level1">
 <h1>Binomial logistic regression</h1>
-<p>In the previous example, each row in the table corresponded to a single binary response (0 or 1) and the associated values of the predictors. In an experimental context, it is possible to have several independent replicates with the same values of the predictors; the number of responses equal to 1 (“success”) among these <span class="math inline">\(N\)</span> replicates can be modeled directly as a binomial variable.</p>
+<p>In the previous example, each row in the table corresponded to a single binary response (0 or 1) and the associated values of the predictors. In an experimental context, it is possible to have several independent replicates with the same values of the predictors; the number of responses equal to 1 among these <span class="math inline">\(N\)</span> replicates can be modeled directly as a binomial variable.</p>
 <div id="example-mortality-of-snails-depending-on-the-environment" class="section level2">
 <h2>Example: Mortality of snails depending on the environment</h2>
 <p>The <code>snails</code> data table in the <strong>MASS</strong> package presents the results of an experiment where snails of 2 species (<code>Species</code>) were exposed to 3 different temperature values (<code>Temp</code>) and 4 relative humidity values (<code>Rel.Hum</code>) for 1 to 4 weeks (<code>Exposure</code>). Twenty snails (<code>N</code>) were followed for each of the 96 possible combinations of these four variables; the <code>Deaths</code> variable indicates how many of them died during the experiment.</p>
@@ -447,7 +517,7 @@ str(snails)</code></pre>
 ##  $ Temp    : int  10 15 20 10 15 20 10 15 20 10 ...
 ##  $ Deaths  : int  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ N       : int  20 20 20 20 20 20 20 20 20 20 ...</code></pre>
-<p>In this example, we will code mortality as the “positive” result (1). To apply a binomial logistic regression to these data, the response in the formula (to the left of the <code>~</code>) must be composed of two columns (number of 1 and number of 0) grouped with <code>cbind</code>. Here, the variable representing the number of 0 (the survivors) is obtained by subtracting <code>Deaths</code> from <code>N</code>.</p>
+<p>In this example, we will code mortality as 1 and its absence (survival) as 0. To apply a binomial logistic regression to these data, the response in the formula (to the left of the <code>~</code>) must be composed of two columns (number of 1 and number of 0) grouped with <code>cbind</code>. Here, the variable representing the number of 0 (the survivors) is obtained by subtracting <code>Deaths</code> from <code>N</code>.</p>
 <pre class="r"><code>mod_snails &lt;- glm(cbind(Deaths, N - Deaths) ~ Species + Exposure + Rel.Hum + Temp,
            data = snails, family = binomial)
 summary(mod_snails)</code></pre>
@@ -481,7 +551,7 @@ summary(mod_snails)</code></pre>
 <p>According to the sign of the coefficients, mortality is greater for species B than species A. This mortality also increases with time of exposure and temperature, but decreases with a rise in relative humidity (in the range of values considered).</p>
 <p>With several observations per row, individual residuals contain more information, so conventional diagnostic charts are more useful than in the previous example. However, almost half of the rows have no dead snail (<code>Deaths</code> = 0) and these zeros are the cause of the “line” of residuals in some graphs.</p>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. Note that the residuals used in that plot are not the response residuals (<span class="math inline">\(y - \hat{y}\)</span>), but rather the deviance residuals <code>residuals(mod_snails, type = &quot;deviance&quot;)</code>, which are are closer to normality. These are calculated from the contribution of each observation to the total deviance, <span class="math inline">\(-2 \log L_k\)</span>, where <span class="math inline">\(L_k\)</span> is the likelihood of observation <span class="math inline">\(k\)</span> taken individually.</p>
+<p>Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. Note that the residuals used in that plot are not the response residuals (<span class="math inline">\(y - \hat{y}\)</span>), but rather the deviance residuals <code>residuals(mod_snails, type = "deviance")</code>, which are are closer to normality. These are calculated from the contribution of each observation to the total deviance, <span class="math inline">\(-2 \log L_k\)</span>, where <span class="math inline">\(L_k\)</span> is the likelihood of observation <span class="math inline">\(k\)</span> taken individually.</p>
 </div>
 </div>
 <div id="perfect-separation-problem" class="section level1">

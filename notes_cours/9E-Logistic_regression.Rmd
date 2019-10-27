@@ -1,6 +1,6 @@
 ---
 title: "Logistic regression"
-date: "<br/>November 5, 2018"
+date: "<br/>November 4, 2019"
 output:
     html_document:
         self_contained: false
@@ -21,7 +21,7 @@ library(cowplot)
 
 - Know the components of a generalized linear model.
 
-- Use logistic regression to model a binary response, a binomial response (number of successes and failures) or proportions.
+- Use logistic regression to model a binary response (e.g. presence/absence), a binomial response (e.g. number of presences and absences) or proportions.
 
 - Interpret the results of a logistic regression and visualize the effects of the predictors.
 
@@ -63,17 +63,17 @@ Logistic regression is an example of a generalized linear model where the respon
 
 ## Binomial distribution
 
-Consider $n$ independent repetitions of an experiment that can end in a success (1) or a failure (0), with a probability of success $p$ for each repetition. In this case, the number of successes $y$ follows a binomial distribution: $y \sim B(n, p)$. According to this distribution, the probability of obtaining $y$ success and $n-y$ failures is:
+Consider $n$ independent repetitions of an experiment that can result in the presence (1) or absence (0) of an event, with the same probability of presence $p$ for each repetition. In this case, the number of presences $y$ follows a binomial distribution: $y \sim B(n, p)$. According to this distribution, the probability of obtaining $y$ presences and $n-y$ absences is:
 
 $$ \frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y} $$
 
-To understand this formula, take for example the sequence of successes and failures 01001 ($n = 5$ and $y = 2$). The probability of getting 0 on the first try is $1-p$, the probability of getting 1 on the second try is $p$, and so on. The probability of a sequence of independent tries is the product of the probabilities of each try, therefore $p^2 (1-p)^3$, which corresponds to the $p^y (1-p)^{n-y} $ of the binomial distribution formula. However, this is the probability of a single sequence of 2 successes and 3 failures. Each of the other possible sequences (11000, 00110, etc.) has the same probability. This number of possible sequences is equal to $n! / y! (n-y)!$, where $!$ represents the factorial operation.
+To understand this formula, take for example the result sequence 01001 ($n = 5$ and $y = 2$). The probability of getting 0 on the first try is $1-p$, the probability of getting 1 on the second try is $p$, and so on. The probability of a sequence of independent tries is the product of the probabilities of each try, therefore $p^2 (1-p)^3$, which corresponds to the $p^y (1-p)^{n-y}$ of the binomial distribution formula. However, this is the probability of a single sequence of two 1s and three 0s. Each of the other possible sequences (11000, 00110, etc.) has the same probability. This number of possible sequences is equal to $n! / y! (n-y)!$, where $!$ represents the factorial operation.
 
-The mean *number* of successes is $np$, with a variance equal to $np(1-p)$. The mean *proportion* of successes is $p$ with a variance of $p(1-p)/n$.
+The mean *number* of presences is $np$, with a variance equal to $np(1-p)$. The mean *proportion* of presences is $p$ with a variance of $p(1-p)/n$.
 
 The binomial distribution with a single trial ($n = 1$) is called the Bernoulli distribution, with a mean of $p$ and a variance equal to $p(1-p)$.
 
-In R, the functions for calculating quantities from the binomial distribution have the `binom` suffix. For example, the probability of obtaining 2 successes over 5 trials, with a probability of success of 0.3, is equal to:
+In R, the functions for calculating quantities from the binomial distribution have the `binom` suffix. For example, the probability of obtaining 2 presences over 5 trials, with a probability of presence of 0.3, is equal to:
 
 ```{r}
 dbinom(2, 5, 0.3)
@@ -83,7 +83,7 @@ Check the help topic `?Binomial` for more details.
 
 ## Logit link
 
-To link the probability of success $p$ of the binomial distribution to a linear predictor $\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$, the most commonly used link is the logit function.
+To link the probability of presence $p$ of the binomial distribution to a linear predictor $\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$, the most commonly used link is the logit function.
 
 $$ \eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right) $$
 
@@ -108,7 +108,7 @@ Note some important properties of this function:
 - If $\eta = 0$, $p = 0.5$ (50% probability).
 - The function is symmetrical about its central point: $p(-\eta) = 1 - p(\eta)$.
 - The probability approaches 0 when $\eta$ takes very negative values and approaches 1 when $\eta$ takes very positive values, without ever reaching those extremes.
-- The slope of the curve is more pronounced in the center and flatter (tending towards 0) at the ends. From a regression point of view, this means that the effect of the explanatory variables (contained in $\eta$) on the probability of success is greater when the probability is close to 50%.
+- The slope of the curve is more pronounced in the center and flatter (tending towards 0) at the ends. From a regression point of view, this means that the effect of the explanatory variables (contained in $\eta$) on the probability of presence is greater when that probability is close to 50%.
 
 In summary, the logistic regression is based on the following model:
 
@@ -151,7 +151,7 @@ The value of $x$ for which the linear predictor is zero (here, $-1 + 0.4x = 0$ g
 In R, logistic regression can be used for three types of responses:
 
 - a binary variable encoded by logical values (FALSE, TRUE), numerical values (0, 1) or a factor (the first level of the factor corresponds to 0, the others to 1);
-- a binomial variable described by two columns (number of successes, number of failures);
+- a binomial variable described by two columns (number of presences, number of absences);
 - a variable indicating a proportion between 0 and 1.
 
 We will see examples of the three cases in this class.
@@ -302,7 +302,7 @@ r2_tjur
 
 # Binomial logistic regression
 
-In the previous example, each row in the table corresponded to a single binary response (0 or 1) and the associated values of the predictors. In an experimental context, it is possible to have several independent replicates with the same values of the predictors; the number of responses equal to 1 ("success") among these $N$ replicates can be modeled directly as a binomial variable.
+In the previous example, each row in the table corresponded to a single binary response (0 or 1) and the associated values of the predictors. In an experimental context, it is possible to have several independent replicates with the same values of the predictors; the number of responses equal to 1 among these $N$ replicates can be modeled directly as a binomial variable.
 
 ## Example: Mortality of snails depending on the environment
 
@@ -313,7 +313,7 @@ library(MASS)
 str(snails)
 ```
 
-In this example, we will code mortality as the "positive" result (1). To apply a binomial logistic regression to these data, the response in the formula (to the left of the `~`) must be composed of two columns (number of 1 and number of 0) grouped with `cbind`. Here, the variable representing the number of 0 (the survivors) is obtained by subtracting `Deaths` from `N`.
+In this example, we will code mortality as 1 and its absence (survival) as 0. To apply a binomial logistic regression to these data, the response in the formula (to the left of the `~`) must be composed of two columns (number of 1 and number of 0) grouped with `cbind`. Here, the variable representing the number of 0 (the survivors) is obtained by subtracting `Deaths` from `N`.
 
 ```{r}
 mod_snails <- glm(cbind(Deaths, N - Deaths) ~ Species + Exposure + Rel.Hum + Temp,

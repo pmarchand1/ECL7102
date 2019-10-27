@@ -11,6 +11,7 @@
 6. [ANOVA à deux facteurs et blocs complets aléatoires](notes_cours/6-ANOVA_2_facteurs.html) ([PDF](notes_cours/6-ANOVA_2_facteurs.pdf) - Données [1](donnees/growth.csv) [2](donnees/antibiot.csv) [3](donnees/pigs.csv))
 7. [Régression linéaire](notes_cours/7-Régression_linéaire.html) ([PDF](notes_cours/7-Régression_linéaire.pdf) - Données [1](donnees/plant_growth_rate.csv) [2](donnees/compensation.csv))
 8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html) ([PDF](notes_cours/8-Sélection_modèles.pdf))
+9. [Régression logistique](notes_cours/9-Regression_logistique.html) ([PDF](notes_cours/9-Regression_logistique.pdf))
 
 ## Laboratoires
 
