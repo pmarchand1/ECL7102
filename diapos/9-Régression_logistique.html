@@ -1,953 +1,524 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Régression logistique</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Régression logistique</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Régression logistique
+### <br/>4 novembre 2019
+
+---
 
 
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
 
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
+&lt;style type="text/css"&gt;
+.pull-left {
+  float: left;
+  width: 35%;
 }
-</style>
-
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
-
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
-
-
-
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
-
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
-
-
-  </style>
-
-    <style type="text/css">code{white-space: pre;}</style>
-
-    <link rel="stylesheet" href="styles.css"/>
-
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
-
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
-
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
-
-
-@media print {
-
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
-
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
-
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
-
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
-
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
-
-
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
-
-		overflow: visible !important;
-		display: block !important;
-
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
-
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
-    
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
-
-* {
-	-webkit-print-color-adjust: exact;
+.pull-right {
+  float: right;
+  width: 60%;
 }
 
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
+.small { font-size: 70% }
+&lt;/style&gt;
 
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
+# Objectifs
 
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
+- Connaître les composantes d'un modèle linéaire généralisé.
 
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
+- Utiliser la régression logistique pour modéliser une réponse binaire (+/-), une réponse binomiale (nombre de + et -) ou des proportions.
 
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
+- Interpréter les résultats d'une régression logistique et visualiser les effets des prédicteurs.
 
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
+---
 
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
+# Motivation
 
-	overflow: visible;
-	display: block;
+Les données ne sont pas toujours normalement distribuées.
 
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
+![](../images/paranormal.jpg)
 
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
+---
 
-.reveal .slides section {
-	page-break-after: always !important;
+# Motivation
 
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
+Modèles avec une réponse catégorique binaire (non/oui, 0/1)
 
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
+- survie ou mort d'individus dans un intervalle de temps donné;
 
-	opacity: 1 !important;
+- présence ou absence d'une espèce sur différents sites;
 
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
+- décision d'un animal de demeurer au même site ou migrer à un autre site.
 
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
+---
 
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
+# Motivation
 
-.reveal img {
-	box-shadow: none;
-}
+Est-ce qu'on peut modéliser la relation entre la réponse moyenne `\(\hat{y}\)` et des prédicteurs au moyen d'une régression linéaire?
 
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
+`$$\hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$`
 
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
+--
 
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
+- Prédictions peuvent être &lt;0 ou &gt;1.
 
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
+- Variance non homogène: `\(y\)` moins variable si `\(\hat{y}\)` près de 0 ou 1.
 
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
+---
 
-</script>
+class: inverse, middle
+
+# Modèles linéaires généralisés (GLM)
+
+---
+
+# Modèles linéaires généralisés
+
+Extensions de la régression linéaire
+
+- différentes distributions de la réponse (pas seulement normale);
+
+- différentes transformation des prédictions linéaires.
+
+---
+
+# Composantes d'un GLM
+
+- Prédicteur linéaire
+
+- Fonction de lien entre le prédicteur linéaire et la réponse moyenne
+
+- Distribution des réponses individuelles
+
+---
+
+# Composantes d'un GLM
+
+**Exemple**: Régression linéaire
+
+`$$\hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$`
+
+--
+
+- Prédicteur linéaire: `\(\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i\)`
+
+--
+
+- Lien entre la réponse moyenne et la valeur du prédicteur: `\(\hat{y} = \eta\)`
+
+--
+
+- Distribution des réponses individuelles: `\(y \sim N(\hat{y}, \sigma)\)`.
+
+---
+
+# Types de GLM vus dans ce cours
+
+- Régression logistique (une ou plusieurs observations d'une réponse binaire)
+
+- Régression de Poisson (données de comptage)
+
+---
+
+class: inverse, middle
+
+# Modèle de régression logistique
+
+---
+
+# Modèle de régression logistique
+
+Dans ce modèle:
+
+- la réponse suit une distribution binomiale (codée 0/1) et
+
+- la fonction *logit* permet de relier la probabilité d'obtenir `\(y = 1\)` à la valeur du prédicteur linéaire.
+
+---
+
+# Distribution binomiale
+
+- Expérience répétée `\(n\)` fois, probabilité `\(p\)` qu'un événement soit présent.
+
+--
+
+- Le nombre de présences `\(y\)` sur `\(n\)` essais suit une distribution binomiale: `\(y \sim B(n, p)\)`. 
+
+--
+
+- Selon cette distribution, la probabilité d'obtenir `\(y\)` présences et `\(n-y\)` absences correspond à:
+
+`$$\frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y}$$`
+
+---
+
+# Propriétés de la distribution binomiale
+
+- Nombre de présences `\(y\)`: moyenne `\(np\)`, variance `\(np(1-p)\)`.
+
+--
+
+- Proportion de présences `\(y/n\)`: moyenne `\(p\)`, variance `\(p(1-p)/n\)`
+
+--
+
+- Dans les deux cas, la variance est maximale si `\(p = 0.5\)` est tend vers 0 lorsqu'on approche `\(p = 0\)` et `\(p = 1\)`.
+
+--
+
+- Cas particulier `\(n = 1\)`: distribution de Bernoulli. Moyenne de `\(p\)` et variance de `\(p(1-p)\)`.
+
+---
+
+# Distribution binomiale dans R
+
+Fonctions `rbinom`, `dbinom`, `pbinom` et `qbinom`.
+
+--
+
+Exemple: Probabilité d'obtenir 2 présences sur 5 essais, avec `\(p\)` = 0.3.
 
 
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
+```r
+dbinom(2, 5, 0.3)
+```
 
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
+```
+## [1] 0.3087
+```
 
-<section>
-    <h1 class="title">Régression logistique</h1>
-    <h3 class="date"><br/>5 novembre 2018</h3>
-</section>
+--
 
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Connaître les composantes d’un modèle linéaire généralisé.</p></li>
-<li class="fragment"><p>Utiliser la régression logistique pour modéliser une réponse binaire (+/-), une réponse binomiale (nombre de + et -) ou des proportions.</p></li>
-<li class="fragment"><p>Interpréter les résultats d’une régression logistique et visualiser les effets des prédicteurs.</p></li>
-</ul>
-</section>
-<section id="motivation" class="slide level2">
-<h2>Motivation</h2>
-<p>Les données ne sont pas toujours normalement distribuées.</p>
-<p><img src="../images/paranormal.jpg" /></p>
-</section>
-<section id="motivation-1" class="slide level2">
-<h2>Motivation</h2>
-<p>Modèles avec une réponse catégorique binaire (non/oui, 0/1)</p>
-<ul>
-<li class="fragment"><p>survie ou mort d’individus dans un intervalle de temps donné;</p></li>
-<li class="fragment"><p>présence ou absence d’une espèce sur différents sites;</p></li>
-<li class="fragment"><p>décision d’un animal de demeurer au même site ou migrer à un autre site.</p></li>
-</ul>
-</section>
-<section id="motivation-2" class="slide level2">
-<h2>Motivation</h2>
-<p>Est-ce qu’on peut modéliser la relation entre la réponse moyenne <span class="math inline">\(\hat{y}\)</span> et des prédicteurs au moyen d’une régression linéaire?</p>
-<p><span class="math display">\[ \hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i \]</span></p>
-<ul>
-<li class="fragment"><p>Prédictions peuvent être &lt;0 ou &gt;1.</p></li>
-<li class="fragment"><p>Variance non homogène (<span class="math inline">\(y\)</span> moins variable si <span class="math inline">\(\hat{y}\)</span> près de 0 ou 1).</p></li>
-</ul>
-</section>
-<section><section id="modeles-lineaires-generalises-glm" class="titleslide slide level1"><h1>Modèles linéaires généralisés (GLM)</h1></section><section id="modeles-lineaires-generalises" class="slide level2">
-<h2>Modèles linéaires généralisés</h2>
-<p>Extensions de la régression linéaire</p>
-<ul>
-<li class="fragment"><p>différentes distributions de la réponse (pas seulement normale);</p></li>
-<li class="fragment"><p>différentes transformation des prédictions linéaires.</p></li>
-</ul>
-</section><section id="composantes-dun-modele-lineaire-generalise" class="slide level2">
-<h2>Composantes d’un modèle linéaire généralisé</h2>
-<ul>
-<li class="fragment"><p>Prédicteur linéaire</p></li>
-<li class="fragment"><p>Fonction de lien entre le prédicteur linéaire et la réponse moyenne</p></li>
-<li class="fragment"><p>Distribution des réponses individuelles</p></li>
-</ul>
-</section><section id="composantes-dun-modele-lineaire-generalise-1" class="slide level2">
-<h2>Composantes d’un modèle linéaire généralisé</h2>
-<p><strong>Exemple</strong>: Régression linéaire</p>
-<p><span class="math display">\[ \hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i \]</span></p>
-<ul>
-<li class="fragment"><p>Prédicteur linéaire: <span class="math inline">\(\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i\)</span></p></li>
-<li class="fragment"><p>Lien entre la réponse moyenne et la valeur du prédicteur: <span class="math inline">\(\hat{y} = \eta\)</span></p></li>
-<li class="fragment"><p>Distribution des réponses individuelles: <span class="math inline">\(y \sim N(\hat{y}, \sigma)\)</span>.</p></li>
-</ul>
-</section><section id="types-de-glm-vus-dans-ce-cours" class="slide level2">
-<h2>Types de GLM vus dans ce cours</h2>
-<ul>
-<li class="fragment"><p>Régression logistique (une ou plusieurs observations d’une réponse binaire)</p></li>
-<li class="fragment"><p>Régression de Poisson (données de comptage)</p></li>
-</ul>
-</section></section>
-<section><section id="modele-de-regression-logistique" class="titleslide slide level1"><h1>Modèle de régression logistique</h1></section><section id="modele-de-regression-logistique-1" class="slide level2">
-<h2>Modèle de régression logistique</h2>
-<p>Dans ce modèle:</p>
-<ul>
-<li class="fragment"><p>la réponse suit une distribution binomiale (codée 0/1) et</p></li>
-<li class="fragment"><p>la fonction <em>logit</em> permet de relier la probabilité d’un résultat positif (<span class="math inline">\(y = 1\)</span>) à la valeur du prédicteur linéaire.</p></li>
-</ul>
-</section><section id="distribution-binomiale" class="slide level2">
-<h2>Distribution binomiale</h2>
-<ul>
-<li>Expérience répétée <span class="math inline">\(n\)</span> fois, probabilité <span class="math inline">\(p\)</span> d’un succès et <span class="math inline">\(1-p\)</span> d’un d’échec.</li>
-</ul>
-<ul>
-<li>Le nombre de succès <span class="math inline">\(y\)</span> suit une distribution binomiale: <span class="math inline">\(y \sim B(n, p)\)</span>.</li>
-</ul>
-<ul>
-<li>Selon cette distribution, la probabilité d’obtenir <span class="math inline">\(y\)</span> succès et <span class="math inline">\(n-y\)</span> échecs correspond à:</li>
-</ul>
-<p><span class="math display">\[ \frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y}\]</span></p>
-</section><section id="proprietes-de-la-distribution-binomiale" class="slide level2">
-<h2>Propriétés de la distribution binomiale</h2>
-<ul>
-<li class="fragment"><p>Nombre de succès (<span class="math inline">\(y\)</span>): moyenne <span class="math inline">\(np\)</span>, variance <span class="math inline">\(np(1-p)\)</span>.</p></li>
-<li class="fragment"><p>Proportion de succès (<span class="math inline">\(y/n\)</span>): moyenne <span class="math inline">\(p\)</span>, variance <span class="math inline">\(p(1-p)/n\)</span></p></li>
-<li class="fragment"><p>Dans les deux cas, la variance est maximale si <span class="math inline">\(p = 0.5\)</span> est tend vers 0 lorsqu’on approche <span class="math inline">\(p = 0\)</span> et <span class="math inline">\(p = 1\)</span>.</p></li>
-<li class="fragment"><p>Cas particulier <span class="math inline">\(n = 1\)</span>: distribution de Bernoulli. Moyenne de <span class="math inline">\(p\)</span> et variance de <span class="math inline">\(p(1-p)\)</span>.</p></li>
-</ul>
-</section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<p>Fonctions dans R: <code>rbinom</code>, <code>dbinom</code>, <code>pbinom</code> et <code>qbinom</code>.</p>
-<p>Exemple: Probabilité d’obtenir 2 succès sur 5 essais, avec <span class="math inline">\(p\)</span> = 0.3.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbinom</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="fl">0.3</span>)</code></pre></div>
-<pre><code>## [1] 0.3087</code></pre>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-2-1.png" width="384" /></p>
-</section><section id="lien-logit" class="slide level2">
-<h2>Lien logit</h2>
-<p><span class="math display">\[ \eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right) \]</span></p>
-<p>Inverse du logit: fonction logistique</p>
-<p><span class="math display">\[ p = \frac{1}{1 + e^{-\eta}} \]</span></p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-3-1.png" width="384" /></p>
-</section><section id="proprietes-du-lien-logit" class="slide level2">
-<h2>Propriétés du lien logit</h2>
-<ul>
-<li class="fragment"><p>Si <span class="math inline">\(\eta = 0\)</span>, <span class="math inline">\(p = 0.5\)</span>.</p></li>
-<li class="fragment"><p>La fonction est symétrique autour de ce point central: <span class="math inline">\(p(-\eta) = 1 - p(\eta)\)</span>.</p></li>
-<li class="fragment"><p><span class="math inline">\(p \rightarrow 0\)</span> lorsque <span class="math inline">\(\eta \rightarrow -\infty\)</span> et <span class="math inline">\(p \rightarrow 1\)</span> lorsque <span class="math inline">\(\eta \rightarrow +\infty\)</span>.</p></li>
-<li class="fragment"><p>La pente de la courbe est plus prononcée au centre et plus faible (tendant vers 0) aux extrémités.</p></li>
-</ul>
-</section><section id="resume-du-modele" class="slide level2">
-<h2>Résumé du modèle</h2>
-<p>Distribution binomiale:</p>
-<p><span class="math display">\[ y \sim B(n, p) \]</span></p>
-<p>Lien logit:</p>
-<p><span class="math display">\[ \text{logit}(p) = \beta_0 + \sum_{i = 1}^m \beta_i x_i \]</span></p>
-<p>équivalent à</p>
-<p><span class="math display">\[ p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}} \]</span></p>
-</section><section id="maximum-de-vraisemblance" class="slide level2">
-<h2>Maximum de vraisemblance</h2>
-<ul>
-<li class="fragment"><p>L’estimation des coefficients <span class="math inline">\(\beta\)</span> d’un modèle linéaire généralisé n’est pas basée sur les moindres carrés, mais plutôt sur le maximum de vraisemblance (<em>maximum likelihood</em>).</p></li>
-<li class="fragment"><p>Les valeurs des coefficients <span class="math inline">\(\beta\)</span> choisies maximisent la probabilité conjointe de l’ensemble des observations de <span class="math inline">\(y\)</span>.</p></li>
-</ul>
-</section><section id="interpretation-des-coefficients" class="slide level2">
-<h2>Interprétation des coefficients</h2>
-<p><strong>Exemple</strong>: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span></p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-4-1.png" width="384" /></p>
-</section><section id="interpretation-des-coefficients-1" class="slide level2">
-<h2>Interprétation des coefficients</h2>
-<p><strong>Exemple</strong>: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span></p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-5-1.png" width="384" /></p>
-<ul>
-<li class="fragment"><span class="math inline">\(\beta_0\)</span>: <span class="math inline">\(\text{logit}(p)\)</span> si <span class="math inline">\(x = 0\)</span>.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">invlogit &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="kw">exp</span>(<span class="op">-</span>x))
-<span class="kw">invlogit</span>(<span class="op">-</span><span class="dv">1</span>)</code></pre></div>
-<pre><code>## [1] 0.2689414</code></pre>
-</section><section id="interpretation-des-coefficients-2" class="slide level2">
-<h2>Interprétation des coefficients</h2>
-<p><strong>Exemple</strong>: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span></p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-7-1.png" width="384" /></p>
-<ul>
-<li class="fragment"><span class="math inline">\(p = 0.5\)</span> si <span class="math inline">\(-1 + 0.4x = 0\)</span> (donc <span class="math inline">\(x = 2.5\)</span>)</li>
-</ul>
-</section><section id="interpretation-des-coefficients-3" class="slide level2">
-<h2>Interprétation des coefficients</h2>
-<p><strong>Exemple</strong>: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span></p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-8-1.png" width="384" /></p>
-<ul>
-<li class="fragment"><p><span class="math inline">\(\beta_1/4\)</span> est la pente maximale de <span class="math inline">\(p\)</span> vs. <span class="math inline">\(x\)</span>.</p></li>
-<li class="fragment"><p>Si <span class="math inline">\(x\)</span> augmente de 1, <span class="math inline">\(p\)</span> augmente au plus de 0.1.</p></li>
-</ul>
-</section></section>
-<section><section id="regression-logistique-avec-r" class="titleslide slide level1"><h1>Régression logistique avec R</h1></section><section id="regression-logistique-avec-r-1" class="slide level2">
-<h2>Régression logistique avec R</h2>
-<p>Nous verrons des exemples pour trois types de réponse:</p>
-<ul>
-<li class="fragment"><p>une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (1er niveau = 0, autres niveaux = 1);</p></li>
-<li class="fragment"><p>une variable binomiale décrite par deux colonnes (nombre de succès, nombre d’échecs);</p></li>
-<li class="fragment"><p>une variable indiquant une proportion entre 0 et 1.</p></li>
-</ul>
-</section><section id="exemple-1-concentrations-darsenic-dans-des-puits-au-bangladesh" class="slide level2">
-<h2>Exemple 1: Concentrations d’arsenic dans des puits au Bangladesh</h2>
-<ul>
-<li class="fragment"><p>Tableau de données <code>Wells</code> du package <strong>carData</strong></p></li>
-<li class="fragment"><p>3020 ménages avec un puits à haute concentration en arsenic</p></li>
-<li class="fragment"><p>Quels facteurs déterminent si un ménage change de puits?</p></li>
-</ul>
-</section><section id="exemple-1-concentrations-darsenic-dans-des-puits-au-bangladesh-1" class="slide level2">
-<h2>Exemple 1: Concentrations d’arsenic dans des puits au Bangladesh</h2>
-<ul>
-<li class="fragment"><p>Réponse: Changer de puits ou non (<code>switch</code>)</p></li>
-<li class="fragment"><p>Prédicteurs: concentration d’arsenic (en mutiples de 100 <span class="math inline">\(\mu g/L\)</span>), distance du puits sûr le plus près (en m).</p></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(carData)
-<span class="kw">str</span>(Wells)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    3020 obs. of  5 variables:
-##  $ switch     : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 2 2 1 2 2 2 2 2 2 2 ...
-##  $ arsenic    : num  2.36 0.71 2.07 1.15 1.1 3.9 2.97 3.24 3.28 2.52 ...
-##  $ distance   : num  16.8 47.3 21 21.5 40.9 ...
-##  $ education  : int  0 0 10 12 14 9 4 10 0 0 ...
-##  $ association: Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 1 1 1 1 2 2 2 1 2 2 ...</code></pre>
-</section><section id="exploration-des-donnees" class="slide level2">
-<h2>Exploration des données</h2>
-<p>Distribution des prédicteurs potentiels lorsque la réponse est positive ou négative</p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-10-1.png" width="480" /></p>
-</section><section id="fonction-glm" class="slide level2">
-<h2>Fonction glm</h2>
-<p>Semblable à <code>lm</code>, mais il faut aussi spécifier la distribution de la réponse (<code>family</code>) et la fonction de lien.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="cf">switch</span> <span class="op">~</span><span class="st"> </span>arsenic <span class="op">+</span><span class="st"> </span>distance, <span class="dt">data =</span> Wells,
-           <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>))
-<span class="kw">summary</span>(mod)</code></pre></div>
-<ul>
-<li class="fragment">Par défaut, la famille binomiale utilise le lien logit.</li>
-</ul>
-</section><section id="resultat" class="slide level2">
-<h2>Résultat</h2>
-<pre><code>## 
-## Call:
-## glm(formula = switch ~ arsenic + distance, family = binomial(link = &quot;logit&quot;), 
-##     data = Wells)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -2.6351  -1.2139   0.7786   1.0702   1.7085  
-## 
-## Coefficients:
-##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)  0.002749   0.079448   0.035    0.972    
-## arsenic      0.460775   0.041385  11.134   &lt;2e-16 ***
-## distance    -0.008966   0.001043  -8.593   &lt;2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 4118.1  on 3019  degrees of freedom
-## Residual deviance: 3930.7  on 3017  degrees of freedom
-## AIC: 3936.7
-## 
-## Number of Fisher Scoring iterations: 4</code></pre>
-</section><section id="visualiser-les-predictions-du-modele" class="slide level2">
-<h2>Visualiser les prédictions du modèle</h2>
-<ul>
-<li>L’effet de chaque prédicteur est non-linéaire et dépend des autres prédicteurs.</li>
-</ul>
-<ul>
-<li>Regardons les prédictions du modèle pour plusieurs combinaisons de concentrations d’arsenic et de distance.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wells_nouv &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="dt">arsenic =</span> <span class="kw">seq</span>(<span class="fl">0.5</span>, <span class="dv">5</span>, <span class="fl">0.5</span>), <span class="dt">distance =</span> <span class="kw">c</span>(<span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>))</code></pre></div>
-<ul>
-<li><code>expand.grid</code> génère toutes les combinaisons des valeurs de différentes variables.</li>
-</ul>
-</section><section id="visualiser-les-predictions-du-modele-1" class="slide level2">
-<h2>Visualiser les prédictions du modèle</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wells_nouv<span class="op">$</span>prob_pred &lt;-<span class="st"> </span><span class="kw">predict</span>(mod, wells_nouv, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)</code></pre></div>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-15-1.png" width="576" /></p>
-</section><section id="intervalles-de-confiance-sur-la-probabilite-moyenne" class="slide level2">
-<h2>Intervalles de confiance sur la probabilité moyenne</h2>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-16-1.png" width="576" /></p>
-</section><section id="intervalles-de-confiance-sur-la-probabilite-moyenne-1" class="slide level2">
-<h2>Intervalles de confiance sur la probabilité moyenne</h2>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-17-1.png" width="288" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">prob_pred &lt;-<span class="st"> </span><span class="kw">predict</span>(mod, wells_nouv, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>, <span class="dt">se.fit =</span> <span class="ot">TRUE</span>)
-wells_nouv<span class="op">$</span>prob_se &lt;-<span class="st"> </span>prob_pred<span class="op">$</span>se.fit
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
-<span class="kw">ggplot</span>(wells_nouv, <span class="kw">aes</span>(<span class="dt">x =</span> arsenic, <span class="dt">y =</span> prob_pred, <span class="dt">color =</span> <span class="kw">as.factor</span>(distance),
-                       <span class="dt">fill =</span> <span class="kw">as.factor</span>(distance))) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> prob_pred <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span><span class="op">*</span>prob_se, <span class="dt">ymax =</span> prob_pred <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span><span class="op">*</span>prob_se),
-                <span class="dt">alpha =</span> <span class="fl">0.3</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
-<span class="st">    </span>...</code></pre></div>
-</section><section id="distributions-des-residus" class="slide level2">
-<h2>Distributions des résidus</h2>
-<p>Les résidus individuels ne sont pas très utiles pour une réponse binaire.</p>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-19-1.png" width="576" /></p>
-</section><section id="graphique-de-residus-groupes" class="slide level2">
-<h2>Graphique de résidus groupés</h2>
-<ul>
-<li>Grouper des observations dont les prédictions sont rapprochés et calculer le résidu de la proportion moyenne.</li>
-</ul>
-<ul>
-<li>Fonction <code>binnedplot</code> du <strong>arm</strong>.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(arm)
-<span class="kw">binnedplot</span>(<span class="kw">fitted</span>(mod), <span class="kw">residuals</span>(mod, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>))</code></pre></div>
-</section><section id="graphique-de-residus-groupes-1" class="slide level2">
-<h2>Graphique de résidus groupés</h2>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-21-1.png" width="576" /></p>
-<ul>
-<li class="fragment">Indique aussi un intervalle de prédiction à 95%.</li>
-</ul>
-</section><section id="coefficient-de-determination" class="slide level2">
-<h2>Coefficient de détermination</h2>
-<ul>
-<li>Le <span class="math inline">\(R^2\)</span> basé sur la somme des écarts carrés n’est pas approprié pour les GLM.</li>
-</ul>
-<ul>
-<li>La <strong>déviance</strong> est une mesure d’écart entre les valeurs attendues et les observations calculée à partir de la vraisemblance <span class="math inline">\(L\)</span> du modèle.</li>
-</ul>
-<p><span class="math display">\[ D = -2 \log L \]</span></p>
-<ul>
-<li>La déviance est égale au premier terme de l’AIC (sans la pénalité).</li>
-</ul>
-<ul>
-<li>Comme pour l’AIC, la valeur absolue n’est pas interprétable.</li>
-</ul>
-</section><section id="pseudo-r2" class="slide level2">
-<h2>Pseudo-<span class="math inline">\(R^2\)</span></h2>
-<p>Deux déviances dans le résultat sommaire de <code>glm</code></p>
-<ul>
-<li><code>Residual deviance</code>: basé sur la vraisemblance du modèle ajusté.</li>
-<li><code>Null deviance</code>: basé sur la vraisemblance du modèle nul (aucun prédicteur).</li>
-</ul>
-<p>Ces valeurs sont analogues à la somme des carrés résiduels et totaux. On peut donc définir un “pseudo-<span class="math inline">\(R^2\)</span>”:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pseudo_R2 &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mod<span class="op">$</span>deviance<span class="op">/</span>mod<span class="op">$</span>null.deviance
-pseudo_R2</code></pre></div>
-<pre><code>## [1] 0.04551395</code></pre>
-</section><section id="r2-de-tjur" class="slide level2">
-<h2><span class="math inline">\(R^2\)</span> de Tjur</h2>
-<p>Autre option de <span class="math inline">\(R^2\)</span>, égale à la différence entre la prédiction moyenne pour le groupe d’observations avec <span class="math inline">\(y = 1\)</span> et celle du groupe <span class="math inline">\(y = 0\)</span>.</p>
-<p><span class="math display">\[ {R^2}_{\text{Tjur}} = \bar{\hat{y}}_{(y=1)} - \bar{\hat{y}}_{(y=0)} \]</span></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r2_tjur &lt;-<span class="st"> </span><span class="kw">mean</span>(mod<span class="op">$</span>fitted.values[mod<span class="op">$</span>y <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(mod<span class="op">$</span>fitted.values[mod<span class="op">$</span>y <span class="op">==</span><span class="st"> </span><span class="dv">0</span>])
-r2_tjur</code></pre></div>
-<pre><code>## [1] 0.06004311</code></pre>
-</section></section>
-<section><section id="regression-logistique-binomiale" class="titleslide slide level1"><h1>Régression logistique binomiale</h1></section><section id="regression-logistique-binomiale-1" class="slide level2">
-<h2>Régression logistique binomiale</h2>
-<ul>
-<li class="fragment"><p>Plusieurs réplicats indépendants d’une réponse binaire pour les mêmes prédicteurs.</p></li>
-<li class="fragment"><p>Type de données plus fréquent dans un contexte expérimental.</p></li>
-</ul>
-</section><section id="exemple-2-mortalite-descargots-en-fonction-de-lenvironnement" class="slide level2">
-<h2>Exemple 2: Mortalité d’escargots en fonction de l’environnement</h2>
-<ul>
-<li class="fragment">Tableau de données <code>snails</code> du package <strong>MASS</strong>.</li>
-<li class="fragment">Prédicteurs: espèce d’escargot, température, humidité relative, temps d’exposition.</li>
-<li class="fragment">Réponse: Nombre d’escargots morts sur un nombre initial de 20 pour chaque combinaison des prédicteurs.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MASS)
-<span class="kw">str</span>(snails)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    96 obs. of  6 variables:
-##  $ Species : Factor w/ 2 levels &quot;A&quot;,&quot;B&quot;: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ Exposure: int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ Rel.Hum : num  60 60 60 65.8 65.8 65.8 70.5 70.5 70.5 75.8 ...
-##  $ Temp    : int  10 15 20 10 15 20 10 15 20 10 ...
-##  $ Deaths  : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ N       : int  20 20 20 20 20 20 20 20 20 20 ...</code></pre>
-</section><section id="exemple-2-mortalite-descargots-en-fonction-de-lenvironnement-1" class="slide level2">
-<h2>Exemple 2: Mortalité d’escargots en fonction de l’environnement</h2>
-<p>Dans ce cas, la réponse a deux colonnes (groupées avec <code>cbind</code>).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_snails &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">cbind</span>(Deaths, N <span class="op">-</span><span class="st"> </span>Deaths) <span class="op">~</span><span class="st"> </span>Species <span class="op">+</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>Rel.Hum <span class="op">+</span><span class="st"> </span>Temp,
-           <span class="dt">data =</span> snails, <span class="dt">family =</span> binomial)
-<span class="kw">summary</span>(mod_snails)</code></pre></div>
-<pre><code>## 
-## Call:
-## glm(formula = cbind(Deaths, N - Deaths) ~ Species + Exposure + 
-##     Rel.Hum + Temp, family = binomial, data = snails)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -1.7261  -0.7107  -0.3362   0.4231   1.7510  
-## 
-## Coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept) -1.40495    0.97070  -1.447    0.148    
-## SpeciesB     1.30864    0.16350   8.004 1.20e-15 ***
-## Exposure     1.50339    0.10235  14.689  &lt; 2e-16 ***
-## Rel.Hum     -0.10684    0.01388  -7.699 1.37e-14 ***
-## Temp         0.09404    0.01927   4.881 1.06e-06 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 539.72  on 95  degrees of freedom
-## Residual deviance:  55.07  on 91  degrees of freedom
-## AIC: 223.93
-## 
-## Number of Fisher Scoring iterations: 5</code></pre>
-</section><section id="exemple-2-mortalite-descargots-en-fonction-de-lenvironnement-2" class="slide level2">
-<h2>Exemple 2: Mortalité d’escargots en fonction de l’environnement</h2>
-<p><img src="9-Régression_logistique_files/figure-revealjs/unnamed-chunk-26-1.png" width="576" /></p>
-</section><section id="probleme-de-separation-parfaite" class="slide level2">
-<h2>Problème de séparation parfaite</h2>
-<p>Essayons d’estimer séparément le taux de mortalité pour chaque semaine.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_snails2 &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">cbind</span>(Deaths, N <span class="op">-</span><span class="st"> </span>Deaths) <span class="op">~</span><span class="st"> </span><span class="kw">as.factor</span>(Exposure), <span class="dt">data =</span> snails,
-                   <span class="dt">family =</span> binomial)
-<span class="kw">summary</span>(mod_snails2)</code></pre></div>
-<pre><code>## 
-## Call:
-## glm(formula = cbind(Deaths, N - Deaths) ~ as.factor(Exposure), 
-##     family = binomial, data = snails)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -2.9350  -1.0881  -0.0002   0.5037   4.1261  
-## 
-## Coefficients:
-##                      Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)            -20.75     888.02  -0.023    0.981
-## as.factor(Exposure)2    17.25     888.02   0.019    0.985
-## as.factor(Exposure)3    19.33     888.02   0.022    0.983
-## as.factor(Exposure)4    20.13     888.02   0.023    0.982
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 539.72  on 95  degrees of freedom
-## Residual deviance: 182.38  on 92  degrees of freedom
-## AIC: 349.24
-## 
-## Number of Fisher Scoring iterations: 17</code></pre>
-</section><section id="probleme-de-separation-parfaite-1" class="slide level2">
-<h2>Problème de séparation parfaite</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">group_by</span>(snails, Exposure) <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">summarize</span>(<span class="kw">mean</span>(Deaths))</code></pre></div>
-<pre><code>## # A tibble: 4 x 2
+---
+
+# Lien logit
+
+`$$\eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right)$$`
+
+--
+
+Inverse du logit: fonction logistique
+
+`$$p = \frac{1}{1 + e^{-\eta}}$$`
+
+--
+
+.center[
+
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+]
+
+---
+
+# Propriétés du lien logit
+
+.pull-left[
+
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+]
+
+
+- Si `\(\eta = 0\)`, `\(p = 0.5\)`.
+
+--
+
+- La fonction est symétrique autour de ce point central: `\(p(-\eta) = 1 - p(\eta)\)`.
+
+--
+
+- `\(p \rightarrow 0\)` lorsque `\(\eta \rightarrow -\infty\)` et `\(p \rightarrow 1\)` lorsque `\(\eta \rightarrow +\infty\)`.
+
+--
+
+- La pente de la courbe est plus prononcée au centre et plus faible (tendant vers 0) aux extrémités.
+
+---
+
+# Résumé du modèle
+
+Distribution binomiale: 
+
+`$$y \sim B(n, p)$$`
+
+--
+
+Lien logit:
+
+`$$\text{logit}(p) = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$` 
+
+--
+
+équivalent à
+
+`$$p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}}$$`
+
+---
+
+# Maximum de vraisemblance
+
+- L'estimation des coefficients `\(\beta\)` d'un modèle linéaire généralisé n'est pas basée sur les moindres carrés, mais plutôt sur le maximum de vraisemblance (*maximum likelihood*). 
+
+--
+
+- Les valeurs des coefficients `\(\beta\)` choisies maximisent la probabilité conjointe de l'ensemble des observations de `\(y\)`.
+
+---
+
+# Interprétation des coefficients
+
+**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+
+# Interprétation des coefficients
+
+**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+- `\(\beta_0\)`: `\(\text{logit}(p)\)` si `\(x = 0\)`.
+
+--
+
+
+```r
+invlogit &lt;- function(x) 1/(1+exp(-x))
+invlogit(-1)
+```
+
+```
+## [1] 0.2689414
+```
+
+---
+
+# Interprétation des coefficients
+
+**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+- `\(p = 0.5\)` si `\(-1 + 0.4x = 0\)` (donc `\(x = 2.5\)`)
+
+---
+
+# Interprétation des coefficients
+
+**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+
+![](9-Régression_logistique_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+- `\(\beta_1/4\)` est la pente maximale de `\(p\)` vs. `\(x\)`. 
+
+- Si `\(x\)` augmente de 1, `\(p\)` augmente au plus de 0.1.
+
+---
+
+class: inverse, middle
+
+# Régression logistique avec R
+
+---
+
+# Régression logistique avec R
+
+Nous verrons des exemples pour trois types de réponse:
+
+- une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (1er niveau = 0, autres niveaux = 1);
+
+--
+
+- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences);
+
+--
+
+- une variable indiquant une proportion entre 0 et 1.
+
+---
+
+# Exemple 1: Réponse binaire
+
+Concentrations d'arsenic dans des puits au Bangladesh
+
+- Tableau de données `Wells` du package **carData**
+
+- 3020 ménages avec un puits à haute concentration en arsenic
+
+- Quels facteurs déterminent si un ménage change de puits?
+
+---
+
+# Coefficient de détermination
+
+- Le `\(R^2\)` basé sur la somme des écarts carrés n'est pas approprié pour les GLM.
+
+--
+
+- La **déviance** est une mesure d'écart entre les valeurs attendues et les observations calculée à partir de la vraisemblance `\(L\)` du modèle.
+
+`$$D = -2 \log L$$`
+
+--
+
+- La déviance est égale au premier terme de l'AIC (sans la pénalité).
+
+- Comme pour l'AIC, la valeur absolue n'est pas interprétable.
+
+---
+
+# Coefficient de détermination
+
+Deux déviances dans le résultat sommaire de `glm`
+
+- `Residual deviance`: basé sur la vraisemblance du modèle ajusté.
+- `Null deviance`: basé sur la vraisemblance du modèle nul (aucun prédicteur).
+
+--
+
+Ces valeurs sont analogues à la somme des carrés résiduels et totaux. On peut donc définir un *pseudo* `\(R^2\)` égal à `\(1 - D_{res} / D_{null}\)`.
+
+---
+
+# `\(R^2\)` de Tjur
+
+Autre option de `\(R^2\)`, égale à la différence entre la prédiction moyenne pour le groupe d'observations avec `\(y = 1\)` et celle du groupe `\(y = 0\)`. 
+
+`$${R^2}_{\text{Tjur}} = \bar{\hat{y}}_{(y=1)} - \bar{\hat{y}}_{(y=0)}$$`
+
+---
+
+# Régression logistique binomiale
+
+- Plusieurs réplicats indépendants d'une réponse binaire pour les mêmes prédicteurs.
+
+- Type de données plus fréquent dans un contexte expérimental.
+
+---
+
+# Exemple 2: Mortalité d'escargots
+
+- Tableau de données `snails` du package **MASS**.
+
+- Prédicteurs: espèce d'escargot, température, humidité relative, temps d'exposition.
+
+- Réponse: Nombre d'escargots morts sur un nombre initial de 20 pour chaque combinaison des prédicteurs.
+
+---
+
+# Problème de séparation parfaite
+
+
+
+
+```r
+group_by(snails, Exposure) %&gt;%
+    summarize(mean(Deaths))
+```
+
+```
+## # A tibble: 4 x 2
 ##   Exposure `mean(Deaths)`
 ##      &lt;int&gt;          &lt;dbl&gt;
 ## 1        1          0    
 ## 2        2          0.583
 ## 3        3          3.88 
-## 4        4          7</code></pre>
-<ul>
-<li class="fragment"><p>L’ordonnée à l’origine <code>(Intercept)</code> correspond à logit(<span class="math inline">\(p\)</span>) pour <code>Exposure</code> = 1, mais il n’y a aucun escargot mort pour ce niveau.</p></li>
-<li class="fragment"><p>Fonction logit n’atteint jamais <span class="math inline">\(p = 0\)</span>. Taux de mortalité trop petit pour être estimé (logit très négatif).</p></li>
-</ul>
-</section><section id="probleme-de-separation-parfaite-2" class="slide level2">
-<h2>Problème de séparation parfaite</h2>
-<ul>
-<li class="fragment"><p>Le coefficient d’une variable qui sépare parfaitement les réponses <span class="math inline">\(y = 1\)</span> et <span class="math inline">\(y = 0\)</span> est mal défini, par exemple:</p>
-<ul>
-<li class="fragment">une catégorie où toutes les réponses sont 0 ou 1;</li>
-<li class="fragment">une variable numérique <span class="math inline">\(x\)</span> avec un seuil <span class="math inline">\(a\)</span> où la réponse est toujours 0 si <span class="math inline">\(x &lt; a\)</span> et 1 si <span class="math inline">\(x &gt; a\)</span>.</li>
-</ul></li>
-<li class="fragment"><p>Il existe des méthodes de réduction de biais (ex.: package <strong>brglm</strong>) qui aident dans ce cas, en pénalisant les coefficients trop élevés.</p></li>
-</ul>
-</section></section>
-<section><section id="regression-logistique-pour-des-proportions" class="titleslide slide level1"><h1>Régression logistique pour des proportions</h1></section><section id="regression-logistique-pour-des-proportions-1" class="slide level2">
-<h2>Régression logistique pour des proportions</h2>
-<ul>
-<li class="fragment"><p>Pour une réponse basée sur un nombre d’individus (ex.: escargots morts ou vivants), la distribution binomiale s’applique directement.</p></li>
-<li class="fragment"><p>Parfois, la réponse existe seulement sous forme de proportion, par exemple:</p>
-<ul>
-<li class="fragment">proportion d’un quadrat recouvert par une mousse;</li>
-<li class="fragment">fraction d’un peuplement brûlée par un feu.</li>
-</ul></li>
-</ul>
-</section><section id="regression-logistique-pour-des-proportions-2" class="slide level2">
-<h2>Régression logistique pour des proportions</h2>
-<ul>
-<li class="fragment"><p>Le lien logit fonctionne pour transformer un prédicteur linéaire en une proportion entre 0 et 1.</p></li>
-<li class="fragment"><p>Toutefois, la variance de cette proportion n’est pas connue si elle ne provient pas d’un processus binomial.</p></li>
-<li class="fragment"><p>Famille <em>quasibinomiale</em>:</p>
-<ul>
-<li class="fragment">pas une vraie distribution</li>
-<li class="fragment">estimation des coefficients suit la même formule que la binomiale</li>
-<li class="fragment">on estime séparément un paramètre de dispersion <span class="math inline">\(\phi\)</span>, pour que la variance des proportions soit égale à <span class="math inline">\(\phi p (1-p)\)</span>.</li>
-</ul></li>
-</ul>
-</section><section id="regression-logistique-pour-des-proportions-3" class="slide level2">
-<h2>Régression logistique pour des proportions</h2>
-<p>Supposons qu’on connaît seulement la proportion d’escargots morts, mais pas le nombre d’individus.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">snails &lt;-<span class="st"> </span><span class="kw">mutate</span>(snails, <span class="dt">prop =</span> Deaths <span class="op">/</span><span class="st"> </span>N)
-mod_prop &lt;-<span class="st"> </span><span class="kw">glm</span>(prop <span class="op">~</span><span class="st"> </span>Species <span class="op">+</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>Rel.Hum <span class="op">+</span><span class="st"> </span>Temp, 
-                <span class="dt">data =</span> snails, <span class="dt">family =</span> quasibinomial)
-<span class="kw">summary</span>(mod_prop)</code></pre></div>
-</section><section id="regression-logistique-pour-des-proportions-4" class="slide level2">
-<h2>Régression logistique pour des proportions</h2>
-<ul>
-<li>Mêmes coefficients que la régression précédente, mais les erreurs-types ont un peu changé.</li>
-</ul>
-<pre><code>## 
+## 4        4          7
+```
+
+--
+
+- L'ordonnée à l'origine `(Intercept)` correspond à logit( `\(p\)` ) pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
+
+--
+
+- Fonction logit n'atteint jamais `\(p = 0\)`. Taux de mortalité trop petit pour être estimé (logit très négatif).
+
+---
+
+# Problème de séparation parfaite
+
+- Le coefficient d'une variable qui sépare parfaitement les réponses `\(y = 1\)` et `\(y = 0\)` est mal défini, par exemple:
+
+    + une catégorie où toutes les réponses sont 0 ou 1;
+    + une variable numérique `\(x\)` avec un seuil `\(a\)` où la réponse est toujours 0 si `\(x &lt; a\)` et 1 si `\(x &gt; a\)`.
+
+--
+
+- Il existe des méthodes de réduction de biais (ex.: package **brglm**) qui aident dans ce cas, en pénalisant les coefficients trop élevés.
+
+---
+
+# Régression logistique de proportions
+
+- Pour une réponse basée sur un nombre d'individus (ex.: escargots morts ou vivants), la distribution binomiale s'applique directement.
+
+--
+
+- Parfois, la réponse existe seulement sous forme de proportion, par exemple:
+
+    + proportion d'un quadrat recouvert par une mousse;
+    + fraction d'un peuplement brûlée par un feu.
+    
+---
+    
+# Régression logistique de proportions    
+    
+- Le lien logit fonctionne pour transformer un prédicteur linéaire en une proportion entre 0 et 1.
+
+--
+
+- Toutefois, la variance de cette proportion n'est pas connue si elle ne provient pas d'un processus binomial.
+
+--
+
+- Famille *quasibinomiale*:
+
+    + pas une vraie distribution
+    + estimation des coefficients suit la même formule que la binomiale
+    + on estime séparément un paramètre de dispersion `\(\phi\)`, pour que la variance des proportions soit égale à `\(\phi p (1-p)\)`.
+    
+---
+
+# Exemple des escargots
+
+- Supposons qu'on ne connait que la proportion d'escargots morts par traitement.
+
+
+```r
+snails &lt;- mutate(snails, prop = Deaths / N)
+mod_prop &lt;- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
+                data = snails, family = quasibinomial)
+```
+
+---
+
+# Exemple des escargots
+
+.small[
+
+
+```r
+summary(mod_prop)
+```
+
+```
+## 
 ## Call:
 ## glm(formula = prop ~ Species + Exposure + Rel.Hum + Temp, family = quasibinomial, 
 ##     data = snails)
@@ -964,7 +535,7 @@ mod_prop &lt;-<span class="st"> </span><span class="kw">glm</span>(prop <span cl
 ## Rel.Hum     -0.106843   0.009851 -10.846  &lt; 2e-16 ***
 ## Temp         0.094041   0.013677   6.876 7.55e-10 ***
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for quasibinomial family taken to be 0.02519503)
 ## 
@@ -972,75 +543,133 @@ mod_prop &lt;-<span class="st"> </span><span class="kw">glm</span>(prop <span cl
 ## Residual deviance:  2.7535  on 91  degrees of freedom
 ## AIC: NA
 ## 
-## Number of Fisher Scoring iterations: 6</code></pre>
-</section><section id="regression-logistique-pour-des-proportions-5" class="slide level2">
-<h2>Régression logistique pour des proportions</h2>
-<ul>
-<li class="fragment"><p>Nous parlerons davantage du paramètre de dispersion au prochain cours.</p></li>
-<li class="fragment"><p>Une autre option pour la modélisation de proportions est la régression beta (package <strong>betareg</strong>).</p></li>
-</ul>
-</section><section id="resume" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Un modèle linéaire généralisé est composé d’un prédicteur linéaire (combinaison linéaire des variables explicatives), d’une fonction de lien pour la réponse moyenne, et d’une distribution statistique de la réponse en fonction de sa moyenne.</p></li>
-<li class="fragment"><p>La régression logistique sert à modéliser des réponses binaires ou des proportions. Elle utilise un lien logit et une distribution binomiale de la réponse.</p></li>
-<li class="fragment"><p>La fonction logit transforme une probabilité entre 0 et 1 en un nombre réel entre -<span class="math inline">\(\infty\)</span> et +<span class="math inline">\(\infty\)</span>. Un logit négatif correspond à une probabilité en-dessous de 0.5, un logit positif correspond à une probabilité au-dessus de 0.5.</p></li>
-</ul>
-</section><section id="resume-1" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Dans une régression logistique, l’effet d’un prédicteur sur la réponse est non-linéaire et dépend de la valeur des autres prédicteurs. Il est donc utile de visualiser les prédictions du modèle pour différentes combinaisons des variables.</p></li>
-<li class="fragment"><p>Pour une réponse binaire (0 ou 1), les résidus individuels donnent peu d’information, mais on peut vérifier l’ajustement du modèle à partir des moyennes de groupes de résidus (<em>binned residuals</em>).</p></li>
-</ul>
-</section></section>
-    </div>
-  </div>
+## Number of Fisher Scoring iterations: 6
+```
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+]
 
-  <script>
+---
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+# Régression logistique de proportions 
 
+- Nous parlerons davantage du paramètre de dispersion au prochain cours.
 
+--
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+- Une autre option pour la modélisation de proportions est la régression beta (package **betareg**).
+
+---
+
+# Résumé
+
+- Un modèle linéaire généralisé est composé d'un prédicteur linéaire (combinaison linéaire des variables explicatives), d'une fonction de lien pour la réponse moyenne, et d'une distribution statistique de la réponse en fonction de sa moyenne.
+
+--
+
+- La régression logistique sert à modéliser des réponses binaires ou des proportions. Elle utilise un lien logit et une distribution binomiale de la réponse.
+
+--
+
+- La fonction logit transforme une probabilité entre 0 et 1 en un nombre réel entre `\(-\infty\)` et `\(+\infty\)`. Un logit négatif correspond à une probabilité en-dessous de 0.5, un logit positif correspond à une probabilité au-dessus de 0.5.
+
+---
+
+# Résumé
+
+- Dans une régression logistique, l'effet d'un prédicteur sur la réponse est non-linéaire et dépend de la valeur des autres prédicteurs. Il est donc utile de visualiser les prédictions du modèle pour différentes combinaisons des variables.
+
+--
+
+- Pour une réponse binaire (0 ou 1), les résidus individuels donnent peu d'information, mais on peut vérifier l'ajustement du modèle à partir des moyennes de groupes de résidus (*binned residuals*).
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>

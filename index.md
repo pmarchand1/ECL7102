@@ -22,3 +22,4 @@
 6. [Analyse de la variance](labos/6-ANOVA.pdf) (Données [1](labos/sablefish.csv) [2](labos/woodstain.csv))
 7. [Régression linéaire](labos/7R-Régression_linéaire.html) ([PDF](labos/7-Régression_linéaire.pdf) - Données [1](labos/sardinella.csv) [2](labos/britain_species.csv))
 8. [Sélection de modèles](labos/8-Sélection_modèles.pdf) (Donnéees [1](labos/environment.csv) - [2(a)](labos/migration.csv) - [2(c)](labos/migr_test.csv))
+9. [Régression logistique](labos/9-Regression_logistique.pdf)

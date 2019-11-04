@@ -1,10 +1,10 @@
 ---
 title: "Logistic regression"
-date: "November 7, 2018"
+date: "November 6, 2019"
 output: pdf_document
 ---
 
-Answers for this lab must be submitted before **November 14th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **November 13th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Wells data revisited

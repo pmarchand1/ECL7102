@@ -1,14 +1,13 @@
 ---
 title: "Régression logistique"
-date: "<br/>5 novembre 2018"
+date: "<br/>4 novembre 2019"
 output: 
-    revealjs::revealjs_presentation:
-        self_contained: false
-        lib_dir: libs
-        theme: night
-        transition: none
-        css: styles.css
-        incremental: true
+  xaringan::moon_reader:
+    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
@@ -18,7 +17,20 @@ library(ggplot2)
 library(cowplot)
 ```
 
-## Objectifs
+```{css, echo = FALSE}
+.pull-left {
+  float: left;
+  width: 35%;
+}
+.pull-right {
+  float: right;
+  width: 60%;
+}
+
+.small { font-size: 70% }
+```
+
+# Objectifs
 
 - Connaître les composantes d'un modèle linéaire généralisé.
 
@@ -26,13 +38,17 @@ library(cowplot)
 
 - Interpréter les résultats d'une régression logistique et visualiser les effets des prédicteurs.
 
-## Motivation
+---
+
+# Motivation
 
 Les données ne sont pas toujours normalement distribuées.
 
 ![](../images/paranormal.jpg)
 
-## Motivation
+---
+
+# Motivation
 
 Modèles avec une réponse catégorique binaire (non/oui, 0/1)
 
@@ -42,20 +58,29 @@ Modèles avec une réponse catégorique binaire (non/oui, 0/1)
 
 - décision d'un animal de demeurer au même site ou migrer à un autre site.
 
-## Motivation
+---
+
+# Motivation
 
 Est-ce qu'on peut modéliser la relation entre la réponse moyenne $\hat{y}$ et des prédicteurs au moyen d'une régression linéaire?
 
-$$ \hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i $$
+$$\hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$
+
+--
 
 - Prédictions peuvent être <0 ou >1.
 
-- Variance non homogène ($y$ moins variable si $\hat{y}$ près de 0 ou 1).
+- Variance non homogène: $y$ moins variable si $\hat{y}$ près de 0 ou 1.
 
+---
+
+class: inverse, middle
 
 # Modèles linéaires généralisés (GLM)
 
-## Modèles linéaires généralisés
+---
+
+# Modèles linéaires généralisés
 
 Extensions de la régression linéaire
 
@@ -63,7 +88,9 @@ Extensions de la régression linéaire
 
 - différentes transformation des prédictions linéaires.
 
-## Composantes d'un modèle linéaire généralisé
+---
+
+# Composantes d'un GLM
 
 - Prédicteur linéaire
 
@@ -71,204 +98,288 @@ Extensions de la régression linéaire
 
 - Distribution des réponses individuelles
 
-## Composantes d'un modèle linéaire généralisé
+---
+
+# Composantes d'un GLM
 
 **Exemple**: Régression linéaire
 
-$$ \hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i $$
+$$\hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$
+
+--
 
 - Prédicteur linéaire: $\eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$
 
+--
+
 - Lien entre la réponse moyenne et la valeur du prédicteur: $\hat{y} = \eta$
+
+--
 
 - Distribution des réponses individuelles: $y \sim N(\hat{y}, \sigma)$.
 
-## Types de GLM vus dans ce cours
+---
+
+# Types de GLM vus dans ce cours
 
 - Régression logistique (une ou plusieurs observations d'une réponse binaire)
 
 - Régression de Poisson (données de comptage)
 
+---
+
+class: inverse, middle
 
 # Modèle de régression logistique
 
-## Modèle de régression logistique
+---
+
+# Modèle de régression logistique
 
 Dans ce modèle:
 
 - la réponse suit une distribution binomiale (codée 0/1) et
 
-- la fonction *logit* permet de relier la probabilité d'un résultat positif ($y = 1$) à la valeur du prédicteur linéaire.
+- la fonction *logit* permet de relier la probabilité d'obtenir $y = 1$ à la valeur du prédicteur linéaire.
 
-## Distribution binomiale
+---
 
->- Expérience répétée $n$ fois, probabilité $p$ d'un succès et $1-p$ d'un d'échec.
+# Distribution binomiale
 
->- Le nombre de succès $y$ suit une distribution binomiale: $y \sim B(n, p)$. 
+- Expérience répétée $n$ fois, probabilité $p$ qu'un événement soit présent.
 
->- Selon cette distribution, la probabilité d'obtenir $y$ succès et $n-y$ échecs correspond à:
+--
 
-$$ \frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y}$$
+- Le nombre de présences $y$ sur $n$ essais suit une distribution binomiale: $y \sim B(n, p)$. 
 
-## Propriétés de la distribution binomiale
+--
 
-- Nombre de succès ($y$): moyenne $np$, variance $np(1-p)$.
+- Selon cette distribution, la probabilité d'obtenir $y$ présences et $n-y$ absences correspond à:
 
-- Proportion de succès ($y/n$): moyenne $p$, variance $p(1-p)/n$
+$$\frac{n!}{y!(n-y)!} p^y (1-p)^{n-y}  = \binom{n}{y} p^y(1-p)^{n-y}$$
+
+---
+
+# Propriétés de la distribution binomiale
+
+- Nombre de présences $y$: moyenne $np$, variance $np(1-p)$.
+
+--
+
+- Proportion de présences $y/n$: moyenne $p$, variance $p(1-p)/n$
+
+--
 
 - Dans les deux cas, la variance est maximale si $p = 0.5$ est tend vers 0 lorsqu'on approche $p = 0$ et $p = 1$.
 
+--
+
 - Cas particulier $n = 1$: distribution de Bernoulli. Moyenne de $p$ et variance de $p(1-p)$.
 
-## Exemple
+---
 
-Fonctions dans R: `rbinom`, `dbinom`, `pbinom` et `qbinom`. 
+# Distribution binomiale dans R
 
-Exemple: Probabilité d'obtenir 2 succès sur 5 essais, avec $p$ = 0.3.
+Fonctions `rbinom`, `dbinom`, `pbinom` et `qbinom`.
+
+--
+
+Exemple: Probabilité d'obtenir 2 présences sur 5 essais, avec $p$ = 0.3.
 
 ```{r}
 dbinom(2, 5, 0.3)
 ```
 
+--
+
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
 ggplot(NULL, aes(x = as.character(rbinom(1000, 5, 0.3)))) +
-    labs(x = "# succès", y = "fréquence") +
+    labs(x = "# présences", y = "fréquence") +
     geom_bar(fill = "blue") +
 #    scale_x_discrete(limits = c(0, 5), breaks = 0:5) +
     scale_y_continuous(expand = c(0, 0))
 ```
 
+---
 
+# Lien logit
 
-## Lien logit
+$$\eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right)$$
 
-$$ \eta = \text{logit}(p) = \log \left( \frac{p}{1-p} \right) $$
+--
 
 Inverse du logit: fonction logistique
 
-$$ p = \frac{1}{1 + e^{-\eta}} $$
+$$p = \frac{1}{1 + e^{-\eta}}$$
 
-```{r, echo = FALSE, fig.dim = c(4, 3)}
-ggplot(data.frame(x = seq(-5,5,0.1)), aes(x = x)) +
+--
+
+.center[
+
+```{r, echo = FALSE, fig.dim = c(5, 4)}
+graph_invlogit <- ggplot(data.frame(x = seq(-5,5,0.1)), aes(x = x)) +
     labs(x = expression(eta), y = "p") +
     stat_function(fun = function(x) 1/(1+exp(-x))) +
     geom_segment(x = -5, xend = 0, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 0, xend = 0, y = 0, yend = 0.5, linetype = "dotted") +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+graph_invlogit
 ```
 
-## Propriétés du lien logit
+]
+
+---
+
+# Propriétés du lien logit
+
+.pull-left[
+
+```{r, echo = FALSE, fig.dim = c(3, 3)}
+graph_invlogit
+```
+
+]
+
 
 - Si $\eta = 0$, $p = 0.5$.
 
+--
+
 - La fonction est symétrique autour de ce point central: $p(-\eta) = 1 - p(\eta)$.
+
+--
 
 - $p \rightarrow 0$ lorsque $\eta \rightarrow -\infty$ et $p \rightarrow 1$ lorsque $\eta \rightarrow +\infty$.
 
+--
+
 - La pente de la courbe est plus prononcée au centre et plus faible (tendant vers 0) aux extrémités.
 
-## Résumé du modèle
+---
+
+# Résumé du modèle
 
 Distribution binomiale: 
 
-$$ y \sim B(n, p) $$
+$$y \sim B(n, p)$$
+
+--
 
 Lien logit:
 
-$$ \text{logit}(p) = \beta_0 + \sum_{i = 1}^m \beta_i x_i $$ 
+$$\text{logit}(p) = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$ 
+
+--
 
 équivalent à
 
-$$ p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}} $$
+$$p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}}$$
 
-## Maximum de vraisemblance
+---
+
+# Maximum de vraisemblance
 
 - L'estimation des coefficients $\beta$ d'un modèle linéaire généralisé n'est pas basée sur les moindres carrés, mais plutôt sur le maximum de vraisemblance (*maximum likelihood*). 
 
+--
+
 - Les valeurs des coefficients $\beta$ choisies maximisent la probabilité conjointe de l'ensemble des observations de $y$.
 
-## Interprétation des coefficients
+---
+
+# Interprétation des coefficients
 
 **Exemple**: $\text{logit}(p) = -1 + 0.4x$
 
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
-ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
+ex_logit <- ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     labs(y = "p") +
     stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+ex_logit
 ```
 
-## Interprétation des coefficients
+---
+
+# Interprétation des coefficients
 
 **Exemple**: $\text{logit}(p) = -1 + 0.4x$
 
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
-ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
-    labs(y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+ex_logit +
     geom_segment(x = -10, xend = 0, y = 0.27, yend = 0.27, linetype = "dotted") +
-    geom_segment(x = 0, xend = 0, y = 0, yend = 0.27, linetype = "dotted") +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+    geom_segment(x = 0, xend = 0, y = 0, yend = 0.27, linetype = "dotted")
 ```
 
 - $\beta_0$: $\text{logit}(p)$ si $x = 0$.
+
+--
+
 ```{r}
 invlogit <- function(x) 1/(1+exp(-x))
 invlogit(-1)
 ```
 
-## Interprétation des coefficients
+---
+
+# Interprétation des coefficients
 
 **Exemple**: $\text{logit}(p) = -1 + 0.4x$
 
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
-ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
-    labs(y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+ex_logit +
     geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
-    geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted") +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+    geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted")
 ```
 
 - $p = 0.5$ si $-1 + 0.4x = 0$ (donc $x = 2.5$)
 
-## Interprétation des coefficients
+---
+
+# Interprétation des coefficients
 
 **Exemple**: $\text{logit}(p) = -1 + 0.4x$
 
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
-ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
-    labs(y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+ex_logit + 
     geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted") +
-    geom_segment(x = 0.5, xend = 4.5, y = 0.3, yend = 0.7, color = "blue", size = 1) +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
+    geom_segment(x = 0.5, xend = 4.5, y = 0.3, yend = 0.7, color = "blue", size = 1)
 ```
 
 - $\beta_1/4$ est la pente maximale de $p$ vs. $x$. 
 
 - Si $x$ augmente de 1, $p$ augmente au plus de 0.1.
 
+---
+
+class: inverse, middle
 
 # Régression logistique avec R
 
-## Régression logistique avec R
+---
+
+# Régression logistique avec R
 
 Nous verrons des exemples pour trois types de réponse:
 
 - une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (1er niveau = 0, autres niveaux = 1);
 
-- une variable binomiale décrite par deux colonnes (nombre de succès, nombre d'échecs);
+--
+
+- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences);
+
+--
 
 - une variable indiquant une proportion entre 0 et 1.
 
-## Exemple 1: Concentrations d'arsenic dans des puits au Bangladesh
+---
+
+# Exemple 1: Réponse binaire
+
+Concentrations d'arsenic dans des puits au Bangladesh
 
 - Tableau de données `Wells` du package **carData**
 
@@ -276,318 +387,184 @@ Nous verrons des exemples pour trois types de réponse:
 
 - Quels facteurs déterminent si un ménage change de puits?
 
-## Exemple 1: Concentrations d'arsenic dans des puits au Bangladesh
+---
 
-- Réponse: Changer de puits ou non (`switch`)
+# Coefficient de détermination
 
-- Prédicteurs: concentration d'arsenic (en mutiples de 100 $\mu g/L$), distance du puits sûr le plus près (en m).
+- Le $R^2$ basé sur la somme des écarts carrés n'est pas approprié pour les GLM.
 
-```{r}
-library(carData)
-str(Wells)
-```
+--
 
-## Exploration des données
+- La **déviance** est une mesure d'écart entre les valeurs attendues et les observations calculée à partir de la vraisemblance $L$ du modèle.
 
-Distribution des prédicteurs potentiels lorsque la réponse est positive ou négative
+$$D = -2 \log L$$
 
-```{r, echo = FALSE, fig.dim = c(5, 3)}
-p1 <- ggplot(Wells, aes(x = switch, y = arsenic)) +
-    geom_boxplot()
-p2 <- ggplot(Wells, aes(x = switch, y = distance)) +
-    geom_boxplot()
+--
 
-plot_grid(p1, p2)
-```
+- La déviance est égale au premier terme de l'AIC (sans la pénalité).
 
-## Fonction glm
+- Comme pour l'AIC, la valeur absolue n'est pas interprétable.
 
-Semblable à `lm`, mais il faut aussi spécifier la distribution de la réponse (`family`) et la fonction de lien.
+---
 
-```{r, eval = FALSE}
-mod <- glm(switch ~ arsenic + distance, data = Wells,
-           family = binomial(link = "logit"))
-summary(mod)
-```
-
-- Par défaut, la famille binomiale utilise le lien logit.
-
-## Résultat
-
-```{r, echo = FALSE}
-mod <- glm(switch ~ arsenic + distance, data = Wells,
-           family = binomial(link = "logit"))
-summary(mod)
-```
-
-## Visualiser les prédictions du modèle
-
->- L'effet de chaque prédicteur est non-linéaire et dépend des autres prédicteurs.
-
->- Regardons les prédictions du modèle pour plusieurs combinaisons de concentrations d'arsenic et de distance.
-
-```{r}
-wells_nouv <- expand.grid(arsenic = seq(0.5, 5, 0.5), distance = c(50, 100, 200))
-```
-
->- `expand.grid` génère toutes les combinaisons des valeurs de différentes variables.
-
-## Visualiser les prédictions du modèle
-
-```{r}
-wells_nouv$prob_pred <- predict(mod, wells_nouv, type = "response")
-```
-
-```{r, echo = FALSE}
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance))) +
-    geom_line() +
-    geom_hline(yintercept = 0.5, linetype = "dotted") +
-    scale_color_brewer(palette = "Dark2")
-```
-
-## Intervalles de confiance sur la probabilité moyenne
-
-```{r, echo = FALSE}
-prob_pred <- predict(mod, wells_nouv, type = "response", se.fit = TRUE)
-wells_nouv$prob_se <- prob_pred$se.fit
-
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
-                       fill = as.factor(distance))) +
-    labs(color = "distance", fill = "distance") +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
-    geom_line() +
-    scale_color_brewer(palette = "Dark2") +
-    scale_fill_brewer(palette = "Dark2")
-
-```
-
-## Intervalles de confiance sur la probabilité moyenne
-
-```{r, echo = FALSE, fig.dim = c(3, 2)}
-prob_pred <- predict(mod, wells_nouv, type = "response", se.fit = TRUE)
-wells_nouv$prob_se <- prob_pred$se.fit
-
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
-                       fill = as.factor(distance))) +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
-    geom_line() +
-    scale_color_brewer(palette = "Dark2") +
-    scale_fill_brewer(palette = "Dark2") +
-    theme(legend.position = "none")
-
-```
-
-```{r, eval = FALSE}
-prob_pred <- predict(mod, wells_nouv, type = "response", se.fit = TRUE)
-wells_nouv$prob_se <- prob_pred$se.fit
-
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
-                       fill = as.factor(distance))) +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
-    geom_line() +
-    ...
-```
-
-## Distributions des résidus
-
-Les résidus individuels ne sont pas très utiles pour une réponse binaire.
-
-```{r, echo = FALSE}
-plot(mod, which = 1)
-```
-
-## Graphique de résidus groupés
-
->- Grouper des observations dont les prédictions sont rapprochés et calculer le résidu de la proportion moyenne.
-
->- Fonction `binnedplot` du **arm**.
-
-```{r, message = FALSE, warning = FALSE, eval = FALSE}
-library(arm)
-binnedplot(fitted(mod), residuals(mod, type = "response"))
-```
-
-## Graphique de résidus groupés
-
-```{r, message = FALSE, warning = FALSE, echo = FALSE}
-library(arm)
-binnedplot(fitted(mod), residuals(mod, type = "response"))
-```
-
-- Indique aussi un intervalle de prédiction à 95%.
-
-
-## Coefficient de détermination
-
->- Le $R^2$ basé sur la somme des écarts carrés n'est pas approprié pour les GLM.
-
->- La **déviance** est une mesure d'écart entre les valeurs attendues et les observations calculée à partir de la vraisemblance $L$ du modèle.
-
-$$ D = -2 \log L $$
-
->- La déviance est égale au premier terme de l'AIC (sans la pénalité).
-
->- Comme pour l'AIC, la valeur absolue n'est pas interprétable.
-
-## Pseudo-$R^2$
+# Coefficient de détermination
 
 Deux déviances dans le résultat sommaire de `glm`
 
->- `Residual deviance`: basé sur la vraisemblance du modèle ajusté.
->- `Null deviance`: basé sur la vraisemblance du modèle nul (aucun prédicteur).
+- `Residual deviance`: basé sur la vraisemblance du modèle ajusté.
+- `Null deviance`: basé sur la vraisemblance du modèle nul (aucun prédicteur).
 
-Ces valeurs sont analogues à la somme des carrés résiduels et totaux. On peut donc définir un "pseudo-$R^2$":
+--
 
-```{r}
-pseudo_R2 <- 1 - mod$deviance/mod$null.deviance
-pseudo_R2
-```
+Ces valeurs sont analogues à la somme des carrés résiduels et totaux. On peut donc définir un *pseudo* $R^2$ égal à $1 - D_{res} / D_{null}$.
 
-## $R^2$ de Tjur
+---
+
+# $R^2$ de Tjur
 
 Autre option de $R^2$, égale à la différence entre la prédiction moyenne pour le groupe d'observations avec $y = 1$ et celle du groupe $y = 0$. 
 
-$$ {R^2}_{\text{Tjur}} = \bar{\hat{y}}_{(y=1)} - \bar{\hat{y}}_{(y=0)} $$
+$${R^2}_{\text{Tjur}} = \bar{\hat{y}}_{(y=1)} - \bar{\hat{y}}_{(y=0)}$$
 
-```{r}
-r2_tjur <- mean(mod$fitted.values[mod$y == 1]) - mean(mod$fitted.values[mod$y == 0])
-r2_tjur
-```
-
+---
 
 # Régression logistique binomiale
-
-## Régression logistique binomiale
 
 - Plusieurs réplicats indépendants d'une réponse binaire pour les mêmes prédicteurs.
 
 - Type de données plus fréquent dans un contexte expérimental.
 
-## Exemple 2: Mortalité d'escargots en fonction de l'environnement
+---
+
+# Exemple 2: Mortalité d'escargots
 
 - Tableau de données `snails` du package **MASS**.
+
 - Prédicteurs: espèce d'escargot, température, humidité relative, temps d'exposition.
+
 - Réponse: Nombre d'escargots morts sur un nombre initial de 20 pour chaque combinaison des prédicteurs.
 
-```{r, message = FALSE, warning = FALSE}
+---
+
+# Problème de séparation parfaite
+
+```{r include = FALSE}
 library(MASS)
-str(snails)
 ```
-
-## Exemple 2: Mortalité d'escargots en fonction de l'environnement
-
-Dans ce cas, la réponse a deux colonnes (groupées avec `cbind`).
-
-```{r}
-mod_snails <- glm(cbind(Deaths, N - Deaths) ~ Species + Exposure + Rel.Hum + Temp,
-           data = snails, family = binomial)
-summary(mod_snails)
-```
-
-## Exemple 2: Mortalité d'escargots en fonction de l'environnement 
-
-```{r, echo = FALSE}
-par(mfrow = c(2, 2))
-plot(mod_snails)
-par(mfrow = c(1, 1))
-```
-
-## Problème de séparation parfaite
-
-Essayons d'estimer séparément le taux de mortalité pour chaque semaine.
-
-```{r}
-mod_snails2 <- glm(cbind(Deaths, N - Deaths) ~ as.factor(Exposure), data = snails,
-                   family = binomial)
-summary(mod_snails2)
-```
-
-## Problème de séparation parfaite
 
 ```{r}
 group_by(snails, Exposure) %>%
     summarize(mean(Deaths))
 ```
 
-- L'ordonnée à l'origine `(Intercept)` correspond à logit($p$) pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
+--
+
+- L'ordonnée à l'origine `(Intercept)` correspond à logit( $p$ ) pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
+
+--
 
 - Fonction logit n'atteint jamais $p = 0$. Taux de mortalité trop petit pour être estimé (logit très négatif).
 
-## Problème de séparation parfaite
+---
+
+# Problème de séparation parfaite
 
 - Le coefficient d'une variable qui sépare parfaitement les réponses $y = 1$ et $y = 0$ est mal défini, par exemple:
 
     + une catégorie où toutes les réponses sont 0 ou 1;
     + une variable numérique $x$ avec un seuil $a$ où la réponse est toujours 0 si $x < a$ et 1 si $x > a$.
 
+--
+
 - Il existe des méthodes de réduction de biais (ex.: package **brglm**) qui aident dans ce cas, en pénalisant les coefficients trop élevés.
 
+---
 
-# Régression logistique pour des proportions
-
-## Régression logistique pour des proportions
+# Régression logistique de proportions
 
 - Pour une réponse basée sur un nombre d'individus (ex.: escargots morts ou vivants), la distribution binomiale s'applique directement.
+
+--
 
 - Parfois, la réponse existe seulement sous forme de proportion, par exemple:
 
     + proportion d'un quadrat recouvert par une mousse;
     + fraction d'un peuplement brûlée par un feu.
     
-## Régression logistique pour des proportions    
+---
+    
+# Régression logistique de proportions    
     
 - Le lien logit fonctionne pour transformer un prédicteur linéaire en une proportion entre 0 et 1.
 
+--
+
 - Toutefois, la variance de cette proportion n'est pas connue si elle ne provient pas d'un processus binomial.
+
+--
 
 - Famille *quasibinomiale*:
 
     + pas une vraie distribution
     + estimation des coefficients suit la même formule que la binomiale
     + on estime séparément un paramètre de dispersion $\phi$, pour que la variance des proportions soit égale à $\phi p (1-p)$.
+    
+---
 
-## Régression logistique pour des proportions 
+# Exemple des escargots
 
-Supposons qu'on connaît seulement la proportion d'escargots morts, mais pas le nombre d'individus.
+- Supposons qu'on ne connait que la proportion d'escargots morts par traitement.
 
-```{r, eval = FALSE}
+```{r}
 snails <- mutate(snails, prop = Deaths / N)
 mod_prop <- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
                 data = snails, family = quasibinomial)
+```
+
+---
+
+# Exemple des escargots
+
+.small[
+
+```{r}
 summary(mod_prop)
 ```
 
-## Régression logistique pour des proportions 
+]
 
->- Mêmes coefficients que la régression précédente, mais les erreurs-types ont un peu changé.
+---
 
-```{r, echo = FALSE}
-snails <- mutate(snails, prop = Deaths / N)
-mod_prop <- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-summary(mod_prop)
-```
-
-## Régression logistique pour des proportions 
+# Régression logistique de proportions 
 
 - Nous parlerons davantage du paramètre de dispersion au prochain cours.
 
+--
+
 - Une autre option pour la modélisation de proportions est la régression beta (package **betareg**).
 
-## Résumé
+---
+
+# Résumé
 
 - Un modèle linéaire généralisé est composé d'un prédicteur linéaire (combinaison linéaire des variables explicatives), d'une fonction de lien pour la réponse moyenne, et d'une distribution statistique de la réponse en fonction de sa moyenne.
 
+--
+
 - La régression logistique sert à modéliser des réponses binaires ou des proportions. Elle utilise un lien logit et une distribution binomiale de la réponse.
 
-- La fonction logit transforme une probabilité entre 0 et 1 en un nombre réel entre -$\infty$ et +$\infty$. Un logit négatif correspond à une probabilité en-dessous de 0.5, un logit positif correspond à une probabilité au-dessus de 0.5.
+--
 
-## Résumé
+- La fonction logit transforme une probabilité entre 0 et 1 en un nombre réel entre $-\infty$ et $+\infty$. Un logit négatif correspond à une probabilité en-dessous de 0.5, un logit positif correspond à une probabilité au-dessus de 0.5.
+
+---
+
+# Résumé
 
 - Dans une régression logistique, l'effet d'un prédicteur sur la réponse est non-linéaire et dépend de la valeur des autres prédicteurs. Il est donc utile de visualiser les prédictions du modèle pour différentes combinaisons des variables.
 
+--
+
 - Pour une réponse binaire (0 ou 1), les résidus individuels donnent peu d'information, mais on peut vérifier l'ajustement du modèle à partir des moyennes de groupes de résidus (*binned residuals*).
 
+---

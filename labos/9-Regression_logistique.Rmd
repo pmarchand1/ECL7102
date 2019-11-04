@@ -1,10 +1,10 @@
 ---
 title: "Régression logistique"
-date: "7 novembre 2018"
+date: "6 novembre 2019"
 output: pdf_document
 ---
 
-Ce laboratoire doit être remis le **14 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **13 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Retour sur les données de puits
