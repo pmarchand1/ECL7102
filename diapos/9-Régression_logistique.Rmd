@@ -30,6 +30,19 @@ library(cowplot)
 .small { font-size: 70% }
 ```
 
+# Questions éclair
+
+Q1. Selon les valeurs d'AIC ci-dessous, dans lequel des cas l'ajustement des modèles A et B est-il le plus semblable? 
+
+| | AIC (cas 1)  | AIC (cas 2)  |
+|-|-------------:|-------------:|
+| Modèle A |  850 | 46 |
+| Modèle B |  855 | 49 |
+
+Q2. Pourquoi peut-on obtenir de meilleures prédictions en faisant la moyenne des prédictions de plusieurs modèles, plutôt qu'en se fiant uniquement au meilleur modèle?
+
+---
+
 # Objectifs
 
 - Connaître les composantes d'un modèle linéaire généralisé.
