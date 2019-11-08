@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-11-12" />
+<meta name="date" content="2019-11-11" />
 
 <title>Poisson regression</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Poisson regression</h1>
-<h4 class="date"><em><br/>November 12, 2018</em></h4>
+<h4 class="date"><br/>November 11, 2019</h4>
 
 </div>
 
@@ -277,7 +346,7 @@ dpois(1, 3)</code></pre>
 <p>For the binomial distribution, we had a positive or negative response for each individual (or sample unit) and we were trying to predict the probability of a positive response <span class="math inline">\(p\)</span>.</p>
 <p>In the Poisson distribution, the response is the number of observations per sample unit and we try to predict the mean of that number.</p>
 <p>If we have a binomial response that is rare at the individual level (<span class="math inline">\(p\)</span> is small) and the population <span class="math inline">\(n\)</span> is large, then we can model the number of cases at the population level by a Poisson distribution with <span class="math inline">\(\lambda = np\)</span>.</p>
-<p><strong>Example</strong>: We are studying a birch forest where chaga is present on a small proportion (e.g. ~ 1%) of trees. Instead of counting birch trees affected and unaffected by the chaga, one could only count the number of chaga conks in plots of a given size and model that number with a Poisson distribution.</p>
+<p><strong>Example</strong>: We are studying a birch forest where chaga is present on a small proportion (e.g. ~ 1%) of trees. Instead of counting birch trees affected and unaffected by the chaga, one could only count the number of chaga conks in plots of a given size and model that number with a Poisson distribution.</p>
 </div>
 <div id="comparison-with-the-normal-distribution" class="section level2">
 <h2>Comparison with the normal distribution</h2>
@@ -314,12 +383,12 @@ dpois(1, 3)</code></pre>
 <p>The logarithm is the default link function for Poisson regression. To properly interpret the results of the regression, remember that a logarithmic transformation is applied to the mean response.</p>
 <div id="summary-of-the-generalized-linear-models-seen-in-this-course" class="section level2">
 <h2>Summary of the generalized linear models seen in this course</h2>
-<table style="width:82%;">
+<table>
 <colgroup>
-<col width="11%" />
-<col width="20%" />
+<col width="12%" />
 <col width="25%" />
-<col width="25%" />
+<col width="30%" />
+<col width="30%" />
 </colgroup>
 <thead>
 <tr class="header">

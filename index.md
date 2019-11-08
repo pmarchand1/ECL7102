@@ -12,6 +12,7 @@
 7. [Régression linéaire](notes_cours/7-Régression_linéaire.html) ([PDF](notes_cours/7-Régression_linéaire.pdf) - Données [1](donnees/plant_growth_rate.csv) [2](donnees/compensation.csv))
 8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html) ([PDF](notes_cours/8-Sélection_modèles.pdf))
 9. [Régression logistique](notes_cours/9-Regression_logistique.html) ([PDF](notes_cours/9-Regression_logistique.pdf))
+10. [Régression de Poisson](notes_cours/10-Regression_Poisson.html) ([PDF](notes_cours/10-Regression_Poisson.pdf) - Données [1](donnees/species.csv) [2](donnees/galapagos.csv))
 
 ## Laboratoires
 

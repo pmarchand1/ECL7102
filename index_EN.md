@@ -11,7 +11,8 @@
 6. [Two-way ANOVA and randomized complete blocks](notes_cours/6E-Two_way_ANOVA.html) ([PDF](notes_cours/6E-Two_way_ANOVA.pdf) - Data [1](donnees/growth.csv) [2](donnees/antibiot.csv) [3](donnees/pigs.csv))
 7. [Linear regression](notes_cours/7E-Linear_regression.html) ([PDF](notes_cours/7E-Linear_regression.pdf) - Data [1](donnees/plant_growth_rate.csv) [2](donnees/compensation.csv))
 8. [Model evaluation and selection](notes_cours/8E-Model_selection.html) ([PDF](notes_cours/8E-Model_selection.pdf))
-9. [Logistic regression](notes_cours/9E-Logistic_regression.html) ([PDF](notes_cours/9E-Logistic_regression.pdf))
+9. [Logistic regression](notes_cours/9E-Logistic_regression.html) ([PDF](notes_cours/9E-Logistic_regression.pdf)) 
+10. [Poisson regression](notes_cours/10E-Poisson_regression.html) ([PDF](notes_cours/10E-Poisson_regression.pdf) - Data [1](donnees/species.csv) [2](donnees/galapagos.csv))
 
 ## Labs
 

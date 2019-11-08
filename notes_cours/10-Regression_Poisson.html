@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression de Poisson</h1>
-<h4 class="date"><em><br/>12 novembre 2018</em></h4>
+<h4 class="date"><br/>11 novembre 2019</h4>
 
 </div>
 
@@ -266,7 +335,7 @@ div.tocify {
 # de la distribution de Poisson avec lambda = 3
 ggplot(NULL, aes(x = rpois(10000, 3))) +
     geom_bar()</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <pre class="r"><code># Probabilité d&#39;obtenir y = 1 si lambda = 3
 dpois(1, 3)</code></pre>
 <pre><code>## [1] 0.1493612</code></pre>
@@ -281,7 +350,7 @@ dpois(1, 3)</code></pre>
 <div id="comparaison-avec-la-distribution-normale" class="section level2">
 <h2>Comparaison avec la distribution normale</h2>
 <p>Lorsque <span class="math inline">\(\lambda\)</span> est assez grand, la distribution de Poisson devient plus symétrique et tend vers une distribution normale.</p>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-2-1.png" width="576" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-2-1.png" width="576" /></p>
 <p>Autrement dit, si le nombre moyen est assez grand, le nombre d’observations se comporte presque comme une variable continue suivant une distribution normale avec <span class="math inline">\(\mu = \lambda\)</span>.</p>
 <p>Dans ce cas, la régression linéaire pourrait s’appliquer. Toutefois, il faut se rappeler que les deux modèles font différentes suppositions au sujet de la variance de la réponse. Dans le modèle de régression linéaire, la moyenne <span class="math inline">\(\mu\)</span> dépend des prédicteurs, mais la variance <span class="math inline">\(\sigma^2\)</span> est constante. Dans le modèle de régression de Poisson, la moyenne et la variance dépendent des prédicteurs, parce qu’elles sont toutes deux égales à <span class="math inline">\(\lambda\)</span>. Il faudra donc observer les graphiques de résidus pour déterminer quel modèle est le plus approprié.</p>
 </div>
@@ -294,7 +363,7 @@ dpois(1, 3)</code></pre>
 </ul>
 <p>Le non-respect des suppositions de la distribution de Poisson peut notamment mener à une <strong>surdispersion</strong> des observations, c’est-à-dire qu’on observe plus de valeurs extrêmes que prévu par le modèle de Poisson. Dans le premier exemple ci-dessus, l’agglomération fait qu’on a davantage de placettes avec 0 semis et davantage de placettes avec un grand nombre de semis.</p>
 <p>Dans le graphique ci-dessous, les barres en rouge suivent une distribution de Poisson tandis que celles en bleu représentent un cas de surdispersion. La moyenne de <span class="math inline">\(y\)</span> est de 5 dans les deux cas.</p>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Nous verrons plus loin comment identifier et traiter les cas de surdispersion.</p>
 </div>
 </div>
@@ -305,7 +374,7 @@ dpois(1, 3)</code></pre>
 <p>Puisque <span class="math inline">\(\lambda\)</span> doit être un nombre positif, nous utiliserons la fonction de logarithme comme lien avec le prédicteur linéaire.</p>
 <p><span class="math display">\[ \log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i \]</span></p>
 <p>Selon les propriétés de la fonction log, une valeur de 0 du prédicteur <span class="math inline">\(\eta\)</span> correspond à <span class="math inline">\(\lambda = 1\)</span>, une valeur positive correspond à <span class="math inline">\(\lambda &gt; 1\)</span> et une valeur négative à <span class="math inline">\(\lambda &lt; 1\)</span>.</p>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-4-1.png" width="384" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-4-1.png" width="384" /></p>
 <p>En inversant le log, on obtient une relation exponentielle entre la réponse moyenne <span class="math inline">\(\lambda\)</span> et les prédicteurs:</p>
 <p><span class="math display">\[ \hat{y} = \lambda = e^{\beta_0 + \sum_{i = 1}^m \beta_i x_i} \]</span></p>
 <p>Puisque l’addition de puissances correspond à une multiplication, ce modèle correspond à des effets multiplicatifs des prédicteurs sur la réponse.</p>
@@ -313,12 +382,12 @@ dpois(1, 3)</code></pre>
 <p>Le logarithme est la fonction de lien par défaut pour la régression de Poisson. Pour bien interpréter les résultats de la régression, il faut se rappeler qu’une transformation logarithmique est appliquée à la réponse moyenne.</p>
 <div id="resume-des-modeles-lineaires-generalises-vu-dans-ce-cours" class="section level2">
 <h2>Résumé des modèles linéaires généralisés vu dans ce cours</h2>
-<table style="width:82%;">
+<table>
 <colgroup>
-<col width="11%" />
-<col width="20%" />
+<col width="12%" />
 <col width="25%" />
-<col width="25%" />
+<col width="30%" />
+<col width="30%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -364,10 +433,10 @@ str(sp)</code></pre>
 <p>Regardons la distribution de la réponse en fonction des prédicteurs:</p>
 <pre class="r"><code>ggplot(sp, aes(x = Biomass, y = Species)) +
     geom_point()</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-6-1.png" width="384" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-6-1.png" width="384" /></p>
 <pre class="r"><code>ggplot(sp, aes(x = pH, y = Species)) +
     geom_boxplot()</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-6-2.png" width="384" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-6-2.png" width="384" /></p>
 <p>Sur ces graphiques, nous remarquons que les conditions associées à un plus grand nombre moyen d’espèces (biomasse faible, pH élevé) ont aussi une plus grande variance. Cela suggère qu’une régression de Poisson pourrait être appropriée.</p>
 <p>Comme pour la régression logistique, la régression de Poisson utilise la fonction <code>glm</code>. Il faut spécifier la famille <code>poisson</code> et (optionnellement) le lien log.</p>
 <pre class="r"><code>mod_sp &lt;- glm(Species ~ Biomass + pH, sp, family = poisson(link = &quot;log&quot;))
@@ -398,11 +467,11 @@ summary(mod_sp)</code></pre>
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
 <p>Avant d’interpréter les coefficients, vérifions l’ajustement du modèle avec les graphiques de diagnostic.</p>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Le premier graphique montre une tendance au niveau des résidus (résidus plus négatifs aux extrêmes et plus positifs au centre). Vu le nombre de points, cette tendance n’est probablement pas due au hasard mais représente un effet systématique qui n’est pas pris en compte dans ce modèle.</p>
 <p>Essayons donc un modèle plus complexe ou il y a interaction entre l’effet de la biomasse et du pH.</p>
 <pre class="r"><code>mod_sp_inter &lt;- glm(Species ~ Biomass * pH, sp, family = poisson)</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Sans avoir éliminé complètement la tendance, cet ajustement semble bien meilleur.</p>
 <p><strong>Notes</strong></p>
 <ul>
@@ -443,7 +512,7 @@ summary(mod_sp)</code></pre>
     geom_point() +
     geom_line(aes(y = fitted(mod_sp_inter))) +
     scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="interpretation-des-coefficients" class="section level2">
 <h2>Interprétation des coefficients</h2>
@@ -559,14 +628,14 @@ str(glp)</code></pre>
 ##  $ Scruz    : num  0.6 26.3 58.7 47.4 1.9 ...
 ##  $ Adjacent : num  1.84 572.33 0.78 0.18 903.82 ...</code></pre>
 <p>Supposons que nous voulons déterminer comment le nombre d’espèces de tortues endémiques (celles présentent sur une seule île) varie en fonction des prédicteurs <code>Area</code>, <code>Elevation</code>, <code>Nearest</code> et <code>Adjacent</code>. Puisque chacun de ces prédicteurs est distribué de façon très asymétrique (voir l’exemple ci-dessous pour la superficie), nous utiliserons le logarithme de chaque prédicteur.</p>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
 <p>Nous ajustons le modèle suivant dans R. Notez que la réponse est <code>Endemics</code> et non <code>log(Endemics)</code>, car le lien log est inclus dans le modèle <code>glm</code> avec distribution de Poisson.</p>
 <pre class="r"><code>mod_glp &lt;- glm(Endemics ~ log(Area) + log(Elevation) + log(Nearest) + log(Adjacent), 
                data = glp, family = poisson)</code></pre>
 <p>Les graphiques de diagnostic indiquent la présence de quelques valeurs extrêmes, bien qu’aucune des distances de Cook soit &gt;1.</p>
 <pre class="r"><code>par(mfrow = c(2,2))
 plot(mod_glp)</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Le modèle indique des effets significatifs pour 3 paramètres: le nombre d’espèces endémiques augmente avec la superficie de l’île; il diminue en fonction de la distance à l’île la plus près et de la superficie de cette île la plus près.</p>
 <pre class="r"><code>summary(mod_glp)</code></pre>
