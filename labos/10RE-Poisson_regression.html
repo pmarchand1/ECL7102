@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-11-14" />
+<meta name="date" content="2019-11-13" />
 
 <title>Poisson regression</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,14 +289,14 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Poisson regression</h1>
-<h4 class="date"><em>November 14, 2018</em></h4>
+<h4 class="date">November 13, 2019</h4>
 
 </div>
 
 
 <div id="insect-communities-in-streams" class="section level2">
 <h2>1. Insect communities in streams</h2>
-<p>The <a href="stream_composition.csv" class="uri">stream_composition.csv</a> dataset shows the number of species of five insect orders in 20 streams, as a function of temperature and pH.</p>
+<p>The <a href="stream_composition.csv">stream_composition.csv</a> dataset shows the number of species of five insect orders in 20 streams, as a function of temperature and pH.</p>
 <pre class="r"><code>stream &lt;- read.csv(&quot;stream_composition.csv&quot;)
 str(stream)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    20 obs. of  8 variables:
@@ -291,7 +360,7 @@ chi2 &lt;- sum((stream$stonefly - fitted(mod_plec))^2 / fitted(mod_plec))
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Display the observed number of species and the fitted value curves for pH values ranging from 5.5 to 7.5 and for three temperature values: 15, 17 and 19 degrees C.</li>
 </ol>
-<p><strong>Hint</strong>: With <em>ggplot</em>, to ensure that prediction curves link points with the same value of a numeric variable (e.g. temperature), you must define a group (e.g. <code>group = temperature</code>) in the <code>aes</code> function.</p>
+<p><strong>Hint</strong>: With <em>ggplot</em>, to ensure that prediction curves link points with the same value of a numeric variable (e.g. temperature), you must define a group (e.g. <code>group = temperature</code>) in the <code>aes</code> function.</p>
 <p><strong>Answer</strong></p>
 <pre class="r"><code>stream_nouv &lt;- expand.grid(pH = seq(5.5, 7.5, 0.2), temperature = c(15, 17, 19))
 stream_nouv$pred &lt;- predict(mod_plec, newdata = stream_nouv, type = &quot;response&quot;)
@@ -360,7 +429,7 @@ ggplot(stream, aes(x = pH, y = mayfly, color = temperature, group = temperature)
 <div id="salamanders-in-different-forest-landscapes" class="section level2">
 <h2>2. Salamanders in different forest landscapes</h2>
 <p><img src="../images/Plethodon_elongatus.jpg" /> <small><em>Photo: Bill Bouton</em></small></p>
-<p>The <a href="salamander.csv" class="uri">salamander.csv</a> file contains data from Welsh and Lind (1995) on the number of salamanders (<code>salaman</code>) of species <em>Plethodon elongatus</em> in 47 plots (<code>site</code>), as a function of percentage forest cover (<code>pct_cover</code>) and forest age.</p>
+<p>The <a href="salamander.csv">salamander.csv</a> file contains data from Welsh and Lind (1995) on the number of salamanders (<code>salaman</code>) of species <em>Plethodon elongatus</em> in 47 plots (<code>site</code>), as a function of percentage forest cover (<code>pct_cover</code>) and forest age.</p>
 <pre class="r"><code>sal &lt;- read.csv(&quot;salamander.csv&quot;)
 str(sal)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    47 obs. of  4 variables:

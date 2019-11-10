@@ -1,14 +1,13 @@
 ---
 title: "Régression de Poisson"
-date: "<br/>12 novembre 2018"
+date: "<br/>11 novembre 2019"
 output: 
-    revealjs::revealjs_presentation:
-        self_contained: false
-        lib_dir: libs
-        theme: night
-        transition: none
-        css: styles.css
-        incremental: true
+  xaringan::moon_reader:
+    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
@@ -18,7 +17,11 @@ library(ggplot2)
 library(cowplot)
 ```
 
-## Objectifs
+```{css, echo = FALSE}
+.small { font-size: 70% }
+```
+
+# Objectifs
 
 - Savoir quand et comment utiliser un modèle linéaire généralisé avec distribution de Poisson.
 
@@ -26,12 +29,19 @@ library(cowplot)
 
 - Adapter l'estimation de paramètres et la sélection de modèles au cas de modèles surdispersés.
 
+---
+
+class: inverse, middle
 
 # Distribution de Poisson
 
-## Données de comptage
+---
+
+# Données de comptage
 
 Nombre d'observations d'un certain événement dans une unité d'échantillonnage définie. 
+
+--
 
 Quelques exemples en écologie:
 
@@ -41,33 +51,51 @@ Quelques exemples en écologie:
 
 - le nombre d'individus d'une espèce d'oiseau entendus dans un certain laps de temps lors de différentes visites à un site.
 
-## Propriétés des données de comptage
+---
+
+# Données de comptage
 
 - Ce sont des nombres discrets $\ge$ 0.
 
+--
+
 - Leur distribution est généralement asymétrique, surtout si le nombre moyen est petit.
+
+--
 
 - La variance du nombre d'observations augmente avec la moyenne.
 
-## Distribution de Poisson
+---
 
->- La variable $y$ représente le nombre d'observations d'un événement dans un intervalle donné. 
+# Distribution de Poisson
 
->- Ces événements sont indépendants.
+- La variable $y$ représente le nombre d'observations d'un événement dans un intervalle donné. 
+
+- Ces événements sont indépendants.
+
+--
 
 Dans ce cas, la variable $y$ suit une distribution de Poisson, avec un paramètre $\lambda$ = taux moyen d'observations par intervalle. 
 
 $$ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} $$
 
->- La distribution de Poisson n'a qu'un paramètre: $\lambda$ correspond à la fois à sa moyenne et à sa variance (donc l'écart-type est $\sqrt{\lambda}$). 
+--
 
-## Distribution de Poisson
+- La distribution de Poisson n'a qu'un paramètre: $\lambda$ correspond à la fois à sa moyenne et à sa variance (donc l'écart-type est $\sqrt{\lambda}$). 
+
+---
+
+# Distribution de Poisson
 
 Dans R, la fonction `rpois` génère des valeur suivant une distribution de Poisson et `dpois` donne la probabilité d'une valeur de $y$ donnée.
+
+--
 
 ```{r}
 dpois(1, lambda = 3)
 ```
+
+--
 
 ```{r, fig.dim = c(4, 3), echo = FALSE}
 # Diagramme à barres de 10000 valeurs aléatoires tirées 
@@ -77,21 +105,29 @@ ggplot(NULL, aes(x = rpois(10000, 3))) +
 
 ```
 
-## Comparaison avec la distribution binomiale
+---
+
+# Poisson ou binomiale?
 
 - Binomiale: réponse positive ou négative pour chaque individu (ou unité d'échantillonnage).
 
 - Poisson: nombre d'observations par unité d'échantillonnage.
 
-- Si une réponse binomiale est rare ($p$ faible) et la population $n$ est grande, alors le nombre de cas dans la population suit une distribution de Poisson avec $\lambda = np$. 
+--
+
+- Si une réponse binomiale est rare, donc $p$ faible, et si la population $n$ est grande, alors le nombre de cas dans la population suit une distribution de Poisson avec $\lambda = np$. 
+
+--
 
     + Exemple: Forêt de bouleaux où le chaga est présent sur ~1% des arbres. On peut modéliser le nombre de chagas par placette plutôt que de compter tous les arbres non-affectés.
+    
+---
 
-## Comparaison avec la distribution normale
+# Poisson ou normale?
 
 Lorsque $\lambda$ est assez grand, la distribution de Poisson devient plus symétrique et tend vers une distribution normale.
 
-```{r, echo = FALSE, fig.dim = c(6, 3)}
+```{r, echo = FALSE, fig.dim = c(8, 4)}
 # Distribution de Poisson avec lambda = 5
 p1 <- ggplot(NULL, aes(x = rpois(10000, 5))) +
     labs(x = "y", title = expression(lambda == 5)) +
@@ -105,27 +141,38 @@ p2 <- ggplot(NULL, aes(x = rpois(10000, 20))) +
 plot_grid(p1, p2, nrow = 1)
 ```
 
+---
 
-## Comparaison avec la distribution normale
+# Poisson ou normale?
 
-Toutefois, la régression linéaire et la régression de Poisson ont différentes suppositions sur la variance.
+La régression linéaire et la régression de Poisson supposent différents comportements de la variance.
 
 - Régression linéaire: $\mu$ dépend des prédicteurs, $\sigma^2$ est constante. 
 
 - Régression de Poisson: la moyenne et la variance sont égales à $\lambda$, qui dépend des prédicteurs.
 
-## Indépendance des observations
+---
 
-- La distribution de Poisson suppose l'indépendance des observations individuelles. Toutefois, cette condition est rarement respectée parfaitement. Par exemple:
+# Indépendance des observations
+
+- La distribution de Poisson suppose l'indépendance des observations individuelles. 
+
+--
+
+- Toutefois, cette condition est rarement respectée parfaitement. Par exemple:
 
     + Les patrons de dispersion mènent à une agglomération de semis de la même espèce.
     + La présence d'une espèce influence la probabilité d'en observer d'autres dû aux interactions de compétition, facilitation, etc.
 
+--
+
 - Lorsqu'on observe plus de valeurs extrêmes que prévu par le modèle de Poisson, il y a **surdispersion** des données.
 
-## Surdispersion
+---
 
->- Deux distributions avec moyenne égale à 5: Poisson en rouge, surdispersée en bleu.
+# Surdispersion
+
+- Deux distributions avec moyenne égale à 5: Poisson en rouge, surdispersée en bleu.
 
 ```{r, echo = FALSE}
 ggplot(NULL) +
@@ -136,24 +183,35 @@ ggplot(NULL) +
              fill = "blue", alpha = 0.4)
 ```
 
+---
+
+class: inverse, middle
 
 # Régression de Poisson
 
-## Régression de Poisson
+---
+
+# Régression de Poisson
 
 Modèle linéaire généralisé où la réponse $y$ suit une distribution de Poisson:
 
 $$ y \sim Pois(\lambda) $$
 
+--
+
 Puisque $\lambda$ doit être positif, nous utiliserons la fonction de logarithme comme lien:
 
-$$ \log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i $$
+$$\log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$
 
-## Lien logarithmique
+---
 
-$$ \log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i $$
+# Lien logarithmique
 
-```{r, echo = FALSE, fig.dim = c(4, 3)}
+$$\log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$
+
+--
+
+```{r, echo = FALSE, fig.dim = c(6, 4)}
 ggplot(data.frame(x = seq(-2,2,0.1)), aes(x = x)) +
     labs(x = expression(eta), y = expression(lambda)) +
     stat_function(fun = function(x) exp(x)) +
@@ -162,25 +220,33 @@ ggplot(data.frame(x = seq(-2,2,0.1)), aes(x = x)) +
     scale_y_continuous(limits = c(0, 7.5), breaks = c(0:7), expand = c(0, 0))
 ```
 
-## Lien logarithmique
+---
+
+# Lien logarithmique
 
 Relation exponentielle entre réponse moyenne et les prédicteurs:
 
-$$ \hat{y} = \lambda = e^{\beta_0 + \sum_{i = 1}^m \beta_i x_i} $$
+$$\hat{y} = \lambda = e^{\beta_0 + \sum_{i = 1}^m \beta_i x_i}$$
+
+--
 
 Addition de puissances = effets multiplicatifs des prédicteurs
 
 $$ \hat{y} = e^{\beta_0} e^{\beta_1 x_1} e^{\beta_2 x_2} \ldots $$
 
-## Résumé des modèles linéaires généralisés vu dans ce cours
+---
+
+# Résumé des GLM vu dans ce cours
 
 Modèle | Distribution | Lien par défaut | Inverse du lien |
--------+--------------+-----------------+-----------------|
+-------|--------------|-----------------|-----------------|
 Régression linéaire | Normale: $y \sim N(\mu, \sigma)$ | Identité: $\mu = \eta$ | $\mu = \eta$ |
 Régression logistique | Binomiale: $y \sim B(n, p)$ | Logit: $\log(p/(1-p)) = \eta$ | $p = 1/(1+e^{-\eta})$
 Régression de Poisson | Poisson: $y \sim Pois(\lambda)$ | Log: $\log(\lambda) = \eta$ | $\lambda = e^{\eta}$ | 
 
-## Exemple
+---
+
+# Exemple
 
 Nombre d'espèces de plantes dans différents quadrats en fonction de la biomasse totale du quadrat et du pH codé selon trois niveaux.
 
@@ -191,29 +257,41 @@ sp$pH <- factor(sp$pH, levels = c("low", "mid", "high"))
 str(sp)
 ```
 
-# Surdispersion
+---
 
-## Surdispersion
+# Surdispersion
 
 - Contrairement à la régression linéaire, la variance n'est pas estimée séparément dans la régression de Poisson.
 
+--
+
 - Modélisation des données surdispersées: variance égale à $\phi \lambda$ où $\phi$ est le paramètre de dispersion.
 
-- Sous-dispersion ($\phi < 1$) plus rare, indique que les observations sont réparties de façon plus régulière que prévue.
+--
 
-## Estimation du paramètre de dispersion
+- Sous-dispersion ( $\phi < 1$ ) plus rare, indique que les observations sont réparties de façon plus régulière que prévue.
 
->- Pour vérifier l'ajustement des résidus à la distribution de Poisson, on calcule le $\chi^2$ (comme vu auparavant):
+---
+
+# Estimation du paramètre de dispersion
+
+- Pour vérifier l'ajustement des résidus à la distribution de Poisson, on calcule le $\chi^2$ (comme vu auparavant):
 
 $$ \chi^2 = \sum_{k=1}^n \frac{(y_k - \hat{y_k})^2}{\hat{y_k}} $$ 
 
->- Si les données suivent une distribution de Poisson, la valeur moyenne du $\chi^2$ est égale au nombre de degrés de liberté résiduels $n - p$ ($p$ = nombre de paramètres estimés).
+--
 
->- $\hat{c}$ est un estimateur de $\phi$ basé sur le $\chi^2$:
+- Si les données suivent une distribution de Poisson, la valeur moyenne du $\chi^2$ est égale au nombre de degrés de liberté résiduels $n - p$, où $p$ est le nombre de paramètres estimés.
+
+--
+
+- $\hat{c}$ est un estimateur de $\phi$ basé sur le $\chi^2$:
 
 $$ \hat{c} = \frac{\chi^2}{df_{res}} $$
 
-## Exemple de données surdispersées
+---
+
+# Exemple de données surdispersées
 
 Nombre d'espèces de tortues et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
 
@@ -222,35 +300,55 @@ glp <- read.csv("../donnees/galapagos.csv")
 str(glp)
 ```
 
-## Surdispersion et régression logistique
+---
 
-- Pour une régression logistique binomiale ($y$ succès sur $n$ essais), les réponses peuvent aussi être surdispersées ou sous-dispersées. 
+# Surdispersion et régression logistique
+
+- Pour une régression logistique binomiale, i.e. $y$ succès sur $n$ essais, les réponses peuvent aussi être surdispersées ou sous-dispersées.
+
+--
 
 - On estime le paramètre de dispersion de la même façon (avec le $\chi^2$). Il existe aussi une famille `quasibinomial` pour la fonction `glm`.
 
+--
+
 - La variance d'une réponse binaire est toujours $p(1-p)$; pas de surdispersion ou sous-dispersion possible.
 
-## Surdispersion et sélection de modèles
+---
+
+# Surdispersion et sélection de modèles
 
 Dans le cas de surdispersion, il faut corriger l'AIC pour obtenir le QAIC.
 
 $$ QAIC = -\frac{2 \log L}{\hat{c}} + 2 K $$
 
+--
+
 On peut modifier l'AICc de la même façon pour obtenir le QAICc.
 
 $$ QAICc = -\frac{2 \log L}{\hat{c}} + 2 K \left( \frac{n}{n-K-1} \right) $$
 
+--
+
 - Le $\hat{c}$ compte comme un paramètre pour le calcul de $K$.
 
-## Surdispersion et sélection de modèles
+---
+
+# Surdispersion et sélection de modèles
 
 - Si on compare plusieurs modèles avec le QAIC ou QAICc, il faut utiliser une seule valeur du $\hat{c}$, celle calculée à partir du modèle le plus complexe. 
 
-- Le package *AICcmodavg* contient une fonction `c_hat` pour calculer le paramètre de dispersion. 
+--
+
+- Le package *AICcmodavg* contient une fonction `c_hat` pour calculer le paramètre de dispersion.
+
+--
 
 - Les autres fonctions du package comme `aictab` acceptent l'argument `c.hat` et calculeront le QIAC(c) dans ce cas.
 
-## Exemple
+---
+
+# Exemple
 
 Quatre modèles pour prédire le nombre d'espèces endémiques sur les îles Galapagos.
 
@@ -261,13 +359,17 @@ mod_area_adj <- glm(Endemics ~ log(Area) + log(Adjacent), data = glp, family = p
 mod_comp <- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp, family = poisson)
 ```
 
+--
+
 ```{r}
 library(AICcmodavg)
 disp <- c_hat(mod_comp)
 disp
 ```
 
-## Exemple
+---
+
+# Exemple
 
 Voici le tableau du QAICc pour ces modèles:
 
@@ -277,41 +379,59 @@ mod_list <- list(mod_area = mod_area, mod_area_near = mod_area_near,
 aictab(mod_list, c.hat = disp)
 ```
 
-## Exemple
+---
+
+# Exemple
 
 Comparons le QAICc et l'AICc
+
+.small[
 
 ```{r, echo = FALSE}
 aictab(mod_list, c.hat = disp)
 aictab(mod_list)
 ```
 
+]
+
+---
 
 # Résumé
 
-## Régression de Poisson
-
 - La distribution de Poisson représente le nombre d'observations indépendantes d'un événement dans une unité d'échantillonnage.
+
+--
 
 - Le modèle de régression de Poisson est basé sur une distribution de Poisson de la réponse autour de sa valeur moyenne; cette valeur est reliée au prédicteur linéaire par la fonction de logarithme.
 
+--
+
 - En raison du lien logarithmique, les effets additifs sur l'échelle du prédicteur linéaire deviennent des effets multiplicatifs sur l'échelle de la réponse.
 
-## Régression de Poisson
+---
+
+# Résumé
 
 - Les distributions binomiale et de Poisson supposent une certaine relation entre la valeur moyenne de la réponse et sa variance. La surdispersion correspond à une variance plus grande que prévue par la distribution.
 
-- Si le paramètre de dispersion n'est pas trop élevé ($\hat{c} < 4$), on peut tout de même utiliser le modèle de Poisson (ou binomial) et multiplier les erreurs-types des coefficients par $\sqrt{\hat{c}}$. 
+--
+
+- Si le paramètre de dispersion n'est pas trop élevé ( $\hat{c} < 4$ ), on peut tout de même utiliser le modèle de Poisson (ou binomial) et multiplier les erreurs-types des coefficients par $\sqrt{\hat{c}}$. 
+--
 
 - Pour la sélection de modèles, l'AIC(c) doit être remplacé par le QAIC(c) pour tenir compte de la surdispersion.
 
-## Modélisation statistique: étapes à retenir
+---
+
+# Étapes à retenir pour tous les modèles
 
 - Exploration des données (distribution des variables individuelles et corrélations)
 
 - Choix d'un type de modèle et ajustement du modèle (`lm`, `glm`, etc.)
 
 - Vérification des suppositions du modèle (ex.: graphiques de diagnostic, paramètre de dispersion)
+
+--
 
 - Interprétation des valeurs estimées des coefficients
 

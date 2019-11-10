@@ -1,6 +1,6 @@
 ---
 title: "Régression de Poisson"
-date: "14 novembre 2018"
+date: "13 novembre 2019"
 output: 
     html_document:
         self_contained: false

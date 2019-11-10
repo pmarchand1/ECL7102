@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,14 +288,14 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression de Poisson</h1>
-<h4 class="date"><em>14 novembre 2018</em></h4>
+<h4 class="date">13 novembre 2019</h4>
 
 </div>
 
 
 <div id="communautes-dinsectes-de-cours-deau" class="section level2">
 <h2>1. Communautés d’insectes de cours d’eau</h2>
-<p>Le tableau de données <a href="stream_composition.csv" class="uri">stream_composition.csv</a> indique le nombre d’espèces de cinq ordres d’insectes présentes dans 20 cours d’eau, en fonction de la température et du pH.</p>
+<p>Le tableau de données <a href="stream_composition.csv">stream_composition.csv</a> indique le nombre d’espèces de cinq ordres d’insectes présentes dans 20 cours d’eau, en fonction de la température et du pH.</p>
 <pre class="r"><code>stream &lt;- read.csv(&quot;stream_composition.csv&quot;)
 str(stream)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    20 obs. of  8 variables:
@@ -253,7 +322,7 @@ str(stream)</code></pre>
 <div id="salamandres-dans-differents-paysages-forestiers" class="section level2">
 <h2>2. Salamandres dans différents paysages forestiers</h2>
 <p><img src="../images/Plethodon_elongatus.jpg" /> <small><em>Photo: Bill Bouton</em></small></p>
-<p>Le fichier <a href="salamander.csv" class="uri">salamander.csv</a> contient des données de Welsh et Lind (1995) sur le nombre de salamandres (<code>salaman</code>) de l’espèce <em>Plethodon elongatus</em> dans 47 placettes (<code>site</code>), en fonction du pourcentage de couvert forestier (<code>pct_cover</code>) et de l’âge du peuplement (<code>forest_age</code>).</p>
+<p>Le fichier <a href="salamander.csv">salamander.csv</a> contient des données de Welsh et Lind (1995) sur le nombre de salamandres (<code>salaman</code>) de l’espèce <em>Plethodon elongatus</em> dans 47 placettes (<code>site</code>), en fonction du pourcentage de couvert forestier (<code>pct_cover</code>) et de l’âge du peuplement (<code>forest_age</code>).</p>
 <pre class="r"><code>sal &lt;- read.csv(&quot;salamander.csv&quot;)
 str(sal)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    47 obs. of  4 variables:

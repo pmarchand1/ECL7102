@@ -1,722 +1,389 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Régression de Poisson</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Régression de Poisson</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
 
+# Régression de Poisson
+### <br/>11 novembre 2019
 
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
-
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
-
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
-
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
-
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
+---
 
 
 
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
 
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
+&lt;style type="text/css"&gt;
+.small { font-size: 70% }
+&lt;/style&gt;
 
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
+# Objectifs
 
+- Savoir quand et comment utiliser un modèle linéaire généralisé avec distribution de Poisson.
 
-  </style>
+- Détecter la surdispersion dans un modèle linéaire généralisé.
 
-    <style type="text/css">code{white-space: pre;}</style>
+- Adapter l'estimation de paramètres et la sélection de modèles au cas de modèles surdispersés.
 
-    <link rel="stylesheet" href="styles.css"/>
+---
 
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
+class: inverse, middle
 
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
+# Distribution de Poisson
 
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
+---
 
+# Données de comptage
 
-@media print {
+Nombre d'observations d'un certain événement dans une unité d'échantillonnage définie. 
 
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
+--
 
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
+Quelques exemples en écologie:
 
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
+- le nombre de semis d'une espèce dans plusieurs quadrats;
 
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
+- le nombre d'espèces (richesse spécifique) observé sur différents sites;
 
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
+- le nombre d'individus d'une espèce d'oiseau entendus dans un certain laps de temps lors de différentes visites à un site.
+
+---
+
+# Données de comptage
+
+- Ce sont des nombres discrets `\(\ge\)` 0.
+
+--
+
+- Leur distribution est généralement asymétrique, surtout si le nombre moyen est petit.
+
+--
+
+- La variance du nombre d'observations augmente avec la moyenne.
+
+---
+
+# Distribution de Poisson
+
+- La variable `\(y\)` représente le nombre d'observations d'un événement dans un intervalle donné. 
+
+- Ces événements sont indépendants.
+
+--
+
+Dans ce cas, la variable `\(y\)` suit une distribution de Poisson, avec un paramètre `\(\lambda\)` = taux moyen d'observations par intervalle. 
+
+$$ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} $$
+
+--
+
+- La distribution de Poisson n'a qu'un paramètre: `\(\lambda\)` correspond à la fois à sa moyenne et à sa variance (donc l'écart-type est `\(\sqrt{\lambda}\)`). 
+
+---
+
+# Distribution de Poisson
+
+Dans R, la fonction `rpois` génère des valeur suivant une distribution de Poisson et `dpois` donne la probabilité d'une valeur de `\(y\)` donnée.
+
+--
 
 
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
+```r
+dpois(1, lambda = 3)
+```
 
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
+```
+## [1] 0.1493612
+```
 
-		overflow: visible !important;
-		display: block !important;
+--
 
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
+![](10-Régression_Poisson_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
+---
 
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
+# Poisson ou binomiale?
 
-		opacity: 1 !important;
+- Binomiale: réponse positive ou négative pour chaque individu (ou unité d'échantillonnage).
 
-		page-break-after: always !important;
+- Poisson: nombre d'observations par unité d'échantillonnage.
 
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
+--
 
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
+- Si une réponse binomiale est rare, donc `\(p\)` faible, et si la population `\(n\)` est grande, alors le nombre de cas dans la population suit une distribution de Poisson avec `\(\lambda = np\)`. 
 
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
+--
 
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
+    + Exemple: Forêt de bouleaux où le chaga est présent sur ~1% des arbres. On peut modéliser le nombre de chagas par placette plutôt que de compter tous les arbres non-affectés.
     
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
+---
 
-* {
-	-webkit-print-color-adjust: exact;
-}
+# Poisson ou normale?
 
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
+Lorsque `\(\lambda\)` est assez grand, la distribution de Poisson devient plus symétrique et tend vers une distribution normale.
 
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
+![](10-Régression_Poisson_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
+---
 
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
+# Poisson ou normale?
 
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
+La régression linéaire et la régression de Poisson supposent différents comportements de la variance.
 
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
+- Régression linéaire: `\(\mu\)` dépend des prédicteurs, `\(\sigma^2\)` est constante. 
 
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
+- Régression de Poisson: la moyenne et la variance sont égales à `\(\lambda\)`, qui dépend des prédicteurs.
 
-	overflow: visible;
-	display: block;
+---
 
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
+# Indépendance des observations
 
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
+- La distribution de Poisson suppose l'indépendance des observations individuelles. 
 
-.reveal .slides section {
-	page-break-after: always !important;
+--
 
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
+- Toutefois, cette condition est rarement respectée parfaitement. Par exemple:
 
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
+    + Les patrons de dispersion mènent à une agglomération de semis de la même espèce.
+    + La présence d'une espèce influence la probabilité d'en observer d'autres dû aux interactions de compétition, facilitation, etc.
 
-	opacity: 1 !important;
+--
 
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
+- Lorsqu'on observe plus de valeurs extrêmes que prévu par le modèle de Poisson, il y a **surdispersion** des données.
 
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
+---
 
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
+# Surdispersion
 
-.reveal img {
-	box-shadow: none;
-}
+- Deux distributions avec moyenne égale à 5: Poisson en rouge, surdispersée en bleu.
 
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
+![](10-Régression_Poisson_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
 
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
+---
 
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
+class: inverse, middle
 
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
+# Régression de Poisson
 
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
+---
 
-</script>
+# Régression de Poisson
+
+Modèle linéaire généralisé où la réponse `\(y\)` suit une distribution de Poisson:
+
+$$ y \sim Pois(\lambda) $$
+
+--
+
+Puisque `\(\lambda\)` doit être positif, nous utiliserons la fonction de logarithme comme lien:
+
+`$$\log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$`
+
+---
+
+# Lien logarithmique
+
+`$$\log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$`
+
+--
+
+![](10-Régression_Poisson_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+
+# Lien logarithmique
+
+Relation exponentielle entre réponse moyenne et les prédicteurs:
+
+`$$\hat{y} = \lambda = e^{\beta_0 + \sum_{i = 1}^m \beta_i x_i}$$`
+
+--
+
+Addition de puissances = effets multiplicatifs des prédicteurs
+
+$$ \hat{y} = e^{\beta_0} e^{\beta_1 x_1} e^{\beta_2 x_2} \ldots $$
+
+---
+
+# Résumé des GLM vu dans ce cours
+
+Modèle | Distribution | Lien par défaut | Inverse du lien |
+-------|--------------|-----------------|-----------------|
+Régression linéaire | Normale: `\(y \sim N(\mu, \sigma)\)` | Identité: `\(\mu = \eta\)` | `\(\mu = \eta\)` |
+Régression logistique | Binomiale: `\(y \sim B(n, p)\)` | Logit: `\(\log(p/(1-p)) = \eta\)` | `\(p = 1/(1+e^{-\eta})\)`
+Régression de Poisson | Poisson: `\(y \sim Pois(\lambda)\)` | Log: `\(\log(\lambda) = \eta\)` | `\(\lambda = e^{\eta}\)` | 
+
+---
+
+# Exemple
+
+Nombre d'espèces de plantes dans différents quadrats en fonction de la biomasse totale du quadrat et du pH codé selon trois niveaux.
 
 
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
+```r
+sp &lt;- read.csv("../donnees/species.csv") 
+# Niveaux de pH dans le bon ordre
+sp$pH &lt;- factor(sp$pH, levels = c("low", "mid", "high"))
+str(sp)
+```
 
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">Régression de Poisson</h1>
-    <h3 class="date"><br/>12 novembre 2018</h3>
-</section>
-
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Savoir quand et comment utiliser un modèle linéaire généralisé avec distribution de Poisson.</p></li>
-<li class="fragment"><p>Détecter la surdispersion dans un modèle linéaire généralisé.</p></li>
-<li class="fragment"><p>Adapter l’estimation de paramètres et la sélection de modèles au cas de modèles surdispersés.</p></li>
-</ul>
-</section>
-<section><section id="distribution-de-poisson" class="titleslide slide level1"><h1>Distribution de Poisson</h1></section><section id="donnees-de-comptage" class="slide level2">
-<h2>Données de comptage</h2>
-<p>Nombre d’observations d’un certain événement dans une unité d’échantillonnage définie.</p>
-<p>Quelques exemples en écologie:</p>
-<ul>
-<li class="fragment"><p>le nombre de semis d’une espèce dans plusieurs quadrats;</p></li>
-<li class="fragment"><p>le nombre d’espèces (richesse spécifique) observé sur différents sites;</p></li>
-<li class="fragment"><p>le nombre d’individus d’une espèce d’oiseau entendus dans un certain laps de temps lors de différentes visites à un site.</p></li>
-</ul>
-</section><section id="proprietes-des-donnees-de-comptage" class="slide level2">
-<h2>Propriétés des données de comptage</h2>
-<ul>
-<li class="fragment"><p>Ce sont des nombres discrets <span class="math inline">\(\ge\)</span> 0.</p></li>
-<li class="fragment"><p>Leur distribution est généralement asymétrique, surtout si le nombre moyen est petit.</p></li>
-<li class="fragment"><p>La variance du nombre d’observations augmente avec la moyenne.</p></li>
-</ul>
-</section><section id="distribution-de-poisson-1" class="slide level2">
-<h2>Distribution de Poisson</h2>
-<ul>
-<li>La variable <span class="math inline">\(y\)</span> représente le nombre d’observations d’un événement dans un intervalle donné.</li>
-</ul>
-<ul>
-<li>Ces événements sont indépendants.</li>
-</ul>
-<p>Dans ce cas, la variable <span class="math inline">\(y\)</span> suit une distribution de Poisson, avec un paramètre <span class="math inline">\(\lambda\)</span> = taux moyen d’observations par intervalle.</p>
-<p><span class="math display">\[ P(y | \lambda) = \frac{\lambda^y}{y!} e^{-\lambda} \]</span></p>
-<ul>
-<li>La distribution de Poisson n’a qu’un paramètre: <span class="math inline">\(\lambda\)</span> correspond à la fois à sa moyenne et à sa variance (donc l’écart-type est <span class="math inline">\(\sqrt{\lambda}\)</span>).</li>
-</ul>
-</section><section id="distribution-de-poisson-2" class="slide level2">
-<h2>Distribution de Poisson</h2>
-<p>Dans R, la fonction <code>rpois</code> génère des valeur suivant une distribution de Poisson et <code>dpois</code> donne la probabilité d’une valeur de <span class="math inline">\(y\)</span> donnée.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dpois</span>(<span class="dv">1</span>, <span class="dt">lambda =</span> <span class="dv">3</span>)</code></pre></div>
-<pre><code>## [1] 0.1493612</code></pre>
-<p><img src="10-Régression_Poisson_files/figure-revealjs/unnamed-chunk-2-1.png" width="384" /></p>
-</section><section id="comparaison-avec-la-distribution-binomiale" class="slide level2">
-<h2>Comparaison avec la distribution binomiale</h2>
-<ul>
-<li class="fragment"><p>Binomiale: réponse positive ou négative pour chaque individu (ou unité d’échantillonnage).</p></li>
-<li class="fragment"><p>Poisson: nombre d’observations par unité d’échantillonnage.</p></li>
-<li class="fragment"><p>Si une réponse binomiale est rare (<span class="math inline">\(p\)</span> faible) et la population <span class="math inline">\(n\)</span> est grande, alors le nombre de cas dans la population suit une distribution de Poisson avec <span class="math inline">\(\lambda = np\)</span>.</p>
-<ul>
-<li class="fragment">Exemple: Forêt de bouleaux où le chaga est présent sur ~1% des arbres. On peut modéliser le nombre de chagas par placette plutôt que de compter tous les arbres non-affectés.</li>
-</ul></li>
-</ul>
-</section><section id="comparaison-avec-la-distribution-normale" class="slide level2">
-<h2>Comparaison avec la distribution normale</h2>
-<p>Lorsque <span class="math inline">\(\lambda\)</span> est assez grand, la distribution de Poisson devient plus symétrique et tend vers une distribution normale.</p>
-<p><img src="10-Régression_Poisson_files/figure-revealjs/unnamed-chunk-3-1.png" width="576" /></p>
-</section><section id="comparaison-avec-la-distribution-normale-1" class="slide level2">
-<h2>Comparaison avec la distribution normale</h2>
-<p>Toutefois, la régression linéaire et la régression de Poisson ont différentes suppositions sur la variance.</p>
-<ul>
-<li class="fragment"><p>Régression linéaire: <span class="math inline">\(\mu\)</span> dépend des prédicteurs, <span class="math inline">\(\sigma^2\)</span> est constante.</p></li>
-<li class="fragment"><p>Régression de Poisson: la moyenne et la variance sont égales à <span class="math inline">\(\lambda\)</span>, qui dépend des prédicteurs.</p></li>
-</ul>
-</section><section id="independance-des-observations" class="slide level2">
-<h2>Indépendance des observations</h2>
-<ul>
-<li class="fragment"><p>La distribution de Poisson suppose l’indépendance des observations individuelles. Toutefois, cette condition est rarement respectée parfaitement. Par exemple:</p>
-<ul>
-<li class="fragment">Les patrons de dispersion mènent à une agglomération de semis de la même espèce.</li>
-<li class="fragment">La présence d’une espèce influence la probabilité d’en observer d’autres dû aux interactions de compétition, facilitation, etc.</li>
-</ul></li>
-<li class="fragment"><p>Lorsqu’on observe plus de valeurs extrêmes que prévu par le modèle de Poisson, il y a <strong>surdispersion</strong> des données.</p></li>
-</ul>
-</section><section id="surdispersion" class="slide level2">
-<h2>Surdispersion</h2>
-<ul>
-<li>Deux distributions avec moyenne égale à 5: Poisson en rouge, surdispersée en bleu.</li>
-</ul>
-<p><img src="10-Régression_Poisson_files/figure-revealjs/unnamed-chunk-4-1.png" width="576" /></p>
-</section></section>
-<section><section id="regression-de-poisson" class="titleslide slide level1"><h1>Régression de Poisson</h1></section><section id="regression-de-poisson-1" class="slide level2">
-<h2>Régression de Poisson</h2>
-<p>Modèle linéaire généralisé où la réponse <span class="math inline">\(y\)</span> suit une distribution de Poisson:</p>
-<p><span class="math display">\[ y \sim Pois(\lambda) \]</span></p>
-<p>Puisque <span class="math inline">\(\lambda\)</span> doit être positif, nous utiliserons la fonction de logarithme comme lien:</p>
-<p><span class="math display">\[ \log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i \]</span></p>
-</section><section id="lien-logarithmique" class="slide level2">
-<h2>Lien logarithmique</h2>
-<p><span class="math display">\[ \log{\lambda} = \eta = \beta_0 + \sum_{i = 1}^m \beta_i x_i \]</span></p>
-<p><img src="10-Régression_Poisson_files/figure-revealjs/unnamed-chunk-5-1.png" width="384" /></p>
-</section><section id="lien-logarithmique-1" class="slide level2">
-<h2>Lien logarithmique</h2>
-<p>Relation exponentielle entre réponse moyenne et les prédicteurs:</p>
-<p><span class="math display">\[ \hat{y} = \lambda = e^{\beta_0 + \sum_{i = 1}^m \beta_i x_i} \]</span></p>
-<p>Addition de puissances = effets multiplicatifs des prédicteurs</p>
-<p><span class="math display">\[ \hat{y} = e^{\beta_0} e^{\beta_1 x_1} e^{\beta_2 x_2} \ldots \]</span></p>
-</section><section id="resume-des-modeles-lineaires-generalises-vu-dans-ce-cours" class="slide level2">
-<h2>Résumé des modèles linéaires généralisés vu dans ce cours</h2>
-<table style="width:82%;">
-<colgroup>
-<col style="width: 11%" />
-<col style="width: 20%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Modèle</th>
-<th>Distribution</th>
-<th>Lien par défaut</th>
-<th>Inverse du lien</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Régression linéaire</td>
-<td>Normale: <span class="math inline">\(y \sim N(\mu, \sigma)\)</span></td>
-<td>Identité: <span class="math inline">\(\mu = \eta\)</span></td>
-<td><span class="math inline">\(\mu = \eta\)</span></td>
-</tr>
-<tr class="even">
-<td>Régression logistique</td>
-<td>Binomiale: <span class="math inline">\(y \sim B(n, p)\)</span></td>
-<td>Logit: <span class="math inline">\(\log(p/(1-p)) = \eta\)</span></td>
-<td><span class="math inline">\(p = 1/(1+e^{-\eta})\)</span></td>
-</tr>
-<tr class="odd">
-<td>Régression de Poisson</td>
-<td>Poisson: <span class="math inline">\(y \sim Pois(\lambda)\)</span></td>
-<td>Log: <span class="math inline">\(\log(\lambda) = \eta\)</span></td>
-<td><span class="math inline">\(\lambda = e^{\eta}\)</span></td>
-</tr>
-</tbody>
-</table>
-</section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<p>Nombre d’espèces de plantes dans différents quadrats en fonction de la biomasse totale du quadrat et du pH codé selon trois niveaux.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sp &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/species.csv&quot;</span>) 
-<span class="co"># Niveaux de pH dans le bon ordre</span>
-sp<span class="op">$</span>pH &lt;-<span class="st"> </span><span class="kw">factor</span>(sp<span class="op">$</span>pH, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;low&quot;</span>, <span class="st">&quot;mid&quot;</span>, <span class="st">&quot;high&quot;</span>))
-<span class="kw">str</span>(sp)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    90 obs. of  3 variables:
-##  $ pH     : Factor w/ 3 levels &quot;low&quot;,&quot;mid&quot;,&quot;high&quot;: 3 3 3 3 3 3 3 3 3 3 ...
+```
+## 'data.frame':	90 obs. of  3 variables:
+##  $ pH     : Factor w/ 3 levels "low","mid","high": 3 3 3 3 3 3 3 3 3 3 ...
 ##  $ Biomass: num  0.469 1.731 2.09 3.926 4.367 ...
-##  $ Species: int  30 39 44 35 25 29 23 18 19 12 ...</code></pre>
-</section></section>
-<section><section id="surdispersion-1" class="titleslide slide level1"><h1>Surdispersion</h1></section><section id="surdispersion-2" class="slide level2">
-<h2>Surdispersion</h2>
-<ul>
-<li class="fragment"><p>Contrairement à la régression linéaire, la variance n’est pas estimée séparément dans la régression de Poisson.</p></li>
-<li class="fragment"><p>Modélisation des données surdispersées: variance égale à <span class="math inline">\(\phi \lambda\)</span> où <span class="math inline">\(\phi\)</span> est le paramètre de dispersion.</p></li>
-<li class="fragment"><p>Sous-dispersion (<span class="math inline">\(\phi &lt; 1\)</span>) plus rare, indique que les observations sont réparties de façon plus régulière que prévue.</p></li>
-</ul>
-</section><section id="estimation-du-parametre-de-dispersion" class="slide level2">
-<h2>Estimation du paramètre de dispersion</h2>
-<ul>
-<li>Pour vérifier l’ajustement des résidus à la distribution de Poisson, on calcule le <span class="math inline">\(\chi^2\)</span> (comme vu auparavant):</li>
-</ul>
-<p><span class="math display">\[ \chi^2 = \sum_{k=1}^n \frac{(y_k - \hat{y_k})^2}{\hat{y_k}} \]</span></p>
-<ul>
-<li>Si les données suivent une distribution de Poisson, la valeur moyenne du <span class="math inline">\(\chi^2\)</span> est égale au nombre de degrés de liberté résiduels <span class="math inline">\(n - p\)</span> (<span class="math inline">\(p\)</span> = nombre de paramètres estimés).</li>
-</ul>
-<ul>
-<li><span class="math inline">\(\hat{c}\)</span> est un estimateur de <span class="math inline">\(\phi\)</span> basé sur le <span class="math inline">\(\chi^2\)</span>:</li>
-</ul>
-<p><span class="math display">\[ \hat{c} = \frac{\chi^2}{df_{res}} \]</span></p>
-</section><section id="exemple-de-donnees-surdispersees" class="slide level2">
-<h2>Exemple de données surdispersées</h2>
-<p>Nombre d’espèces de tortues et d’espèces endémiques pour différentes îles de l’archipel des Galapagos.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">glp &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/galapagos.csv&quot;</span>)
-<span class="kw">str</span>(glp)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    30 obs. of  8 variables:
-##  $ Name     : Factor w/ 30 levels &quot;Baltra&quot;,&quot;Bartolome&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ Species: int  30 39 44 35 25 29 23 18 19 12 ...
+```
+
+---
+
+# Surdispersion
+
+- Contrairement à la régression linéaire, la variance n'est pas estimée séparément dans la régression de Poisson.
+
+--
+
+- Modélisation des données surdispersées: variance égale à `\(\phi \lambda\)` où `\(\phi\)` est le paramètre de dispersion.
+
+--
+
+- Sous-dispersion ( `\(\phi &lt; 1\)` ) plus rare, indique que les observations sont réparties de façon plus régulière que prévue.
+
+---
+
+# Estimation du paramètre de dispersion
+
+- Pour vérifier l'ajustement des résidus à la distribution de Poisson, on calcule le `\(\chi^2\)` (comme vu auparavant):
+
+$$ \chi^2 = \sum_{k=1}^n \frac{(y_k - \hat{y_k})^2}{\hat{y_k}} $$ 
+
+--
+
+- Si les données suivent une distribution de Poisson, la valeur moyenne du `\(\chi^2\)` est égale au nombre de degrés de liberté résiduels `\(n - p\)`, où `\(p\)` est le nombre de paramètres estimés.
+
+--
+
+- `\(\hat{c}\)` est un estimateur de `\(\phi\)` basé sur le `\(\chi^2\)`:
+
+$$ \hat{c} = \frac{\chi^2}{df_{res}} $$
+
+---
+
+# Exemple de données surdispersées
+
+Nombre d'espèces de tortues et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
+
+
+```r
+glp &lt;- read.csv("../donnees/galapagos.csv")
+str(glp)
+```
+
+```
+## 'data.frame':	30 obs. of  8 variables:
+##  $ Name     : Factor w/ 30 levels "Baltra","Bartolome",..: 1 2 3 4 5 6 7 8 9 10 ...
 ##  $ Species  : int  58 31 3 25 2 18 24 10 8 2 ...
 ##  $ Endemics : int  23 21 3 9 1 11 0 7 4 2 ...
 ##  $ Area     : num  25.09 1.24 0.21 0.1 0.05 ...
 ##  $ Elevation: int  346 109 114 46 77 119 93 168 71 112 ...
 ##  $ Nearest  : num  0.6 0.6 2.8 1.9 1.9 8 6 34.1 0.4 2.6 ...
 ##  $ Scruz    : num  0.6 26.3 58.7 47.4 1.9 ...
-##  $ Adjacent : num  1.84 572.33 0.78 0.18 903.82 ...</code></pre>
-</section><section id="surdispersion-et-regression-logistique" class="slide level2">
-<h2>Surdispersion et régression logistique</h2>
-<ul>
-<li class="fragment"><p>Pour une régression logistique binomiale (<span class="math inline">\(y\)</span> succès sur <span class="math inline">\(n\)</span> essais), les réponses peuvent aussi être surdispersées ou sous-dispersées.</p></li>
-<li class="fragment"><p>On estime le paramètre de dispersion de la même façon (avec le <span class="math inline">\(\chi^2\)</span>). Il existe aussi une famille <code>quasibinomial</code> pour la fonction <code>glm</code>.</p></li>
-<li class="fragment"><p>La variance d’une réponse binaire est toujours <span class="math inline">\(p(1-p)\)</span>; pas de surdispersion ou sous-dispersion possible.</p></li>
-</ul>
-</section><section id="surdispersion-et-selection-de-modeles" class="slide level2">
-<h2>Surdispersion et sélection de modèles</h2>
-<p>Dans le cas de surdispersion, il faut corriger l’AIC pour obtenir le QAIC.</p>
-<p><span class="math display">\[ QAIC = -\frac{2 \log L}{\hat{c}} + 2 K \]</span></p>
-<p>On peut modifier l’AICc de la même façon pour obtenir le QAICc.</p>
-<p><span class="math display">\[ QAICc = -\frac{2 \log L}{\hat{c}} + 2 K \left( \frac{n}{n-K-1} \right) \]</span></p>
-<ul>
-<li class="fragment">Le <span class="math inline">\(\hat{c}\)</span> compte comme un paramètre pour le calcul de <span class="math inline">\(K\)</span>.</li>
-</ul>
-</section><section id="surdispersion-et-selection-de-modeles-1" class="slide level2">
-<h2>Surdispersion et sélection de modèles</h2>
-<ul>
-<li class="fragment"><p>Si on compare plusieurs modèles avec le QAIC ou QAICc, il faut utiliser une seule valeur du <span class="math inline">\(\hat{c}\)</span>, celle calculée à partir du modèle le plus complexe.</p></li>
-<li class="fragment"><p>Le package <em>AICcmodavg</em> contient une fonction <code>c_hat</code> pour calculer le paramètre de dispersion.</p></li>
-<li class="fragment"><p>Les autres fonctions du package comme <code>aictab</code> acceptent l’argument <code>c.hat</code> et calculeront le QIAC(c) dans ce cas.</p></li>
-</ul>
-</section><section id="exemple-1" class="slide level2">
-<h2>Exemple</h2>
-<p>Quatre modèles pour prédire le nombre d’espèces endémiques sur les îles Galapagos.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_area &lt;-<span class="st"> </span><span class="kw">glm</span>(Endemics <span class="op">~</span><span class="st"> </span><span class="kw">log</span>(Area), <span class="dt">data =</span> glp, <span class="dt">family =</span> poisson)
-mod_area_near &lt;-<span class="st"> </span><span class="kw">glm</span>(Endemics <span class="op">~</span><span class="st"> </span><span class="kw">log</span>(Area) <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(Nearest), <span class="dt">data =</span> glp, <span class="dt">family =</span> poisson)
-mod_area_adj &lt;-<span class="st"> </span><span class="kw">glm</span>(Endemics <span class="op">~</span><span class="st"> </span><span class="kw">log</span>(Area) <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(Adjacent), <span class="dt">data =</span> glp, <span class="dt">family =</span> poisson)
-mod_comp &lt;-<span class="st"> </span><span class="kw">glm</span>(Endemics <span class="op">~</span><span class="st"> </span><span class="kw">log</span>(Area) <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(Nearest) <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(Adjacent), <span class="dt">data =</span> glp, <span class="dt">family =</span> poisson)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(AICcmodavg)
-disp &lt;-<span class="st"> </span><span class="kw">c_hat</span>(mod_comp)
-disp</code></pre></div>
-<pre><code>## &#39;c-hat&#39; 3.56 (method: pearson estimator)</code></pre>
-</section><section id="exemple-2" class="slide level2">
-<h2>Exemple</h2>
-<p>Voici le tableau du QAICc pour ces modèles:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_list &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">mod_area =</span> mod_area, <span class="dt">mod_area_near =</span> mod_area_near, 
-                 <span class="dt">mod_area_adj =</span> mod_area_adj, <span class="dt">mod_comp =</span> mod_comp)
-<span class="kw">aictab</span>(mod_list, <span class="dt">c.hat =</span> disp)</code></pre></div>
-<pre><code>## 
+##  $ Adjacent : num  1.84 572.33 0.78 0.18 903.82 ...
+```
+
+---
+
+# Surdispersion et régression logistique
+
+- Pour une régression logistique binomiale, i.e. `\(y\)` succès sur `\(n\)` essais, les réponses peuvent aussi être surdispersées ou sous-dispersées.
+
+--
+
+- On estime le paramètre de dispersion de la même façon (avec le `\(\chi^2\)`). Il existe aussi une famille `quasibinomial` pour la fonction `glm`.
+
+--
+
+- La variance d'une réponse binaire est toujours `\(p(1-p)\)`; pas de surdispersion ou sous-dispersion possible.
+
+---
+
+# Surdispersion et sélection de modèles
+
+Dans le cas de surdispersion, il faut corriger l'AIC pour obtenir le QAIC.
+
+$$ QAIC = -\frac{2 \log L}{\hat{c}} + 2 K $$
+
+--
+
+On peut modifier l'AICc de la même façon pour obtenir le QAICc.
+
+$$ QAICc = -\frac{2 \log L}{\hat{c}} + 2 K \left( \frac{n}{n-K-1} \right) $$
+
+--
+
+- Le `\(\hat{c}\)` compte comme un paramètre pour le calcul de `\(K\)`.
+
+---
+
+# Surdispersion et sélection de modèles
+
+- Si on compare plusieurs modèles avec le QAIC ou QAICc, il faut utiliser une seule valeur du `\(\hat{c}\)`, celle calculée à partir du modèle le plus complexe. 
+
+--
+
+- Le package *AICcmodavg* contient une fonction `c_hat` pour calculer le paramètre de dispersion.
+
+--
+
+- Les autres fonctions du package comme `aictab` acceptent l'argument `c.hat` et calculeront le QIAC(c) dans ce cas.
+
+---
+
+# Exemple
+
+Quatre modèles pour prédire le nombre d'espèces endémiques sur les îles Galapagos.
+
+
+```r
+mod_area &lt;- glm(Endemics ~ log(Area), data = glp, family = poisson)
+mod_area_near &lt;- glm(Endemics ~ log(Area) + log(Nearest), data = glp, family = poisson)
+mod_area_adj &lt;- glm(Endemics ~ log(Area) + log(Adjacent), data = glp, family = poisson)
+mod_comp &lt;- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp, family = poisson)
+```
+
+--
+
+
+```r
+library(AICcmodavg)
+disp &lt;- c_hat(mod_comp)
+disp
+```
+
+```
+## 'c-hat' 3.56 (method: pearson estimator)
+```
+
+---
+
+# Exemple
+
+Voici le tableau du QAICc pour ces modèles:
+
+
+```r
+mod_list &lt;- list(mod_area = mod_area, mod_area_near = mod_area_near, 
+                 mod_area_adj = mod_area_adj, mod_comp = mod_comp)
+aictab(mod_list, c.hat = disp)
+```
+
+```
+## 
 ## Model selection based on QAICc:
 ## (c-hat estimate = 3.562208)
 ## 
@@ -724,11 +391,20 @@ disp</code></pre></div>
 ## mod_area_adj  4 76.19        0.00    0.42   0.42   -33.30
 ## mod_comp      5 76.68        0.49    0.33   0.75   -32.09
 ## mod_area      3 78.49        2.29    0.13   0.89   -35.78
-## mod_area_near 4 78.82        2.63    0.11   1.00   -34.61</code></pre>
-</section><section id="exemple-3" class="slide level2">
-<h2>Exemple</h2>
-<p>Comparons le QAICc et l’AICc</p>
-<pre><code>## 
+## mod_area_near 4 78.82        2.63    0.11   1.00   -34.61
+```
+
+---
+
+# Exemple
+
+Comparons le QAICc et l'AICc
+
+.small[
+
+
+```
+## 
 ## Model selection based on QAICc:
 ## (c-hat estimate = 3.562208)
 ## 
@@ -736,89 +412,153 @@ disp</code></pre></div>
 ## mod_area_adj  4 76.19        0.00    0.42   0.42   -33.30
 ## mod_comp      5 76.68        0.49    0.33   0.75   -32.09
 ## mod_area      3 78.49        2.29    0.13   0.89   -35.78
-## mod_area_near 4 78.82        2.63    0.11   1.00   -34.61</code></pre>
-<pre><code>## 
+## mod_area_near 4 78.82        2.63    0.11   1.00   -34.61
+```
+
+```
+## 
 ## Model selection based on AICc:
 ## 
 ##               K   AICc Delta_AICc AICcWt Cum.Wt      LL
 ## mod_comp      4 238.23       0.00   0.95   0.95 -114.31
 ## mod_area_adj  3 244.14       5.91   0.05   1.00 -118.61
 ## mod_area_near 3 253.50      15.27   0.00   1.00 -123.29
-## mod_area      2 259.37      21.14   0.00   1.00 -127.46</code></pre>
-</section></section>
-<section><section id="resume" class="titleslide slide level1"><h1>Résumé</h1></section><section id="regression-de-poisson-2" class="slide level2">
-<h2>Régression de Poisson</h2>
-<ul>
-<li class="fragment"><p>La distribution de Poisson représente le nombre d’observations indépendantes d’un événement dans une unité d’échantillonnage.</p></li>
-<li class="fragment"><p>Le modèle de régression de Poisson est basé sur une distribution de Poisson de la réponse autour de sa valeur moyenne; cette valeur est reliée au prédicteur linéaire par la fonction de logarithme.</p></li>
-<li class="fragment"><p>En raison du lien logarithmique, les effets additifs sur l’échelle du prédicteur linéaire deviennent des effets multiplicatifs sur l’échelle de la réponse.</p></li>
-</ul>
-</section><section id="regression-de-poisson-3" class="slide level2">
-<h2>Régression de Poisson</h2>
-<ul>
-<li class="fragment"><p>Les distributions binomiale et de Poisson supposent une certaine relation entre la valeur moyenne de la réponse et sa variance. La surdispersion correspond à une variance plus grande que prévue par la distribution.</p></li>
-<li class="fragment"><p>Si le paramètre de dispersion n’est pas trop élevé (<span class="math inline">\(\hat{c} &lt; 4\)</span>), on peut tout de même utiliser le modèle de Poisson (ou binomial) et multiplier les erreurs-types des coefficients par <span class="math inline">\(\sqrt{\hat{c}}\)</span>.</p></li>
-<li class="fragment"><p>Pour la sélection de modèles, l’AIC(c) doit être remplacé par le QAIC(c) pour tenir compte de la surdispersion.</p></li>
-</ul>
-</section><section id="modelisation-statistique-etapes-a-retenir" class="slide level2">
-<h2>Modélisation statistique: étapes à retenir</h2>
-<ul>
-<li class="fragment"><p>Exploration des données (distribution des variables individuelles et corrélations)</p></li>
-<li class="fragment"><p>Choix d’un type de modèle et ajustement du modèle (<code>lm</code>, <code>glm</code>, etc.)</p></li>
-<li class="fragment"><p>Vérification des suppositions du modèle (ex.: graphiques de diagnostic, paramètre de dispersion)</p></li>
-<li class="fragment"><p>Interprétation des valeurs estimées des coefficients</p></li>
-<li class="fragment"><p>Visualisation des prédictions du modèle</p></li>
-<li class="fragment"><p>Si plusieurs modèles candidats: comparaison, sélection d’un meilleur modèle et/ou prédictions multimodèles</p></li>
-</ul>
-</section></section>
-    </div>
-  </div>
+## mod_area      2 259.37      21.14   0.00   1.00 -127.46
+```
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+]
 
-  <script>
+---
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+# Résumé
 
+- La distribution de Poisson représente le nombre d'observations indépendantes d'un événement dans une unité d'échantillonnage.
 
+--
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+- Le modèle de régression de Poisson est basé sur une distribution de Poisson de la réponse autour de sa valeur moyenne; cette valeur est reliée au prédicteur linéaire par la fonction de logarithme.
+
+--
+
+- En raison du lien logarithmique, les effets additifs sur l'échelle du prédicteur linéaire deviennent des effets multiplicatifs sur l'échelle de la réponse.
+
+---
+
+# Résumé
+
+- Les distributions binomiale et de Poisson supposent une certaine relation entre la valeur moyenne de la réponse et sa variance. La surdispersion correspond à une variance plus grande que prévue par la distribution.
+
+--
+
+- Si le paramètre de dispersion n'est pas trop élevé ( `\(\hat{c} &lt; 4\)` ), on peut tout de même utiliser le modèle de Poisson (ou binomial) et multiplier les erreurs-types des coefficients par `\(\sqrt{\hat{c}}\)`. 
+--
+
+- Pour la sélection de modèles, l'AIC(c) doit être remplacé par le QAIC(c) pour tenir compte de la surdispersion.
+
+---
+
+# Étapes à retenir pour tous les modèles
+
+- Exploration des données (distribution des variables individuelles et corrélations)
+
+- Choix d'un type de modèle et ajustement du modèle (`lm`, `glm`, etc.)
+
+- Vérification des suppositions du modèle (ex.: graphiques de diagnostic, paramètre de dispersion)
+
+--
+
+- Interprétation des valeurs estimées des coefficients
+
+- Visualisation des prédictions du modèle
+
+- Si plusieurs modèles candidats: comparaison, sélection d'un meilleur modèle et/ou prédictions multimodèles
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>
