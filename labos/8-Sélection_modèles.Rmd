@@ -42,7 +42,7 @@ Nous cherchons à prédire la date d'arrivée en Europe (*migDate*, mesurée en 
 
 En théorie, on s'attend à ce que les oiseaux arrivent plus tard si leur site de reproduction est plus nordique (dû au climat et à la distance à parcourir) et s'ils muent au site d'hivernage. On s'attend à ce que les oiseaux arrivent plus tôt si leur site d'hivernage est plus nordique (moins de distance à parcourir) et s'ils nichent dans des cavités existantes.
 
-a) Vérifiez l'ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l'ordonnée à l'origine). Ces résultats sont-ils conforment à ceux attendus en théorie? 
+a) Vérifiez l'ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l'ordonnée à l'origine). Ces résultats sont-ils conformes à ceux attendus en théorie? 
 
 b) Comparez avec l'AICc les modèles incluant les combinaisons suivantes des 4 prédicteurs:
 
