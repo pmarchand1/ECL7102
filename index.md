@@ -13,6 +13,8 @@
 8. [Évaluation et sélection de modèles](notes_cours/8-Sélection_modèles.html) ([PDF](notes_cours/8-Sélection_modèles.pdf))
 9. [Régression logistique](notes_cours/9-Regression_logistique.html) ([PDF](notes_cours/9-Regression_logistique.pdf))
 10. [Régression de Poisson](notes_cours/10-Regression_Poisson.html) ([PDF](notes_cours/10-Regression_Poisson.pdf) - Données [1](donnees/species.csv) [2](donnees/galapagos.csv))
+11. [Modèles mixtes - Partie 1](notes_cours/11-Modeles_mixtes_Partie1.html) ([PDF](notes_cours/11-Modeles_mixtes_Partie1.pdf) - [Données](donnees/rikz.csv))
+
 
 ## Laboratoires
 
@@ -25,3 +27,4 @@
 8. [Sélection de modèles](labos/8-Sélection_modèles.pdf) (Donnéees [1](labos/environment.csv) - [2(a)](labos/migration.csv) - [2(c)](labos/migr_test.csv))
 9. [Régression logistique](labos/9-Regression_logistique.pdf)
 10. [Régression de Poisson](labos/10-Regression_Poisson.html) ([PDF](labos/10-Regression_Poisson.pdf) - Données [1](labos/stream_composition.csv) [2](labos/salamander.csv))
+

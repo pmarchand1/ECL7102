@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Modèles linéaires mixtes, partie 1</h1>
-<h4 class="date"><em><br/>19 novembre 2018</em></h4>
+<h4 class="date"><br/>18 novembre 2019</h4>
 
 </div>
 
@@ -269,7 +338,7 @@ div.tocify {
 </div>
 <div id="exemple-faune-benthique-aux-pays-bas" class="section level2">
 <h2>Exemple: Faune benthique aux Pays-Bas</h2>
-<p>Le jeu de données <a href="../donnees/rikz.csv">rikz.csv</a>, tiré du manuel de Zuur et al. (voir références en bas page), présente des données sur les communautés benthiques de 9 plages des Pays-Bas. La richesse spécifique (<code>Richness</code>) a été mesurée pour 5 sites sur chacune des 9 plages (<code>Beach</code>) pour un total de 45 observations. La variable <code>NAP</code> mesure la position verticale de chaque site par rapport au niveau moyen de la mer, tandis que l’indice d’exposition aux vagues (<code>Exposure</code>) est mesuré à l’échelle de la plage.</p>
+<p>Le jeu de données <a href="../donnees/rikz.csv">rikz.csv</a>, tiré du manuel de Zuur et al. (voir références en bas page), présente des données sur les communautés benthiques de 9 plages des Pays-Bas. La richesse spécifique (<code>Richness</code>) a été mesurée pour 5 sites sur chacune des 9 plages (<code>Beach</code>) pour un total de 45 observations. La variable <code>NAP</code> mesure la position verticale de chaque site par rapport au niveau moyen de la mer, tandis que l’indice d’exposition aux vagues (<code>Exposure</code>) est mesuré à l’échelle de la plage.</p>
 <pre class="r"><code>rikz &lt;- read.csv(&quot;../donnees/rikz.csv&quot;)
 # Corriger la représentation des variables catégorielles
 rikz &lt;- mutate(rikz, Beach = as.factor(Beach), 
@@ -314,11 +383,11 @@ summary(mod1)</code></pre>
 ggplot(rikz, aes(x = NAP, y = srich)) +
     geom_point() +
     geom_line(aes(y = fit1))</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>La régression linéaire suppose que les résidus sont indépendants d’une observation à l’autre. Ce n’est pas le cas ici, puisque les 5 sites d’une même plage sont plus similaires par rapport aux sites de plages différentes.</p>
 <pre class="r"><code>ggplot(rikz, aes(x = Beach, y = residuals(mod1))) +
     geom_point()</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="modele-2-estimation-des-coefficients-pour-chaque-groupe" class="section level3">
 <h3>Modèle 2: Estimation des coefficients pour chaque groupe</h3>
@@ -358,7 +427,7 @@ summary(mod2)</code></pre>
 ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
     geom_point() +
     geom_line(aes(y = fit2))</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Un modèle plus flexible permettrait à l’effet du NAP (la pente de la droite) de varier d’une plage à l’autre, en ajoutant l’interaction entre <code>NAP</code> et <code>Beach</code>.</p>
 <pre class="r"><code>mod2_inter &lt;- lm(srich ~ NAP * Beach, rikz)
 summary(mod2_inter)</code></pre>
@@ -412,7 +481,7 @@ aictab(list(mod1 = mod1, mod2 = mod2, mod2_inter = mod2_inter))</code></pre>
 ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
     geom_point() +
     geom_line(aes(y = fit2i))</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 <div id="modele-3-predicteur-lie-aux-groupes" class="section level3">
 <h3>Modèle 3: Prédicteur lié aux groupes</h3>
@@ -454,13 +523,13 @@ summary(mod3)</code></pre>
 ## Residuals    39 12.4026  0.3180                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>Ici, l’interaction est significative même si les coefficients <code>NAP:Exposure10</code> et <code>NAP:Exposure11</code> du modèle ne le sont pas. Ces coefficients indiquent seulement la différence entre les pentes de <em>srich</em> vs. <em>NAP</em> pour les niveaux d’exposition 10 et 8 (dans le premier cas) ou 11 et 8 (dans le second cas). Il est possible que la différence la plus significative soit entre les niveaux 10 et 11, comme le suggèrent les droites de prédiction.</p>
+<p>Ici, l’interaction est significative même si les coefficients <code>NAP:Exposure10</code> et <code>NAP:Exposure11</code> du modèle ne le sont pas. Ces coefficients indiquent seulement la différence entre les pentes de <em>srich</em> vs. <em>NAP</em> pour les niveaux d’exposition 10 et 8 (dans le premier cas) ou 11 et 8 (dans le second cas). Il est possible que la différence la plus significative soit entre les niveaux 10 et 11, comme le suggèrent les droites de prédiction.</p>
 <pre class="r"><code>rikz$fit3 &lt;- fitted(mod3)
 
 ggplot(rikz, aes(x = NAP, y = srich, color = Exposure)) +
     geom_point() +
     geom_line(aes(y = fit3))</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Par rapport au modèle précédent, cette approche est non seulement plus parcimonieuse (moins de paramètres à ajuster), mais elle nous permet aussi d’expliquer les différences entre plages en fonction de paramètres environnementaux. Nous pourrions donc appliquer les prédictions du modèle à d’autres plages en autant que nous connaissions leur indice d’exposition.</p>
 <p>Dans le cas présent, il semble que l’indice d’exposition explique une bonne partie de la variation entre groupes. Toutefois, comment pourrions-nous inclure des différences qui subsistent entre les groupes après avoir contrôlé l’effet de cet indice?</p>
 <p>Dans un contexte de régression linéaire classique, il n’est pas possible d’inclure à la fois une variable catégorielle indiquant le groupe et un prédicteur défini pour chaque groupe. Dans l’exemple suivant, puisque les différences de richesse moyenne entre plages (après avoir contrôlé l’effet du NAP) sont entièrement prises en compte par le facteur Beach, il ne reste plus rien à expliquer par la variable Exposure.</p>
@@ -535,16 +604,16 @@ summary(mod4_1)</code></pre>
 <p>Créons ensuite un deuxième jeu de données contenant seulement les plages et leur indice d’exposition. Nous utiliserons pour cela la fonction <code>distinct</code> de <em>dplyr</em>, qui extrait les combinaisons uniques des variables spécifiées dans un tableau de données.</p>
 <pre class="r"><code>rikz_beach &lt;- distinct(rikz, Beach, Exposure)
 rikz_beach</code></pre>
-<pre><code>##   Exposure Beach
-## 1       10     1
-## 2        8     2
-## 3       11     3
-## 4       11     4
-## 5       10     5
-## 6       11     6
-## 7       11     7
-## 8       10     8
-## 9       10     9</code></pre>
+<pre><code>##   Beach Exposure
+## 1     1       10
+## 2     2        8
+## 3     3       11
+## 4     4       11
+## 5     5       10
+## 6     6       11
+## 7     7       11
+## 8     8       10
+## 9     9       10</code></pre>
 <p>Nous ajoutons ensuite à ce tableau les coefficients de l’étape 1 qui constituent la réponse à modéliser au niveau de la plage.</p>
 <pre class="r"><code>rikz_beach$coef &lt;- coef(mod4_1)[-1] # Le coefficient 1 est NAP
 
@@ -629,7 +698,7 @@ summary(mmod)</code></pre>
 ## NAP -0.162</code></pre>
 <p>Regardons les différentes composantes de ce résultat. La première ligne indique que le modèle a été ajusté avec la méthode du maximum de vraisemblance restreint (REML, pour <em>restricted maximum likelihood</em>). Sans entrer trop dans les détails, le REML sert à corriger le biais du maximum de vraisemblance lorsque vient le temps d’estimer des variances (effets aléatoires).</p>
 <p>Le bloc d’effets aléatoires (<code>Random effects</code>) contient les estimés pour la variance et l’écart-type de l’ordonnée à l’origine (<span class="math inline">\(\sigma_\alpha\)</span>), ainsi que la variance et l’écart-type résiduel (<span class="math inline">\(\sigma_y\)</span>). Le bloc d’effets fixes indique l’estimé pour la moyenne de l’ordonnée à l’origine (<span class="math inline">\(\mu_\alpha\)</span>) et l’effet du NAP. Le sommaire indique aussi la corrélation estimée entre les deux effets fixes. Une corrélation négative est normale lorsque la valeur moyenne du prédicteur est supérieure à zéro: si on pivote la droite autour de la moyenne de façon à augmenter la pente, la position de l’ordonnée à l’origine descend le long de l’axe des <span class="math inline">\(y\)</span> (voir diagramme ci-dessous).</p>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
 <p>Remarquez que <code>lmer</code> ne fournit pas de valeur <span class="math inline">\(p\)</span> pour les effets estimés, car contrairement au cas d’un modèle linéaire, la distribution exacte de ces estimés n’est pas connue. Nous pouvons néanmoins obtenir des intervalle de confiance approximatifs avec <code>confint</code>.</p>
 <pre class="r"><code>confint(mmod)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
@@ -680,7 +749,7 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
     geom_line(aes(y = fit1), color = &quot;black&quot;, linetype = &quot;dashed&quot;) +
     geom_line(aes(y = fit2), linetype = &quot;dotted&quot;) +
     geom_line(aes(y = fitmm))</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <p>Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu’on s’éloigne de la moyenne (voir par exemple la plage 2 en haut du graphique). En statistique, on parle d’une contraction (<em>shrinkage</em>) des estimés des effets de groupe.</p>
 </div>
 <div id="modele-mixte-comme-compromis-entre-sous-ajustement-et-surajustement" class="section level2">
@@ -692,16 +761,16 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 <h2>Graphiques de diagnostic</h2>
 <p>La fonction <code>plot</code> appliquée à un modèle mixte ne produit qu’un graphique, celui des résidus en fonction des valeurs attendues.</p>
 <pre class="r"><code>plot(mmod)</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <p>Pour reproduire le diagramme quantile-quantile des résidus, nous pouvons appeler les fonctions <code>qqnorm</code> et <code>qqline</code>. Ce graphique montre que les résidus aux extrêmes sont plus grands que ceux prévus par la distribution normale.</p>
 <pre class="r"><code>qqnorm(residuals(mmod))
 qqline(residuals(mmod))</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <p>Dans le modèle mixte, les effets de groupe sont aussi supposés suivre une distribution normale. Nous vérifions cette supposition en réalisant un diagramme quantile-quantile des effets aléatoires (<code>ranef</code>).</p>
 <pre class="r"><code>beach_coef &lt;- ranef(mmod)$Beach
 qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <p>Même avec seulement 9 points, il est évident que les différences au niveau de la plage ne sont pas normalement distribuées.</p>
 <p>Notez que les mesures d’influence des observations comme la distance de Cook ne s’appliquent pas aux modèles mixtes.</p>
 </div>
@@ -757,7 +826,7 @@ summary(mmod_exp)</code></pre>
 <pre class="r"><code>beach_coef &lt;- ranef(mmod_exp)$`Beach`
 qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
 <div id="correlation-intra-classe" class="section level1">
 <h1>Corrélation intra-classe</h1>

@@ -13,6 +13,8 @@
 8. [Model evaluation and selection](notes_cours/8E-Model_selection.html) ([PDF](notes_cours/8E-Model_selection.pdf))
 9. [Logistic regression](notes_cours/9E-Logistic_regression.html) ([PDF](notes_cours/9E-Logistic_regression.pdf)) 
 10. [Poisson regression](notes_cours/10E-Poisson_regression.html) ([PDF](notes_cours/10E-Poisson_regression.pdf) - Data [1](donnees/species.csv) [2](donnees/galapagos.csv))
+11. [Mixed models - Part 1](notes_cours/11E-Mixed_models_Part1.html) ([PDF](notes_cours/11E-Mixed_models_Part1.pdf) - [Data](donnees/rikz.csv))
+
 
 ## Labs
 

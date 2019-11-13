@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-11-19" />
+<meta name="date" content="2019-11-18" />
 
 <title>Linear mixed models, part 1</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Linear mixed models, part 1</h1>
-<h4 class="date"><em><br/>November 19, 2018</em></h4>
+<h4 class="date"><br/>November 18, 2019</h4>
 
 </div>
 
@@ -270,7 +339,7 @@ div.tocify {
 </div>
 <div id="example-benthic-fauna-in-the-netherlands" class="section level2">
 <h2>Example: Benthic fauna in the Netherlands</h2>
-<p>The <a href="../donnees/rikz.csv">rikz.csv</a> dataset, taken from the textbook by Zuur et al. (see references at the bottom of this page), presents data on the benthic communities of 9 beaches in the Netherlands. Species richness was measured for 5 sites on each of the 9 beaches for a total of 45 observations. The <code>NAP</code> variable measures the vertical position of each site relative to mean sea level, while the exposure index (<code>Exposure</code>) is measured at the beach scale.</p>
+<p>The <a href="../donnees/rikz.csv">rikz.csv</a> dataset, taken from the textbook by Zuur et al. (see references at the bottom of this page), presents data on the benthic communities of 9 beaches in the Netherlands. Species richness was measured for 5 sites on each of the 9 beaches for a total of 45 observations. The <code>NAP</code> variable measures the vertical position of each site relative to mean sea level, while the exposure index (<code>Exposure</code>) is measured at the beach scale.</p>
 <pre class="r"><code>rikz &lt;- read.csv(&quot;../donnees/rikz.csv&quot;)
 # Correct the representation of categorical variables
 rikz &lt;- mutate(rikz, Beach = as.factor(Beach), 
@@ -455,7 +524,7 @@ summary(mod3)</code></pre>
 ## Residuals    39 12.4026  0.3180                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>Here, the interaction is significant even if the model’s coefficients for <code>NAP: Exposure10</code> and <code>NAP: Exposure11</code> are not. These coefficients only indicate the difference between the slopes of <em>srich</em> vs. <em>NAP</em> for exposure levels 10 vs. 8 (in the first case) or 11 vs. 8 (in the second case). It is possible that the most significant difference is between 10 and 11, as suggested by the prediction lines.</p>
+<p>Here, the interaction is significant even if the model’s coefficients for <code>NAP: Exposure10</code> and <code>NAP: Exposure11</code> are not. These coefficients only indicate the difference between the slopes of <em>srich</em> vs. <em>NAP</em> for exposure levels 10 vs. 8 (in the first case) or 11 vs. 8 (in the second case). It is possible that the most significant difference is between 10 and 11, as suggested by the prediction lines.</p>
 <pre class="r"><code>rikz$fit3 &lt;- fitted(mod3)
 
 ggplot(rikz, aes(x = NAP, y = srich, color = Exposure)) +
@@ -536,16 +605,16 @@ summary(mod4_1)</code></pre>
 <p>We then create a second dataset containing only the beaches and their exposure index. We use the <code>distinct</code> function of <em>dplyr</em>, which extracts the unique combinations the specified variables from a data frame.</p>
 <pre class="r"><code>rikz_beach &lt;- distinct(rikz, Beach, Exposure)
 rikz_beach</code></pre>
-<pre><code>##   Exposure Beach
-## 1       10     1
-## 2        8     2
-## 3       11     3
-## 4       11     4
-## 5       10     5
-## 6       11     6
-## 7       11     7
-## 8       10     8
-## 9       10     9</code></pre>
+<pre><code>##   Beach Exposure
+## 1     1       10
+## 2     2        8
+## 3     3       11
+## 4     4       11
+## 5     5       10
+## 6     6       11
+## 7     7       11
+## 8     8       10
+## 9     9       10</code></pre>
 <p>We then add to this data frame the beach intercepts obtained at step 1, which is the response we want to model at step 2.</p>
 <pre class="r"><code>rikz_beach$coef &lt;- coef(mod4_1)[-1] # Coefficient 1 is NAP
 

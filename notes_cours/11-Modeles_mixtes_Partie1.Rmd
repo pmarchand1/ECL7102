@@ -1,6 +1,6 @@
 ---
 title: "Modèles linéaires mixtes, partie 1"
-date: "<br/>19 novembre 2018"
+date: "<br/>18 novembre 2019"
 output:
     html_document:
         self_contained: false
