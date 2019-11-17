@@ -29,43 +29,43 @@ library(cowplot)
 
 # Motivation
 
-## Exemple: Croissance de plusieurs espèces dans une forêt
+## Exemple: Croissance de l'épinette blanche sur plusieurs sites
 
-Supposons que vous devez modéliser la croissance des arbres dans une forêt mixte. Vous avez mesuré les variables numériques suivantes sur un échantillon de 100 arbres de différentes espèces dans une parcelle de recherche:
+Supposons que vous devez modéliser la croissance de l'épinette blanche sur plusieurs sites dans une région. Vous avez mesuré les variables numériques suivantes sur un échantillon de 100 arbres, répartis entre les différents sites:
 
 - la croissance annuelle (variable réponse);
 - le diamètre (DHP) ;
 - l'âge;
 - l'indice de compétition (IC, basé sur le nombre et la taille des arbres voisins).
 
-Pour cet exercice, vous pouvez supposer que les variables ont été transformées pour assurer que l'effet de chaque prédicteur soit linéaire, et que la portion aléatoire de la réponse suit une distribution normale.
+(a) Quelle serait l'équation d'un modèle linéaire (du type `y ~ x`) représentant la relation entre la croissance annuelle et les trois prédicteurs?
 
-(a) Quel type de modèle utiliseriez-vous pour représenter la relation entre la croissance annuelle et les trois prédicteurs?
+(b) Si la croissance moyenne dépend du site, comment inclure cet effet dans votre modèle?
 
-(b) Si la croissance moyenne dépend de l'espèce, comment inclure cet effet dans votre modèle?
+(c) Si l'effet du diamètre, de l'âge et de l'IC sur la croissance dépendent du site, comment inclure cela dans votre modèle?
 
-(c) Si l'effet des prédicteurs numériques sur la croissance dépend de l'espèce, comment inclure cet effet dans votre modèle?
+(d) Est-ce que les méthodes proposées en (b) et (c) fonctionnent mieux avec un petit nombre de sites (ex.: 100 arbres répartis sur 3 sites) ou un grand nombre de sites (ex.: 100 arbres répartis sur 20 sites)? Est-ce qu'elles fonctionnent mieux si le nombre d'arbres échantillonné par site est semblable (ex.: 5 épinettes sur chacun des 20 sites) ou variable (ex.: de 2 à 30 épinettes dépendant du site)?
 
-(d) Est-ce que les méthodes proposées en (b) et (c) fonctionnent mieux avec peu d'espèces (ex.: 100 arbres divisés en 2 espèces) ou beaucoup d'espèces (ex.: 100 arbres divisés en 20 espèces)? Est-ce qu'elles fonctionnent mieux si le nombre d'arbres échantillonné par espèce est semblable (ex.: 5 arbres pour chacune des 20 espèces) ou variable (ex.: de 2 à 30 arbres dépendant de l'espèce)?
+(e) Pouvez-vous utiliser ce modèle pour prédire la croissance de l'épinette blanche sur un nouveau site dans la même région?
 
-(e) Pouvez-vous utiliser ce modèle pour prédire la croissance d'une espèce qui n'est pas représentée dans votre échantillon de 100 arbres?
+Supposons maintenant que vous connaissez certaines caractéristiques de chaque site qui pourraient expliquer les différences de croissance entre les sites, par exemple:
 
-Supposons maintenant que vous connaissez certaines caractéristiques de chaque espèce qui pourraient expliquer les différences entre espèces, par exemple:
-
-- le degré de tolérance à l'ombre (variable catégorielle);
-- la surface foliaire spécifique (SFS, variable numérique).
+- la classe de drainage (variable catégorielle);
+- la pente du site (variable numérique).
 
 (a) Comment pouvez-vous inclure ces caractéristiques dans votre modèle?
 
-(b) Est-ce que le modèle proposé en (a) fonctionne mieux avec peu d'espèces ou beaucoup d'espèces?
+(b) Est-ce que le modèle proposé en (a) fonctionne mieux avec plusieurs sites ou peu de sites?
 
-(c) Pouvez-vous utiliser ce modèle pour prédire la croissance d'une espèce qui n'est pas représentée dans votre échantillon de 100 arbres?
+(c) Pouvez-vous utiliser ce modèle pour prédire la croissance sur un nouveau site dans la même région?
 
 Finalement, supposons que vous avez mesuré la croissance et les autres prédicteurs individuels sur les même 100 arbres pour trois années consécutives. 
 
-(a) Comment pourriez-vous ajouter la variation de croissance d'une année à l'autre dans votre modèle? Serait-il utile d'ajouter des variables météorologiques du site (ex.: température moyenne) pour expliquer cette variation interannuelle?
+(a) Comment pourriez-vous inclure la variation de croissance d'une année à l'autre dans votre modèle?
 
-(b) Du point de vue statistique, est-ce que le fait de mesurer les mêmes arbres à chaque année influence l'exactitude des conclusions de la régression?
+(b) S'il y a une station météorologique dans cette région, serait-il utile d'ajouter des variables météo (ex.: température moyenne) pour expliquer cette variation interannuelle?
+
+(c) Du point de vue statistique, est-ce que le fait de mesurer les mêmes arbres à chaque année influence l'exactitude des conclusions de la régression?
 
 ## Exemple: Faune benthique aux Pays-Bas
 
@@ -435,9 +435,9 @@ D'un point de vue pratique, la corrélation intra-classe indique quelle échelle
 
 - Un modèle mixte constitue un compromis entre une régression linéaire qui ignore la structure groupée et une régression qui estime un effet fixe séparé pour chaque groupe. 
 
-- Pour ce faire, le modèle mixte corrige l'estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction). Plus l'échantillon d'un groupe est faible, plus cette correction est importante. Pour cette raison, les modèles mixtes sont particulièrement utiles lorsqu'on a un grand nombre de groupes et peu d'observations dans certains groupes.
+- Pour ce faire, le modèle mixte corrige l'estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction).
 
-- Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l'échelle du groupe. Un modèle mixte peut inclure à la fois l'effet aléatoire des groupes et une variable explicative définie à l'échelle du groupe. 
+- Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l'échelle du groupe. Un modèle mixte peut inclure à la fois l'effet aléatoire des groupes et une variable explicative définie à l'échelle du groupe.
 
 
 # Références

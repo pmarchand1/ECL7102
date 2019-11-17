@@ -303,36 +303,36 @@ div.tocify {
 </div>
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
-<div id="exemple-croissance-de-plusieurs-especes-dans-une-foret" class="section level2">
-<h2>Exemple: Croissance de plusieurs espèces dans une forêt</h2>
-<p>Supposons que vous devez modéliser la croissance des arbres dans une forêt mixte. Vous avez mesuré les variables numériques suivantes sur un échantillon de 100 arbres de différentes espèces dans une parcelle de recherche:</p>
+<div id="exemple-croissance-de-lepinette-blanche-sur-plusieurs-sites" class="section level2">
+<h2>Exemple: Croissance de l’épinette blanche sur plusieurs sites</h2>
+<p>Supposons que vous devez modéliser la croissance de l’épinette blanche sur plusieurs sites dans une région. Vous avez mesuré les variables numériques suivantes sur un échantillon de 100 arbres, répartis entre les différents sites:</p>
 <ul>
 <li>la croissance annuelle (variable réponse);</li>
 <li>le diamètre (DHP) ;</li>
 <li>l’âge;</li>
 <li>l’indice de compétition (IC, basé sur le nombre et la taille des arbres voisins).</li>
 </ul>
-<p>Pour cet exercice, vous pouvez supposer que les variables ont été transformées pour assurer que l’effet de chaque prédicteur soit linéaire, et que la portion aléatoire de la réponse suit une distribution normale.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>Quel type de modèle utiliseriez-vous pour représenter la relation entre la croissance annuelle et les trois prédicteurs?</p></li>
-<li><p>Si la croissance moyenne dépend de l’espèce, comment inclure cet effet dans votre modèle?</p></li>
-<li><p>Si l’effet des prédicteurs numériques sur la croissance dépend de l’espèce, comment inclure cet effet dans votre modèle?</p></li>
-<li><p>Est-ce que les méthodes proposées en (b) et (c) fonctionnent mieux avec peu d’espèces (ex.: 100 arbres divisés en 2 espèces) ou beaucoup d’espèces (ex.: 100 arbres divisés en 20 espèces)? Est-ce qu’elles fonctionnent mieux si le nombre d’arbres échantillonné par espèce est semblable (ex.: 5 arbres pour chacune des 20 espèces) ou variable (ex.: de 2 à 30 arbres dépendant de l’espèce)?</p></li>
-<li><p>Pouvez-vous utiliser ce modèle pour prédire la croissance d’une espèce qui n’est pas représentée dans votre échantillon de 100 arbres?</p></li>
+<li><p>Quelle serait l’équation d’un modèle linéaire (du type <code>y ~ x</code>) représentant la relation entre la croissance annuelle et les trois prédicteurs?</p></li>
+<li><p>Si la croissance moyenne dépend du site, comment inclure cet effet dans votre modèle?</p></li>
+<li><p>Si l’effet du diamètre, de l’âge et de l’IC sur la croissance dépendent du site, comment inclure cela dans votre modèle?</p></li>
+<li><p>Est-ce que les méthodes proposées en (b) et (c) fonctionnent mieux avec un petit nombre de sites (ex.: 100 arbres répartis sur 3 sites) ou un grand nombre de sites (ex.: 100 arbres répartis sur 20 sites)? Est-ce qu’elles fonctionnent mieux si le nombre d’arbres échantillonné par site est semblable (ex.: 5 épinettes sur chacun des 20 sites) ou variable (ex.: de 2 à 30 épinettes dépendant du site)?</p></li>
+<li><p>Pouvez-vous utiliser ce modèle pour prédire la croissance de l’épinette blanche sur un nouveau site dans la même région?</p></li>
 </ol>
-<p>Supposons maintenant que vous connaissez certaines caractéristiques de chaque espèce qui pourraient expliquer les différences entre espèces, par exemple:</p>
+<p>Supposons maintenant que vous connaissez certaines caractéristiques de chaque site qui pourraient expliquer les différences de croissance entre les sites, par exemple:</p>
 <ul>
-<li>le degré de tolérance à l’ombre (variable catégorielle);</li>
-<li>la surface foliaire spécifique (SFS, variable numérique).</li>
+<li>la classe de drainage (variable catégorielle);</li>
+<li>la pente du site (variable numérique).</li>
 </ul>
 <ol style="list-style-type: lower-alpha">
 <li><p>Comment pouvez-vous inclure ces caractéristiques dans votre modèle?</p></li>
-<li><p>Est-ce que le modèle proposé en (a) fonctionne mieux avec peu d’espèces ou beaucoup d’espèces?</p></li>
-<li><p>Pouvez-vous utiliser ce modèle pour prédire la croissance d’une espèce qui n’est pas représentée dans votre échantillon de 100 arbres?</p></li>
+<li><p>Est-ce que le modèle proposé en (a) fonctionne mieux avec plusieurs sites ou peu de sites?</p></li>
+<li><p>Pouvez-vous utiliser ce modèle pour prédire la croissance sur un nouveau site dans la même région?</p></li>
 </ol>
 <p>Finalement, supposons que vous avez mesuré la croissance et les autres prédicteurs individuels sur les même 100 arbres pour trois années consécutives.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>Comment pourriez-vous ajouter la variation de croissance d’une année à l’autre dans votre modèle? Serait-il utile d’ajouter des variables météorologiques du site (ex.: température moyenne) pour expliquer cette variation interannuelle?</p></li>
+<li><p>Comment pourriez-vous inclure la variation de croissance d’une année à l’autre dans votre modèle?</p></li>
+<li><p>S’il y a une station météorologique dans cette région, serait-il utile d’ajouter des variables météo (ex.: température moyenne) pour expliquer cette variation interannuelle?</p></li>
 <li><p>Du point de vue statistique, est-ce que le fait de mesurer les mêmes arbres à chaque année influence l’exactitude des conclusions de la régression?</p></li>
 </ol>
 </div>
@@ -843,7 +843,7 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <li><p>Un modèle linéaire mixte (aussi appelé modèle multi-niveaux) est une extension de la régression linéaire pour des données groupées, où certains des coefficients varient de façon aléatoire d’un groupe à l’autre.</p></li>
 <li><p>Dans ce cours, nous avons vu des exemples où l’ordonnée à l’origine inclut un effet aléatoire. Dans le prochain cours, nous verrons comment ajouter des effets aléatoires à d’autres coefficients.</p></li>
 <li><p>Un modèle mixte constitue un compromis entre une régression linéaire qui ignore la structure groupée et une régression qui estime un effet fixe séparé pour chaque groupe.</p></li>
-<li><p>Pour ce faire, le modèle mixte corrige l’estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction). Plus l’échantillon d’un groupe est faible, plus cette correction est importante. Pour cette raison, les modèles mixtes sont particulièrement utiles lorsqu’on a un grand nombre de groupes et peu d’observations dans certains groupes.</p></li>
+<li><p>Pour ce faire, le modèle mixte corrige l’estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction).</p></li>
 <li><p>Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l’échelle du groupe. Un modèle mixte peut inclure à la fois l’effet aléatoire des groupes et une variable explicative définie à l’échelle du groupe.</p></li>
 </ul>
 </div>

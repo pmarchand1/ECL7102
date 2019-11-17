@@ -1,1317 +1,415 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Modèles linéaires mixtes, partie 1</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Modèles linéaires mixtes, partie 1</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
 
+# Modèles linéaires mixtes, partie 1
+### <br/>18 novembre 2019
 
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
+---
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
 
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
 
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
 
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
+&lt;style type="text/css"&gt;
+.small { font-size: 70% }
+&lt;/style&gt;
 
+# Objectifs
 
+- Appliquer un modèle linéaire mixte à des données groupées.
 
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
+- Expliquer comment un modèle mixte constitue un compromis entre un modèle ignorant l'effet de groupe et un modèle à effets fixes par groupe.
 
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
+- Déterminer les situations où il est le plus bénéfique d'utiliser un modèle mixte.
 
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
+---
 
+class: inverse, middle
 
-  </style>
+# Pourquoi les modèles mixtes?
 
-    <style type="text/css">code{white-space: pre;}</style>
+---
 
-    <link rel="stylesheet" href="styles.css"/>
+# Exemple
 
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
+Richesse spécifique de la communauté benthique sur 45 sites intertidaux de 9 plages aux Pays-Bas.
 
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
 
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
-
-
-@media print {
-
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
-
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
-
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
-
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
-
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
-
-
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
-
-		overflow: visible !important;
-		display: block !important;
-
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
-
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
-    
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
-
-* {
-	-webkit-print-color-adjust: exact;
-}
-
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
-
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
-
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
-
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
-
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
-
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
-
-	overflow: visible;
-	display: block;
-
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
-
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
-
-.reveal .slides section {
-	page-break-after: always !important;
-
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
-
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
-
-	opacity: 1 !important;
-
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
-
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
-
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
-
-.reveal img {
-	box-shadow: none;
-}
-
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
-
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
-
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
-
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
-
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
-
-</script>
-
-
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
-
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">Modèles linéaires mixtes, partie 1</h1>
-    <h3 class="date"><br/>19 novembre 2018</h3>
-</section>
-
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Appliquer un modèle linéaire mixte à des données groupées.</p></li>
-<li class="fragment"><p>Expliquer comment un modèle mixte constitue un compromis entre un modèle ignorant l’effet de groupe et un modèle à effets fixes par groupe.</p></li>
-<li class="fragment"><p>Déterminer les situations où il est le plus bénéfique d’utiliser un modèle mixte.</p></li>
-</ul>
-</section>
-<section><section id="pourquoi-les-modeles-mixtes" class="titleslide slide level1"><h1>Pourquoi les modèles mixtes?</h1></section><section id="exercice" class="slide level2">
-<h2>Exercice</h2>
-<ul>
-<li class="fragment"><p>Objectif: Modéliser la croissance des arbres à partir d’un échantillon de 100 arbres de différentes espèces dans une parcelle de recherche, pour lesquels on a mesuré:</p>
-<ul>
-<li class="fragment">la croissance annuelle (variable réponse);</li>
-<li class="fragment">le diamètre (DHP) ;</li>
-<li class="fragment">l’âge;</li>
-<li class="fragment">l’indice de compétition (IC, basé sur le nombre et la taille des arbres voisins).</li>
-</ul></li>
-<li class="fragment"><p>Vous pouvez supposer que les variables ont été transformées pour obtenir des effets linéaires et que la portion aléatoire de la réponse suit une distribution normale.</p></li>
-</ul>
-</section><section id="exercice---partie-1" class="slide level2">
-<h2>Exercice - Partie 1</h2>
-<table>
-<thead>
-<tr class="header">
-<th>Croissance</th>
-<th>DHP</th>
-<th>Âge</th>
-<th>IC</th>
-<th>Espèce</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-</tr>
-</tbody>
-</table>
-<div style="font-size:16pt">
-<ol type="1">
-<li class="fragment"><p>Quel type de modèle utiliseriez-vous pour relier la croissance au DHP, à l’âge et à l’IC?</p></li>
-<li class="fragment"><p>Si la croissance moyenne dépend de l’espèce, comment inclure cet effet dans votre modèle?</p></li>
-<li class="fragment"><p>Et si l’effet des prédicteurs numériques sur la croissance varie d’une espèce à l’autre?</p></li>
-<li class="fragment"><p>Est-ce que ces modèles fonctionnent mieux si peu d’espèces (ex.: 2) ou beaucoup d’espèces (ex.: 20) sont représentées parmi les 100 arbres? Fonctionnent-ils mieux si le nombre d’arbres échantillonné est semblable d’une espèce à l’autre?</p></li>
-<li class="fragment"><p>Avec ce modèle, pouvez-vous prédire la croissance d’une espèce non présente dans l’échantillon?</p></li>
-</ol>
-</div>
-</section><section id="exercice---partie-2" class="slide level2">
-<h2>Exercice - Partie 2</h2>
-<ul>
-<li class="fragment"><p>Supposons que vous connaissez certaines caractéristiques de chaque espèce qui pourraient expliquer les différences entre espèces, par exemple:</p>
-<ul>
-<li class="fragment">le degré de tolérance à l’ombre (variable catégorielle);</li>
-<li class="fragment">la surface foliaire spécifique (SFS, variable numérique).</li>
-</ul></li>
-</ul>
-</section><section id="exercice---partie-2-1" class="slide level2">
-<h2>Exercice - Partie 2</h2>
-<table>
-<thead>
-<tr class="header">
-<th>Croissance</th>
-<th>DHP</th>
-<th>Âge</th>
-<th>IC</th>
-<th>Espèce</th>
-<th>Ombre</th>
-<th>SFS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-</tr>
-</tbody>
-</table>
-<ol type="1">
-<li class="fragment"><p>Comment pouvez-vous inclure ces caractéristiques dans votre modèle?</p></li>
-<li class="fragment"><p>Est-ce que le modèle proposé fonctionne mieux avec peu d’espèces ou beaucoup d’espèces?</p></li>
-<li class="fragment"><p>Avec ce modèle, pouvez-vous prédire la croissance d’une espèce non présente dans l’échantillon?</p></li>
-</ol>
-</section><section id="exercice---partie-3" class="slide level2">
-<h2>Exercice - Partie 3</h2>
-<p>Finalement, supposons que vous avez mesuré la croissance et les autres prédicteurs individuels sur les mêmes 100 arbres pour trois années consécutives.</p>
-<table>
-<thead>
-<tr class="header">
-<th>ID Arbre</th>
-<th>Année</th>
-<th>Croissance</th>
-<th>DHP</th>
-<th>Âge</th>
-<th>IC</th>
-<th>Espèce</th>
-<th>Ombre</th>
-<th>SFS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-</tr>
-</tbody>
-</table>
-<ol type="1">
-<li class="fragment"><p>Comment pourriez-vous ajouter la variation de croissance d’une année à l’autre dans votre modèle?</p></li>
-<li class="fragment"><p>Serait-il utile d’ajouter des variables météorologiques du site pour expliquer cette variation?</p></li>
-<li class="fragment"><p>Est-ce que le fait de mesurer les mêmes arbres à chaque année influence l’exactitude du modèle?</p></li>
-</ol>
-</section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<p>Richesse spécifique de la communauté benthique sur 45 sites intertidaux de 9 plages aux Pays-Bas.</p>
-<pre><code>##   Sample Richness Exposure    NAP Beach
+```
+##   Sample Richness Exposure    NAP Beach
 ## 1      1       11       10  0.045     1
 ## 2      2       10       10 -1.036     1
 ## 3      3       13       10 -1.336     1
 ## 4      4       11       10  0.616     1
 ## 5      5       10       10 -0.684     1
-## 6      6        8        8  1.190     2</code></pre>
-<ul>
-<li class="fragment"><em>NAP</em>: Position du site par rapport au niveau moyen de la mer.</li>
-<li class="fragment"><em>Exposure</em>: Indice d’exposition de la plage.</li>
-</ul>
-</section><section id="exemple-1" class="slide level2">
-<h2>Exemple</h2>
-<ul>
-<li>Pour pouvoir utiliser un modèle linéaire (plutôt que Poisson), on applique une transformation racine carrée au nombre d’espèces.</li>
-</ul>
-<ul>
-<li>Cette transformation permet généralement d’homogénéiser la variance des données de comptage.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz &lt;-<span class="st"> </span><span class="kw">mutate</span>(rikz, <span class="dt">srich =</span> <span class="kw">sqrt</span>(Richness))</code></pre></div>
-</section><section id="modele-1-ignorer-les-groupes" class="slide level2">
-<h2>Modèle 1: Ignorer les groupes</h2>
-<ul>
-<li>Ce modèle inclut seulement le prédicteur mesuré au niveau du site (<em>NAP</em>).</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod1 &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP, rikz)
-<span class="kw">summary</span>(mod1)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = srich ~ NAP, data = rikz)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.1898 -0.5874 -0.1233  0.2603  2.0089 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   2.3952     0.1241  19.295  &lt; 2e-16 ***
-## NAP          -0.7409     0.1190  -6.224 1.72e-07 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.7851 on 43 degrees of freedom
-## Multiple R-squared:  0.474,  Adjusted R-squared:  0.4617 
-## F-statistic: 38.74 on 1 and 43 DF,  p-value: 1.724e-07</code></pre>
-</section><section id="modele-1-ignorer-les-groupes-1" class="slide level2">
-<h2>Modèle 1: Ignorer les groupes</h2>
-<ul>
-<li>Prédictions du modèle en fonction du NAP.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz<span class="op">$</span>fit1 &lt;-<span class="st"> </span><span class="kw">fitted</span>(mod1)
+## 6      6        8        8  1.190     2
+```
 
-<span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> NAP, <span class="dt">y =</span> srich)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit1))</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-4-1.png" width="576" /></p>
-</section><section id="modele-1-ignorer-les-groupes-2" class="slide level2">
-<h2>Modèle 1: Ignorer les groupes</h2>
-<ul>
-<li>Les résidus ne sont pas indépendants: les observations d’une même plage sont plus semblables.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> Beach, <span class="dt">y =</span> <span class="kw">residuals</span>(mod1))) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>()</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-5-1.png" width="576" /></p>
-</section><section id="modele-2-effet-de-chaque-groupe" class="slide level2">
-<h2>Modèle 2: Effet de chaque groupe</h2>
-<ul>
-<li>L’ajout du facteur <code>Beach</code> au modèle permet d’estimer les différences systématiques de richesse entre les plages.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod2 &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Beach, rikz)
-<span class="kw">summary</span>(mod2)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = srich ~ NAP + Beach, data = rikz)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.58544 -0.28653 -0.06544  0.23657  1.69043 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  2.99457    0.26711  11.211 3.92e-13 ***
-## NAP         -0.66410    0.09655  -6.878 5.49e-08 ***
-## Beach2       0.61544    0.37909   1.623  0.11346    
-## Beach3      -1.21158    0.37491  -3.232  0.00268 ** 
-## Beach4      -1.13596    0.38510  -2.950  0.00564 ** 
-## Beach5      -0.32863    0.38648  -0.850  0.40093    
-## Beach6      -0.90219    0.37835  -2.385  0.02265 *  
-## Beach7      -0.98741    0.39419  -2.505  0.01705 *  
-## Beach8      -0.89080    0.38392  -2.320  0.02628 *  
-## Beach9      -0.79350    0.38561  -2.058  0.04712 *  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.5882 on 35 degrees of freedom
-## Multiple R-squared:  0.7596, Adjusted R-squared:  0.6978 
-## F-statistic: 12.29 on 9 and 35 DF,  p-value: 1.744e-08</code></pre>
-</section><section id="modele-2-effet-de-chaque-groupe-1" class="slide level2">
-<h2>Modèle 2: Effet de chaque groupe</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz<span class="op">$</span>fit2 &lt;-<span class="st"> </span><span class="kw">fitted</span>(mod2)
+- *NAP*: Position du site par rapport au niveau moyen de la mer.
+- *Exposure*: Indice d'exposition de la plage.
 
-<span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> NAP, <span class="dt">y =</span> srich, <span class="dt">color =</span> Beach)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit2))</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-7-1.png" width="576" /></p>
-</section><section id="modele-2-effet-de-chaque-groupe-2" class="slide level2">
-<h2>Modèle 2: Effet de chaque groupe</h2>
-<ul>
-<li>Modèle plus flexible: l’effet du NAP (la pente de la droite) peut varier d’une plage à l’autre.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod2_inter &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">*</span><span class="st"> </span>Beach, rikz)
-<span class="kw">summary</span>(mod2_inter)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = srich ~ NAP * Beach, data = rikz)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.84831 -0.16080 -0.03091  0.14909  0.98737 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  3.28835    0.24259  13.555 1.45e-13 ***
-## NAP         -0.05077    0.28172  -0.180 0.858319    
-## Beach2       0.30239    0.32158   0.940 0.355394    
-## Beach3      -1.50542    0.31542  -4.773 5.61e-05 ***
-## Beach4      -1.56073    0.33715  -4.629 8.25e-05 ***
-## Beach5       0.11078    0.35432   0.313 0.756947    
-## Beach6      -1.25466    0.31812  -3.944 0.000513 ***
-## Beach7      -1.39537    0.41116  -3.394 0.002144 ** 
-## Beach8      -1.17907    0.32697  -3.606 0.001242 ** 
-## Beach9      -0.85912    0.33879  -2.536 0.017314 *  
-## NAP:Beach2  -0.54313    0.36261  -1.498 0.145780    
-## NAP:Beach3  -0.47943    0.37104  -1.292 0.207267    
-## NAP:Beach4  -0.37552    0.35511  -1.057 0.299666    
-## NAP:Beach5  -1.82561    0.38805  -4.705 6.74e-05 ***
-## NAP:Beach6  -0.36229    0.33258  -1.089 0.285636    
-## NAP:Beach7  -0.48212    0.41379  -1.165 0.254155    
-## NAP:Beach8  -0.62429    0.32975  -1.893 0.069089 .  
-## NAP:Beach9  -1.01278    0.35527  -2.851 0.008256 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.4508 on 27 degrees of freedom
-## Multiple R-squared:  0.8911, Adjusted R-squared:  0.8225 
-## F-statistic:    13 on 17 and 27 DF,  p-value: 7.079e-09</code></pre>
-</section><section id="modele-2-effet-de-chaque-groupe-3" class="slide level2">
-<h2>Modèle 2: Effet de chaque groupe</h2>
-<ul>
-<li>Le modèle avec interaction entre le NAP et la plage est surajusté.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(AICcmodavg)
-<span class="kw">aictab</span>(<span class="kw">list</span>(<span class="dt">mod1 =</span> mod1, <span class="dt">mod2 =</span> mod2, <span class="dt">mod2_inter =</span> mod2_inter))</code></pre></div>
-<pre><code>## 
-## Model selection based on AICc:
-## 
-##             K   AICc Delta_AICc AICcWt Cum.Wt     LL
-## mod2       11  98.64       0.00    0.8    0.8 -34.32
-## mod2_inter 19 101.41       2.77    0.2    1.0 -16.50
-## mod1        3 110.47      11.82    0.0    1.0 -51.94</code></pre>
-</section><section id="modele-2-effet-de-chaque-groupe-4" class="slide level2">
-<h2>Modèle 2: Effet de chaque groupe</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz<span class="op">$</span>fit2i &lt;-<span class="st"> </span><span class="kw">fitted</span>(mod2_inter)
+---
 
-<span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> NAP, <span class="dt">y =</span> srich, <span class="dt">color =</span> Beach)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit2i))</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-10-1.png" width="576" /></p>
-</section><section id="modele-3-predicteur-lie-aux-groupes" class="slide level2">
-<h2>Modèle 3: Prédicteur lié aux groupes</h2>
-<ul>
-<li>Plutôt que d’estimer un effet par plage, utiliser une variable pouvant expliquer cette différence entre plages (indice d’exposition).</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod3 &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">*</span><span class="st"> </span>Exposure, rikz)
-<span class="kw">summary</span>(mod3)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = srich ~ NAP * Exposure, data = rikz)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.01561 -0.26022 -0.07632  0.18031  1.62592 
-## 
-## Coefficients:
-##                Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)      3.5907     0.2641  13.597  &lt; 2e-16 ***
-## NAP             -0.5939     0.2856  -2.079  0.04420 *  
-## Exposure10      -1.0101     0.2950  -3.424  0.00146 ** 
-## Exposure11      -1.7375     0.2976  -5.839 8.68e-07 ***
-## NAP:Exposure10  -0.3680     0.3113  -1.182  0.24429    
-## NAP:Exposure11   0.1281     0.3140   0.408  0.68549    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.5639 on 39 degrees of freedom
-## Multiple R-squared:  0.7538, Adjusted R-squared:  0.7223 
-## F-statistic: 23.88 on 5 and 39 DF,  p-value: 6.417e-11</code></pre>
-</section><section id="modele-3-predicteur-lie-aux-groupes-1" class="slide level2">
-<h2>Modèle 3: Prédicteur lié aux groupes</h2>
-<ul>
-<li>Utilisons l’ANOVA pour vérifier si l’interaction est significative.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(mod3)</code></pre></div>
-<pre><code>## Analysis of Variance Table
-## 
-## Response: srich
-##              Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
-## NAP           1 23.8787 23.8787 75.0869 1.255e-10 ***
-## Exposure      2 11.6166  5.8083 18.2643 2.527e-06 ***
-## NAP:Exposure  2  2.4831  1.2416  3.9041   0.02848 *  
-## Residuals    39 12.4026  0.3180                      
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-</section><section id="modele-3-predicteur-lie-aux-groupes-2" class="slide level2">
-<h2>Modèle 3: Prédicteur lié aux groupes</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz<span class="op">$</span>fit3 &lt;-<span class="st"> </span><span class="kw">fitted</span>(mod3)
+# Comparaison des modèles
 
-<span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> NAP, <span class="dt">y =</span> srich, <span class="dt">color =</span> Exposure)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit3))</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-13-1.png" width="576" /></p>
-</section><section id="modele-3-predicteur-lie-aux-groupes-3" class="slide level2">
-<h2>Modèle 3: Prédicteur lié aux groupes</h2>
-<ul>
-<li class="fragment">Par rapport au modèle précédent, cette approche est plus parcimonieuse (moins de paramètres à ajuster) et permet d’expliquer les différences entre plages en fonction de paramètres environnementaux.</li>
-<li class="fragment"><p>On peut donc appliquer les prédictions du modèle à d’autres plages en autant qu’on connaisse leur indice d’exposition.</p></li>
-<li class="fragment"><p>Une régression linéaire classique ne peut inclure à la fois une variable catégorielle indiquant le groupe et un prédicteur défini pour chaque groupe.</p></li>
-</ul>
-</section><section id="combiner-les-modeles-2-et-3" class="slide level2">
-<h2>Combiner les modèles 2 et 3</h2>
-<ul>
-<li>Le facteur Beach contient les différences entre plages, il ne reste rien à expliquer avec Exposure.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_exp_beach &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Beach <span class="op">+</span><span class="st"> </span>Exposure, rikz)
-<span class="kw">summary</span>(mod_exp_beach)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = srich ~ NAP + Beach + Exposure, data = rikz)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.58544 -0.28653 -0.06544  0.23657  1.69043 
-## 
-## Coefficients: (2 not defined because of singularities)
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  2.99457    0.26711  11.211 3.92e-13 ***
-## NAP         -0.66410    0.09655  -6.878 5.49e-08 ***
-## Beach2       0.61544    0.37909   1.623  0.11346    
-## Beach3      -1.21158    0.37491  -3.232  0.00268 ** 
-## Beach4      -1.13596    0.38510  -2.950  0.00564 ** 
-## Beach5      -0.32863    0.38648  -0.850  0.40093    
-## Beach6      -0.90219    0.37835  -2.385  0.02265 *  
-## Beach7      -0.98741    0.39419  -2.505  0.01705 *  
-## Beach8      -0.89080    0.38392  -2.320  0.02628 *  
-## Beach9      -0.79350    0.38561  -2.058  0.04712 *  
-## Exposure10        NA         NA      NA       NA    
-## Exposure11        NA         NA      NA       NA    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.5882 on 35 degrees of freedom
-## Multiple R-squared:  0.7596, Adjusted R-squared:  0.6978 
-## F-statistic: 12.29 on 9 and 35 DF,  p-value: 1.744e-08</code></pre>
-</section><section id="combiner-les-modeles-2-et-3-1" class="slide level2">
-<h2>Combiner les modèles 2 et 3</h2>
-<ul>
-<li>Si on essayait de modéliser une variation de la pente de <code>srich ~ NAP</code> en fonction de l’indice d’exposition et de la plage, ce modèle serait équivalent au modèle 2 avec interaction.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_exp_beach &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">*</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>NAP <span class="op">*</span><span class="st"> </span>Beach , rikz)
-<span class="kw">all.equal</span>(<span class="kw">fitted</span>(mod_exp_beach), <span class="kw">fitted</span>(mod2_inter)) </code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-</section><section id="modele-4-modele-lineaire-en-deux-etapes" class="slide level2">
-<h2>Modèle 4: Modèle linéaire en deux étapes</h2>
-<p>D’abord estimer les différences de richesse entre plages à partir des données des sites, puis modéliser l’effet des plages en fonction de l’indice d’exposition.</p>
-<ul>
-<li>Étape 1: Observation <span class="math inline">\(k\)</span> de la plage <span class="math inline">\(j\)</span></li>
-</ul>
-<p><span class="math display">\[ y_k \sim N(\alpha_{j[k]} + \beta x_{1k}, \sigma_y) \]</span></p>
-<ul>
-<li>Étape 2: Ordonnée à l’origine de la plage <span class="math inline">\(j\)</span></li>
-</ul>
-<p><span class="math display">\[ \alpha_j \sim N(\gamma_0 + \gamma_1 u_{1j}, \sigma_\alpha) \]</span></p>
-</section><section id="modele-4---etape-1" class="slide level2">
-<h2>Modèle 4 - Étape 1</h2>
-<ul>
-<li>On ajoute <code>- 1</code> à la formule pour fixer l’ordonnée à l’origine à 0.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod4_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Beach <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, rikz)
-<span class="kw">summary</span>(mod4_<span class="dv">1</span>)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = srich ~ NAP + Beach - 1, data = rikz)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -1.58544 -0.28653 -0.06544  0.23657  1.69043 
-## 
-## Coefficients:
-##        Estimate Std. Error t value Pr(&gt;|t|)    
-## NAP    -0.66410    0.09655  -6.878 5.49e-08 ***
-## Beach1  2.99457    0.26711  11.211 3.92e-13 ***
-## Beach2  3.61000    0.26440  13.653 1.39e-15 ***
-## Beach3  1.78298    0.26307   6.778 7.41e-08 ***
-## Beach4  1.85861    0.26839   6.925 4.78e-08 ***
-## Beach5  2.66594    0.26948   9.893 1.12e-11 ***
-## Beach6  2.09238    0.26404   7.924 2.55e-09 ***
-## Beach7  2.00715    0.27616   7.268 1.73e-08 ***
-## Beach8  2.10377    0.26751   7.864 3.04e-09 ***
-## Beach9  2.20106    0.26879   8.189 1.20e-09 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.5882 on 35 degrees of freedom
-## Multiple R-squared:  0.9527, Adjusted R-squared:  0.9392 
-## F-statistic: 70.48 on 10 and 35 DF,  p-value: &lt; 2.2e-16</code></pre>
-</section><section id="modele-4---etape-2" class="slide level2">
-<h2>Modèle 4 - Étape 2</h2>
-<ul>
-<li>On crée un jeu de données avec une rangée par plage et on ajoute les effets de plage estimés à l’étape 1.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz_beach &lt;-<span class="st"> </span><span class="kw">distinct</span>(rikz, Beach, Exposure)
-rikz_beach<span class="op">$</span>coef &lt;-<span class="st"> </span><span class="kw">coef</span>(mod4_<span class="dv">1</span>)[<span class="op">-</span><span class="dv">1</span>] <span class="co"># Le coefficient 1 est NAP</span>
-rikz_beach</code></pre></div>
-<pre><code>##   Exposure Beach     coef
-## 1       10     1 2.994566
-## 2        8     2 3.610002
-## 3       11     3 1.782984
-## 4       11     4 1.858608
-## 5       10     5 2.665938
-## 6       11     6 2.092379
-## 7       11     7 2.007155
-## 8       10     8 2.103766
-## 9       10     9 2.201064</code></pre>
-</section><section id="modele-4---etape-2-1" class="slide level2">
-<h2>Modèle 4 - Étape 2</h2>
-<ul>
-<li>Modèle de l’effet de plage (coefficient de l’étape 1) en fonction de l’indice d’exposition.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod4_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(coef <span class="op">~</span><span class="st"> </span>Exposure, rikz_beach)
-<span class="kw">summary</span>(mod4_<span class="dv">2</span>)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = coef ~ Exposure, data = rikz_beach)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.3876 -0.1523  0.0000  0.1571  0.5032 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   3.6100     0.3101  11.640 2.42e-05 ***
-## Exposure10   -1.1187     0.3467  -3.226  0.01800 *  
-## Exposure11   -1.6747     0.3467  -4.830  0.00291 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.3101 on 6 degrees of freedom
-## Multiple R-squared:  0.803,  Adjusted R-squared:  0.7373 
-## F-statistic: 12.23 on 2 and 6 DF,  p-value: 0.007645</code></pre>
-</section><section id="modele-4" class="slide level2">
-<h2>Modèle 4</h2>
-<ul>
-<li class="fragment"><p>Cette approche traite chaque plage comme une seule observation à la deuxième étape.</p></li>
-<li class="fragment"><p>Si le nombre d’échantillons différait d’une plage à l’autre, ce modèle sous-représenterait les plages mieux échantillonnés.</p></li>
-</ul>
-</section></section>
-<section><section id="modeles-lineaires-mixtes" class="titleslide slide level1"><h1>Modèles linéaires mixtes</h1></section><section id="modeles-lineaires-mixtes-1" class="slide level2">
-<h2>Modèles linéaires mixtes</h2>
-<ul>
-<li class="fragment"><p>Ces modèles sont semblables à la régression en deux étapes que nous avons effectuée, mais les deux étapes sont réalisées simultanément.</p></li>
-<li class="fragment"><p>Ces modèles sont surtout utiles pour les cas suivants:</p>
-<ul>
-<li class="fragment">données groupées ou hiérarchisées (ex.: région, site, placette);</li>
-<li class="fragment">variables explicatives définies à plusieurs niveaux (individu et groupe);</li>
-<li class="fragment">beaucoup de groupes et/ou peu d’observations par groupe;</li>
-<li class="fragment">besoin d’estimer la variation entre groupes;</li>
-<li class="fragment">besoin de généraliser les résultats à des groupes non observés.</li>
-</ul></li>
-</ul>
-</section><section id="modeles-lineaires-mixtes-2" class="slide level2">
-<h2>Modèles linéaires mixtes</h2>
-<ul>
-<li class="fragment"><p>Un modèle linéaire mixte est une régression linéaire dont un ou plusieurs des coefficients varient d’un groupe d’observations à une autre, <em>et où cette variation est modélisée par une distribution statistique</em>.</p></li>
-<li class="fragment"><p>Ils sont aussi connus sous le nom de modèles <em>hiérarchiques</em> ou <em>multi-niveaux</em>, car ils modélisent la variation à au moins deux niveaux (observation individuelle et groupe).</p></li>
-<li class="fragment"><p>Dans ce cours-ci, nous traiterons des modèles mixtes où seule l’ordonnée à l’origine varie par groupe.</p></li>
-</ul>
-</section><section id="representation-mathematique" class="slide level2">
-<h2>Représentation mathématique</h2>
-<ul>
-<li><span class="math inline">\(\hat{y_k}\)</span> dépend des prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, etc., avec une ordonnée à l’origine spécifique au groupe <span class="math inline">\(j\)</span> qui contient l’observation <span class="math inline">\(k\)</span>.</li>
-</ul>
-<p><span class="math display">\[ \hat{y_k} = \alpha_{j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + ...\]</span></p>
-<ul>
-<li>Comme pour le modèle de régression linéaire, <span class="math inline">\(y_k\)</span> suit une distribution normale.</li>
-</ul>
-<p><span class="math display">\[ y_k \sim N(\hat{y_k}, \sigma_y) \]</span></p>
-<ul>
-<li><span class="math inline">\(\alpha_j\)</span> est considérée comme une variable aléatoire normalement distribuée parmi une “population” de groupes:</li>
-</ul>
-<p><span class="math display">\[ \alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha) \]</span></p>
-</section><section id="representation-mathematique-1" class="slide level2">
-<h2>Représentation mathématique</h2>
-<ul>
-<li class="fragment"><p>L’effet de groupe <span class="math inline">\(\alpha_j\)</span> est un effet <em>aléatoire</em>, en opposition aux effets <em>fixes</em> qui sont estimés de façon indépendante sans faire partie d’une distribution.</p></li>
-<li class="fragment"><p>Le modèle est dit mixte car il contient à la fois des effets fixes (les <span class="math inline">\(\beta\)</span> associés aux prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, etc.) et des effets aléatoires.</p></li>
-<li class="fragment"><p>On suppose une distribution normale pour <span class="math inline">\(\alpha_j\)</span> car c’est la distribution la plus “naturelle” à supposer si on ne connaît que la moyenne et l’écart-type.</p></li>
-</ul>
-</section><section id="modele-lineaire-mixte-avec-r" class="slide level2">
-<h2>Modèle linéaire mixte avec R</h2>
-<ul>
-<li class="fragment"><p>Nous utilisons la fonction <code>lmer</code> du package <em>lme4</em> pour ajuster des modèles linéaires mixtes.</p></li>
-<li class="fragment"><p>Cette fonction accepte une formule du même type que <code>lm</code>. Les effets aléatoires ont une syntaxe particulière dans la formule:</p>
-<ul>
-<li class="fragment">Par exemple, le terme <code>(1 | Beach)</code> indique que l’ordonnée à l’origine (symbolisée par la “variable” <code>1</code>) varie de façon aléatoire entre les groupes définis par <code>Beach</code>.</li>
-</ul></li>
-</ul>
-</section><section id="modele-lineaire-mixte-avec-r-1" class="slide level2">
-<h2>Modèle linéaire mixte avec R</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lme4)
+## Option 1: Ignorer les groupes
 
-mmod &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Beach), rikz)
-<span class="kw">summary</span>(mmod)</code></pre></div>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: srich ~ NAP + (1 | Beach)
-##    Data: rikz
-## 
-## REML criterion at convergence: 97.1
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.5693 -0.4286 -0.1869  0.3230  2.9399 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  Beach    (Intercept) 0.2957   0.5438  
-##  Residual             0.3460   0.5882  
-## Number of obs: 45, groups:  Beach, 9
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  2.37424    0.20405  11.635
-## NAP         -0.68063    0.09501  -7.163
-## 
-## Correlation of Fixed Effects:
-##     (Intr)
-## NAP -0.162</code></pre>
-</section><section id="intervalles-de-confiance" class="slide level2">
-<h2>Intervalles de confiance</h2>
-<ul>
-<li><code>lmer</code> ne fournit pas de valeur <span class="math inline">\(p\)</span> pour les effets estimés, car leur distribution exacte n’est pas connnue.</li>
-</ul>
-<ul>
-<li>La fonction <code>confint</code> permet d’estimer les intervalles de confiance.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">confint</span>(mmod)</code></pre></div>
-<pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                  2.5 %     97.5 %
-## .sig01       0.2664346  0.9469885
-## .sigma       0.4682062  0.7455375
-## (Intercept)  1.9537581  2.7916024
-## NAP         -0.8729868 -0.4948024</code></pre>
-</section><section id="effets-fixes-et-aleatoires" class="slide level2">
-<h2>Effets fixes et aléatoires</h2>
-<ul>
-<li>Les fonctions <code>fixef</code> et <code>ranef</code> permettent d’extraire les effets fixes et aléatoires du modèle, respectivement.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(mmod)</code></pre></div>
-<pre><code>## (Intercept)         NAP 
-##   2.3742423  -0.6806307</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ranef</span>(mmod)</code></pre></div>
-<pre><code>## $Beach
-##   (Intercept)
-## 1   0.4962684
-## 2   1.0050818
-## 3  -0.4791252
-## 4  -0.4104708
-## 5   0.2444787
-## 6  -0.2252788
-## 7  -0.2858167
-## 8  -0.2124511
-## 9  -0.1326862</code></pre>
-</section><section id="effets-fixes-et-aleatoires-1" class="slide level2">
-<h2>Effets fixes et aléatoires</h2>
-<ul>
-<li>La fonction <code>coef</code> retourne les effets estimés par groupe.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(mmod)</code></pre></div>
-<pre><code>## $Beach
-##   (Intercept)        NAP
-## 1    2.870511 -0.6806307
-## 2    3.379324 -0.6806307
-## 3    1.895117 -0.6806307
-## 4    1.963772 -0.6806307
-## 5    2.618721 -0.6806307
-## 6    2.148964 -0.6806307
-## 7    2.088426 -0.6806307
-## 8    2.161791 -0.6806307
-## 9    2.241556 -0.6806307
-## 
-## attr(,&quot;class&quot;)
-## [1] &quot;coef.mer&quot;</code></pre>
-</section><section id="effets-de-groupe-fixes-ou-aleatoires" class="slide level2">
-<h2>Effets de groupe fixes ou aléatoires</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz<span class="op">$</span>fitmm &lt;-<span class="st"> </span><span class="kw">fitted</span>(mmod)
+- Estimation incorrecte si les résidus sont plus semblables entre observations du même groupe.
 
-<span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> NAP, <span class="dt">y =</span> srich, <span class="dt">color =</span> Beach)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit1), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit2), <span class="dt">linetype =</span> <span class="st">&quot;dotted&quot;</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fitmm))</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-23-1.png" width="576" /></p>
-</section><section id="contraction-des-estimes" class="slide level2">
-<h2>Contraction des estimés</h2>
-<ul>
-<li class="fragment"><p>Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu’on s’éloigne de la moyenne (voir par exemple la plage 2 en haut du graphique).</p></li>
-<li class="fragment"><p>En statistique, on parle d’une contraction (<em>shrinkage</em>) des estimés des effets de groupe.</p></li>
-</ul>
-</section><section id="compromis-entre-sous-ajustement-et-surajustement" class="slide level2">
-<h2>Compromis entre sous-ajustement et surajustement</h2>
-<ul>
-<li class="fragment"><p>Puisque les ordonnées à l’origine sont supposées provenir d’une distribution commune, le modèle mixte estime l’ordonnée à l’origine de chaque plage en tenant compte non seulement des valeurs mesurées à cette plage, mais aussi de celles des autres plages.</p></li>
-<li class="fragment"><p>Les différences entre les valeurs moyennes mesurées par plage peuvent être dues soit à des différences réelles de richesse spécifique entre les plages, soit au hasard de l’échantillonnage.</p></li>
-<li class="fragment"><p>Le modèle mixte est donc un compromis entre (1) ignorer totalement les différences entre plages et (2) estimer indépendamment la moyenne de chaque plage à partir de ses 5 points.</p></li>
-</ul>
-</section><section id="graphiques-de-diagnostic" class="slide level2">
-<h2>Graphiques de diagnostic</h2>
-<ul>
-<li>Un seul graphique produit par <code>plot</code> (résidus vs. valeurs attendues)</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(mmod)</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-24-1.png" width="576" /></p>
-</section><section id="diagramme-quantile-quantile-des-residus" class="slide level2">
-<h2>Diagramme quantile-quantile des résidus</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">qqnorm</span>(<span class="kw">residuals</span>(mmod))
-<span class="kw">qqline</span>(<span class="kw">residuals</span>(mmod))</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-25-1.png" width="576" /></p>
-</section><section id="diagramme-quantile-quantile-des-effets-de-groupe" class="slide level2">
-<h2>Diagramme quantile-quantile des effets de groupe</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">beach_coef &lt;-<span class="st"> </span><span class="kw">ranef</span>(mmod)<span class="op">$</span>Beach
-<span class="kw">qqnorm</span>(beach_coef<span class="op">$</span><span class="st">`</span><span class="dt">(Intercept)</span><span class="st">`</span>)
-<span class="kw">qqline</span>(beach_coef<span class="op">$</span><span class="st">`</span><span class="dt">(Intercept)</span><span class="st">`</span>)</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-26-1.png" width="576" /></p>
-</section></section>
-<section><section id="modele-mixte-avec-predicteur-lie-aux-groupes" class="titleslide slide level1"><h1>Modèle mixte avec prédicteur lié aux groupes</h1></section><section id="modele-mixte-avec-predicteur-lie-aux-groupes-1" class="slide level2">
-<h2>Modèle mixte avec prédicteur lié aux groupes</h2>
-<ul>
-<li>Modèle pour l’ordonnée à l’origine du groupe <span class="math inline">\(j\)</span>:</li>
-</ul>
-<p><span class="math display">\[ \alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha) \]</span></p>
-<ul>
-<li>Si <span class="math inline">\(\mu_\alpha\)</span> n’est pas constante, reliée linéairement à un prédicteur <span class="math inline">\(u_1\)</span>:</li>
-</ul>
-<p><span class="math display">\[ \mu_\alpha = \gamma_0 + \gamma_1 u_1 \]</span></p>
-</section><section id="modele-mixte-avec-predicteur-lie-aux-groupes-2" class="slide level2">
-<h2>Modèle mixte avec prédicteur lié aux groupes</h2>
-<ul>
-<li>Ré-écrivons le modèle en 1 équation:</li>
-</ul>
-<p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \epsilon_k \]</span></p>
-<ul>
-<li>Les deux derniers termes représentent la variation aléatoire par groupe et par observation individuelle:</li>
-</ul>
-<p><span class="math display">\[ \nu_j \sim N(0, \sigma_\alpha) \]</span> <span class="math display">\[ \epsilon_k \sim N(0, \sigma_y) \]</span></p>
-</section><section id="modele-mixte-avec-predicteur-lie-aux-groupes-3" class="slide level2">
-<h2>Modèle mixte avec prédicteur lié aux groupes</h2>
-<ul>
-<li>Il suffit d’ajouter le prédicteur de groupe à la formule dans <code>lmer</code>:</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mmod_exp &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Beach), rikz)
-<span class="kw">summary</span>(mmod_exp)</code></pre></div>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: srich ~ NAP + Exposure + (1 | Beach)
-##    Data: rikz
-## 
-## REML criterion at convergence: 86
-## 
-## Scaled residuals: 
-##      Min       1Q   Median       3Q      Max 
-## -2.38707 -0.48281 -0.07465  0.47962  3.03495 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  Beach    (Intercept) 0.02315  0.1521  
-##  Residual             0.34658  0.5887  
-## Number of obs: 45, groups:  Beach, 9
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  3.62081    0.30510  11.867
-## NAP         -0.70349    0.09107  -7.724
-## Exposure10  -1.11766    0.33998  -3.287
-## Exposure11  -1.66923    0.34021  -4.907
-## 
-## Correlation of Fixed Effects:
-##            (Intr) NAP    Exps10
-## NAP        -0.082              
-## Exposure10 -0.891 -0.007       
-## Exposure11 -0.888 -0.037  0.800</code></pre>
-</section><section id="diagramme-quantile-quantile-des-effets-aleatoires" class="slide level2">
-<h2>Diagramme quantile-quantile des effets aléatoires</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">beach_coef &lt;-<span class="st"> </span><span class="kw">ranef</span>(mmod_exp)<span class="op">$</span><span class="st">`</span><span class="dt">Beach</span><span class="st">`</span>
-<span class="kw">qqnorm</span>(beach_coef<span class="op">$</span><span class="st">`</span><span class="dt">(Intercept)</span><span class="st">`</span>)
-<span class="kw">qqline</span>(beach_coef<span class="op">$</span><span class="st">`</span><span class="dt">(Intercept)</span><span class="st">`</span>)</code></pre></div>
-<p><img src="11-Modèles_mixtes_Partie1_files/figure-revealjs/unnamed-chunk-28-1.png" width="576" /></p>
-</section><section id="correlation-intra-classe" class="slide level2">
-<h2>Corrélation intra-classe</h2>
-<p><span class="math display">\[ \frac{\sigma_\alpha^2}{\sigma_\alpha^2 + \sigma_y^2} \]</span></p>
-<ul>
-<li><span class="math inline">\(\sigma_\alpha\)</span> représente l’écart-type de la réponse moyenne entre les groupes et <span class="math inline">\(\sigma_y\)</span> représente l’écart-type de la réponse entre observations d’un même groupe.</li>
-</ul>
-<ul>
-<li>Rapport tend vers 0 si <span class="math inline">\(\sigma_y \gg \sigma_\alpha\)</span> et vers 1 si <span class="math inline">\(\sigma_\alpha \gg \sigma_y\)</span>.</li>
-</ul>
-</section><section id="correlation-intra-classe-1" class="slide level2">
-<h2>Corrélation intra-classe</h2>
-<ul>
-<li class="fragment"><p>La corrélation intra-classe est d’environ 0.45 pour le premier modèle (<code>mmod</code>) et diminue à 0.06 en tenant compte de l’indice d’exposition (modèle <code>mmod_exp</code>).</p></li>
-<li class="fragment"><p>D’un point de vue pratique, ce rapport nous indique quelle échelle contribue davantage à la variation de la réponse, donc à quelle échelle nous pourrions échantillonner davantage pour réduire l’incertitude du modèle.</p></li>
-</ul>
-</section><section id="resume" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Un modèle linéaire mixte (aussi appelé modèle multi-niveaux) est une extension de la régression linéaire pour des données groupées, où certains des coefficients varient de façon aléatoire d’un groupe à l’autre.</p></li>
-<li class="fragment"><p>Dans ce cours, nous avons vu des exemples où l’ordonnée à l’origine inclut un effet aléatoire. Dans le prochain cours, nous verrons comment ajouter des effets aléatoires à d’autres coefficients.</p></li>
-<li class="fragment"><p>Un modèle mixte constitue un compromis entre une régression linéaire qui ignore la structure groupée et une régression qui estime un effet fixe séparé pour chaque groupe.</p></li>
-</ul>
-</section><section id="resume-1" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Le modèle mixte corrige l’estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction). Plus l’échantillon d’un groupe est faible, plus cette correction est importante. Pour cette raison, les modèles mixtes sont particulièrement utiles lorsqu’on a un grand nombre de groupes et peu d’observations dans certains groupes.</p></li>
-<li class="fragment"><p>Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l’échelle du groupe. Un modèle mixte peut inclure à la fois l’effet aléatoire des groupes et une variable explicative définie à l’échelle du groupe.</p></li>
-</ul>
-</section><section id="references" class="slide level2">
-<h2>Références</h2>
-<ul>
-<li class="fragment"><p>Gelman, A. and Hill, J. (2006) <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge, Cambridge University Press.</p></li>
-<li class="fragment"><p>Zuur, A.F., Ieno, E.N., Walker, N.J., Saveliev, A.A., Smith, G.M. (2009) <em>Mixed Effects Models and Extensions in Ecology with R</em>. New York, Springer-Verlag.</p></li>
-</ul>
-</section></section>
-    </div>
-  </div>
+--
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+## Option 2: Effets de groupe
 
-  <script>
+- Beaucoup de paramètres à estimer s'il y a plusieurs groupes et des interactions.
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+- Risque de surajustement.
 
+---
 
+# Comparaison des modèles
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+## Option 3: Prédicteur lié aux groupes
+
+- Approche plus parcimonieuse (moins de paramètres) qui tente d'expliquer les différences entre groupes en fonction de facteurs mesurés.
+
+- On peut appliquer les prédictions du modèle à d'autres groupes non-échantillonnés, si on connait les valeurs des prédicteurs.
+
+--
+
+- Impossible de combiner avec l'option 2 pour expliquer la variation entre groupes non-expliquée par les prédicteurs.
+
+---
+
+# Option 4: Modèle en deux étapes
+
+D'abord estimer les différences de richesse entre plages à partir des données des sites, puis modéliser l'effet des plages en fonction de l'indice d'exposition.
+
+- Étape 1: Observation `\(k\)` de la plage `\(j\)`
+
+`$$y_k \sim N(\alpha_{j[k]} + \beta x_{1k}, \sigma_y)$$` 
+
+--
+
+- Étape 2: Ordonnée à l'origine de la plage `\(j\)` 
+
+`$$\alpha_j \sim N(\gamma_0 + \gamma_1 u_{1j}, \sigma_\alpha)$$`
+
+---
+
+# Option 4
+
+- Cette approche traite chaque plage comme une seule observation à la deuxième étape. 
+
+- Si le nombre d'échantillons différait d'une plage à l'autre, ce modèle sous-représenterait les plages mieux échantillonnés.
+
+---
+
+class: inverse, middle
+
+# Modèles linéaires mixtes
+
+---
+
+# Modèles linéaires mixtes
+
+Approche semblable à la régression en deux étapes, mais les deux étapes sont réalisées simultanément.
+
+--
+
+Ces modèles sont surtout utiles pour les cas suivants:
+
+- données groupées ou hiérarchisées (ex.: région, site, placette);
+- variables explicatives définies à plusieurs niveaux (individu et groupe);
+- beaucoup de groupes et/ou peu d'observations par groupe;
+- besoin d'estimer la variation entre groupes;
+- besoin de généraliser les résultats à des groupes non observés.
+
+---
+
+# Modèles linéaires mixtes
+
+- Un modèle linéaire mixte est une régression linéaire dont un ou plusieurs des coefficients varient d'un groupe d'observations à une autre, *et où cette variation est modélisée par une distribution statistique*. 
+
+--
+
+- Ils sont aussi connus sous le nom de modèles *hiérarchiques* ou *multi-niveaux*, car ils modélisent la variation à au moins deux niveaux (observation individuelle et groupe).
+
+--
+
+- Dans ce cours-ci, nous traiterons des modèles mixtes où seule l'ordonnée à l'origine varie par groupe. 
+
+---
+
+# Représentation mathématique
+
+- `\(\hat{y_k}\)` dépend des prédicteurs `\(x_1\)`, `\(x_2\)`, etc., avec une ordonnée à l'origine spécifique au groupe `\(j\)` qui contient l'observation `\(k\)`.
+
+`$$\hat{y_k} = \alpha_{j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + ...$$`
+
+--
+
+- Comme pour le modèle de régression linéaire, `\(y_k\)` suit une distribution normale.
+
+$$ y_k \sim N(\hat{y_k}, \sigma_y) $$
+
+--
+
+- `\(\alpha_j\)` est considérée comme une variable aléatoire normalement distribuée parmi une "population" de groupes:
+
+`$$\alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha)$$`
+
+---
+
+# Représentation mathématique
+
+- L'effet de groupe `\(\alpha_j\)` est un effet *aléatoire*, en opposition aux effets *fixes* qui sont estimés de façon indépendante sans faire partie d'une distribution. 
+
+--
+
+- Le modèle est dit mixte car il contient à la fois des effets fixes (les `\(\beta\)` associés aux prédicteurs `\(x_1\)`, `\(x_2\)`, etc.) et des effets aléatoires.
+
+--
+
+- On suppose une distribution normale pour `\(\alpha_j\)` car c'est la distribution la plus "naturelle" à supposer si on ne connaît que la moyenne et l'écart-type.
+
+---
+
+# Modèle linéaire mixte avec R
+
+- Nous utilisons la fonction `lmer` du package *lme4* pour ajuster des modèles linéaires mixtes.
+
+- Cette fonction accepte une formule du même type que `lm`. Les effets aléatoires ont une syntaxe particulière dans la formule. 
+
+--
+
+- Par exemple, le terme `(1 | Beach)` indique que l'ordonnée à l'origine (symbolisée par la "variable" `1`) varie de façon aléatoire entre les groupes définis par `Beach`.
+
+---
+
+# Résumé des fonctions
+
+- `lmer`: Ajuster un modèle linéaire mixte.
+- `confint`: Estimer les intervalles de confiance des paramètres du modèle mixte (coefficients des effets fixes, variances des effets aléatoires).
+- `fixef`: Effets fixes du modèle.
+- `ranef`: Effets aléatoires du modèle (variation de chaque groupe par rapport à la moyenne).
+- `coef`: Coefficients du modèle par groupe (somme des effets fixes et aléatoires).
+
+---
+
+# Contraction des estimés
+
+- Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu'on s'éloigne de la moyenne. 
+
+- En statistique, on parle d'une contraction (*shrinkage*) des estimés des effets de groupe.
+
+---
+
+# Modèle mixte comme compromis
+
+- Puisque les ordonnées à l'origine sont supposées provenir d'une distribution commune, le modèle mixte estime l'ordonnée à l'origine de chaque plage en tenant compte non seulement des valeurs mesurées à cette plage, mais aussi de celles des autres plages.
+
+--
+
+- Les différences entre les valeurs moyennes mesurées par plage peuvent être dues soit à des différences réelles de richesse spécifique entre les plages, soit au hasard de l'échantillonnage.
+
+--
+
+- Le modèle mixte est donc un compromis entre (1) ignorer totalement les différences entre plages et (2) estimer indépendamment la moyenne de chaque plage à partir de ses 5 points. 
+
+---
+
+# Modèle mixte vs. ANOVA
+
+L'ANOVA effectue un test de l'hypothèse selon laquelle il n'y a pas de différence entre les moyennes de chaque groupe:
+
+- Si l'hypothèse nulle n'est pas rejetée, on ignore les différences entre groupes.
+- Si l'hypothèse nulle est rejetée, on prend les différences observées comme estimés des différences réelles.
+
+--
+
+Avec un modèle mixte, on évite de faire ce choix, mais on tente plutôt d'estimer quelle partie des différences observées est due au hasard vs. à des différences entre les moyennes réelles des groupes.
+
+---
+
+# Prédicteur lié aux groupes
+
+Modèle pour l'ordonnée à l'origine du groupe `\(j\)`:
+
+`$$\alpha_{j} \sim N(\mu_\alpha, \sigma_\alpha)$$`
+
+--
+
+Si `\(\mu_\alpha\)` n'est pas constante, reliée linéairement à un prédicteur `\(u_1\)`:
+
+`$$\mu_\alpha = \gamma_0 + \gamma_1 u_1$$`
+
+---
+
+# Prédicteur lié aux groupes
+
+Ré-écrivons le modèle en une équation:
+
+`$$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \epsilon_k$$`
+
+--
+
+- Les deux derniers termes représentent la variation aléatoire par groupe et par observation individuelle:
+
+`$$\nu_j \sim N(0, \sigma_\alpha)$$`
+
+--
+
+`$$\epsilon_k \sim N(0, \sigma_y)$$`
+
+---
+
+# Corrélation intra-classe
+
+`$$\frac{\sigma_\alpha^2}{\sigma_\alpha^2 + \sigma_y^2}$$`
+
+--
+
+- `\(\sigma_\alpha\)` représente l'écart-type de la réponse moyenne entre les groupes et `\(\sigma_y\)` représente l'écart-type de la réponse entre observations d'un même groupe.
+
+--
+
+- Rapport tend vers 0 si `\(\sigma_y \gg \sigma_\alpha\)` et vers 1 si `\(\sigma_\alpha \gg \sigma_y\)`.
+
+---
+
+# Corrélation intra-classe
+
+- La corrélation intra-classe est d'environ 0.45 pour le modèle sans `Exposure` et diminue à 0.06 en tenant compte de l'indice d'exposition.
+
+- D'un point de vue pratique, ce rapport nous indique quelle échelle contribue davantage à la variation de la réponse, donc à quelle échelle nous pourrions échantillonner davantage pour réduire l'incertitude du modèle.
+
+---
+
+# Résumé
+
+- Un modèle linéaire mixte (aussi appelé modèle multi-niveaux) est une extension de la régression linéaire pour des données groupées, où certains des coefficients varient de façon aléatoire d'un groupe à l'autre.
+
+--
+
+- Dans ce cours, nous avons vu des exemples où l'ordonnée à l'origine inclut un effet aléatoire. Dans le prochain cours, nous verrons comment ajouter des effets aléatoires à d'autres coefficients.
+
+--
+
+- Un modèle mixte constitue un compromis entre une régression linéaire qui ignore la structure groupée et une régression qui estime un effet fixe séparé pour chaque groupe. 
+
+---
+
+# Résumé
+
+- Le modèle mixte corrige l'estimation des effets de chaque groupe pour les rapprocher de la tendance générale (contraction).
+
+--
+
+- Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l'échelle du groupe. Un modèle mixte peut inclure à la fois l'effet aléatoire des groupes et une variable explicative définie à l'échelle du groupe. 
+
+---
+
+# Références
+
+- Gelman, A. and Hill, J. (2006) *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge, Cambridge University Press.
+
+- Zuur, A.F., Ieno, E.N., Walker, N.J., Saveliev, A.A., Smith, G.M. (2009) *Mixed Effects Models and Extensions in Ecology with R*. New York, Springer-Verlag.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>

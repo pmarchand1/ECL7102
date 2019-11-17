@@ -304,37 +304,37 @@ div.tocify {
 </div>
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
-<div id="example-growth-of-several-tree-species-in-a-forest" class="section level2">
-<h2>Example: Growth of several tree species in a forest</h2>
-<p>Suppose you need to model tree growth in a mixed forest. You measured the following numeric variables on a sample of 100 trees of different species in a research plot:</p>
+<div id="example-growth-of-white-spruce-on-several-sites" class="section level2">
+<h2>Example: Growth of white spruce on several sites</h2>
+<p>Suppose you need to model the growth of white spruce at multiple sites within a region. You measured the following numeric variables on a total sample of 100 trees, spread across multiple sites:</p>
 <ul>
 <li>annual growth (response variable);</li>
-<li>diameter (DHP);</li>
+<li>diameter (DBH);</li>
 <li>age;</li>
-<li>competition index (IC, based on the number and size of neighboring trees).</li>
+<li>competition index (CI, based on the number and size of neighboring trees).</li>
 </ul>
-<p>For this exercise, you can assume that the variables have been transformed to ensure that the effect of each predictor is linear, and that the random portion of the response follows a normal distribution.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>What type of model would you use to represent the relationship between annual growth and the three predictors?</p></li>
-<li><p>If the mean growth depends on the species, how do you include this effect in your model?</p></li>
-<li><p>If the effect of the numerical predictors on growth depends on the species, how do you include this effect in your model?</p></li>
-<li><p>Do the methods proposed in (b) and (c) work best with few species (e.g. 100 trees divided into 2 species) or many species (e.g. 100 trees divided into 20 species)? Do they work better if the number of trees sampled by species is similar (e.g. 5 trees for each of the 20 species) or variable (e.g. 2 to 30 trees depending on the species)?</p></li>
-<li><p>Can you use this model to predict the growth of a species that is not represented in your sample of 100 trees?</p></li>
+<li><p>What would be the equation of a linear model (e.g. <code>y ~ x</code>) representing the relationship between annual growth and the three predictors?</p></li>
+<li><p>If the mean growth varies by site, how can you include this effect in your model?</p></li>
+<li><p>If the effects of diameter, age and competition index on growth vary by site, how do you account for this in your model?</p></li>
+<li><p>Do the methods proposed in (b) and (c) work best with few sites (e.g. 100 trees across 3 sites) or many sites (e.g. 100 trees across 20 sites)? Do they work better if the number of trees sampled by site is similar (e.g. 5 trees at each of the 20 sites) or variable (e.g. 2 to 30 trees depending on the site)?</p></li>
+<li><p>Can you use this model to predict the growth of white spruce at a new site?</p></li>
 </ol>
-<p>Suppose now that you know some characteristics of each species that could explain the differences between species, for example:</p>
+<p>Suppose now that you know some characteristics of each site that could explain the differences in growth between sites, for example:</p>
 <ul>
-<li>the degree of shade tolerance (categorical variable);</li>
-<li>the specific leaf area (SLA, numerical variable).</li>
+<li>the drainage class (categorical variable);</li>
+<li>the slope of the site (numerical variable).</li>
 </ul>
 <ol style="list-style-type: lower-alpha">
-<li><p>How can you include these features in your model?</p></li>
-<li><p>Does the model proposed in (a) work better with few species or many species?</p></li>
-<li><p>Can you use this model to predict the growth of a species that is not represented in your sample of 100 trees?</p></li>
+<li><p>How can you include these variables in your model?</p></li>
+<li><p>Does the model proposed in (a) work better with few sites or many sites?</p></li>
+<li><p>Can you use that model to predict the growth of white spruce at a new site?</p></li>
 </ol>
-<p>Finally, suppose you measured growth and other individual predictors on the same 100 trees for three consecutive years.</p>
+<p>Finally, suppose you measured growth and other individual predictors on the same 100 white spruce trees for three consecutive years.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>How could you add year-to-year growth variation in your model? Would it be useful to add meteorological variables of the site (e.g. mean temperature) to explain this interannual variation?</p></li>
-<li><p>From a statistical point of view, does measuring the same trees each year influence the accuracy of the regression conclusions?</p></li>
+<li><p>How could you add year-to-year growth variation in your model?</p></li>
+<li><p>If there is a weather station in the region, would it be useful to add the effect of weather variables (e.g. mean temperature) to explain this interannual variation?</p></li>
+<li><p>From a statistical point of view, does measuring the same trees each year influence the accuracy of the regression estimates?</p></li>
 </ol>
 </div>
 <div id="example-benthic-fauna-in-the-netherlands" class="section level2">
@@ -838,101 +838,13 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <p>The intra-class correlation is about 0.45 for the first model (<code>mmod</code>) and decreases to 0.06 taking into account the exposure index (model <code>mmod_exp</code>).</p>
 <p>From a practical point of view, the intra-class correlation indicates which scale contributes more to the variation of the response, so at which scale we could sample more to reduce the uncertainty of the model. In our example, if this correlation was close to 1, it would be better to sample multiple beaches with few samples per beach; if not, we could get a larger sample over a limited number of beaches. Of course, this assumes that the beaches observed so far are representative of the “population” of beaches that interest us.</p>
 </div>
-<div id="mixed-models-for-unbalanced-groups" class="section level1">
-<h1>Mixed models for unbalanced groups</h1>
-<p>In the previous example, the number of observations was balanced between the groups (9 groups of 5 observations). Mixed models also have interesting properties for cases where groups do not contain the same number of observations, as we will see in the next example.</p>
-<div id="example-house-radon-concentration-in-minnesota" class="section level2">
-<h2>Example: House radon concentration in Minnesota</h2>
-<p>The dataset <a href="../donnees/radon.csv">radon.csv</a>, from the textbook by Gelman and Hill, contains radon concentration measurements (<code>log_radon</code>, on a logarithmic scale) from 919 houses in 85 counties (<code>county</code>) of the American state of Minnesota. The number of houses sampled per county ranges from 1 to 116. This dataset includes a house-level predictor, the floor where the measurement was taken (with 0 = basement and 1 = ground floor), and a county-level predictor, the soil uranium level (also on a logarithmic scale).</p>
-<pre class="r"><code>radon &lt;- read.csv(&quot;../donnees/radon.csv&quot;)
-head(radon)</code></pre>
-<pre><code>##   county floor log_uranium log_radon
-## 1 AITKIN     1  -0.6890476 0.7884574
-## 2 AITKIN     0  -0.6890476 0.7884574
-## 3 AITKIN     0  -0.6890476 1.0647107
-## 4 AITKIN     0  -0.6890476 0.0000000
-## 5  ANOKA     0  -0.8473129 1.1314021
-## 6  ANOKA     0  -0.8473129 0.9162907</code></pre>
-<p>We estimate the parameters of a mixed model with fixed effects of the floor and uranium level, as well as a random variation of the intercept by county.</p>
-<pre class="r"><code>mm_radon &lt;- lmer(log_radon ~ floor + log_uranium + (1 | county), radon)
-summary(mm_radon)</code></pre>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: log_radon ~ floor + log_uranium + (1 | county)
-##    Data: radon
-## 
-## REML criterion at convergence: 2134.2
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -4.9673 -0.6117  0.0274  0.6555  3.3848 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  county   (Intercept) 0.02446  0.1564  
-##  Residual             0.57523  0.7584  
-## Number of obs: 919, groups:  county, 85
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  1.46576    0.03794  38.633
-## floor       -0.66824    0.06880  -9.713
-## log_uranium  0.72027    0.09176   7.849
-## 
-## Correlation of Fixed Effects:
-##             (Intr) floor 
-## floor       -0.357       
-## log_uranium  0.145 -0.009</code></pre>
-<p>How can fixed effects be interpreted in this model?</p>
-<ul>
-<li><code>(Intercept)</code> is the mean of <code>log_radon</code> if <code>floor</code> = 0 (i.e. in a basement) and <code>log_uranium</code> = 0.</li>
-<li><code>floor</code> is the difference of <code>log_radon</code> if <code>floor</code> increases by 1 (i.e. ground floor compared to the basement).</li>
-<li><code>log_uranium</code> is the effect of an increase of one unit of <code>log_uranium</code> on <code>log_radon</code>. In the particular case where the two variables are on a logarithmic scale, this coefficient can be interpreted as a multiplicative effect: a 1% increase in the concentration of uranium in the soil increases the concentration of radon in homes by 0.72%.</li>
-</ul>
-<p>Now let’s use the model to predict <code>log_radon</code> for a basement in each county. First, we extract the county name, the uranium concentration and the number of houses per county (that number will be useful later).</p>
-<pre class="r"><code>comtes &lt;- group_by(radon, county, log_uranium) %&gt;%
-    summarize(n = n()) %&gt;%
-    ungroup()</code></pre>
-<p>Here is the graph of county-level predicted values:</p>
-<pre class="r"><code>comtes$floor &lt;- 0 # basement
-comtes$mm_pred &lt;- predict(mm_radon, comtes)
-
-ggplot(comtes, aes(x = log_uranium, y = mm_pred)) +
-    geom_point()</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
-<p>These predictions deviate from the mean linear trend based on the estimated intercepts for each county (random effects).</p>
-<p>Let’s now compare these predictions to those of two classical linear regressions, one with no county effect or one with fixed effects for each county.</p>
-<pre class="r"><code>lm_radon1 &lt;- lm(log_radon ~ floor + log_uranium, radon)
-lm_radon2 &lt;- lm(log_radon ~ floor + log_uranium + county, radon)
-
-comtes &lt;- mutate(comtes, pred1 = predict(lm_radon1, comtes), 
-                 pred2 = predict(lm_radon2, comtes))
-
-ggplot(comtes, aes(x = log_uranium)) +
-    labs(y = &quot;log_radon&quot;) +
-    geom_line(aes(y = pred1)) +
-    geom_point(aes(y = pred2), shape = 1) +
-    geom_point(aes(y = mm_pred))</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
-<p>The line represents the prediction of the model ignorning the county, the filled points indicate the county effects of the mixed model, and the hollow points indicate the fixed effects by county. The predictions of the mixed model are closer to the mean trend, showing the shrinkage of the coefficients for the mixed model.</p>
-<p>Now let’s look at the effect of the <span class="math inline">\(n\)</span>, the sample size in each county. For clarity, the two predictions of the same county are connected by a dotted line.</p>
-<pre class="r"><code>ggplot(comtes, aes(x = log_uranium)) +
-    labs(y = &quot;log_radon&quot;) +
-    geom_line(aes(y = pred1)) +
-    geom_point(aes(y = pred2, size = n), shape = 1) +
-    geom_point(aes(y = mm_pred, size = n)) +
-    geom_segment(aes(xend = log_uranium, y = mm_pred, yend = pred2),
-                 linetype = &quot;dotted&quot;)</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
-<p>This result shows that the smaller the sample size in a county, the more its effect is shrunk towards the mean. In other words, the fewer points in a county, the more the deviation observed between that county and the overall trend is likely to be due to random sampling, and the more the mixed model must “correct” this value by bringing it closer to that of the general trend.</p>
-</div>
-</div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <ul>
 <li><p>A linear mixed model (also called a multilevel model) is an extension of linear regression for grouped data, where some of the coefficients vary randomly from one group to another.</p></li>
 <li><p>In this class, we have seen examples where intercept includes a random effect. In the next class, we’ll see how to add random effects to other coefficients.</p></li>
 <li><p>A mixed model is a compromise between a linear regression that ignores the group structure and a regression that estimates a separate fixed effect for each group.</p></li>
-<li><p>To do this, the mixed model corrects the estimation of the effects of each group to bring them closer to the general trend (shrinkage). The smaller the sample in a group, the larger this correction is. For this reason, mixed models are particularly useful when there are a large number of groups and few observations in some groups.</p></li>
+<li><p>To do this, the mixed model corrects the estimation of the effects of each group to bring them closer to the general trend (shrinkage).</p></li>
 <li><p>In classical linear regression, one cannot include both a fixed effect per group and a group-level predictor. A mixed model can include both the random effect of groups and an explanatory variable defined at the group level.</p></li>
 </ul>
 </div>
