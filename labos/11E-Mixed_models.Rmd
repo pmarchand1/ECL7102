@@ -1,67 +1,48 @@
 ---
 title: "Mixed models"
-date: "November 21, 2018"
-output: 
-    html_document:
-        self_contained: false
-        lib_dir: libs
-        theme: spacelab
-        toc: true
-        toc_float: true
+date: "November 20, 2019"
+output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-```
+Answers for this lab must be submitted before **December 4th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
+## 1. Wheat yield as a function of fertilizer and soil moisture
 
-## 1. Effect of nitrogen on the yield of oat varieties
-
-The `Oats` data frame included in the *nlme* package shows the results of a split-plot agricultural experiment. The experiment is done in six blocks (`Block`). Each block is divided into three sections where a different variety of oats is sown (`Variety`), then each section is divided into four quadrants, each receiving a different concentration of nitrogen (`nitro`): 0, 0.2, 0.4 or 0.6. The response variable is the oat yield of each of the 72 quadrants (6 blocks x 3 varieties x 4 nitrogen concentrations).
+The `Wheat` data frame included in the *nlme* package presents the result of an agricultural experiment to measure the effect of fertilizer quantity and soil moisture on the yield of a wheat variety (`DryMatter`, the response variable). The plants were divided into 12 trays. Soil moisture is constant in a tray, but each tray is divided into 4 sections each receiving a different amount of fertilizer. There are therefore 48 individual measurements of the yield, i.e. 4 per tray.
 
 ```{r}
 library(nlme)
-data(Oats)
-# Changer le bloc en facteur non-ordonné
-Oats$Block <- factor(Oats$Block, ordered = FALSE)
-str(Oats)
+data(Wheat)
+head(Wheat)
 ```
 
-(a) For the `Block` and` Variety` factors, which kind of contrasts should you use to compare the effect of each category to the mean, rather than to a reference category? Specify this type of contrast and name the contrast variables to facilitate the interpretation.
+(a) Estimate the parameters of a linear model including the additive effects of fertilizer and moisture on yield. Is it correct to ignore the grouping of the measurements per tray? Justify your answer from a plot of residuals.
 
-(b) Estimate the parameters of a linear model of yield as a function of nitrogen concentration, oat variety and a *fixed* effect of the block. Check if it is useful to include the interaction between nitrogen and variety. What would such an interaction mean?
+(b) Now fit a mixed model that includes the same fixed effects, as well as a random effect representing the grouped data structure. Compare the coefficients of the fixed effects (fertilizer and moisture) for both models, as well as the standard errors of these coefficients. Explain the differences if any.
 
-(c) Choose the model with or without interaction according to your result in (b), check the diagnostic graphs and interpret the value of the coefficients.
+(c) From appropriate diagnostic plots, verify that the mixed model residuals in (b) are randomly distributed following a normal distribution.
 
-(d) Now estimate the parameters of a mixed model identical to the linear model in (c), except that the effect of the blocks is random rather than fixed. Compare the fixed effects common to both models, as well as the block fixed effects of the previous model to the random effects of this new model. Explain the differences you observe, if any.
-
-(e) Calculate the intra-class correlation for the mixed model in (d). What is the mathematical significance of this coefficient? How do you interpret the result from a biological point of view?
+(d) Calculate the intra-class correlation for the mixed model in (b). What is the mathematical interpretation of this value?
 
 
-## 2. Indicators of disease in bees
+## 2. Growth curves of spruce trees
 
-American foulbrood is an infectious disease affecting bee colonies. The [bees.csv](bees.csv) dataset, from the Zuur et al. textbook *Mixed Effects Models and Extensions in Ecology with R*, contains measurements of bacterial spore density (`Spobee`) found on 72 bees from 24 hives (`Hive`, 3 bees per hive).
-
-We want to determine the relationship between this density of spores and two variables defined for each hive: the level of infection observed in the hive (`Infection`) and an estimate of the size of the colony (`BeesN`).
+The `Spruce` data frame included in the *nlme* package contains data on the growth of 79 spruce trees. The logarithm of the volume (`logSize`) for each spruce (identified by the `Tree` number) was measured at 13 different times from the beginning of the experiment (`days`). The trees are also divided between 4 plots.
 
 ```{r}
-bees <- read.csv("bees.csv")
-str(bees)
+data(Spruce)
+head(Spruce)
 ```
 
-(a) Before modeling these data, perform the following transformations.
+(a) Create a graph of the observed `logSize` for these trees, with a color code for the plot. Why would it be better to model the growth curve by taking `days` as a factor, i.e. `logSize ~ as.factor(days)` rather than `logSize ~ days`?
 
-- The level of infection is on a qualitative scale (0 = no symptoms, 1 = mild infection, 2 = moderate and 3 = severe). Since we have very few hives for the different levels of infection (1 level 1, 1 level 2, and 2 level 3), create a new `pres_inf` binary variable that indicates presence (levels 1 to 3) or absence (level 0) of infection.
+*Tip*: With `ggplot`, you can overlay a `geom_point` and `geom_line`, and then specify `group = Tree` in the `aes` function to ensure that lines are drawn between points for each tree.
 
-- The distribution of the `Spobee` response is very asymmetrical. As suggested by Zuur et al., create a new variable by applying the `log1p` function, equivalent to *log(Spobee + 1)*. This is a logarithmic transformation where 1 has been added to the response beforehand to avoid taking the logarithm of 0.
+(b) Estimate the parameters of the linear model `logSize ~ as.factor(days)`. According to this model, what is the average variation of `logSize` between day 152 and day 201? What is its standard error?
 
-- Express the size of the colony in units of 10,000 bees.
+(c) Now fit a mixed model that takes into account that these are repeated measurements on the same trees. (*Note*: Ignore the plot for now.) Based on these results, why is it beneficial to measure the same trees on each sampling day to estimate a growth curve?
 
-(b) Estimate the parameters of a mixed model to determine the effect of presence of infection and colony size on the (transformed) spore density observed on bees. Which random effect would be appropriate for this problem?
+(d) What is the intra-class correlation for the model in (c)? Based on this result, is the variation in size among trees at any point in the experiment due more to (i) initial differences in size between trees or (ii) a change in the growth pattern from one tree to another?
 
-(c) Use diagnostic graphs to verify model assumptions, including the normality of random effects.
-
-(d) What is the intra-class correlation coefficient of this model? To more accurately estimate the fixed effects of this model, would it be better to sample more hives, or more bees per hive?
-
-(e) What are the 95% confidence intervals for fixed effects in the mixed model? If we replace this model with a linear regression completely ignoring the `Hive` variable, would these intervals be narrower or wider, and why?
+(e) Add to the model in (c) a random effect for the plot. According to this model, does tree size differ significantly between plots?
 

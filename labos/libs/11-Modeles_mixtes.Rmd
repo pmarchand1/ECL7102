@@ -1,0 +1,152 @@
+---
+title: "Modèles mixtes"
+date: "20 novembre 2019"
+output: pdf_document
+---
+
+**Les nombres entre parenthèses indiquent le nombre de points pour chaque question.**
+
+**Total: 10 points.**
+
+## 1. Rendement du blé en fonction de l'engrais et de l'humidité du sol
+
+Le tableau de données `Wheat` inclus dans le package *nlme* présente le résultat d'une expérience agricole visant à mesurer l'effet de la quantité d'engrais (`fertilizer`) et de l'humidité du sol (`Moisture`) sur le rendement d'une variété de blé (`DryMatter`, la variable réponse). Les plants ont été répartis en 12 plateaux (`Tray`). L'humidité du sol est constante dans un plateau, mais chaque plateau est divisé en 4 sections recevant chacune une quantité différente d'engrais. Il y a donc 48 mesures individuelles du rendement, soit 4 par plateau.
+
+```{r}
+library(nlme)
+data(Wheat)
+head(Wheat)
+```
+
+
+(a) Estimez les paramètres d'un modèle linéaire incluant les effets additifs de l'engrais et de l'humidité sur le rendement. Est-il possible d'ignorer le groupement des mesures par plateau? Justifiez votre réponse à partir d'un graphique des résidus par plateau. **(1)**  
+
+**Réponse**
+
+```{r}
+ml_ble <- lm(DryMatter ~ fertilizer + Moisture, data = Wheat)
+
+library(ggplot2)
+ggplot(Wheat, aes(x = Tray, y = residuals(ml_ble))) +
+    geom_point()
+```
+
+Le graphique montre que les résidus ne sont pas indépendants; leurs valeurs sont plus semblables dans un même plateau. On ne devrait donc pas ignorer les groupes ici.
+
+
+(b) Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu'un effet aléatoire représentant la structure groupée des données. Comparez les coefficients des effets fixes (engrais et humidité) pour les deux modèles, ainsi que les erreurs-types de ces coefficients. Expliquez les différences s'il y a lieu. **(2)**
+
+**Réponse**
+
+```{r}
+library(lme4)
+mm_ble <- lmer(DryMatter ~ fertilizer + Moisture + (1 | Tray), data = Wheat)
+summary(mm_ble)
+summary(ml_ble)
+```
+
+Les valeurs des coefficients sont les mêmes, mais les erreurs-types changent: dans le modèle mixte, l'erreur-type est plus faible pour l'engrais, mais plus élevée pour l'humidité. 
+
+Puisque chaque valeur de `fertilizer` est répliquée dans chaque plateau, cet effet est estimé plus précisément en tenant compte de la variation de rendement moyen entre les plateaux. La variable `Moisture` par contre ne varie pas à l'intérieur des plateaux. Ainsi, en définissant les groupes on reconnait que cette variable n'est vraiment répliquée que 3 fois (3 plateaux par niveau d'humidité), ce qui augmente l'erreur-type pour son coefficient.
+
+
+(c) À partir de graphique de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) sont répartis aléatoirement en suivant une distribution normale. **(1)**
+
+**Réponse**
+
+```{r}
+plot(mm_ble)
+qqnorm(residuals(mm_ble))
+qqline(residuals(mm_ble))
+```
+
+Le graphique des valeurs résiduelles vs. attendues semble montrer une tendance (résidus positifs pour les valeurs attendues extrêmes et négatifs pour les valeurs intermédiaires), ce qui pourrait signifier que l'effet des prédicteurs n'est pas vraiment linéaire. 
+
+Le graphique quantile-quantile montre que la distribution des résidus ne s'éloigne pas trop de la normalité.
+
+
+(d) Calculez la corrélation intra-classe pour le modèle mixte en (b). Quelle est l'interprétation mathématique de cette valeur? **(1)**
+
+**Réponse**
+
+Dans le tableau sommaire en (b), la variance des groupes était de 4.474 et la variance résiduelle de 1.674. Donc la corrélation intra-classe est égale à:
+
+```{r}
+4.474 / (4.474 + 1.674)
+```
+
+Cela signifie que 72% de la variation non-expliquée par les effets fixes du modèle est due aux différences entre plateaux, plutôt qu'aux différences à l'intérieur de chaque plateau.
+
+
+## 2. Courbes de croissance d'épinettes
+
+Le tableau `Spruce` inclus dans le package *nlme* contient des données sur la croissance de 79 épinettes. Le logarithme du volume (`logSize`) pour chaque épinette (identifiée par un numéro d'arbre `Tree`) a été mesuré à 13 différents moments à partir du début de l'expérience (nombre de jours `days`). Les épinettes sont aussi réparties entre 4 placettes (`plot`).
+
+```{r}
+data(Spruce)
+head(Spruce)
+```
+
+(a) Créez un graphique de la courbe de croissance observée (`logSize` en fonction du nombre de jours) pour ces arbres, avec un code de couleur pour la placette. Pourquoi serait-il préférable de modéliser la courbe de croissance en prenant `days` comme facteur, donc `logSize ~ as.factor(days)` plutôt que `logSize ~ days`? **(1)**
+
+*Truc*: Avec `ggplot`, vous pouvez superposer un `geom_point` et un `geom_line`, puis spécifier `group = Tree` dans la fonction `aes` afin d'assurer que les lignes soient tracées entre les points pour chaque arbre.
+
+**Réponse**
+
+```{r}
+ggplot(Spruce, aes(x = days, y = logSize, group = Tree, color = plot)) +
+    geom_point() +
+    geom_line()
+```
+
+La croissance n'est pas linéaire dans le temps, donc le modèle `logSize ~ days` n'est pas approprié. Par contre, en prenant le nombre de jours comme un facteur, on estime indépendamment la croissance pour chaque intervalle de temps.
+
+
+(b) Estimez les paramètres du modèle linéaire `logSize ~ as.factor(days)`. Selon ce modèle, quel est la variation moyenne de `logSize` entre le jour 152 et le jour 201? Quel est son écart-type? **(1)**
+
+**Réponse**
+
+```{r}
+ml_spruce <- lm(logSize ~ as.factor(days), data = Spruce)
+summary(ml_spruce)
+```
+
+Il s'agit du coefficient `as.factor(days)201`, car le jour 152 est le niveau de référence. Donc `logSize` augmente de 0.815 avec un écart-type de 0.104.
+
+
+(c) Ajustez maintenant un modèle mixte qui tient compte du fait qu'il s'agit de mesures répétées sur les mêmes arbres. (*Note*: Ignorez la placette `plot` pour l'instant.) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d'échantillonnage afin d'estimer une courbe de croissance? **(1)**
+
+**Réponse**
+
+```{r}
+mm_spruce <- lmer(logSize ~ as.factor(days) + (1 | Tree), data = Spruce)
+summary(mm_spruce)
+```
+
+L'erreur-type des effets temporels (`days`) est diminuée par rapport au modèle en (b), donc la courbe de croissance est estimée plus précisément si on fait le suivi des mêmes arbres et que cette information est considérée dans le modèle.
+
+
+(d) Quelle est la corrélation intra-classe pour le modèle en (c)? Selon ce résultat, est-ce que la variation de taille parmi les arbres à un moment donné de l'expérience est due davantage (i) aux différences initiales de taille entre les arbres ou (ii) à une variation de la croissance d'un arbre à l'autre? **(1)**
+
+**Réponse**
+
+Selon le sommaire en (c), la variance par arbre est de 0.39203 et la variance résiduelle est de 0.03117.
+
+```{r}
+0.39203 / (0.39203 + 0.03117)
+```
+
+93% de la variation est due à l'effet aléatoire de l'arbre sur l'ordonnée à l'origine de la taille, donc aux différences initiales de taille entre les arbres.
+
+
+(e) Ajoutez au modèle en (c) un effet aléatoire de la placette `plot`. Selon ce modèle, est-ce que la taille des arbres diffère de façon marquée entre les placettes?
+
+**Réponse**
+
+```{r}
+mm_spruce2 <- lmer(logSize ~ as.factor(days) + (1 | Tree) + (1 | plot), data = Spruce)
+summary(mm_spruce2)
+```
+
+La variance due aux placettes est très petite (environ 0.008).
+
