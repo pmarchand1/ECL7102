@@ -192,7 +192,7 @@ Pour choisir les effets aléatoires du modèle, nous pouvons poser la question s
 - les observations de deux arbres prises la même année; et
 - les observations prises sur des arbres du même site
 
-risquent d'être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, espèce et année).
+risquent d'être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, site et année).
 
 La valeur de $y_k$, correspondant à la croissance de l'arbre $i$ du site $j$ lors de l'année $t$, est représentée par le modèle:
 
@@ -210,7 +210,7 @@ Du point de vue de la structure d'un modèle, deux effets aléatoires peuvent ê
 
 Pour indiquer à R que l'effet A est niché dans l'effet B, on écrit par exemple `(1 | B/A)`. Dans ce cas-ci, la formule pourrait être ré-écrite:
 
-`croissance ~ ombre + DHP + age + (1 | site / id_arbre) + (1 | annee)`
+`croissance ~ pente + DHP + age + (1 | site / id_arbre) + (1 | annee)`
 
 Si les numéros d'identification des arbres ne sont pas répétés d'un site à l'autre, il n'est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour `lmer`. Cependant, si les arbres étaient numérotés 1, 2, ... pour chaque site, il serait nécessaire d'utiliser la formule avec l'effet niché: dans le cas contraire, R supposerait que les arbres "1" de chaque site représenteraient le même individu.
 

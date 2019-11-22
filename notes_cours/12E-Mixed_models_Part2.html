@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-11-26" />
+<meta name="date" content="2019-11-25" />
 
 <title>Linear mixed models, part 2</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Linear mixed models, part 2</h1>
-<h4 class="date"><em><br/>November 26, 2018</em></h4>
+<h4 class="date"><br/>November 25, 2019</h4>
 
 </div>
 
@@ -249,7 +318,7 @@ div.tocify {
 </div>
 <div id="mixed-models-for-unbalanced-groups" class="section level1">
 <h1>Mixed models for unbalanced groups</h1>
-<p>In the examples seen last week (species richness at intertidal sites, yield of oat varieties, bee colony disease), the number of observations was balanced between the groups. Mixed models also have interesting properties for cases where groups do not contain the same number of observations, as we will see in the next example.</p>
+<p>In the examples seen in the last class and lab, the number of observations was balanced between the groups. Mixed models also have interesting properties for cases where groups do not contain the same number of observations, as we will see in the next example.</p>
 <div id="example-house-radon-concentration-in-minnesota" class="section level2">
 <h2>Example: House radon concentration in Minnesota</h2>
 <p>The dataset <a href="../donnees/radon.csv">radon.csv</a>, from the textbook by Gelman and Hill, contains radon concentration measurements (<code>log_radon</code>, on a logarithmic scale) from 919 houses in 85 counties (<code>county</code>) of the American state of Minnesota. The number of houses sampled per county ranges from 1 to 116. This dataset includes a house-level predictor, the floor where the measurement was taken (with 0 = basement and 1 = ground floor), and a county-level predictor, the soil uranium level (also on a logarithmic scale).</p>
@@ -383,32 +452,32 @@ predict(mm_radon, nouv_comte)</code></pre>
 </div>
 <div id="multiple-random-effects" class="section level1">
 <h1>Multiple random effects</h1>
-<div id="example-tree-growth-of-several-species" class="section level2">
-<h2>Example: Tree growth of several species</h2>
-<p>Consider again the example seen at the beginning of the last class. We want to model the annual growth of different tree species in a research plot. For five consecutive years, we measured annual growth of the same 100 trees based on two predictors (<span class="math inline">\(x_1, x_2\)</span>) that varied for each observation (tree and year). We also know the species of each tree and the value of a predictor (<span class="math inline">\(u_1\)</span>) measured at the species level. How could we represent these data with a linear mixed model?</p>
+<div id="example-growth-of-spruce-on-several-sites" class="section level2">
+<h2>Example: Growth of spruce on several sites</h2>
+<p>Consider again the example seen at the beginning of the last class. We want to model the annual growth of white spruce on different sites. For five consecutive years, we measured annual growth of the same 100 trees based on two predictors (<span class="math inline">\(x_1, x_2\)</span>; say the diameter and age) that vary for each observation (tree and year). We also know the value of a predictor (<span class="math inline">\(u_1\)</span>; say the slope) that is fixed at the site level. How could we represent these data with a linear mixed model?</p>
 <p>To choose the random effects of the model, we can ask the following question: for which groups of observations would the variation of the response be correlated (between observations of the same group)? In this case:</p>
 <ul>
 <li>observations made on the same tree from one year to the next;</li>
 <li>observations of two trees taken the same year; and</li>
-<li>observations made on trees of the same species</li>
+<li>observations made on trees at the same site</li>
 </ul>
-<p>may be correlated. We therefore include three random effects in the model (tree, species and year).</p>
-<p>The value of <span class="math inline">\(y_k\)</span>, corresponding to the growth of the tree <span class="math inline">\(i\)</span> of the species <span class="math inline">\(j\)</span> during the year <span class="math inline">\(t\)</span>, is represented by the model:</p>
+<p>may be correlated. We therefore include three random effects in the model (tree, site and year).</p>
+<p>The value of <span class="math inline">\(y_k\)</span>, corresponding to the growth of the tree <span class="math inline">\(i\)</span> at site <span class="math inline">\(j\)</span> during the year <span class="math inline">\(t\)</span>, is represented by the model:</p>
 <p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k \]</span></p>
-<p>In R, if <code>shade</code> represents species-level shade tolerance and <code>DBH</code> and <code>age</code> are individual-level predictors, that model could be specified as:</p>
-<p><code>growth ~ shade + DBH + age + (1 | species) + (1 | tree_id) + (1 | year)</code></p>
+<p>In R, if <code>slope</code> represents the slope of the site and <code>DBH</code> and <code>age</code> are individual-level predictors, that model could be specified as:</p>
+<p><code>growth ~ slope + DBH + age + (1 | site) + (1 | tree_id) + (1 | year)</code></p>
 <p>From a model structure point of view, two random effects can be either crossed or nested.</p>
 <ul>
-<li><p>The effects of the tree and the year are crossed: each tree is measured for several years and several trees are measured each year. In the same way, the effects of the species and the year are crossed.</p></li>
-<li><p>The effects of the tree and the species are nested: each tree is part of a single species.</p></li>
+<li><p>The effects of the tree and the year are crossed: each tree is measured for several years and several trees are measured each year. In the same way, the effects of the site and the year are crossed.</p></li>
+<li><p>The effects of the tree and the site are nested: each tree is associated with one site.</p></li>
 </ul>
 <p>To tell R that effect A is nested in effect B, we use a term like <code>(1 | B / A)</code>. In this case, the formula could be rewritten as:</p>
-<p><code>growth ~ shade + DBH + age + (1 | species / tree_id) + (1 | year)</code></p>
-<p>If the tree ID numbers are not repeated from one species to another, it is not necessary to specify the nested effects: the two formulas are equivalent to <code>lmer</code>. However, if the trees were numbered 1, 2, … for each species, it would be necessary to use the formula with the nested effect: otherwise, R would believe that the trees labelled “1” in each species represent the same individual.</p>
+<p><code>growth ~ slope + DBH + age + (1 | site / tree_id) + (1 | year)</code></p>
+<p>If the tree ID numbers are not repeated from one site to another, it is not necessary to specify the nested effects: the two formulas are equivalent to <code>lmer</code>. However, if the trees were numbered 1, 2, … for each site, it would be necessary to use the formula with the nested effect: otherwise, R would assume that the trees labelled “1” in each site represent the same individual.</p>
 </div>
 <div id="example-split-plot-experiment-design" class="section level2">
 <h2>Example: Split-plot experiment design</h2>
-<p>The <code>Oats</code> data frame in the <em>nlme</em> package, which we used at the last lab, shows the results of a split-plot agricultural experiment. The experiment is done in six blocks. Each block is divided into three sections where a different variety of oats is sown, then each section is divided into four quadrants which each receive a different concentration of nitrogen (<code>nitro</code>): 0, 0.2, 0.4 or 0.6. The response variable is oat yield for each of the 72 quadrants (6 blocks x 3 varieties x 4 nitrogen concentrations).</p>
+<p>The <code>Oats</code> data frame in the <em>nlme</em> package shows the results of a split-plot agricultural experiment. The experiment is done in six blocks. Each block is divided into three sections where a different variety of oats is sown, then each section is divided into four quadrants which each receive a different concentration of nitrogen (<code>nitro</code>): 0, 0.2, 0.4 or 0.6. The response variable is oat yield for each of the 72 quadrants (6 blocks x 3 varieties x 4 nitrogen concentrations).</p>
 <pre class="r"><code>library(nlme)
 # Change block to an unrdered factor
 Oats$Block &lt;- factor(Oats$Block, ordered = FALSE)
@@ -422,12 +491,9 @@ head(Oats)</code></pre>
 ## 5     I Golden Rain   0.0   117
 ## 6     I Golden Rain   0.2   114</code></pre>
 <p>Here is an example of a possible spatial configuration for this experiment. The planted varieties (colors) are randomly assigned to the three sections of each block and the nitrogen concentrations (numbers) are randomly assigned to the quadrants of each section.</p>
-<div class="figure">
-<img src="../images/split_plot.png" />
-
-</div>
+<p><img src="../images/split_plot.png" /></p>
 <p>The split-plot design is a way of replicating two experimental treatments across several blocks. Its particular feature is that one of the treatments (here, the variety of oats) is applied to a larger surface and another treatment (here, the concentration of nitrogen) is nested within the first.</p>
-<p>In the laboratory, we defined a random effect of the block, which represents the fact that the variance of the response is smaller between observations of the same block than between observations of different blocks. This could be due for example to unmeasured environmental gradients in the plot.</p>
+<p>We can first define a random effect of the block, which represents the fact that the variance of the response is smaller between observations of the same block than between observations of different blocks. This could be due for example to unmeasured environmental gradients in the plot.</p>
 <pre class="r"><code>mm_oats &lt;- lmer(yield ~ nitro + Variety + (1 | Block), Oats)</code></pre>
 <p>For the same reason, it is possible that the variance is smaller between quadrants of the same section; we can take into account this second level of grouping by including a random effect of the section (variety) nested in that of the block.</p>
 <pre class="r"><code>mm_oats2 &lt;- lmer(yield ~ nitro + Variety + (1 | Block / Variety), Oats)
@@ -511,7 +577,7 @@ head(rikz)</code></pre>
 <p><em>Note</em>: To avoid complicating the model, we ignore the <code>Exposure</code> group-level predictor for now.</p>
 <p>We could also consider a case where the effect of the NAP on the response varies from one beach to another. Our model would therefore take the form:</p>
 <p><span class="math display">\[ \hat{y_k} = \alpha_{j[k]} + \beta_{j[k]} x_k \]</span> ,</p>
-<p>where the intercept and slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> both vary from group to group. In this case, the mixed model assumes that <span class="math inline">\(\alpha_j\)</span> and <span class="math inline">\(\beta_j\)</span> follow a normal distribution with a standard deviation of <span class="math inline">\(\sigma_\alpha\)</span> and <span class="math inline">\(\sigma_\beta\)</span>, respectively. However, the model does not assume that the two effects are independent. As we saw in the last class, the intercept and slope of a regression can be correlated, so the model also estimates their correlation <span class="math inline">\(\rho_{\alpha \beta}\)</span>.</p>
+<p>where the intercept and slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> both vary from group to group. In this case, the mixed model assumes that <span class="math inline">\(\alpha_j\)</span> and <span class="math inline">\(\beta_j\)</span> follow a normal distribution with a standard deviation of <span class="math inline">\(\sigma_\alpha\)</span> and <span class="math inline">\(\sigma_\beta\)</span>, respectively. However, the model does not assume that the two effects are independent. As we saw in the last class, the intercept and slope of a regression can be correlated, so the model also estimates their correlation <span class="math inline">\(\rho_{\alpha \beta}\)</span>.</p>
 <p>In R, to represent a random variation of the effect of one of the predictors, we add this predictor on the left part of the random effect term:</p>
 <pre class="r"><code>mm_rikz2 &lt;- lmer(srich ~ NAP + (1 + NAP | Beach), rikz)
 summary(mm_rikz2)</code></pre>
@@ -582,7 +648,7 @@ aictab(list(mm_rikz = mm_rikz, mm_rikz2 = mm_rikz2))</code></pre>
 ## mm_rikz  4 106.15        0.0   0.57   0.57 -48.57
 ## mm_rikz2 6 106.75        0.6   0.43   1.00 -46.27</code></pre>
 <p>As we saw in the last lesson, the <code>lmer</code> function estimates the mixed model parameters using the restricted maximum likelihood method (REML), in order to obtain unbiased estimates of the variance parameters. The warning indicates that the AIC(c) calculated on models fit by REML is only valid for the comparison of models with the same fixed effects, but different random effects.</p>
-<p>In their manual, Zuur et al. (2009) suggest the following protocol:</p>
+<p>In their manual, Zuur et al. (2009) suggest the following protocol:</p>
 <ol style="list-style-type: decimal">
 <li><p>First, include all the fixed effects of interest and choose, if necessary, between different versions of the random effects. This step is based on the AIC of models fitted by REML.</p></li>
 <li><p>Keep the random effects chosen in the previous step and compare different versions of the fixed effects. This step requires comparing the models fitted by maximum likelihood, not by REML (with the <code>REML = FALSE</code> option of<code>lmer</code>).</p></li>

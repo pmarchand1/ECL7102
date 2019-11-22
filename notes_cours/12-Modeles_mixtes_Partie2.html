@@ -460,7 +460,7 @@ predict(mm_radon, nouv_comte)</code></pre>
 <li>les observations de deux arbres prises la même année; et</li>
 <li>les observations prises sur des arbres du même site</li>
 </ul>
-<p>risquent d’être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, espèce et année).</p>
+<p>risquent d’être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, site et année).</p>
 <p>La valeur de <span class="math inline">\(y_k\)</span>, correspondant à la croissance de l’arbre <span class="math inline">\(i\)</span> du site <span class="math inline">\(j\)</span> lors de l’année <span class="math inline">\(t\)</span>, est représentée par le modèle:</p>
 <p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k \]</span></p>
 <p>Dans R, si <code>pente</code> représente la pente du site et que les prédicteurs individuels sont <code>DHP</code> et <code>age</code>, ce modèle pourrait s’exprimer ainsi:</p>
@@ -471,7 +471,7 @@ predict(mm_radon, nouv_comte)</code></pre>
 <li><p>Les effets de l’arbre et du site sont nichés (<em>nested</em>): chaque arbre est associé à un seul site.</p></li>
 </ul>
 <p>Pour indiquer à R que l’effet A est niché dans l’effet B, on écrit par exemple <code>(1 | B/A)</code>. Dans ce cas-ci, la formule pourrait être ré-écrite:</p>
-<p><code>croissance ~ ombre + DHP + age + (1 | site / id_arbre) + (1 | annee)</code></p>
+<p><code>croissance ~ pente + DHP + age + (1 | site / id_arbre) + (1 | annee)</code></p>
 <p>Si les numéros d’identification des arbres ne sont pas répétés d’un site à l’autre, il n’est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour <code>lmer</code>. Cependant, si les arbres étaient numérotés 1, 2, … pour chaque site, il serait nécessaire d’utiliser la formule avec l’effet niché: dans le cas contraire, R supposerait que les arbres “1” de chaque site représenteraient le même individu.</p>
 </div>
 <div id="exemple-plan-dexperience-en-parcelles-divisees" class="section level2">

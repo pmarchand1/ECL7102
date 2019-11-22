@@ -45,7 +45,7 @@ This discussion led us to consider *linear mixed models* to represent this type 
 
 # Mixed models for unbalanced groups
 
-In the examples seen last week (species richness at intertidal sites, yield of oat varieties, bee colony disease), the number of observations was balanced between the groups. Mixed models also have interesting properties for cases where groups do not contain the same number of observations, as we will see in the next example.
+In the examples seen in the last class and lab, the number of observations was balanced between the groups. Mixed models also have interesting properties for cases where groups do not contain the same number of observations, as we will see in the next example.
 
 ## Example: House radon concentration in Minnesota
 
@@ -181,41 +181,41 @@ The `predict` function does not provide confidence intervals or prediction inter
 
 # Multiple random effects
 
-## Example: Tree growth of several species
+## Example: Growth of spruce on several sites
 
-Consider again the example seen at the beginning of the last class. We want to model the annual growth of different tree species in a research plot. For five consecutive years, we measured annual growth of the same 100 trees based on two predictors ($x_1, x_2$) that varied for each observation (tree and year). We also know the species of each tree and the value of a predictor ($u_1$) measured at the species level. How could we represent these data with a linear mixed model?
+Consider again the example seen at the beginning of the last class. We want to model the annual growth of white spruce on different sites. For five consecutive years, we measured annual growth of the same 100 trees based on two predictors ($x_1, x_2$; say the diameter and age) that vary for each observation (tree and year). We also know the value of a predictor ($u_1$; say the slope) that is fixed at the site level. How could we represent these data with a linear mixed model?
 
 To choose the random effects of the model, we can ask the following question: for which groups of observations would the variation of the response be correlated (between observations of the same group)? In this case:
 
 - observations made on the same tree from one year to the next;
 - observations of two trees taken the same year; and
-- observations made on trees of the same species
+- observations made on trees at the same site
 
-may be correlated. We therefore include three random effects in the model (tree, species and year).
+may be correlated. We therefore include three random effects in the model (tree, site and year).
 
-The value of $y_k$, corresponding to the growth of the tree $i$ of the species $j$ during the year $t$, is represented by the model:
+The value of $y_k$, corresponding to the growth of the tree $i$ at site $j$ during the year $t$, is represented by the model:
 
 $$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k $$
 
-In R, if `shade` represents species-level shade tolerance and `DBH` and `age` are individual-level predictors, that model could be specified as:
+In R, if `slope` represents the slope of the site and `DBH` and `age` are individual-level predictors, that model could be specified as:
 
-`growth ~ shade + DBH + age + (1 | species) + (1 | tree_id) + (1 | year)`
+`growth ~ slope + DBH + age + (1 | site) + (1 | tree_id) + (1 | year)`
 
 From a model structure point of view, two random effects can be either crossed or nested.
 
-- The effects of the tree and the year are crossed: each tree is measured for several years and several trees are measured each year. In the same way, the effects of the species and the year are crossed.
+- The effects of the tree and the year are crossed: each tree is measured for several years and several trees are measured each year. In the same way, the effects of the site and the year are crossed.
 
-- The effects of the tree and the species are nested: each tree is part of a single species.
+- The effects of the tree and the site are nested: each tree is associated with one site.
 
 To tell R that effect A is nested in effect B, we use a term like `(1 | B / A)`. In this case, the formula could be rewritten as:
 
-`growth ~ shade + DBH + age + (1 | species / tree_id) + (1 | year)`
+`growth ~ slope + DBH + age + (1 | site / tree_id) + (1 | year)`
 
-If the tree ID numbers are not repeated from one species to another, it is not necessary to specify the nested effects: the two formulas are equivalent to `lmer`. However, if the trees were numbered 1, 2, ... for each species, it would be necessary to use the formula with the nested effect: otherwise, R would believe that the trees labelled "1" in each species represent the same individual.
+If the tree ID numbers are not repeated from one site to another, it is not necessary to specify the nested effects: the two formulas are equivalent to `lmer`. However, if the trees were numbered 1, 2, ... for each site, it would be necessary to use the formula with the nested effect: otherwise, R would assume that the trees labelled "1" in each site represent the same individual.
 
 ## Example: Split-plot experiment design
 
-The `Oats` data frame in the *nlme* package, which we used at the last lab, shows the results of a split-plot agricultural experiment. The experiment is done in six blocks. Each block is divided into three sections where a different variety of oats is sown, then each section is divided into four quadrants which each receive a different concentration of nitrogen (`nitro`): 0, 0.2, 0.4 or 0.6. The response variable is oat yield for each of the 72 quadrants (6 blocks x 3 varieties x 4 nitrogen concentrations).
+The `Oats` data frame in the *nlme* package shows the results of a split-plot agricultural experiment. The experiment is done in six blocks. Each block is divided into three sections where a different variety of oats is sown, then each section is divided into four quadrants which each receive a different concentration of nitrogen (`nitro`): 0, 0.2, 0.4 or 0.6. The response variable is oat yield for each of the 72 quadrants (6 blocks x 3 varieties x 4 nitrogen concentrations).
 
 ```{r, message = FALSE, warning = FALSE}
 library(nlme)
@@ -230,7 +230,7 @@ Here is an example of a possible spatial configuration for this experiment. The 
 
 The split-plot design is a way of replicating two experimental treatments across several blocks. Its particular feature is that one of the treatments (here, the variety of oats) is applied to a larger surface and another treatment (here, the concentration of nitrogen) is nested within the first.
 
-In the laboratory, we defined a random effect of the block, which represents the fact that the variance of the response is smaller between observations of the same block than between observations of different blocks. This could be due for example to unmeasured environmental gradients in the plot.
+We can first define a random effect of the block, which represents the fact that the variance of the response is smaller between observations of the same block than between observations of different blocks. This could be due for example to unmeasured environmental gradients in the plot.
 
 ```{r}
 mm_oats <- lmer(yield ~ nitro + Variety + (1 | Block), Oats)
