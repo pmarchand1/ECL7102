@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -99,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -202,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -219,7 +288,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Modèles linéaires mixtes, partie 2</h1>
-<h4 class="date"><em><br/>26 novembre 2018</em></h4>
+<h4 class="date"><br/>25 novembre 2019</h4>
 
 </div>
 
@@ -248,7 +317,7 @@ div.tocify {
 </div>
 <div id="modeles-mixtes-pour-groupes-non-equilibres" class="section level1">
 <h1>Modèles mixtes pour groupes non-équilibrés</h1>
-<p>Dans les exemples vus la semaine dernière (richesse spécifique de sites intertidaux, rendement de variétés d’avoine, maladie des colonies d’abeilles), le nombre d’observations était équilibré entre les groupes. Les modèles mixtes ont aussi des propriétés intéressantes pour les cas où les groupes ne contiennent pas le même nombre d’observations, comme nous le verrons dans le prochain exemple.</p>
+<p>Dans les exemples vus lors du cours et du laboratoire de la semaine dernière, le nombre d’observations était équilibré entre les groupes. Les modèles mixtes ont aussi des propriétés intéressantes pour les cas où les groupes ne contiennent pas le même nombre d’observations, comme nous le verrons dans le prochain exemple.</p>
 <div id="exemple-concentration-de-radon-dans-des-maisons-du-minnesota" class="section level2">
 <h2>Exemple: Concentration de radon dans des maisons du Minnesota</h2>
 <p>Le jeu de données <a href="../donnees/radon.csv">radon.csv</a>, tiré du manuel de Gelman et Hill, contient des mesures de concentration de radon (<code>log_radon</code>, échelle logarithmique) prises dans 919 maisons réparties dans 85 comtés (<code>county</code>) de l’état américain du Minnesota. Le nombre de maisons par comté varie de 1 à 116. Ce jeu de données inclut un prédicteur au niveau de la maison, soit l’étage où la mesure a été prise (<code>floor</code>, avec 0 = sous-sol et 1 = rez-de-chaussée) et un prédicteur au niveau du comté, soit la concentration d’uranium du sol (<code>log_uranium</code>, échelle logarithmique).</p>
@@ -307,7 +376,7 @@ comtes$mm_pred &lt;- predict(mm_radon, comtes)
 
 ggplot(comtes, aes(x = log_uranium, y = mm_pred)) +
     geom_point()</code></pre>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="12-Modeles_mixtes_Partie2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Ces prédictions dévient de la tendance linéaire moyenne en fonction des ordonnées à l’origine estimées pour chaque comté (effets aléatoires).</p>
 <p>Comparons maintenant ces prédictions à ceux de deux régressions linéaires classiques, avec aucun effet de comté (mais avec l’effet de l’uranium) ou un effet fixe par comté.</p>
 <pre class="r"><code>lm_radon1 &lt;- lm(log_radon ~ floor + log_uranium, radon)
@@ -321,7 +390,7 @@ ggplot(comtes, aes(x = log_uranium)) +
     geom_line(aes(y = pred1)) +
     geom_point(aes(y = pred2), shape = 1) +
     geom_point(aes(y = mm_pred))</code></pre>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="12-Modeles_mixtes_Partie2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>La ligne représente la prédiction sans effet de comté, les points pleins indiquent les effets de comté du modèle mixte et les points vides indiquent les effets fixes par comté. Les prédictions du modèle mixte se rapprochent plus de la tendance moyenne, démontrant la contraction des coefficients pour le modèle mixte.</p>
 <p>Regardons maintenant l’effet de la taille de l’échantillon <span class="math inline">\(n\)</span> dans chaque comté. Aux fins de clarté, les deux prédictions d’un même comté sont reliées par une ligne pointillée.</p>
 <pre class="r"><code>ggplot(comtes, aes(x = log_uranium)) +
@@ -331,7 +400,7 @@ ggplot(comtes, aes(x = log_uranium)) +
     geom_point(aes(y = mm_pred, size = n)) +
     geom_segment(aes(xend = log_uranium, y = mm_pred, yend = pred2),
                  linetype = &quot;dotted&quot;)</code></pre>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="12-Modeles_mixtes_Partie2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Ce résultat montre que plus l’échantillon est faible dans un comté, plus l’effet de contraction est important. Autrement dit, moins il y a de points dans un comté, plus la déviation observée entre ce comté et la tendance globale risque d’être due au hasard de l’échantillonnage et plus le modèle mixte doit “corriger” cette valeur en la ramenant près de la tendance générale.</p>
 </div>
 </div>
@@ -382,32 +451,32 @@ predict(mm_radon, nouv_comte)</code></pre>
 </div>
 <div id="effets-aleatoires-multiples" class="section level1">
 <h1>Effets aléatoires multiples</h1>
-<div id="exemple-croissance-des-arbres-de-plusieurs-especes" class="section level2">
-<h2>Exemple: Croissance des arbres de plusieurs espèces</h2>
-<p>Considérons de nouveau l’exemple vu au début du dernier cours. Nous souhaitons modéliser la croissance annuelle de différentes espèces d’arbres dans une parcelle de recherche. Pour cinq années consécutives, nous avons mesuré la croissance annuelle des mêmes 100 arbres en fonction de deux prédicteurs (<span class="math inline">\(x_1, x_2\)</span>) qui varient pour chaque observation (arbre et année). Nous connaissons aussi l’espèce ce chaque arbre et la valeur d’un prédicteur (<span class="math inline">\(u_1\)</span>) mesuré au niveau de l’espèce. Comment pourrions-nous représenter ces données avec un modèle linéaire mixte?</p>
+<div id="exemple-croissance-depinettes-sur-plusieurs-sites" class="section level2">
+<h2>Exemple: Croissance d’épinettes sur plusieurs sites</h2>
+<p>Considérons de nouveau l’exemple vu au début du dernier cours. Nous souhaitons modéliser la croissance annuelle de l’épinette blanche sur différents sites. Pour cinq années consécutives, nous avons mesuré la croissance annuelle des mêmes 100 arbres en fonction de deux prédicteurs (<span class="math inline">\(x_1, x_2\)</span>; disons le diamètre et l’âge) qui varient pour chaque observation (arbre et année). Nous connaissons aussi la valeur d’un prédicteur fixe au niveau du site (<span class="math inline">\(u_1\)</span>; par exemple la pente). Comment pourrions-nous représenter ces données avec un modèle linéaire mixte?</p>
 <p>Pour choisir les effets aléatoires du modèle, nous pouvons poser la question suivante: pour quels groupes d’observations la variation de la réponse serait-elle corrélée (entre observations d’un même groupe)? Dans ce cas-ci:</p>
 <ul>
 <li>les observations prises sur le même arbre d’une année à l’autre;</li>
 <li>les observations de deux arbres prises la même année; et</li>
-<li>les observations prises sur des arbres de la même espèce</li>
+<li>les observations prises sur des arbres du même site</li>
 </ul>
 <p>risquent d’être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, espèce et année).</p>
-<p>La valeur de <span class="math inline">\(y_k\)</span>, correspondant à la croissance de l’arbre <span class="math inline">\(i\)</span> de l’espèce <span class="math inline">\(j\)</span> lors de l’année <span class="math inline">\(t\)</span>, est représentée par le modèle:</p>
+<p>La valeur de <span class="math inline">\(y_k\)</span>, correspondant à la croissance de l’arbre <span class="math inline">\(i\)</span> du site <span class="math inline">\(j\)</span> lors de l’année <span class="math inline">\(t\)</span>, est représentée par le modèle:</p>
 <p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k \]</span></p>
-<p>Dans R, si <code>ombre</code> représente la tolérance à l’ombre de l’espèce et que les prédicteurs individuels sont <code>DHP</code> et <code>age</code>, ce modèle pourrait s’exprimer ainsi:</p>
-<p><code>croissance ~ ombre + DHP + age + (1 | espece) + (1 | id_arbre) + (1 | annee)</code></p>
+<p>Dans R, si <code>pente</code> représente la pente du site et que les prédicteurs individuels sont <code>DHP</code> et <code>age</code>, ce modèle pourrait s’exprimer ainsi:</p>
+<p><code>croissance ~ pente + DHP + age + (1 | site) + (1 | id_arbre) + (1 | annee)</code></p>
 <p>Du point de vue de la structure d’un modèle, deux effets aléatoires peuvent être soit croisés, soit nichés.</p>
 <ul>
-<li><p>Les effets de l’arbre et de l’année sont croisés (<em>crossed</em>): chaque arbre est mesurée pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets de l’espèce et de l’année sont croisés.</p></li>
-<li><p>Les effets de l’arbre et de l’espèce sont nichés (<em>nested</em>): chaque arbre fait partie d’une seule espèce.</p></li>
+<li><p>Les effets de l’arbre et de l’année sont croisés (<em>crossed</em>): chaque arbre est mesurée pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets du site et de l’année sont croisés.</p></li>
+<li><p>Les effets de l’arbre et du site sont nichés (<em>nested</em>): chaque arbre est associé à un seul site.</p></li>
 </ul>
 <p>Pour indiquer à R que l’effet A est niché dans l’effet B, on écrit par exemple <code>(1 | B/A)</code>. Dans ce cas-ci, la formule pourrait être ré-écrite:</p>
-<p><code>croissance ~ ombre + DHP + age + (1 | espece / id_arbre) + (1 | annee)</code></p>
-<p>Si les numéros d’identification des arbres ne sont pas répétés d’une espèce à l’autre, il n’est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour <code>lmer</code>. Cependant, si les arbres étaient numérotés 1, 2, … pour chaque espèce, il serait nécessaire d’utiliser la formule avec l’effet niché: dans le cas contraire, R croirait que les arbres “1” de chaque espèce représenteraient le même individu.</p>
+<p><code>croissance ~ ombre + DHP + age + (1 | site / id_arbre) + (1 | annee)</code></p>
+<p>Si les numéros d’identification des arbres ne sont pas répétés d’un site à l’autre, il n’est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour <code>lmer</code>. Cependant, si les arbres étaient numérotés 1, 2, … pour chaque site, il serait nécessaire d’utiliser la formule avec l’effet niché: dans le cas contraire, R supposerait que les arbres “1” de chaque site représenteraient le même individu.</p>
 </div>
 <div id="exemple-plan-dexperience-en-parcelles-divisees" class="section level2">
 <h2>Exemple: Plan d’expérience en parcelles divisées</h2>
-<p>Le tableau de données <code>Oats</code> du package <em>nlme</em>, que nous avons utilisé au dernier laboratoire, présente les résultats d’une expérience agricole en parcelles divisées (<em>split-plot</em>). L’expérience est réalisée en six blocs (<code>Block</code>). Chaque bloc est divisé en trois sections où une variété différente d’avoine est semée (<code>Variety</code>), puis chaque section est divisée en quatre quadrants qui reçoivent chacun une concentration différente d’azote (<code>nitro</code>): 0, 0.2, 0.4 ou 0.6. La variable réponse est le rendement (<code>yield</code>) en avoine pour chacun des 72 quadrants (6 blocs x 3 variétés x 4 concentrations d’azote).</p>
+<p>Le tableau de données <code>Oats</code> du package <em>nlme</em> présente les résultats d’une expérience agricole en parcelles divisées (<em>split-plot</em>). L’expérience est réalisée en six blocs (<code>Block</code>). Chaque bloc est divisé en trois sections où une variété différente d’avoine est semée (<code>Variety</code>), puis chaque section est divisée en quatre quadrants qui reçoivent chacun une concentration différente d’azote (<code>nitro</code>): 0, 0.2, 0.4 ou 0.6. La variable réponse est le rendement (<code>yield</code>) en avoine pour chacun des 72 quadrants (6 blocs x 3 variétés x 4 concentrations d’azote).</p>
 <pre class="r"><code>library(nlme)
 # Changer le bloc en facteur non-ordonné
 Oats$Block &lt;- factor(Oats$Block, ordered = FALSE)
@@ -421,12 +490,9 @@ head(Oats)</code></pre>
 ## 5     I Golden Rain   0.0   117
 ## 6     I Golden Rain   0.2   114</code></pre>
 <p>Voici un exemple de configuration spatiale possible pour cette expérience. Les variétés plantées (couleur) sont assignées aléatoirement aux trois sections de chaque bloc et les concentrations d’azote (nombres) sont assignés aléatoirement aux quadrants de chaque section.</p>
-<div class="figure">
-<img src="../images/split_plot.png" />
-
-</div>
+<p><img src="../images/split_plot.png" /></p>
 <p>Le plan en parcelles divisées constitue une façon de répliquer deux traitements expérimentaux sur plusieurs blocs. Sa particularité est qu’un des traitements (ici, la variété d’avoine) est appliqué à une plus grande surface et un autre traitement (ici, la concentration d’azote) est niché dans le premier.</p>
-<p>Dans le laboratoire, nous avions défini un effet aléatoire du bloc, qui représente le fait que la variance de la réponse est plus petite entre observations du même bloc qu’entre observations de différents blocs. Cela pourrait être dû par exemple à des gradients environnementaux non-mesurés dans la parcelle.</p>
+<p>Nous pouvons d’abord définir un effet aléatoire du bloc, qui représente le fait que la variance de la réponse est plus petite entre observations du même bloc qu’entre observations de différents blocs. Cela pourrait être dû par exemple à des gradients environnementaux non-mesurés dans la parcelle.</p>
 <pre class="r"><code>mm_oats &lt;- lmer(yield ~ nitro + Variety + (1 | Block), Oats)</code></pre>
 <p>Pour la même raison, il est possible que la variance soit plus petite entre quadrants d’une même section; nous pouvons tenir compte de ce deuxième niveau de groupement en incluant un effet aléatoire de la section (variété) niché dans celui du bloc.</p>
 <pre class="r"><code>mm_oats2 &lt;- lmer(yield ~ nitro + Variety + (1 | Block / Variety), Oats)
@@ -510,7 +576,7 @@ head(rikz)</code></pre>
 <p><em>Note</em>: Pour éviter de compliquer le modèle, nous ignorons le prédicteur de groupe <code>Exposure</code> pour l’instant.</p>
 <p>Nous pourrions aussi considérer un cas où l’effet du NAP sur la réponse varie d’une plage à l’autre. Notre modèle prendrait donc la forme:</p>
 <p><span class="math display">\[ \hat{y_k} = \alpha_{j[k]} + \beta_{j[k]} x_k \]</span> ,</p>
-<p>où l’ordonnée à l’origine et la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> varient toutes deux d’un groupe à l’autre. Dans ce cas, le modèle mixte suppose que <span class="math inline">\(\alpha_j\)</span> et <span class="math inline">\(\beta_j\)</span> suivent une distribution normale avec un écart-type de <span class="math inline">\(\sigma_\alpha\)</span> et <span class="math inline">\(\sigma_\beta\)</span>, respectivement. Toutefois, le modèle ne suppose pas que les deux effets sont indépendants. Comme nous avons vu au dernier cours, l’ordonnée à l’origine et la pente d’une régression peuvent être corrélés, donc le modèle estime aussi leur corrélation <span class="math inline">\(\rho_{\alpha \beta}\)</span>.</p>
+<p>où l’ordonnée à l’origine et la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> varient toutes deux d’un groupe à l’autre. Dans ce cas, le modèle mixte suppose que <span class="math inline">\(\alpha_j\)</span> et <span class="math inline">\(\beta_j\)</span> suivent une distribution normale avec un écart-type de <span class="math inline">\(\sigma_\alpha\)</span> et <span class="math inline">\(\sigma_\beta\)</span>, respectivement. Toutefois, le modèle ne suppose pas que les deux effets sont indépendants. Comme nous avons vu au dernier cours, l’ordonnée à l’origine et la pente d’une régression peuvent être corrélés, donc le modèle estime aussi leur corrélation <span class="math inline">\(\rho_{\alpha \beta}\)</span>.</p>
 <p>Dans R, pour représenter une variation aléatoire de l’effet d’un des prédicteurs, nous ajoutons ce prédicteur dans la partie gauche du terme d’effet aléatoire:</p>
 <pre class="r"><code>mm_rikz2 &lt;- lmer(srich ~ NAP + (1 + NAP | Beach), rikz)
 summary(mm_rikz2)</code></pre>
@@ -562,7 +628,7 @@ summary(mm_rikz2)</code></pre>
 ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
     geom_point() + 
     geom_line(aes(y = fit2))</code></pre>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="12-Modeles_mixtes_Partie2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
 <div id="selection-de-modeles" class="section level1">
 <h1>Sélection de modèles</h1>
@@ -581,7 +647,7 @@ aictab(list(mm_rikz = mm_rikz, mm_rikz2 = mm_rikz2))</code></pre>
 ## mm_rikz  4 106.15        0.0   0.57   0.57 -48.57
 ## mm_rikz2 6 106.75        0.6   0.43   1.00 -46.27</code></pre>
 <p>Comme nous avons vu au dernier cours, la fonction <code>lmer</code> estime les paramètres du modèle mixte par la méthode du maximum de vraisemblance restreint (REML), afin d’obtenir des estimés non-biaisés des paramètres de variance. L’avertissement indique que l’AIC(c) calculé sur des modèles ajustés par REML est seulement valide pour la comparaison de modèles avec les mêmes effets fixes, mais différents effets aléatoires.</p>
-<p>Dans leur manuel, Zuur et al. (2009) suggèrent le protocole suivant:</p>
+<p>Dans leur manuel, Zuur et al. (2009) suggèrent le protocole suivant:</p>
 <ol style="list-style-type: decimal">
 <li><p>D’abord, inclure tous les effets fixes qui nous intéressent et choisir, si nécessaire, entre différentes versions des effets aléatoires. Cette étape est basée sur l’AIC des modèles ajustés par REML.</p></li>
 <li><p>Conserver les effets aléatoires choisis à l’étape précédente et comparer différentes versions des effets fixes. Cette étape requiert de comparer les modèles ajustés selon le maximum de vraisemblance, pas le REML (avec l’option <code>REML = FALSE</code> de <code>lmer</code>).</p></li>

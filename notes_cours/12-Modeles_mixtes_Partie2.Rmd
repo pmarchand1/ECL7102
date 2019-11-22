@@ -1,6 +1,6 @@
 ---
 title: "Modèles linéaires mixtes, partie 2"
-date: "<br/>26 novembre 2018"
+date: "<br/>25 novembre 2019"
 output:
     html_document:
         self_contained: false
@@ -45,7 +45,7 @@ Cette discussion nous a amené à considérer les *modèles linéaires mixtes* p
 
 # Modèles mixtes pour groupes non-équilibrés
 
-Dans les exemples vus la semaine dernière (richesse spécifique de sites intertidaux, rendement de variétés d'avoine, maladie des colonies d'abeilles), le nombre d'observations était équilibré entre les groupes. Les modèles mixtes ont aussi des propriétés intéressantes pour les cas où les groupes ne contiennent pas le même nombre d'observations, comme nous le verrons dans le prochain exemple.
+Dans les exemples vus lors du cours et du laboratoire de la semaine dernière, le nombre d'observations était équilibré entre les groupes. Les modèles mixtes ont aussi des propriétés intéressantes pour les cas où les groupes ne contiennent pas le même nombre d'observations, comme nous le verrons dans le prochain exemple.
 
 ## Exemple: Concentration de radon dans des maisons du Minnesota
 
@@ -182,41 +182,41 @@ La fonction `predict` n'offre pas d'intervalles de confiance ou de prédiction p
 
 # Effets aléatoires multiples
 
-## Exemple: Croissance des arbres de plusieurs espèces
+## Exemple: Croissance d'épinettes sur plusieurs sites
 
-Considérons de nouveau l'exemple vu au début du dernier cours. Nous souhaitons modéliser la croissance annuelle de différentes espèces d'arbres dans une parcelle de recherche. Pour cinq années consécutives, nous avons mesuré la croissance annuelle des mêmes 100 arbres en fonction de deux prédicteurs ($x_1, x_2$) qui varient pour chaque observation (arbre et année). Nous connaissons aussi l'espèce ce chaque arbre et la valeur d'un prédicteur ($u_1$) mesuré au niveau de l'espèce. Comment pourrions-nous représenter ces données avec un modèle linéaire mixte? 
+Considérons de nouveau l'exemple vu au début du dernier cours. Nous souhaitons modéliser la croissance annuelle de l'épinette blanche sur différents sites. Pour cinq années consécutives, nous avons mesuré la croissance annuelle des mêmes 100 arbres en fonction de deux prédicteurs ($x_1, x_2$; disons le diamètre et l'âge) qui varient pour chaque observation (arbre et année). Nous connaissons aussi la valeur d'un prédicteur fixe au niveau du site ($u_1$; par exemple la pente). Comment pourrions-nous représenter ces données avec un modèle linéaire mixte? 
 
 Pour choisir les effets aléatoires du modèle, nous pouvons poser la question suivante: pour quels groupes d'observations la variation de la réponse serait-elle corrélée (entre observations d'un même groupe)? Dans ce cas-ci:
 
 - les observations prises sur le même arbre d'une année à l'autre;
 - les observations de deux arbres prises la même année; et
-- les observations prises sur des arbres de la même espèce
+- les observations prises sur des arbres du même site
 
 risquent d'être corrélés. Nous incluons donc trois effets aléatoires dans le modèle (arbre, espèce et année).
 
-La valeur de $y_k$, correspondant à la croissance de l'arbre $i$ de l'espèce $j$ lors de l'année $t$, est représentée par le modèle:
+La valeur de $y_k$, correspondant à la croissance de l'arbre $i$ du site $j$ lors de l'année $t$, est représentée par le modèle:
 
 $$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k $$
 
-Dans R, si `ombre` représente la tolérance à l'ombre de l'espèce et que les prédicteurs individuels sont `DHP` et `age`, ce modèle pourrait s'exprimer ainsi:
+Dans R, si `pente` représente la pente du site et que les prédicteurs individuels sont `DHP` et `age`, ce modèle pourrait s'exprimer ainsi:
 
-`croissance ~ ombre + DHP + age + (1 | espece) + (1 | id_arbre) + (1 | annee)`
+`croissance ~ pente + DHP + age + (1 | site) + (1 | id_arbre) + (1 | annee)`
 
 Du point de vue de la structure d'un modèle, deux effets aléatoires peuvent être soit croisés, soit nichés.
 
-- Les effets de l'arbre et de l'année sont croisés (*crossed*): chaque arbre est mesurée pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets de l'espèce et de l'année sont croisés.
+- Les effets de l'arbre et de l'année sont croisés (*crossed*): chaque arbre est mesurée pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets du site et de l'année sont croisés.
 
-- Les effets de l'arbre et de l'espèce sont nichés (*nested*): chaque arbre fait partie d'une seule espèce.
+- Les effets de l'arbre et du site sont nichés (*nested*): chaque arbre est associé à un seul site.
 
 Pour indiquer à R que l'effet A est niché dans l'effet B, on écrit par exemple `(1 | B/A)`. Dans ce cas-ci, la formule pourrait être ré-écrite:
 
-`croissance ~ ombre + DHP + age + (1 | espece / id_arbre) + (1 | annee)`
+`croissance ~ ombre + DHP + age + (1 | site / id_arbre) + (1 | annee)`
 
-Si les numéros d'identification des arbres ne sont pas répétés d'une espèce à l'autre, il n'est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour `lmer`. Cependant, si les arbres étaient numérotés 1, 2, ... pour chaque espèce, il serait nécessaire d'utiliser la formule avec l'effet niché: dans le cas contraire, R croirait que les arbres "1" de chaque espèce représenteraient le même individu.
+Si les numéros d'identification des arbres ne sont pas répétés d'un site à l'autre, il n'est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour `lmer`. Cependant, si les arbres étaient numérotés 1, 2, ... pour chaque site, il serait nécessaire d'utiliser la formule avec l'effet niché: dans le cas contraire, R supposerait que les arbres "1" de chaque site représenteraient le même individu.
 
 ## Exemple: Plan d'expérience en parcelles divisées
 
-Le tableau de données `Oats` du package *nlme*, que nous avons utilisé au dernier laboratoire, présente les résultats d'une expérience agricole en parcelles divisées (*split-plot*). L'expérience est réalisée en six blocs (`Block`). Chaque bloc est divisé en trois sections où une variété différente d'avoine est semée (`Variety`), puis chaque section est divisée en quatre quadrants qui reçoivent chacun une concentration différente d'azote (`nitro`): 0, 0.2, 0.4 ou 0.6. La variable réponse est le rendement (`yield`) en avoine pour chacun des 72 quadrants (6 blocs x 3 variétés x 4 concentrations d'azote).
+Le tableau de données `Oats` du package *nlme* présente les résultats d'une expérience agricole en parcelles divisées (*split-plot*). L'expérience est réalisée en six blocs (`Block`). Chaque bloc est divisé en trois sections où une variété différente d'avoine est semée (`Variety`), puis chaque section est divisée en quatre quadrants qui reçoivent chacun une concentration différente d'azote (`nitro`): 0, 0.2, 0.4 ou 0.6. La variable réponse est le rendement (`yield`) en avoine pour chacun des 72 quadrants (6 blocs x 3 variétés x 4 concentrations d'azote).
 
 ```{r, message = FALSE, warning = FALSE}
 library(nlme)
@@ -231,7 +231,7 @@ Voici un exemple de configuration spatiale possible pour cette expérience. Les 
 
 Le plan en parcelles divisées constitue une façon de répliquer deux traitements expérimentaux sur plusieurs blocs. Sa particularité est qu'un des traitements (ici, la variété d'avoine) est appliqué à une plus grande surface et un autre traitement (ici, la concentration d'azote) est niché dans le premier.
 
-Dans le laboratoire, nous avions défini un effet aléatoire du bloc, qui représente le fait que la variance de la réponse est plus petite entre observations du même bloc qu'entre observations de différents blocs. Cela pourrait être dû par exemple à des gradients environnementaux non-mesurés dans la parcelle.
+Nous pouvons d'abord définir un effet aléatoire du bloc, qui représente le fait que la variance de la réponse est plus petite entre observations du même bloc qu'entre observations de différents blocs. Cela pourrait être dû par exemple à des gradients environnementaux non-mesurés dans la parcelle.
 
 ```{r}
 mm_oats <- lmer(yield ~ nitro + Variety + (1 | Block), Oats)
