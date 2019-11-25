@@ -353,7 +353,7 @@ aictab(list(mod_comp = mod_comp, mod_comp2 = mod_comp2))
 
 Nous choisissons donc le premier modèle (effet aléatoire sur l'ordonnée à l'origine seulement). Ensuite, comparons les modèles avec ou sans indice d'exposition. Puisque nous comparons différents effets fixes, il faut réajuster les modèles avec ML plutôt que REML.
 
-```{r}
+```{r, message = FALSE}
 mod_comp_ml <- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz, REML = FALSE)
 mod_nap_ml <- lmer(srich ~ NAP + (1 | Beach), rikz, REML = FALSE)
 
