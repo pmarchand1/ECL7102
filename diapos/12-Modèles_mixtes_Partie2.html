@@ -1,1122 +1,459 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <title>Modèles linéaires mixtes, partie 2</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Modèles linéaires mixtes, partie 2</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
 
+# Modèles linéaires mixtes, partie 2
+### <br/>25 novembre 2019
 
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
+---
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/night.css" id="theme">
 
-<style type="text/css">
-.reveal section img {
-  background: rgba(255, 255, 255, 0.85);
-}
-</style>
 
-  <!-- some tweaks to reveal css -->
-  <style type="text/css">
-    .reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.5em;  }
-    .reveal h3 { font-size: 1.25em;	}
-    .reveal h4 { font-size: 1em;	}
 
-    .reveal .slides>section,
-    .reveal .slides>section>section {
-      padding: 0px 0px;
-    }
+# Rappel
 
+- Régression linéaire "classique" avec des données groupées: ignorer les groupes, estimer séparément des effets pour chaque groupe, ou tenir compte indirectement des groupes à partir de prédicteurs mesurés au niveau de ces groupes.
 
+--
 
-    .reveal table {
-      border-width: 1px;
-      border-spacing: 2px;
-      border-style: dotted;
-      border-color: gray;
-      border-collapse: collapse;
-      font-size: 0.7em;
-    }
+- Si on ignore la structure groupée des données, résidus ne sont pas indépendants, donc surestimation de la précision des inférences.
 
-    .reveal table th {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      font-weight: bold;
-      border-style: dotted;
-      border-color: gray;
-    }
+--
 
-    .reveal table td {
-      border-width: 1px;
-      padding-left: 10px;
-      padding-right: 25px;
-      border-style: dotted;
-      border-color: gray;
-    }
+- Estimer des effets fixes pour chaque groupe est difficile lorsqu'on a peu d'observations par groupe: le hasard de l'échantillonnage crée des différences fortuites entre groupes.
 
+---
 
-  </style>
+# Rappel
 
-    <style type="text/css">code{white-space: pre;}</style>
+- La régression linéaire ne considère qu'un terme aléatoire (résidus des observations individuelles).
 
-    <link rel="stylesheet" href="styles.css"/>
+--
 
-<!-- Printing and PDF exports -->
-<script id="paper-css" type="application/dynamic-css">
+- Les modèles mixtes incluent la variation aléatoire partagée par les observations d'un même groupe. 
 
-/* Default Print Stylesheet Template
-   by Rob Glazebrook of CSSnewbie.com
-   Last Updated: June 4, 2008
+--
 
-   Feel free (nay, compelled) to edit, append, and
-   manipulate this file as you see fit. */
+- Les modèles mixtes produisent aussi des estimés des coefficients de la régression pour chaque groupe, mais en supposant une distribution normale de ces coefficients centrée sur la moyenne des groupes.
 
+--
 
-@media print {
+- Comparé aux effets fixes de groupe, ces coefficients sont "contractés" vers la moyenne générale. Cela permet d'obtenir des estimés plus fiables même avec peu d'observations par groupe.
 
-	/* SECTION 1: Set default width, margin, float, and
-	   background. This prevents elements from extending
-	   beyond the edge of the printed page, and prevents
-	   unnecessary background images from printing */
-	html {
-		background: #fff;
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	body {
-		background: #fff;
-		font-size: 20pt;
-		width: auto;
-		height: auto;
-		border: 0;
-		margin: 0 5%;
-		padding: 0;
-		overflow: visible;
-		float: none !important;
-	}
+---
 
-	/* SECTION 2: Remove any elements not needed in print.
-	   This would include navigation, ads, sidebars, etc. */
-	.nestedarrow,
-	.controls,
-	.fork-reveal,
-	.share-reveal,
-	.state-background,
-	.reveal .progress,
-	.reveal .backgrounds {
-		display: none !important;
-	}
+# Objectifs
 
-	/* SECTION 3: Set body font face, size, and color.
-	   Consider using a serif font for readability. */
-	body, p, td, li, div {
-		font-size: 20pt!important;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		color: #000;
-	}
+- Comprendre comment les modèles mixtes traitent le cas de groupes non-équilibrés.
 
-	/* SECTION 4: Set heading font face, sizes, and color.
-	   Differentiate your headings from your body text.
-	   Perhaps use a large sans-serif for distinction. */
-	h1,h2,h3,h4,h5,h6 {
-		color: #000!important;
-		height: auto;
-		line-height: normal;
-		font-family: Georgia, "Times New Roman", Times, serif !important;
-		text-shadow: 0 0 0 #000 !important;
-		text-align: left;
-		letter-spacing: normal;
-	}
-	/* Need to reduce the size of the fonts for printing */
-	h1 { font-size: 28pt !important;  }
-	h2 { font-size: 24pt !important; }
-	h3 { font-size: 22pt !important; }
-	h4 { font-size: 22pt !important; font-variant: small-caps; }
-	h5 { font-size: 21pt !important; }
-	h6 { font-size: 20pt !important; font-style: italic; }
+- Faire des prédictions à partir d'un modèle linéaire mixte.
 
-	/* SECTION 5: Make hyperlinks more usable.
-	   Ensure links are underlined, and consider appending
-	   the URL to the end of the link for usability. */
-	a:link,
-	a:visited {
-		color: #000 !important;
-		font-weight: bold;
-		text-decoration: underline;
-	}
-	/*
-	.reveal a:link:after,
-	.reveal a:visited:after {
-		content: " (" attr(href) ") ";
-		color: #222 !important;
-		font-size: 90%;
-	}
-	*/
+- Créer des modèles avec l'effet aléatoire de plusieurs variables et l'effet aléatoire d'une variable sur plus d'un coefficient.
 
+- Appliquer la sélection de modèles avec l'AIC aux modèles mixtes.
 
-	/* SECTION 6: more reveal.js specific additions by @skypanther */
-	ul, ol, div, p {
-		visibility: visible;
-		position: static;
-		width: auto;
-		height: auto;
-		display: block;
-		overflow: visible;
-		margin: 0;
-		text-align: left !important;
-	}
-	.reveal pre,
-	.reveal table {
-		margin-left: 0;
-		margin-right: 0;
-	}
-	.reveal pre code {
-		padding: 20px;
-		border: 1px solid #ddd;
-	}
-	.reveal blockquote {
-		margin: 20px 0;
-	}
-	.reveal .slides {
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
+---
 
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 0 !important;
-		zoom: 1 !important;
+# Modèle mixte - groupes non-équilibrés
 
-		overflow: visible !important;
-		display: block !important;
+Concentration de radon (`log_radon`, échelle logarithmique) dans 919 maisons réparties dans 85 comtés (`county`) de l'état américain du Minnesota (1 à 116 maisons par comté).
 
-		text-align: left !important;
-		-webkit-perspective: none;
-		   -moz-perspective: none;
-		    -ms-perspective: none;
-		        perspective: none;
 
-		-webkit-perspective-origin: 50% 50%;
-		   -moz-perspective-origin: 50% 50%;
-		    -ms-perspective-origin: 50% 50%;
-		        perspective-origin: 50% 50%;
-	}
-	.reveal .slides section {
-		visibility: visible !important;
-		position: static !important;
-		width: auto !important;
-		height: auto !important;
-		display: block !important;
-		overflow: visible !important;
-
-		left: 0 !important;
-		top: 0 !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
-		padding: 60px 20px !important;
-		z-index: auto !important;
-
-		opacity: 1 !important;
-
-		page-break-after: always !important;
-
-		-webkit-transform-style: flat !important;
-		   -moz-transform-style: flat !important;
-		    -ms-transform-style: flat !important;
-		        transform-style: flat !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-
-		-webkit-transition: none !important;
-		   -moz-transition: none !important;
-		    -ms-transition: none !important;
-		        transition: none !important;
-	}
-	.reveal .slides section.stack {
-		padding: 0 !important;
-	}
-	.reveal section:last-of-type {
-		page-break-after: avoid !important;
-	}
-	.reveal section .fragment {
-		opacity: 1 !important;
-		visibility: visible !important;
-
-		-webkit-transform: none !important;
-		   -moz-transform: none !important;
-		    -ms-transform: none !important;
-		        transform: none !important;
-	}
-	.reveal section img {
-		display: block;
-		margin: 15px 0px;
-		background: rgba(255,255,255,1);
-		border: 1px solid #666;
-		box-shadow: none;
-	}
-
-	.reveal section small {
-		font-size: 0.8em;
-	}
-
-}  
-</script>
-
-
-<script id="pdf-css" type="application/dynamic-css">
-    
-/**
- * This stylesheet is used to print reveal.js
- * presentations to PDF.
- *
- * https://github.com/hakimel/reveal.js#pdf-export
- */
-
-* {
-	-webkit-print-color-adjust: exact;
-}
-
-body {
-	margin: 0 auto !important;
-	border: 0;
-	padding: 0;
-	float: none !important;
-	overflow: visible;
-}
-
-html {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
-}
-
-/* Remove any elements not needed in print. */
-.nestedarrow,
-.reveal .controls,
-.reveal .progress,
-.reveal .playback,
-.reveal.overview,
-.fork-reveal,
-.share-reveal,
-.state-background {
-	display: none !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	text-shadow: 0 0 0 #000 !important;
-}
-
-.reveal pre code {
-	overflow: hidden !important;
-	font-family: Courier, 'Courier New', monospace !important;
-}
-
-ul, ol, div, p {
-	visibility: visible;
-	position: static;
-	width: auto;
-	height: auto;
-	display: block;
-	overflow: visible;
-	margin: auto;
-}
-.reveal {
-	width: auto !important;
-	height: auto !important;
-	overflow: hidden !important;
-}
-.reveal .slides {
-	position: static;
-	width: 100%;
-	height: auto;
-
-	left: auto;
-	top: auto;
-	margin: 0 !important;
-	padding: 0 !important;
-
-	overflow: visible;
-	display: block;
-
-	-webkit-perspective: none;
-	   -moz-perspective: none;
-	    -ms-perspective: none;
-	        perspective: none;
-
-	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
-	   -moz-perspective-origin: 50% 50%;
-	    -ms-perspective-origin: 50% 50%;
-	        perspective-origin: 50% 50%;
-}
-
-.reveal .slides section {
-	page-break-after: always !important;
-
-	visibility: visible !important;
-	position: relative !important;
-	display: block !important;
-	position: relative !important;
-
-	margin: 0 !important;
-	padding: 0 !important;
-	box-sizing: border-box !important;
-	min-height: 1px;
-
-	opacity: 1 !important;
-
-	-webkit-transform-style: flat !important;
-	   -moz-transform-style: flat !important;
-	    -ms-transform-style: flat !important;
-	        transform-style: flat !important;
-
-	-webkit-transform: none !important;
-	   -moz-transform: none !important;
-	    -ms-transform: none !important;
-	        transform: none !important;
-}
-
-.reveal section.stack {
-	margin: 0 !important;
-	padding: 0 !important;
-	page-break-after: avoid !important;
-	height: auto !important;
-	min-height: auto !important;
-}
-
-.reveal img {
-	box-shadow: none;
-}
-
-.reveal .roll {
-	overflow: visible;
-	line-height: 1em;
-}
-
-/* Slide backgrounds are placed inside of their slide when exporting to PDF */
-.reveal section .slide-background {
-	display: block !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	z-index: -1;
-}
-
-/* All elements should be above the slide-background */
-.reveal section>* {
-	position: relative;
-	z-index: 1;
-}
-
-/* Display slide speaker notes when 'showNotes' is enabled */
-.reveal .speaker-notes-pdf {
-	display: block;
-	width: 100%;
-	max-height: none;
-	left: auto;
-	top: auto;
-	z-index: 100;
-}
-
-/* Display slide numbers when 'slideNumber' is enabled */
-.reveal .slide-number-pdf {
-	display: block;
-	position: absolute;
-	font-size: 14px;
-}
-
-</script>
-
-
-<script>
-var style = document.createElement( 'style' );
-style.type = 'text/css';
-var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
-var style_script = document.getElementById(style_script_id).text;
-style.innerHTML = style_script;
-document.getElementsByTagName('head')[0].appendChild(style);
-</script>
-
-</head>
-<body>
-  <div class="reveal">
-    <div class="slides">
-
-<section>
-    <h1 class="title">Modèles linéaires mixtes, partie 2</h1>
-    <h3 class="date"><br/>26 novembre 2018</h3>
-</section>
-
-<section id="rappel" class="slide level2">
-<h2>Rappel</h2>
-<ul>
-<li class="fragment"><p>Régression linéaire “classique” avec des données groupées: ignorer les groupes, estimer séparément des effets pour chaque groupe, ou tenir compte indirectement des groupes à partir de prédicteurs mesurés au niveau de ces groupes.</p></li>
-<li class="fragment"><p>Si on ignore la structure groupée des données, résidus ne sont pas indépendants, donc surestimation de la précision des inférences.</p></li>
-<li class="fragment"><p>Estimer des effets fixes pour chaque groupe est difficile lorsqu’on a peu d’observations par groupe: le hasard de l’échantillonnage crée des différences fortuites entre groupes.</p></li>
-</ul>
-</section>
-<section id="rappel-1" class="slide level2">
-<h2>Rappel</h2>
-<ul>
-<li class="fragment"><p>La régression linéaire ne considère qu’un terme aléatoire (résidus des observations individuelles).</p></li>
-<li class="fragment"><p>Les modèles mixtes incluent la variation aléatoire partagée par les observations d’un même groupe.</p></li>
-<li class="fragment"><p>Les modèles mixtes produisent aussi des estimés des coefficients de la régression pour chaque groupe, mais en supposant une distribution normale de ces coefficients centrée sur la moyenne des groupes.</p></li>
-<li class="fragment"><p>Comparé aux effets fixes de groupe, ces coefficients sont “contractés” vers la moyenne générale. Cela permet d’obtenir des estimés plus fiables même avec peu d’observations par groupe.</p></li>
-</ul>
-</section>
-<section id="objectifs" class="slide level2">
-<h2>Objectifs</h2>
-<ul>
-<li class="fragment"><p>Comprendre comment les modèles mixtes traitent le cas de groupes non-équilibrés.</p></li>
-<li class="fragment"><p>Faire des prédictions à partir d’un modèle linéaire mixte.</p></li>
-<li class="fragment"><p>Créer des modèles avec l’effet aléatoire de plusieurs variables et l’effet aléatoire d’une variable sur plus d’un coefficient.</p></li>
-<li class="fragment"><p>Appliquer la sélection de modèles avec l’AIC aux modèles mixtes.</p></li>
-</ul>
-</section>
-<section><section id="modeles-mixtes-pour-groupes-non-equilibres" class="titleslide slide level1"><h1>Modèles mixtes pour groupes non-équilibrés</h1></section><section id="exemple-distribution-du-radon" class="slide level2">
-<h2>Exemple: Distribution du radon</h2>
-<ul>
-<li>Concentration de radon (<code>log_radon</code>, échelle logarithmique) dans 919 maisons réparties dans 85 comtés (<code>county</code>) de l’état américain du Minnesota (1 à 116 maisons par comté).</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">radon &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/radon.csv&quot;</span>)
-<span class="kw">head</span>(radon)</code></pre></div>
-<pre><code>##   county floor log_uranium log_radon
+```
+##   county floor log_uranium log_radon
 ## 1 AITKIN     1  -0.6890476 0.7884574
 ## 2 AITKIN     0  -0.6890476 0.7884574
 ## 3 AITKIN     0  -0.6890476 1.0647107
 ## 4 AITKIN     0  -0.6890476 0.0000000
 ## 5  ANOKA     0  -0.8473129 1.1314021
-## 6  ANOKA     0  -0.8473129 0.9162907</code></pre>
-<ul>
-<li class="fragment"><code>floor</code>: Étage où la mesure a été prise (0 = sous-sol, 1 = rez-de-chaussée)</li>
-<li class="fragment"><code>log_uranium</code>: Concentration d’uranium du sol (mesure à l’échelle du comté)</li>
-</ul>
-</section><section id="exemple-distribution-du-radon-1" class="slide level2">
-<h2>Exemple: Distribution du radon</h2>
-<ul>
-<li>Modèle mixte avec effets fixes de l’étage et de la concentration d’uranium, ainsi qu’une variation aléatoire de l’ordonnée à l’origine par comté.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lme4)
-mm_radon &lt;-<span class="st"> </span><span class="kw">lmer</span>(log_radon <span class="op">~</span><span class="st"> </span>floor <span class="op">+</span><span class="st"> </span>log_uranium <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>county), radon)
-<span class="kw">summary</span>(mm_radon)</code></pre></div>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: log_radon ~ floor + log_uranium + (1 | county)
-##    Data: radon
-## 
-## REML criterion at convergence: 2134.2
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -4.9673 -0.6117  0.0274  0.6555  3.3848 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  county   (Intercept) 0.02446  0.1564  
-##  Residual             0.57523  0.7584  
-## Number of obs: 919, groups:  county, 85
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  1.46576    0.03794  38.633
-## floor       -0.66824    0.06880  -9.713
-## log_uranium  0.72027    0.09176   7.849
-## 
-## Correlation of Fixed Effects:
-##             (Intr) floor 
-## floor       -0.357       
-## log_uranium  0.145 -0.009</code></pre>
-</section><section id="interpretation-des-effets-fixes" class="slide level2">
-<h2>Interprétation des effets fixes</h2>
-<ul>
-<li class="fragment"><p><code>(Intercept)</code> est la moyenne de <code>log_radon</code> si <code>floor</code> = 0 (dans un sous-sol) et <code>log_uranium</code> = 0.</p></li>
-<li class="fragment"><p><code>floor</code> est la différence de <code>log_radon</code> si <code>floor</code> augmente de 1 (rez-de-chaussée vs. sous-sol).</p></li>
-<li class="fragment"><p><code>log_uranium</code> est l’effet d’une augmentation d’une unité de <code>log_uranium</code> sur <code>log_radon</code>.</p>
-<ul>
-<li class="fragment">Lorsque variables sont sur une échelle logarithmique, on peut interpréter ce coefficient (0.72) comme un effet multiplicatif: une augmentation de 1% de la concentration d’uranium du sol augmente la concentration de radon dans les maisons de 0.72%.</li>
-</ul></li>
-</ul>
-</section><section id="predictions-par-comte" class="slide level2">
-<h2>Prédictions par comté</h2>
-<ul>
-<li>Tableau de données avec le nom du comté, sa concentration d’uranium et le nombre de maisons échantillonnées. On fixe la variable <code>floor</code> à 0 (sous-sol).</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comtes &lt;-<span class="st"> </span><span class="kw">group_by</span>(radon, county, log_uranium) <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">ungroup</span>()
-comtes<span class="op">$</span>floor &lt;-<span class="st"> </span><span class="dv">0</span>
-<span class="kw">head</span>(comtes)</code></pre></div>
-<pre><code>## # A tibble: 6 x 4
-##   county    log_uranium     n floor
-##   &lt;fct&gt;           &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
-## 1 AITKIN         -0.689     4     0
-## 2 ANOKA          -0.847    52     0
-## 3 BECKER         -0.113     3     0
-## 4 BELTRAMI       -0.593     7     0
-## 5 BENTON         -0.143     4     0
-## 6 BIG STONE       0.387     3     0</code></pre>
-</section><section id="predictions-par-comte-1" class="slide level2">
-<h2>Prédictions par comté</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comtes<span class="op">$</span>mm_pred &lt;-<span class="st"> </span><span class="kw">predict</span>(mm_radon, comtes)
+## 6  ANOKA     0  -0.8473129 0.9162907
+```
 
-<span class="kw">ggplot</span>(comtes, <span class="kw">aes</span>(<span class="dt">x =</span> log_uranium, <span class="dt">y =</span> mm_pred)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>()</code></pre></div>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-revealjs/unnamed-chunk-4-1.png" width="576" /></p>
-</section><section id="predictions-par-comte-2" class="slide level2">
-<h2>Prédictions par comté</h2>
-<ul>
-<li>Comparons ces prédictions à ceux de deux régressions linéaires classiques, avec aucun effet de comté (mais avec l’effet de l’uranium) ou un effet fixe par comté.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lm_radon1 &lt;-<span class="st"> </span><span class="kw">lm</span>(log_radon <span class="op">~</span><span class="st"> </span>floor <span class="op">+</span><span class="st"> </span>log_uranium, radon)
-lm_radon2 &lt;-<span class="st"> </span><span class="kw">lm</span>(log_radon <span class="op">~</span><span class="st"> </span>floor <span class="op">+</span><span class="st"> </span>county, radon)
+--
 
-comtes &lt;-<span class="st"> </span><span class="kw">mutate</span>(comtes, <span class="dt">pred1 =</span> <span class="kw">predict</span>(lm_radon1, comtes), 
-                 <span class="dt">pred2 =</span> <span class="kw">predict</span>(lm_radon2, comtes))</code></pre></div>
-</section><section id="predictions-par-comte-3" class="slide level2">
-<h2>Prédictions par comté</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(comtes, <span class="kw">aes</span>(<span class="dt">x =</span> log_uranium)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;log_radon&quot;</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> pred1)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> pred2), <span class="dt">shape =</span> <span class="dv">1</span>) <span class="op">+</span><span class="st"> </span><span class="co"># Points vides</span>
-<span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> mm_pred))</code></pre></div>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-revealjs/unnamed-chunk-6-1.png" width="576" /></p>
-</section><section id="predictions-par-comte---effet-de-n" class="slide level2">
-<h2>Prédictions par comté - Effet de <em>n</em></h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(comtes, <span class="kw">aes</span>(<span class="dt">x =</span> log_uranium)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;log_radon&quot;</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> pred1)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> pred2, <span class="dt">size =</span> n), <span class="dt">shape =</span> <span class="dv">1</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> mm_pred, <span class="dt">size =</span> n)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">xend =</span> log_uranium, <span class="dt">y =</span> mm_pred, <span class="dt">yend =</span> pred2),
-                 <span class="dt">linetype =</span> <span class="st">&quot;dotted&quot;</span>) <span class="co"># Ligne pointillée reliant les deux prédictions</span></code></pre></div>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-revealjs/unnamed-chunk-7-1.png" width="576" /></p>
-</section></section>
-<section><section id="predictions-a-partir-dun-modele-mixte" class="titleslide slide level1"><h1>Prédictions à partir d’un modèle mixte</h1></section><section id="rappel-equation-dun-modele-mixte" class="slide level2">
-<h2>Rappel: Équation d’un modèle mixte</h2>
-<p>Modèle avec prédicteurs liés à l’observation <span class="math inline">\(k\)</span> et au groupe <span class="math inline">\(j\)</span>, avec effet aléatoire sur l’ordonnée à l’origine.</p>
-<p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k \]</span></p>
-<ul>
-<li><code>fixef</code> nous donne les estimés des coefficients <span class="math inline">\(\gamma_0\)</span>, <span class="math inline">\(\gamma_1\)</span> et <span class="math inline">\(\beta_1\)</span></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">eff_fixes &lt;-<span class="st"> </span><span class="kw">fixef</span>(mm_radon)
-eff_fixes</code></pre></div>
-<pre><code>## (Intercept)       floor log_uranium 
-##   1.4657628  -0.6682448   0.7202676</code></pre>
-</section><section id="rappel-equation-dun-modele-mixte-1" class="slide level2">
-<h2>Rappel: Équation d’un modèle mixte</h2>
-<p>Modèle avec prédicteurs liés à l’observation <span class="math inline">\(k\)</span> et au groupe <span class="math inline">\(j\)</span>, avec effet aléatoire sur l’ordonnée à l’origine.</p>
-<p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k \]</span></p>
-<ul>
-<li><code>ranef</code> indique les estimés des effets aléatoires <span class="math inline">\(\nu_j\)</span>.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">eff_alea &lt;-<span class="st"> </span><span class="kw">ranef</span>(mm_radon)<span class="op">$</span>county
-<span class="kw">head</span>(eff_alea)</code></pre></div>
-<pre><code>##            (Intercept)
-## AITKIN    -0.020642363
-## ANOKA      0.011245768
-## BECKER     0.012422028
-## BELTRAMI   0.111128436
-## BENTON     0.008235846
-## BIG STONE -0.026196358</code></pre>
-</section><section id="predire-des-nouvelles-observations-de-groupes-existants" class="slide level2">
-<h2>Prédire des nouvelles observations de groupes existants</h2>
-<ul>
-<li>Par défaut, la fonction <code>predict</code> utilise à la fois les estimés des effets fixes et aléatoires.</li>
-</ul>
-<ul>
-<li>Valeur prédite <span class="math inline">\(\hat{y}\)</span> pour un sous-sol <span class="math inline">\(x_1 = 0\)</span> du comté <span class="math inline">\(j\)</span>:</li>
-</ul>
-<p><span class="math display">\[ \hat{y} = \hat{\gamma_0} + \hat{\gamma_1} u_{1j} + \hat{\nu_{j}} \]</span> .</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred_man &lt;-<span class="st"> </span>eff_fixes[<span class="st">&quot;(Intercept)&quot;</span>] <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span>eff_fixes[<span class="st">&quot;log_uranium&quot;</span>] <span class="op">*</span><span class="st"> </span>comtes<span class="op">$</span>log_uranium <span class="op">+</span><span class="st"> </span>eff_alea<span class="op">$</span><span class="st">`</span><span class="dt">(Intercept)</span><span class="st">`</span>
-                
-<span class="kw">all.equal</span>(pred_man, comtes<span class="op">$</span>mm_pred)</code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-</section><section id="predire-des-observations-dun-nouveau-groupe" class="slide level2">
-<h2>Prédire des observations d’un nouveau groupe</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nouv_comte &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">county =</span> <span class="st">&quot;NOUVEAU&quot;</span>, <span class="dt">log_uranium =</span> <span class="fl">0.5</span>, <span class="dt">floor =</span> <span class="dv">0</span>)
-<span class="kw">predict</span>(mm_radon, nouv_comte)</code></pre></div>
-<pre><code>## Error in levelfun(r, n, allow.new.levels = allow.new.levels): new levels detected in newdata</code></pre>
-</section><section id="predire-des-observations-dun-nouveau-groupe-1" class="slide level2">
-<h2>Prédire des observations d’un nouveau groupe</h2>
-<ul>
-<li>Pour effectuer une prédiction basée seulement sur les effets fixes, nous devons spécifier l’argument <code>re.form = ~0</code>.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(mm_radon, nouv_comte, <span class="dt">re.form =</span> <span class="op">~</span><span class="dv">0</span>)</code></pre></div>
-<pre><code>##        1 
-## 1.825897</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">eff_fixes[<span class="st">&quot;(Intercept)&quot;</span>] <span class="op">+</span><span class="st"> </span>eff_fixes[<span class="st">&quot;log_uranium&quot;</span>] <span class="op">*</span><span class="st"> </span>nouv_comte<span class="op">$</span>log_uranium</code></pre></div>
-<pre><code>## (Intercept) 
-##    1.825897</code></pre>
-</section><section id="predictions-a-partir-dun-modele-mixte-1" class="slide level2">
-<h2>Prédictions à partir d’un modèle mixte</h2>
-<ul>
-<li class="fragment"><p>Avec un modèle mixte, on peut faire des prédictions pour des groupes non inclus dans les données originales.</p></li>
-<li class="fragment"><p>Dans ce cas, les prédictions sont basés sur un groupe “moyen” (effet aléatoire de groupe de 0).</p></li>
-<li class="fragment"><p>L’incertitude associée à cette prédiction est plus grande que lorsqu’on prédit de nouvelles observations pour un groupe existant.</p></li>
-<li class="fragment"><p>Des méthodes de simulation (pas vues dans ce cours) sont nécessaires pour obtenir des intervalles de confiance ou de prédiction pour ces estimés.</p></li>
-</ul>
-</section></section>
-<section><section id="effets-aleatoires-multiples" class="titleslide slide level1"><h1>Effets aléatoires multiples</h1></section><section id="exemple-croissance-des-arbres-de-plusieurs-especes" class="slide level2">
-<h2>Exemple: Croissance des arbres de plusieurs espèces</h2>
-<ul>
-<li>100 arbres mesurés pour 5 années consécutives.</li>
-</ul>
-<ul>
-<li>Nous voulons modéliser la croissance annuelle en fonction de deux prédicteurs qui varient pour chaque observation (DHP, âge) et de la tolérance à l’ombre de l’espèce.</li>
-</ul>
-<table>
-<thead>
-<tr class="header">
-<th>ID Arbre</th>
-<th>Année</th>
-<th>Croissance</th>
-<th>DHP</th>
-<th>Âge</th>
-<th>Espèce</th>
-<th>Ombre</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-</tr>
-</tbody>
-</table>
-</section><section id="choisir-les-effest-aleatoires-dun-modele" class="slide level2">
-<h2>Choisir les effest aléatoires d’un modèle</h2>
-<p>Pour quels groupes d’observations la variation de la réponse serait-elle corrélée (entre observations d’un même groupe)?</p>
-<ul>
-<li class="fragment">les observations prises sur le même arbre d’une année à l’autre;</li>
-<li class="fragment">les observations de deux arbres prises la même année; et</li>
-<li class="fragment">les observations prises sur des arbres de la même espèce.</li>
-</ul>
-</section><section id="equation-du-modele" class="slide level2">
-<h2>Équation du modèle</h2>
-<ul>
-<li>Croissance <span class="math inline">\(y_k\)</span> de l’arbre <span class="math inline">\(i\)</span> de l’espèce <span class="math inline">\(j\)</span> lors de l’année <span class="math inline">\(t\)</span>:</li>
-</ul>
-<p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k \]</span></p>
-<ul>
-<li>Formule dans R:</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">croissance <span class="op">~</span><span class="st"> </span>ombre <span class="op">+</span><span class="st"> </span>DHP <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>espece) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>id_arbre) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>annee)</code></pre></div>
-</section><section id="effets-aleatoires-croises-ou-niches" class="slide level2">
-<h2>Effets aléatoires croisés ou nichés</h2>
-<ul>
-<li class="fragment"><p>Les effets de l’arbre et de l’année sont croisés (<em>crossed</em>): chaque arbre est mesurée pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets de l’espèce et de l’année sont croisés.</p></li>
-<li class="fragment"><p>Les effets de l’arbre et de l’espèce sont nichés (<em>nested</em>): chaque arbre fait partie d’une seule espèce.</p></li>
-</ul>
-</section><section id="effets-aleatoires-croises-ou-niches-1" class="slide level2">
-<h2>Effets aléatoires croisés ou nichés</h2>
-<ul>
-<li>Pour indiquer à R que l’effet A est niché dans l’effet B, on écrit par exemple <code>(1 | B/A)</code>. Dans ce cas-ci, la formule pourrait être ré-écrite:</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">croissance <span class="op">~</span><span class="st"> </span>ombre <span class="op">+</span><span class="st"> </span>DHP <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>espece <span class="op">/</span><span class="st"> </span>id_arbre) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>annee)</code></pre></div>
-<ul>
-<li class="fragment"><p>Si les valeurs d’<code>id_arbre</code> ne sont pas répétées d’une espèce à l’autre, il n’est pas nécessaire de préciser les effets nichés.</p></li>
-<li class="fragment"><p>Si les arbres étaient numérotés 1, 2, … pour chaque espèce, il faut indiquer l’effet niché dans le modèle, sinon R croirait que les arbres “1” de chaque espèce représentent le même individu.</p></li>
-</ul>
-</section><section id="experience-en-parcelles-divisees" class="slide level2">
-<h2>Expérience en parcelles divisées</h2>
-<ul>
-<li>Tableau de données <code>Oats</code> vu au dernier laboratoire.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlme)
-<span class="co"># Changer le bloc en facteur non-ordonné</span>
-Oats<span class="op">$</span>Block &lt;-<span class="st"> </span><span class="kw">factor</span>(Oats<span class="op">$</span>Block, <span class="dt">ordered =</span> <span class="ot">FALSE</span>)
-<span class="kw">head</span>(Oats)</code></pre></div>
-<pre><code>## Grouped Data: yield ~ nitro | Block
+- `floor`: Étage où la mesure a été prise (0 = sous-sol, 1 = rez-de-chaussée)
+- `log_uranium`: Concentration d'uranium du sol (mesure à l'échelle du comté)
+
+---
+
+# Prédictions à partir d'un modèle mixte
+
+Modèle avec prédicteurs liés à l'observation `\(k\)` et au groupe `\(j\)`, avec effet aléatoire sur l'ordonnée à l'origine.
+
+`$$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k$$`
+
+--
+
+- `fixef` nous donne les estimés des coefficients `\(\gamma_0\)`, `\(\gamma_1\)` et `\(\beta_1\)`
+
+- `ranef` indique les estimés des effets aléatoires `\(\nu_j\)`. 
+
+---
+
+# Prédicitions pour des groupes connus
+
+- Par défaut, la fonction `predict` utilise à la fois les estimés des effets fixes et aléatoires. 
+
+- Valeur prédite `\(\hat{y}\)` pour un sous-sol `\(x_1 = 0\)` du comté `\(j\)`:
+
+`$$\hat{y} = \hat{\gamma_0} + \hat{\gamma_1} u_{1j} + \hat{\nu_{j}}$$` .
+
+---
+
+# Prédictions pour des nouveaux groupes
+
+- Pour effectuer une prédiction basée seulement sur les effets fixes, nous devons spécifier l'argument `re.form = ~0`.
+
+--
+
+- Dans ce cas, les prédictions sont basés sur un groupe "moyen" (effet aléatoire de groupe est 0).
+
+--
+
+- L'incertitude associée à cette prédiction est plus grande que lorsqu'on prédit de nouvelles observations pour un groupe existant.
+
+--
+
+- Des méthodes de simulation (pas vues dans ce cours) sont nécessaires pour obtenir des intervalles de confiance ou de prédiction pour ces estimés.
+
+---
+
+# Effets aléatoires multiples
+
+**Exemple: Croissance d'épinettes sur plusieurs sites**
+
+- 100 arbres mesurés pour 5 années consécutives. 
+
+- Nous voulons modéliser la croissance annuelle en fonction de deux prédicteurs qui varient pour chaque observation (DHP, âge) et de la pente du site.
+
+--
+
+- Considérons un tableau avec les champs de données suivants: Site, ID_Arbre, Annee, Croissance, DHP, Âge, Pente. 
+
+--
+
+- Pour quels groupes d'observations la variation de la réponse serait-elle corrélée (entre observations d'un même groupe)?
+
+---
+
+# Effets aléatoires multiples
+
+Pour quels groupes d'observations la variation de la réponse serait-elle corrélée (entre observations d'un même groupe)?
+
+- les observations prises sur le même arbre d'une année à l'autre;
+- les observations de deux arbres prises la même année; et
+- les observations prises sur des arbres de la même espèce.
+
+---
+
+# Équation du modèle
+
+- Croissance `\(y_k\)` de l'arbre `\(i\)` de l'espèce `\(j\)` lors de l'année `\(t\)`:
+
+`$$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k$$`
+
+--
+
+- Formule dans R:
+
+
+```r
+croissance ~ pente + DHP + age + (1 | site) + (1 | id_arbre) + (1 | annee)
+```
+
+---
+
+# Effets aléatoires croisés ou nichés
+
+- Les effets de l'arbre et de l'année sont croisés (*crossed*): chaque arbre est mesuré pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets du site et de l'année sont croisés.
+
+--
+
+- Les effets de l'arbre et du site sont nichés (*nested*): chaque arbre n'est associé qu'à un site.
+
+---
+
+# Effets aléatoires croisés ou nichés
+
+- Pour indiquer à R que l'effet A est niché dans l'effet B, on écrit par exemple `(1 | B/A)`. Dans ce cas-ci, la formule pourrait être ré-écrite:
+
+
+```r
+croissance ~ pente + DHP + age + (1 | site / id_arbre) + (1 | annee)
+```
+
+--
+
+- Si les valeurs d'`id_arbre` ne sont pas répétées d'une espèce à l'autre, il n'est pas nécessaire de préciser les effets nichés.
+
+--
+
+- Si les arbres étaient numérotés 1, 2, ... pour chaque site, il faut indiquer l'effet niché dans le modèle, sinon R croirait que les arbres "1" de chaque site représentent le même individu.
+
+---
+
+# Expérience en parcelles divisées
+
+Le tableau de données `Oats` du package *nlme* présente le rendement (*yield*) de variétés d'avoine en fonction de la concentration d'azote (*nitro*).
+
+
+```r
+library(nlme)
+head(Oats)
+```
+
+```
+## Grouped Data: yield ~ nitro | Block
 ##   Block     Variety nitro yield
 ## 1     I     Victory   0.0   111
 ## 2     I     Victory   0.2   130
 ## 3     I     Victory   0.4   157
 ## 4     I     Victory   0.6   174
 ## 5     I Golden Rain   0.0   117
-## 6     I Golden Rain   0.2   114</code></pre>
-</section><section id="experience-en-parcelles-divisees-1" class="slide level2">
-<h2>Expérience en parcelles divisées</h2>
-<p>Configuration spatiale possible de cette expérience</p>
-<p><img src="../images/split_plot.png" /></p>
-<ul>
-<li class="fragment">Dans ce type de plan, un des traitements est appliqué à une plus grande surface et un autre traitement est niché dans le premier.</li>
-</ul>
-</section><section id="effet-aleatoire-de-bloc" class="slide level2">
-<h2>Effet aléatoire de bloc</h2>
-<ul>
-<li>Dans le laboratoire, nous avions défini un effet aléatoire du bloc, car les observations varient moins dans le même bloc qu’entre deux blocs différents.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mm_oats &lt;-<span class="st"> </span><span class="kw">lmer</span>(yield <span class="op">~</span><span class="st"> </span>nitro <span class="op">+</span><span class="st"> </span>Variety <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Block), Oats)</code></pre></div>
-<ul>
-<li class="fragment"><p>Il est aussi possible que la variance soit plus petite entre quadrants d’une même section.</p></li>
-<li class="fragment"><p>Nous pouvons tenir compte de ce deuxième niveau de groupement en incluant un effet aléatoire de la section (variété) niché dans celui du bloc.</p></li>
-</ul>
-</section><section id="effet-aleatoire-de-bloc-et-section" class="slide level2">
-<h2>Effet aléatoire de bloc et section</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mm_oats2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(yield <span class="op">~</span><span class="st"> </span>nitro <span class="op">+</span><span class="st"> </span>Variety <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Block <span class="op">/</span><span class="st"> </span>Variety), Oats)
-<span class="kw">summary</span>(mm_oats2)</code></pre></div>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: yield ~ nitro + Variety + (1 | Block/Variety)
-##    Data: Oats
-## 
-## REML criterion at convergence: 578.9
-## 
-## Scaled residuals: 
-##      Min       1Q   Median       3Q      Max 
-## -1.62948 -0.65841 -0.07207  0.55785  1.71463 
-## 
-## Random effects:
-##  Groups        Name        Variance Std.Dev.
-##  Variety:Block (Intercept) 108.9    10.44   
-##  Block         (Intercept) 214.5    14.65   
-##  Residual                  165.6    12.87   
-## Number of obs: 72, groups:  Variety:Block, 18; Block, 6
-## 
-## Fixed effects:
-##                   Estimate Std. Error t value
-## (Intercept)         82.400      8.059  10.225
-## nitro               73.667      6.781  10.863
-## VarietyMarvellous    5.292      7.079   0.748
-## VarietyVictory      -6.875      7.079  -0.971
-## 
-## Correlation of Fixed Effects:
-##             (Intr) nitro  VrtyMr
-## nitro       -0.252              
-## VartyMrvlls -0.439  0.000       
-## VarityVctry -0.439  0.000  0.500</code></pre>
-</section><section id="interpretation-des-resultats" class="slide level2">
-<h2>Interprétation des résultats</h2>
-<ul>
-<li class="fragment"><p>À première vue, il apparaît contradictoire d’utiliser la même variable <code>Variety</code> comme effet fixe et comme effet aléatoire.</p></li>
-<li class="fragment"><p>Toutefois, l’effet aléatoire ne s’applique pas aux différences entre les 3 variétés (il serait incorrect d’écrire <code>(1 | Variety)</code>), mais plutôt aux différences entre les 18 sections représentées par les combinaisons d’un bloc et d’une variété.</p></li>
-</ul>
-</section><section id="interpretation-des-resultats-1" class="slide level2">
-<h2>Interprétation des résultats</h2>
-<p>Le deuxième modèle donne un intervalle de confiance plus large pour les effets fixes des variétés, mais moins large pour l’effet de l’azote.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">confint</span>(mm_oats)
-## Computing profile confidence intervals ...
-##                        2.5 %    97.5 %
-## .sig01              8.126934 29.461033
-## .sigma             12.737325 17.936286
-## (Intercept)        67.144282 97.655713
-## nitro              57.976482 89.356851
-## VarietyMarvellous  -3.302201 13.885535
-## VarietyVictory    -15.468868  1.718868
-<span class="kw">confint</span>(mm_oats2)
-## Computing profile confidence intervals ...
-##                        2.5 %    97.5 %
-## .sig01              4.211238 16.580613
-## .sig02              5.476922 29.072404
-## .sigma             10.674601 15.588813
-## (Intercept)        66.501050 98.298960
-## nitro              60.261178 87.072155
-## VarietyMarvellous  -8.458427 19.041762
-## VarietyVictory    -20.625094  6.875096</code></pre></div>
-</section><section id="interpretation-des-resultats-2" class="slide level2">
-<h2>Interprétation des résultats</h2>
-<p><img src="../images/split_plot.png" /></p>
-<ul>
-<li class="fragment">Dans le premier modèle, nous supposions que toutes les observations étaient indépendantes à l’intérieur d’un bloc. Nous n’avons pas en fait 4 réplicats indépendants pour chaque variété.</li>
-</ul>
-</section><section id="interpretation-des-resultats-3" class="slide level2">
-<h2>Interprétation des résultats</h2>
-<p><img src="../images/split_plot.png" /></p>
-<ul>
-<li class="fragment">En considérant les effets aléatoires par section, la variance résiduelle entre observations d’une même section est réduite. Puisque les 4 niveaux de concentration d’azote sont répliqués dans chaque section, une réduction de la variance résiduelle augmente la précision du coefficient pour cette variable.</li>
-</ul>
-</section></section>
-<section><section id="modele-mixte-avec-pente-aleatoire" class="titleslide slide level1"><h1>Modèle mixte avec pente aléatoire</h1></section><section id="exemple" class="slide level2">
-<h2>Exemple</h2>
-<ul>
-<li>Reprenons le jeu de données <code>rikz</code> vu au dernier cours, présentant la richesse spécifique de 45 sites intertidaux répartis sur 9 plages des Pays-Bas.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;../donnees/rikz.csv&quot;</span>)
-rikz &lt;-<span class="st"> </span><span class="kw">mutate</span>(rikz, <span class="dt">Beach =</span> <span class="kw">as.factor</span>(Beach), <span class="dt">Exposure =</span> <span class="kw">as.factor</span>(Exposure))
-<span class="co"># Transformer la réponse</span>
-rikz &lt;-<span class="st"> </span><span class="kw">mutate</span>(rikz, <span class="dt">srich =</span> <span class="kw">sqrt</span>(Richness))
-<span class="kw">head</span>(rikz)</code></pre></div>
-<pre><code>##   Sample Richness Exposure    NAP Beach    srich
-## 1      1       11       10  0.045     1 3.316625
-## 2      2       10       10 -1.036     1 3.162278
-## 3      3       13       10 -1.336     1 3.605551
-## 4      4       11       10  0.616     1 3.316625
-## 5      5       10       10 -0.684     1 3.162278
-## 6      6        8        8  1.190     2 2.828427</code></pre>
-<ul>
-<li>Nous avons déjà utilisé des modèles avec effet aléatoire sur l’ordonnée à l’origine.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mm_rikz &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Beach), rikz)</code></pre></div>
-</section><section id="modele-mixte-avec-pente-aleatoire-1" class="slide level2">
-<h2>Modèle mixte avec pente aléatoire</h2>
-<p><span class="math display">\[ \hat{y_k} = \alpha_{j[k]} + \beta_{j[k]} x_k \]</span></p>
-<ul>
-<li class="fragment"><p>Ici, l’ordonnée à l’origine et la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> varient entre groupes.</p></li>
-<li class="fragment"><p>Le modèle estime la moyenne des <span class="math inline">\(\alpha_j\)</span> et <span class="math inline">\(\beta_j\)</span> (effets fixes), les écarts-types des effets aléatoires (<span class="math inline">\(\sigma_\alpha\)</span> et <span class="math inline">\(\sigma_\beta\)</span>) ainsi que leur corrélation <span class="math inline">\(\rho_{\alpha \beta}\)</span>.</p></li>
-</ul>
-</section><section id="modele-mixte-avec-pente-aleatoire-2" class="slide level2">
-<h2>Modèle mixte avec pente aléatoire</h2>
-<ul>
-<li>On ajoute le NAP dans la partie gauche du terme d’effet aléatoire.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mm_rikz2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>NAP <span class="op">|</span><span class="st"> </span>Beach), rikz)
-<span class="kw">summary</span>(mm_rikz2)</code></pre></div>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: srich ~ NAP + (1 + NAP | Beach)
-##    Data: rikz
-## 
-## REML criterion at convergence: 92.5
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -1.6245 -0.4430 -0.1095  0.3023  2.1610 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev. Corr 
-##  Beach    (Intercept) 0.4389   0.6625        
-##           NAP         0.1582   0.3978   -0.41
-##  Residual             0.2159   0.4647        
-## Number of obs: 45, groups:  Beach, 9
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)   2.4369     0.2348  10.379
-## NAP          -0.7026     0.1543  -4.552
-## 
-## Correlation of Fixed Effects:
-##     (Intr)
-## NAP -0.390</code></pre>
-</section><section id="modele-mixte-avec-pente-aleatoire-3" class="slide level2">
-<h2>Modèle mixte avec pente aléatoire</h2>
-<ul>
-<li>Coefficients estimés par plage</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(mm_rikz2)</code></pre></div>
-<pre><code>## $Beach
-##   (Intercept)        NAP
-## 1    3.022772 -0.4129461
-## 2    3.485563 -0.6702414
-## 3    1.840190 -0.5388216
-## 4    1.816460 -0.4861710
-## 5    3.149914 -1.4983870
-## 6    2.067750 -0.4565699
-## 7    2.003302 -0.6094925
-## 8    2.142433 -0.6761907
-## 9    2.404104 -0.9748256
-## 
-## attr(,&quot;class&quot;)
-## [1] &quot;coef.mer&quot;</code></pre>
-</section><section id="modele-mixte-avec-pente-aleatoire-4" class="slide level2">
-<h2>Modèle mixte avec pente aléatoire</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz<span class="op">$</span>fit2 &lt;-<span class="st"> </span><span class="kw">fitted</span>(mm_rikz2)
+## 6     I Golden Rain   0.2   114
+```
 
-<span class="kw">ggplot</span>(rikz, <span class="kw">aes</span>(<span class="dt">x =</span> NAP, <span class="dt">y =</span> srich, <span class="dt">color =</span> Beach)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> fit2))</code></pre></div>
-<p><img src="12-Modèles_mixtes_Partie2_files/figure-revealjs/unnamed-chunk-24-1.png" width="576" /></p>
-</section></section>
-<section><section id="selection-de-modeles" class="titleslide slide level1"><h1>Sélection de modèles</h1></section><section id="selection-de-modeles-1" class="slide level2">
-<h2>Sélection de modèles</h2>
-<ul>
-<li>Plus complexe pour les modèles mixtes, car il faut choisir à la fois les termes fixes et aléatoires.</li>
-</ul>
-<ul>
-<li>Par exemple, comparons l’AICc des deux modèles précédents (avec ou sans effet aléatoire sur la pente).</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(AICcmodavg)
+---
 
-<span class="kw">aictab</span>(<span class="kw">list</span>(<span class="dt">mm_rikz =</span> mm_rikz, <span class="dt">mm_rikz2 =</span> mm_rikz2))</code></pre></div>
-<pre><code>## Warning in aictab.AIClmerMod(list(mm_rikz = mm_rikz, mm_rikz2 = mm_rikz2)): 
-## Model selection for fixed effects is only appropriate with ML estimation:
-## REML (default) should only be used to select random effects for a constant set of fixed effects</code></pre>
-<pre><code>## 
-## Model selection based on AICc:
-## 
-##          K   AICc Delta_AICc AICcWt Cum.Wt Res.LL
-## mm_rikz  4 106.15        0.0   0.57   0.57 -48.57
-## mm_rikz2 6 106.75        0.6   0.43   1.00 -46.27</code></pre>
-</section><section id="selection-de-modeles-2" class="slide level2">
-<h2>Sélection de modèles</h2>
-<ul>
-<li class="fragment"><p>Par défaut, <code>lmer</code> estime les paramètres du modèle mixte par la méthode du maximum de vraisemblance restreint (REML), afin d’obtenir des estimés non-biaisés des paramètres de variance.</p></li>
-<li class="fragment"><p>L’avertissement indique que l’AIC(c) calculé sur des modèles ajustés par REML est seulement valide pour la comparaison de modèles avec les mêmes effets fixes, mais différents effets aléatoires.</p></li>
-</ul>
-</section><section id="selection-de-modeles-3" class="slide level2">
-<h2>Sélection de modèles</h2>
-<p>Zuur et al. (2009) suggèrent le protocole suivant:</p>
-<ol type="1">
-<li class="fragment"><p>D’abord, inclure tous les effets fixes qui nous intéressent et choisir, si nécessaire, entre différentes versions des effets aléatoires. Cette étape est basée sur l’AIC des modèles ajustés par REML.</p></li>
-<li class="fragment"><p>Conserver les effets aléatoires choisis à l’étape précédente et comparer différentes versions des effets fixes. Cette étape requiert de comparer les modèles ajustés selon le maximum de vraisemblance, pas le REML (avec l’option <code>REML = FALSE</code> de <code>lmer</code>).</p></li>
-<li class="fragment"><p>Réajuster le meilleur modèle par REML pour obtenir les estimés finaux.</p></li>
-</ol>
-</section><section id="exemple-1" class="slide level2">
-<h2>Exemple</h2>
-<ul>
-<li>Modèle complet pour les effets fixes inclut NAP et Exposure.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_comp &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Beach), rikz)
-mod_comp2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>NAP <span class="op">|</span><span class="st"> </span>Beach), rikz)
+# Expérience en parcelles divisées
 
-<span class="kw">aictab</span>(<span class="kw">list</span>(<span class="dt">mod_comp =</span> mod_comp, <span class="dt">mod_comp2 =</span> mod_comp2))</code></pre></div>
-<pre><code>## Warning in aictab.AIClmerMod(list(mod_comp = mod_comp, mod_comp2 = mod_comp2)): 
-## Model selection for fixed effects is only appropriate with ML estimation:
-## REML (default) should only be used to select random effects for a constant set of fixed effects</code></pre>
-<pre><code>## 
-## Model selection based on AICc:
-## 
-##           K   AICc Delta_AICc AICcWt Cum.Wt Res.LL
-## mod_comp  6 100.18        0.0    0.8    0.8 -42.98
-## mod_comp2 8 102.98        2.8    0.2    1.0 -41.49</code></pre>
-</section><section id="exemple-2" class="slide level2">
-<h2>Exemple</h2>
-<ul>
-<li>Comparaison des effets fixes (modèles ajustés avec ML)</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_comp_ml &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>Exposure <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Beach), rikz, <span class="dt">REML =</span> <span class="ot">FALSE</span>)
-mod_nap_ml &lt;-<span class="st"> </span><span class="kw">lmer</span>(srich <span class="op">~</span><span class="st"> </span>NAP <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>Beach), rikz, <span class="dt">REML =</span> <span class="ot">FALSE</span>)
+Configuration spatiale possible de cette expérience
 
-<span class="kw">aictab</span>(<span class="kw">list</span>(<span class="dt">mod_comp_ml =</span> mod_comp_ml, <span class="dt">mod_nap_ml =</span> mod_nap_ml))</code></pre></div>
-<pre><code>## 
-## Model selection based on AICc:
-## 
-##             K   AICc Delta_AICc AICcWt Cum.Wt     LL
-## mod_comp_ml 6  92.13        0.0   0.99   0.99 -38.96
-## mod_nap_ml  4 101.83        9.7   0.01   1.00 -46.42</code></pre>
-</section><section id="effet-fixe-ou-aleatoire" class="slide level2">
-<h2>Effet fixe ou aléatoire?</h2>
-<ul>
-<li class="fragment"><p>On ne peut pas utiliser l’AIC pour déterminer si une variable devrait être considérée comme effet fixe ou aléatoire, par exemple, pour choisir entre <code>srich ~ NAP + Beach</code> et <code>srich ~ NAP + (1 | Beach)</code>.</p></li>
-<li class="fragment"><p>Il faut donc déterminer <em>a priori</em> quelles variables constituent des effets fixes ou aléatoires. Comment choisir?</p></li>
-</ul>
-</section><section id="effet-fixe-ou-aleatoire-1" class="slide level2">
-<h2>Effet fixe ou aléatoire?</h2>
-<ul>
-<li class="fragment"><p>Si on veut estimer l’effet d’un ou plusieurs traitements spécifiques sur la réponse, la variable de traitement est un effet fixe.</p></li>
-<li class="fragment"><p>Si la variable catégorielle a seulement deux niveaux (binaire), il faut un effet fixe. Effet aléatoire peut être estimé avec 3-4 niveaux, mais la variance est incertaine.</p></li>
-<li class="fragment"><p>L’effet aléatoire devient avantageux avec plusieurs groupes et peu d’observations dans certains de ces groupes.</p></li>
-<li class="fragment"><p>L’effet aléatoire est aussi utile si on s’intéresse moins aux différences entre groupes spécifiques qu’à la variation entre groupes (incluant les groupes non observés).</p></li>
-</ul>
-</section><section id="resume" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Les modèles mixtes ajustent les estimés des effets aléatoires en fonction du nombre d’observations par groupe: moins il y a d’observations par groupe, plus son effet est contracté vers la moyenne générale.</p></li>
-<li class="fragment"><p>Pour prédire une nouvelle observation dans un groupe existant, nous utilisons l’effet aléatoire estimé pour ce groupe. Pour prédire une nouvelle observation dans un nouveau groupe, nous utilisons seulement les effets fixes (l’effet d’un groupe “moyen”).</p></li>
-<li class="fragment"><p>Plusieurs effets aléatoires peuvent être inclus dans un même modèle. Ces effets peuvent être nichés ou croisés. Si les niveaux de la variable <span class="math inline">\(A\)</span> sont nichés dans ceux de la variable <span class="math inline">\(B\)</span>, leur effet aléatoire est représenté par <code>(1 | B/A)</code> dans la formule du modèle.</p></li>
-</ul>
-</section><section id="resume-1" class="slide level2">
-<h2>Résumé</h2>
-<ul>
-<li class="fragment"><p>Une variable peut avoir un effet aléatoire sur l’ordonnée à l’origine et sur le coefficient (la pente) d’un prédicteur individuel. Cela indique que l’effet du prédicteur sur la réponse varie d’un groupe à l’autre, de façon semblable à une interaction dans un modèle linéaire classique.</p></li>
-<li class="fragment"><p>L’AIC(c) est une mesure valide pour la comparaison de modèles avec différents effets aléatoires et les mêmes effets fixes, ou avec différents effets fixes et les mêmes effets aléatoires. Ces modèles doivent être ajustés par REML dans le premier cas et par ML (<code>REML = FALSE</code>) dans le deuxième.</p></li>
-</ul>
-</section><section id="references" class="slide level2">
-<h2>Références</h2>
-<ul>
-<li class="fragment"><p>Harrison, X.A., Donaldson, L., Correa-Cano, M.E., Evans, J. Fisher, D.N., Goodwin, C.E.D., Robinson, B.S., Hodgson, D.J., Inger, R. (2018) A brief introduction to mixed effects modelling and multi-model inference in ecology. <em>PeerJ</em> 6: e4794.</p></li>
-<li class="fragment"><p>Gelman, A. and Hill, J. (2006) <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge, Cambridge University Press.</p></li>
-<li class="fragment"><p>Zuur, A.F., Ieno, E.N., Walker, N.J., Saveliev, A.A., Smith, G.M. (2009) <em>Mixed Effects Models and Extensions in Ecology with R</em>. New York, Springer-Verlag.</p></li>
-</ul>
-</section></section>
-    </div>
-  </div>
+![](../images/split_plot.png)
 
-  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+--
 
-  <script>
+- Dans ce type de plan, un des traitements est appliqué à une plus grande surface et un autre traitement est niché dans le premier.
 
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        // Push each slide change to the browser history
-        history: true,
-        // Vertical centering of slides
-        center: false,
-        // Transition style
-        transition: 'none', // none/fade/slide/convex/concave/zoom
-        // Transition style for full page slide backgrounds
-        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+---
 
+# Interprétation des résultats
 
+- À première vue, il apparaît contradictoire d'utiliser la même variable `Variety` comme effet fixe et comme effet aléatoire. 
 
-        // Optional reveal.js plugins
-        dependencies: [
-        ]
-      });
-    </script>
-  <!-- dynamically load mathjax for compatibility with self-contained -->
-  <script>
-    (function () {
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      document.getElementsByTagName("head")[0].appendChild(script);
-    })();
-  </script>
+--
+
+- Toutefois, l'effet aléatoire ne s'applique pas aux différences entre les 3 variétés (il serait incorrect d'écrire `(1 | Variety)`), mais plutôt aux différences entre les 18 sections représentées par les combinaisons d'un bloc et d'une variété.
+
+---
+
+# Interprétation des résultats
+
+![](../images/split_plot.png)
+
+- Dans le premier modèle, nous supposions que toutes les observations étaient indépendantes à l'intérieur d'un bloc. Nous n'avons pas en fait 4 réplicats indépendants pour chaque variété.
+
+---
+
+# Interprétation des résultats
+
+![](../images/split_plot.png)
+
+- En considérant les effets aléatoires par section, la variance résiduelle entre observations d'une même section est réduite. Puisque les 4 niveaux de concentration d'azote sont répliqués dans chaque section, une réduction de la variance résiduelle augmente la précision du coefficient pour cette variable.
+
+---
+
+# Modèle mixte avec pente aléatoire
+
+`$$\hat{y_k} = \alpha_{j[k]} + \beta_{j[k]} x_k$$`
+
+--
+
+- Ici, l'ordonnée à l'origine et la pente de `\(y\)` vs. `\(x\)` varient entre groupes. 
+
+--
+
+- Le modèle estime la moyenne des `\(\alpha_j\)` et `\(\beta_j\)` (effets fixes), les écarts-types des effets aléatoires ( `\(\sigma_\alpha\)` et `\(\sigma_\beta\)` ) ainsi que leur corrélation `\(\rho_{\alpha \beta}\)`.
+
+---
+
+# Sélection de modèles
+
+- Plus complexe pour les modèles mixtes, car il faut choisir à la fois les termes fixes et aléatoires.
+
+--
+
+- Par défaut, `lmer` estime les paramètres du modèle mixte par la méthode du maximum de vraisemblance restreint (REML), afin d'obtenir des estimés non-biaisés des paramètres de variance. 
+
+--
+
+- L'avertissement indique que l'AIC(c) calculé sur des modèles ajustés par REML est seulement valide pour la comparaison de modèles avec les mêmes effets fixes, mais différents effets aléatoires.
+
+---
+
+# Sélection de modèles
+
+Zuur et al. (2009) suggèrent le protocole suivant:
+
+--
+
+1. D'abord, inclure tous les effets fixes qui nous intéressent et choisir, si nécessaire, entre différentes versions des effets aléatoires. Cette étape est basée sur l'AIC des modèles ajustés par REML.
+
+--
+
+2. Conserver les effets aléatoires choisis à l'étape précédente et comparer différentes versions des effets fixes. Cette étape requiert de comparer les modèles ajustés selon le maximum de vraisemblance, pas le REML (avec l'option `REML = FALSE` de `lmer`).
+
+--
+
+3. Réajuster le meilleur modèle par REML pour obtenir les estimés finaux.
+
+---
+
+# Effet fixe ou aléatoire?
+
+- On ne peut pas utiliser l'AIC pour déterminer si une variable devrait être considérée comme effet fixe ou aléatoire, par exemple, pour choisir entre `srich ~ NAP + Beach` et `srich ~ NAP + (1 | Beach)`. 
+
+--
+
+- Il faut donc déterminer *a priori* quelles variables constituent des effets fixes ou aléatoires. Comment choisir?
+
+---
+
+# Effet fixe ou aléatoire?
+
+- Si on veut estimer l'effet d'un ou plusieurs traitements spécifiques sur la réponse, la variable de traitement est un effet fixe.
+
+--
+
+- Si la variable catégorielle a seulement deux niveaux (binaire), il faut un effet fixe. Effet aléatoire peut être estimé avec 3-4 niveaux, mais la variance est incertaine.
+
+--
+
+- L'effet aléatoire devient avantageux avec plusieurs groupes et peu d'observations dans certains de ces groupes. 
+
+--
+
+- L'effet aléatoire est aussi utile si on s'intéresse moins aux différences entre groupes spécifiques qu'à la variation entre groupes (incluant les groupes non observés).
+
+---
+
+# Résumé
+
+- Les modèles mixtes ajustent les estimés des effets aléatoires en fonction du nombre d'observations par groupe: moins il y a d'observations par groupe, plus son effet est contracté vers la moyenne générale.
+
+--
+
+- Pour prédire une nouvelle observation dans un groupe existant, nous utilisons l'effet aléatoire estimé pour ce groupe. Pour prédire une nouvelle observation dans un nouveau groupe, nous utilisons seulement les effets fixes (l'effet d'un groupe "moyen").
+
+--
+
+- Plusieurs effets aléatoires peuvent être inclus dans un même modèle. Ces effets peuvent être nichés ou croisés. Si les niveaux de la variable `\(A\)` sont nichés dans ceux de la variable `\(B\)`, leur effet aléatoire est représenté par `(1 | B/A)` dans la formule du modèle.
+
+---
+
+# Résumé
+
+- Une variable peut avoir un effet aléatoire sur l'ordonnée à l'origine et sur le coefficient (la pente) d'un prédicteur individuel. Cela indique que l'effet du prédicteur sur la réponse varie d'un groupe à l'autre, de façon semblable à une interaction dans un modèle linéaire classique.
+
+--
+
+- L'AIC(c) est une mesure valide pour la comparaison de modèles avec différents effets aléatoires et les mêmes effets fixes, ou avec différents effets fixes et les mêmes effets aléatoires. Ces modèles doivent être ajustés par REML dans le premier cas et par ML (`REML = FALSE`) dans le deuxième.
+
+---
+
+# Références
+
+- Harrison, X.A., Donaldson, L., Correa-Cano, M.E., Evans, J. Fisher, D.N., Goodwin, C.E.D., Robinson, B.S., Hodgson, D.J., Inger, R. (2018) A brief introduction to mixed effects modelling and multi-model inference in ecology. *PeerJ* 6: e4794.
+
+- Gelman, A. and Hill, J. (2006) *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge, Cambridge University Press.
+
+- Zuur, A.F., Ieno, E.N., Walker, N.J., Saveliev, A.A., Smith, G.M. (2009) *Mixed Effects Models and Extensions in Ecology with R*. New York, Springer-Verlag.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
 
 <script>
-  (function() {
-    if (window.jQuery) {
-      Reveal.addEventListener( 'slidechanged', function(event) {  
-        window.jQuery(event.previousSlide).trigger('hidden');
-        window.jQuery(event.currentSlide).trigger('shown');
-      });
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
     }
-  })();
+  }
+})();
 </script>
 
-
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
   </body>
 </html>

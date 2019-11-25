@@ -1,14 +1,13 @@
 ---
 title: "Modèles linéaires mixtes, partie 2"
-date: "<br/>26 novembre 2018"
+date: "<br/>25 novembre 2019"
 output: 
-    revealjs::revealjs_presentation:
-        self_contained: false
-        lib_dir: libs
-        theme: night
-        transition: none
-        css: styles.css
-        incremental: true
+  xaringan::moon_reader:
+    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
@@ -18,25 +17,39 @@ library(ggplot2)
 library(cowplot)
 ```
 
-## Rappel
+# Rappel
 
 - Régression linéaire "classique" avec des données groupées: ignorer les groupes, estimer séparément des effets pour chaque groupe, ou tenir compte indirectement des groupes à partir de prédicteurs mesurés au niveau de ces groupes.
 
+--
+
 - Si on ignore la structure groupée des données, résidus ne sont pas indépendants, donc surestimation de la précision des inférences.
+
+--
 
 - Estimer des effets fixes pour chaque groupe est difficile lorsqu'on a peu d'observations par groupe: le hasard de l'échantillonnage crée des différences fortuites entre groupes.
 
-## Rappel
+---
+
+# Rappel
 
 - La régression linéaire ne considère qu'un terme aléatoire (résidus des observations individuelles).
 
+--
+
 - Les modèles mixtes incluent la variation aléatoire partagée par les observations d'un même groupe. 
+
+--
 
 - Les modèles mixtes produisent aussi des estimés des coefficients de la régression pour chaque groupe, mais en supposant une distribution normale de ces coefficients centrée sur la moyenne des groupes.
 
+--
+
 - Comparé aux effets fixes de groupe, ces coefficients sont "contractés" vers la moyenne générale. Cela permet d'obtenir des estimés plus fiables même avec peu d'observations par groupe.
 
-## Objectifs
+---
+
+# Objectifs
 
 - Comprendre comment les modèles mixtes traitent le cas de groupes non-équilibrés.
 
@@ -46,188 +59,85 @@ library(cowplot)
 
 - Appliquer la sélection de modèles avec l'AIC aux modèles mixtes.
 
+---
 
-# Modèles mixtes pour groupes non-équilibrés
+# Modèle mixte - groupes non-équilibrés
 
-## Exemple: Distribution du radon
+Concentration de radon (`log_radon`, échelle logarithmique) dans 919 maisons réparties dans 85 comtés (`county`) de l'état américain du Minnesota (1 à 116 maisons par comté).
 
->- Concentration de radon (`log_radon`, échelle logarithmique) dans 919 maisons réparties dans 85 comtés (`county`) de l'état américain du Minnesota (1 à 116 maisons par comté).
-
-```{r}
+```{r, echo = FALSE}
 radon <- read.csv("../donnees/radon.csv")
 head(radon)
 ```
 
+--
+
 - `floor`: Étage où la mesure a été prise (0 = sous-sol, 1 = rez-de-chaussée)
 - `log_uranium`: Concentration d'uranium du sol (mesure à l'échelle du comté)
 
-## Exemple: Distribution du radon
-
->- Modèle mixte avec effets fixes de l'étage et de la concentration d'uranium, ainsi qu'une variation aléatoire de l'ordonnée à l'origine par comté.
-
-```{r, message = FALSE, warning = FALSE}
-library(lme4)
-mm_radon <- lmer(log_radon ~ floor + log_uranium + (1 | county), radon)
-summary(mm_radon)
-```
-
-## Interprétation des effets fixes 
-
-- `(Intercept)` est la moyenne de `log_radon` si `floor` = 0 (dans un sous-sol) et `log_uranium` = 0.
-
-- `floor` est la différence de `log_radon` si `floor` augmente de 1 (rez-de-chaussée vs. sous-sol).
-
-- `log_uranium` est l'effet d'une augmentation d'une unité de `log_uranium` sur `log_radon`. 
-
-    + Lorsque variables sont sur une échelle logarithmique, on peut interpréter ce coefficient (0.72) comme un effet multiplicatif: une augmentation de 1% de la concentration d'uranium du sol augmente la concentration de radon dans les maisons de 0.72%.
-    
-## Prédictions par comté 
-
->- Tableau de données avec le nom du comté, sa concentration d'uranium et le nombre de maisons échantillonnées. On fixe la variable `floor` à 0 (sous-sol).
-
-```{r}
-comtes <- group_by(radon, county, log_uranium) %>%
-    summarize(n = n()) %>%
-    ungroup()
-comtes$floor <- 0
-head(comtes)
-```
-
-## Prédictions par comté 
-
-```{r}
-
-comtes$mm_pred <- predict(mm_radon, comtes)
-
-ggplot(comtes, aes(x = log_uranium, y = mm_pred)) +
-    geom_point()
-```
-
-## Prédictions par comté
-
->- Comparons ces prédictions à ceux de deux régressions linéaires classiques, avec aucun effet de comté (mais avec l'effet de l'uranium) ou un effet fixe par comté.
-
-```{r, warning = FALSE, message = FALSE}
-lm_radon1 <- lm(log_radon ~ floor + log_uranium, radon)
-lm_radon2 <- lm(log_radon ~ floor + county, radon)
-
-comtes <- mutate(comtes, pred1 = predict(lm_radon1, comtes), 
-                 pred2 = predict(lm_radon2, comtes))
-
-
-```
-
-## Prédictions par comté
-
-```{r}
-ggplot(comtes, aes(x = log_uranium)) +
-    labs(y = "log_radon") +
-    geom_line(aes(y = pred1)) +
-    geom_point(aes(y = pred2), shape = 1) + # Points vides
-    geom_point(aes(y = mm_pred))
-```
-
-
-## Prédictions par comté - Effet de *n*
-
-```{r}
-ggplot(comtes, aes(x = log_uranium)) +
-    labs(y = "log_radon") +
-    geom_line(aes(y = pred1)) +
-    geom_point(aes(y = pred2, size = n), shape = 1) +
-    geom_point(aes(y = mm_pred, size = n)) +
-    geom_segment(aes(xend = log_uranium, y = mm_pred, yend = pred2),
-                 linetype = "dotted") # Ligne pointillée reliant les deux prédictions
-```
-
+---
 
 # Prédictions à partir d'un modèle mixte
 
-## Rappel: Équation d'un modèle mixte
-
 Modèle avec prédicteurs liés à l'observation $k$ et au groupe $j$, avec effet aléatoire sur l'ordonnée à l'origine.
 
-$$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k $$
+$$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k$$
 
->- `fixef` nous donne les estimés des coefficients $\gamma_0$, $\gamma_1$ et $\beta_1$
+--
 
-```{r}
-eff_fixes <- fixef(mm_radon)
-eff_fixes
-```
+- `fixef` nous donne les estimés des coefficients $\gamma_0$, $\gamma_1$ et $\beta_1$
 
-## Rappel: Équation d'un modèle mixte
+- `ranef` indique les estimés des effets aléatoires $\nu_j$. 
 
-Modèle avec prédicteurs liés à l'observation $k$ et au groupe $j$, avec effet aléatoire sur l'ordonnée à l'origine.
+---
 
-$$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k $$
+# Prédicitions pour des groupes connus
 
->- `ranef` indique les estimés des effets aléatoires $\nu_j$. 
+- Par défaut, la fonction `predict` utilise à la fois les estimés des effets fixes et aléatoires. 
 
-```{r}
-eff_alea <- ranef(mm_radon)$county
-head(eff_alea)
-```
+- Valeur prédite $\hat{y}$ pour un sous-sol $x_1 = 0$ du comté $j$:
 
+$$\hat{y} = \hat{\gamma_0} + \hat{\gamma_1} u_{1j} + \hat{\nu_{j}}$$ .
 
-## Prédire des nouvelles observations de groupes existants
+---
 
->- Par défaut, la fonction `predict` utilise à la fois les estimés des effets fixes et aléatoires. 
+# Prédictions pour des nouveaux groupes
 
->- Valeur prédite $\hat{y}$ pour un sous-sol $x_1 = 0$ du comté $j$:
+- Pour effectuer une prédiction basée seulement sur les effets fixes, nous devons spécifier l'argument `re.form = ~0`.
 
-$$ \hat{y} = \hat{\gamma_0} + \hat{\gamma_1} u_{1j} + \hat{\nu_{j}} $$ .
+--
 
-```{r}
-pred_man <- eff_fixes["(Intercept)"] + 
-    eff_fixes["log_uranium"] * comtes$log_uranium + eff_alea$`(Intercept)`
-                
-all.equal(pred_man, comtes$mm_pred)
-```
+- Dans ce cas, les prédictions sont basés sur un groupe "moyen" (effet aléatoire de groupe est 0).
 
-## Prédire des observations d'un nouveau groupe
-
-```{r, error = TRUE}
-nouv_comte <- data.frame(county = "NOUVEAU", log_uranium = 0.5, floor = 0)
-predict(mm_radon, nouv_comte)
-```
-
-## Prédire des observations d'un nouveau groupe
-
->- Pour effectuer une prédiction basée seulement sur les effets fixes, nous devons spécifier l'argument `re.form = ~0`.
-
-```{r}
-predict(mm_radon, nouv_comte, re.form = ~0)
-```
-
-```{r}
-eff_fixes["(Intercept)"] + eff_fixes["log_uranium"] * nouv_comte$log_uranium
-```
-
-## Prédictions à partir d'un modèle mixte
-
-- Avec un modèle mixte, on peut faire des prédictions pour des groupes non inclus dans les données originales.
-
-- Dans ce cas, les prédictions sont basés sur un groupe "moyen" (effet aléatoire de groupe de 0).
+--
 
 - L'incertitude associée à cette prédiction est plus grande que lorsqu'on prédit de nouvelles observations pour un groupe existant.
 
+--
+
 - Des méthodes de simulation (pas vues dans ce cours) sont nécessaires pour obtenir des intervalles de confiance ou de prédiction pour ces estimés.
 
+---
 
 # Effets aléatoires multiples
 
-## Exemple: Croissance des arbres de plusieurs espèces
+**Exemple: Croissance d'épinettes sur plusieurs sites**
 
->- 100 arbres mesurés pour 5 années consécutives. 
+- 100 arbres mesurés pour 5 années consécutives. 
 
->- Nous voulons modéliser la croissance annuelle en fonction de deux prédicteurs qui varient pour chaque observation (DHP, âge) et de la tolérance à l'ombre de l'espèce.
+- Nous voulons modéliser la croissance annuelle en fonction de deux prédicteurs qui varient pour chaque observation (DHP, âge) et de la pente du site.
 
-| ID Arbre | Année | Croissance | DHP | Âge | Espèce | Ombre |
-|----------+-------+------------+-----+-----+--------+-------|
-| ...      | ...   | ...        | ... | ... | ...    | ...   |
+--
 
-## Choisir les effest aléatoires d'un modèle
+- Considérons un tableau avec les champs de données suivants: Site, ID_Arbre, Annee, Croissance, DHP, Âge, Pente. 
+
+--
+
+- Pour quels groupes d'observations la variation de la réponse serait-elle corrélée (entre observations d'un même groupe)?
+
+---
+
+# Effets aléatoires multiples
 
 Pour quels groupes d'observations la variation de la réponse serait-elle corrélée (entre observations d'un même groupe)?
 
@@ -235,249 +145,200 @@ Pour quels groupes d'observations la variation de la réponse serait-elle corré
 - les observations de deux arbres prises la même année; et
 - les observations prises sur des arbres de la même espèce.
 
-## Équation du modèle
+---
 
->- Croissance $y_k$ de l'arbre $i$ de l'espèce $j$ lors de l'année $t$:
+# Équation du modèle
 
-$$ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k $$
+- Croissance $y_k$ de l'arbre $i$ de l'espèce $j$ lors de l'année $t$:
 
->- Formule dans R:
+$$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k$$
 
-```{r, eval = FALSE}
-croissance ~ ombre + DHP + age + (1 | espece) + (1 | id_arbre) + (1 | annee)
-```
+--
 
-
-## Effets aléatoires croisés ou nichés
-
-- Les effets de l'arbre et de l'année sont croisés (*crossed*): chaque arbre est mesurée pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets de l'espèce et de l'année sont croisés.
-
-- Les effets de l'arbre et de l'espèce sont nichés (*nested*): chaque arbre fait partie d'une seule espèce.
-
-## Effets aléatoires croisés ou nichés
-
->- Pour indiquer à R que l'effet A est niché dans l'effet B, on écrit par exemple `(1 | B/A)`. Dans ce cas-ci, la formule pourrait être ré-écrite:
+- Formule dans R:
 
 ```{r, eval = FALSE}
-croissance ~ ombre + DHP + age + (1 | espece / id_arbre) + (1 | annee)
+croissance ~ pente + DHP + age + (1 | site) + (1 | id_arbre) + (1 | annee)
 ```
 
+---
 
+# Effets aléatoires croisés ou nichés
+
+- Les effets de l'arbre et de l'année sont croisés (*crossed*): chaque arbre est mesuré pour plusieurs années et plusieurs arbres sont mesurés chaque année. De même, les effets du site et de l'année sont croisés.
+
+--
+
+- Les effets de l'arbre et du site sont nichés (*nested*): chaque arbre n'est associé qu'à un site.
+
+---
+
+# Effets aléatoires croisés ou nichés
+
+- Pour indiquer à R que l'effet A est niché dans l'effet B, on écrit par exemple `(1 | B/A)`. Dans ce cas-ci, la formule pourrait être ré-écrite:
+
+```{r, eval = FALSE}
+croissance ~ pente + DHP + age + (1 | site / id_arbre) + (1 | annee)
+```
+
+--
 
 - Si les valeurs d'`id_arbre` ne sont pas répétées d'une espèce à l'autre, il n'est pas nécessaire de préciser les effets nichés.
 
-- Si les arbres étaient numérotés 1, 2, ... pour chaque espèce, il faut indiquer l'effet niché dans le modèle, sinon R croirait que les arbres "1" de chaque espèce représentent le même individu.
+--
 
-## Expérience en parcelles divisées
+- Si les arbres étaient numérotés 1, 2, ... pour chaque site, il faut indiquer l'effet niché dans le modèle, sinon R croirait que les arbres "1" de chaque site représentent le même individu.
 
->- Tableau de données `Oats` vu au dernier laboratoire.
+---
+
+# Expérience en parcelles divisées
+
+Le tableau de données `Oats` du package *nlme* présente le rendement (*yield*) de variétés d'avoine en fonction de la concentration d'azote (*nitro*).
 
 ```{r, message = FALSE, warning = FALSE}
 library(nlme)
-# Changer le bloc en facteur non-ordonné
-Oats$Block <- factor(Oats$Block, ordered = FALSE)
 head(Oats)
 ```
 
-## Expérience en parcelles divisées
+---
+
+# Expérience en parcelles divisées
 
 Configuration spatiale possible de cette expérience
 
 ![](../images/split_plot.png)
 
+--
+
 - Dans ce type de plan, un des traitements est appliqué à une plus grande surface et un autre traitement est niché dans le premier.
 
-## Effet aléatoire de bloc
+---
 
->- Dans le laboratoire, nous avions défini un effet aléatoire du bloc, car les observations varient moins dans le même bloc qu'entre deux blocs différents.
-
-```{r}
-mm_oats <- lmer(yield ~ nitro + Variety + (1 | Block), Oats)
-```
-
-- Il est aussi possible que la variance soit plus petite entre quadrants d'une même section.
-
-- Nous pouvons tenir compte de ce deuxième niveau de groupement en incluant un effet aléatoire de la section (variété) niché dans celui du bloc.
-
-## Effet aléatoire de bloc et section
-
-```{r}
-mm_oats2 <- lmer(yield ~ nitro + Variety + (1 | Block / Variety), Oats)
-summary(mm_oats2)
-```
-
-## Interprétation des résultats
+# Interprétation des résultats
 
 - À première vue, il apparaît contradictoire d'utiliser la même variable `Variety` comme effet fixe et comme effet aléatoire. 
 
+--
+
 - Toutefois, l'effet aléatoire ne s'applique pas aux différences entre les 3 variétés (il serait incorrect d'écrire `(1 | Variety)`), mais plutôt aux différences entre les 18 sections représentées par les combinaisons d'un bloc et d'une variété.
 
-## Interprétation des résultats
+---
 
-Le deuxième modèle donne un intervalle de confiance plus large pour les effets fixes des variétés, mais moins large pour l'effet de l'azote.
-
-```{r, collapse = TRUE}
-confint(mm_oats)
-confint(mm_oats2)
-```
-
-## Interprétation des résultats
+# Interprétation des résultats
 
 ![](../images/split_plot.png)
 
 - Dans le premier modèle, nous supposions que toutes les observations étaient indépendantes à l'intérieur d'un bloc. Nous n'avons pas en fait 4 réplicats indépendants pour chaque variété.
 
-## Interprétation des résultats
+---
+
+# Interprétation des résultats
 
 ![](../images/split_plot.png)
 
 - En considérant les effets aléatoires par section, la variance résiduelle entre observations d'une même section est réduite. Puisque les 4 niveaux de concentration d'azote sont répliqués dans chaque section, une réduction de la variance résiduelle augmente la précision du coefficient pour cette variable.
 
+---
 
 # Modèle mixte avec pente aléatoire
 
-## Exemple
+$$\hat{y_k} = \alpha_{j[k]} + \beta_{j[k]} x_k$$
 
->- Reprenons le jeu de données `rikz` vu au dernier cours, présentant la richesse spécifique de 45 sites intertidaux répartis sur 9 plages des Pays-Bas.  
-
-```{r}
-rikz <- read.csv("../donnees/rikz.csv")
-rikz <- mutate(rikz, Beach = as.factor(Beach), Exposure = as.factor(Exposure))
-# Transformer la réponse
-rikz <- mutate(rikz, srich = sqrt(Richness))
-head(rikz)
-```
-
->- Nous avons déjà utilisé des modèles avec effet aléatoire sur l'ordonnée à l'origine.
-
-```{r}
-mm_rikz <- lmer(srich ~ NAP + (1 | Beach), rikz)
-```
-
-## Modèle mixte avec pente aléatoire
-
-$$ \hat{y_k} = \alpha_{j[k]} + \beta_{j[k]} x_k $$
+--
 
 - Ici, l'ordonnée à l'origine et la pente de $y$ vs. $x$ varient entre groupes. 
 
-- Le modèle estime la moyenne des $\alpha_j$ et $\beta_j$ (effets fixes), les écarts-types des effets aléatoires ($\sigma_\alpha$ et $\sigma_\beta$) ainsi que leur corrélation $\rho_{\alpha \beta}$.
+--
 
-## Modèle mixte avec pente aléatoire
+- Le modèle estime la moyenne des $\alpha_j$ et $\beta_j$ (effets fixes), les écarts-types des effets aléatoires ( $\sigma_\alpha$ et $\sigma_\beta$ ) ainsi que leur corrélation $\rho_{\alpha \beta}$.
 
->- On ajoute le NAP dans la partie gauche du terme d'effet aléatoire.
-
-```{r}
-mm_rikz2 <- lmer(srich ~ NAP + (1 + NAP | Beach), rikz)
-summary(mm_rikz2)
-```
-
-## Modèle mixte avec pente aléatoire
-
->- Coefficients estimés par plage
-
-```{r}
-coef(mm_rikz2)
-```
-
-## Modèle mixte avec pente aléatoire
-
-```{r}
-rikz$fit2 <- fitted(mm_rikz2)
-
-ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
-    geom_point() + 
-    geom_line(aes(y = fit2))
-```
-
+---
 
 # Sélection de modèles
 
-## Sélection de modèles
+- Plus complexe pour les modèles mixtes, car il faut choisir à la fois les termes fixes et aléatoires.
 
->- Plus complexe pour les modèles mixtes, car il faut choisir à la fois les termes fixes et aléatoires.
-
->- Par exemple, comparons l'AICc des deux modèles précédents (avec ou sans effet aléatoire sur la pente).
-
-```{r, include = FALSE}
-library(AICcmodavg)
-```
-
-```{r}
-library(AICcmodavg)
-
-aictab(list(mm_rikz = mm_rikz, mm_rikz2 = mm_rikz2))
-```
-
-## Sélection de modèles
+--
 
 - Par défaut, `lmer` estime les paramètres du modèle mixte par la méthode du maximum de vraisemblance restreint (REML), afin d'obtenir des estimés non-biaisés des paramètres de variance. 
 
+--
+
 - L'avertissement indique que l'AIC(c) calculé sur des modèles ajustés par REML est seulement valide pour la comparaison de modèles avec les mêmes effets fixes, mais différents effets aléatoires.
 
-## Sélection de modèles
+---
+
+# Sélection de modèles
 
 Zuur et al. (2009) suggèrent le protocole suivant:
 
+--
+
 1. D'abord, inclure tous les effets fixes qui nous intéressent et choisir, si nécessaire, entre différentes versions des effets aléatoires. Cette étape est basée sur l'AIC des modèles ajustés par REML.
+
+--
 
 2. Conserver les effets aléatoires choisis à l'étape précédente et comparer différentes versions des effets fixes. Cette étape requiert de comparer les modèles ajustés selon le maximum de vraisemblance, pas le REML (avec l'option `REML = FALSE` de `lmer`).
 
+--
+
 3. Réajuster le meilleur modèle par REML pour obtenir les estimés finaux.
 
-## Exemple
+---
 
->- Modèle complet pour les effets fixes inclut NAP et Exposure.
-
-```{r}
-mod_comp <- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz)
-mod_comp2 <- lmer(srich ~ NAP + Exposure + (1 + NAP | Beach), rikz)
-
-aictab(list(mod_comp = mod_comp, mod_comp2 = mod_comp2))
-```
-
-## Exemple
-
->- Comparaison des effets fixes (modèles ajustés avec ML)
-
-```{r}
-mod_comp_ml <- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz, REML = FALSE)
-mod_nap_ml <- lmer(srich ~ NAP + (1 | Beach), rikz, REML = FALSE)
-
-aictab(list(mod_comp_ml = mod_comp_ml, mod_nap_ml = mod_nap_ml))
-```
-
-## Effet fixe ou aléatoire?
+# Effet fixe ou aléatoire?
 
 - On ne peut pas utiliser l'AIC pour déterminer si une variable devrait être considérée comme effet fixe ou aléatoire, par exemple, pour choisir entre `srich ~ NAP + Beach` et `srich ~ NAP + (1 | Beach)`. 
 
+--
+
 - Il faut donc déterminer *a priori* quelles variables constituent des effets fixes ou aléatoires. Comment choisir?
 
-## Effet fixe ou aléatoire?
+---
+
+# Effet fixe ou aléatoire?
 
 - Si on veut estimer l'effet d'un ou plusieurs traitements spécifiques sur la réponse, la variable de traitement est un effet fixe.
 
+--
+
 - Si la variable catégorielle a seulement deux niveaux (binaire), il faut un effet fixe. Effet aléatoire peut être estimé avec 3-4 niveaux, mais la variance est incertaine.
+
+--
 
 - L'effet aléatoire devient avantageux avec plusieurs groupes et peu d'observations dans certains de ces groupes. 
 
+--
+
 - L'effet aléatoire est aussi utile si on s'intéresse moins aux différences entre groupes spécifiques qu'à la variation entre groupes (incluant les groupes non observés).
 
-## Résumé
+---
+
+# Résumé
 
 - Les modèles mixtes ajustent les estimés des effets aléatoires en fonction du nombre d'observations par groupe: moins il y a d'observations par groupe, plus son effet est contracté vers la moyenne générale.
 
+--
+
 - Pour prédire une nouvelle observation dans un groupe existant, nous utilisons l'effet aléatoire estimé pour ce groupe. Pour prédire une nouvelle observation dans un nouveau groupe, nous utilisons seulement les effets fixes (l'effet d'un groupe "moyen").
+
+--
 
 - Plusieurs effets aléatoires peuvent être inclus dans un même modèle. Ces effets peuvent être nichés ou croisés. Si les niveaux de la variable $A$ sont nichés dans ceux de la variable $B$, leur effet aléatoire est représenté par `(1 | B/A)` dans la formule du modèle.
 
-## Résumé
+---
+
+# Résumé
 
 - Une variable peut avoir un effet aléatoire sur l'ordonnée à l'origine et sur le coefficient (la pente) d'un prédicteur individuel. Cela indique que l'effet du prédicteur sur la réponse varie d'un groupe à l'autre, de façon semblable à une interaction dans un modèle linéaire classique.
 
+--
+
 - L'AIC(c) est une mesure valide pour la comparaison de modèles avec différents effets aléatoires et les mêmes effets fixes, ou avec différents effets fixes et les mêmes effets aléatoires. Ces modèles doivent être ajustés par REML dans le premier cas et par ML (`REML = FALSE`) dans le deuxième.
 
+---
 
-## Références
+# Références
 
 - Harrison, X.A., Donaldson, L., Correa-Cano, M.E., Evans, J. Fisher, D.N., Goodwin, C.E.D., Robinson, B.S., Hodgson, D.J., Inger, R. (2018) A brief introduction to mixed effects modelling and multi-model inference in ecology. *PeerJ* 6: e4794.
 
