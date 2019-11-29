@@ -1,6 +1,6 @@
 ---
 title: "Analyses multivariées, Partie 1"
-date: "<br/>3 décembre 2018"
+date: "<br/>2 décembre 2019"
 output:
     html_document:
         self_contained: false
@@ -34,11 +34,12 @@ Les analyses multivariées visent à modéliser la *distribution conjointe* de p
 
 Voici certaines situations où ces méthodes pourraient être utiles:
 
+- Au moment de décrire et d'explorer un jeu de données avec plusieurs variables, il peut être intéressant de visualiser la relation entre les variables (ex.: corrélations) et entre les observations (ex.: similarité entre nos sites d'études) dans un seul graphique.
+
 - La réponse qu'on souhaite expliquer est multivariée. Par exemple, la composition d'une communauté écologique est définie comme la présence ou l'abondance de plusieurs espèces à différents sites. Les interactions entre espèces (ex.: compétition) font qu'on ne peut pas étudier cette réponse comme la combinaison de plusieurs réponses univariées indépendantes (une espèce à la fois).  
 
 - On veut expliquer une réponse univariée en fonction d'un grand nombre de prédicteurs qui sont partiellement corrélés. Par exemple, la présence d'une espèce en fonction des conditions climatiques, la croissance d'arbres de différentes espèces sur un site en fonction de leurs traits fonctionnels, etc. Dans les cours précédents sur la régression, nous avons vu qu'il est difficile d'estimer l'effet d'un grand nombre de prédicteurs potentiellement corrélés dans un même modèle. La sélection de modèles est aussi compliquée lorsque le nombre de prédicteurs est grand.
 
-- Dans le cadre d'une analyse exploratoire des données, on pourrait vouloir résumer les différences entre observations (ex.: individus, sites) en fonction de plusieurs variables dans un seul graphique, plutôt qu'avoir à consulter un nuage de points pour chaque paire de variables.
 
 # Structure des données multivariées
 

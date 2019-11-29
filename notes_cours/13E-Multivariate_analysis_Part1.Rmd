@@ -1,6 +1,6 @@
 ---
 title: "Multivariate analysis, Part 1"
-date: "<br/>December 3, 2018"
+date: "<br/>December 2, 2019"
 output:
     html_document:
         self_contained: false
@@ -34,11 +34,12 @@ Multivariate analysis aims to model the *joint distribution* of several variable
 
 Here are some situations where these methods might be useful:
 
+- In the description or exploration of a dataset with many variables, it can be useful to visualize the relationship between variables (e.g. correlations) and between observations (e.g. similarity between study sites) with a single graph.
+
 - The response we want to explain is multivariate. For example, the composition of an ecological community is defined as the presence or abundance of several species at different sites. Interactions between species (e.g. competition) make it impossible to study this response as the combination of several independent univariate responses (one species at a time).
 
 - We want to explain a univariate response according to a large number of predictors that are partially correlated. For example, the presence of a species depending on climatic conditions, the growth of trees of different species on a site depending on their functional traits, etc. In previous classes on regression, we have seen that it is difficult to estimate the effect of a large number of potentially correlated predictors in the same model. Model selection is also complicated when the number of predictors is large.
 
-- As part of an exploratory analysis of the data, we might want to summarize the differences between observations (e.g. individuals, sites) according to several variables in a single graph, rather than having to look at a scatter plot for each pair of variables.
 
 # Structure of multivariate data
 
