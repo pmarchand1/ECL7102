@@ -1,14 +1,13 @@
 ---
 title: "Analyses multivariées, Partie 1"
-date: "<br/>3 décembre 2018"
-output:
-    revealjs::revealjs_presentation:
-        self_contained: false
-        lib_dir: libs
-        theme: night
-        transition: none
-        css: styles.css
-        incremental: true
+date: "<br/>2 décembre 2019"
+output: 
+  xaringan::moon_reader:
+    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
@@ -18,8 +17,11 @@ library(ggplot2)
 library(cowplot)
 ```
 
+```{css, echo = FALSE}
+.small { font-size: 70% }
+```
 
-## Objectifs
+# Objectifs
 
 - Décrire différents rôles des techniques d'analyse multivariées.
 
@@ -29,21 +31,29 @@ library(cowplot)
 
 - Diviser les observations en classes à partir des méthodes de regroupement hiérarchique.
 
+---
 
-## Pourquoi les analyses multivariées?
+# Pourquoi les analyses multivariées?
 
-- Les analyses multivariées servent à modéliser la *distribution conjointe* de plusieurs variables (distribution des variables individuelles et corrélations). Par exemple:
+Les analyses multivariées servent à modéliser la *distribution conjointe* de plusieurs variables (distribution des variables individuelles et corrélations). Par exemple:
 
-    + expliquer une réponse multivariée;
+--
+
+- visualiser les similitudes entre sites d'observation en fonction de plusieurs variables mesurées pour chaque site;
+
+--
+
+- expliquer une réponse multivariée;
+
+--
     
-    + expliquer une réponse univariée en fonction d'un grand nombre de prédicteurs partiellement corrélés;
+- expliquer une réponse univariée en fonction d'un grand nombre de prédicteurs partiellement corrélés.
     
-    + visualiser les différences entre observations en fonction de plusieurs variables.
+---
 
+# Structure des données multivariées
 
-## Structure des données multivariées
-
-- Matrice $X$ représentant $n$ observations de $p$ variables.
+Matrice $X$ représentant $n$ observations de $p$ variables.
 
 $$  
 \begin{bmatrix}
@@ -54,59 +64,75 @@ x_{n1} & ... & ... & x_{np}
 \end{bmatrix}
 $$
 
-## Exemple
+---
 
-- Données climatiques pour 49 grandes villes (source: WorldClim).
+# Exemple
+
+Données climatiques pour 49 grandes villes (source: WorldClim).
+
+.small[
 
 ```{r}
 villes <- read.csv("../donnees/cities_climate.csv")
 head(villes)
 ```
 
-## Normalisation des données
+]
+
+---
+
+# Normalisation des données
 
 - Les méthodes d'ordination et de regroupement sont basées sur le concept de *distance* entre les points dans l'espace à $p$ dimensions. 
 
+--
+
 - On ne peut pas comparer cette distance selon plusieurs variables avec des unités différentes.
+
+--
 
 - C'est pourquoi on commence par normaliser les variables: soustraire de chaque colonne sa moyenne et diviser par son écart-type (fonction `scale` dans R). Le résultat est une matrice où chaque colonne a une moyenne de 0 et un écart-type de 1. 
 
-## Normalisation des données
+---
 
-```{r}
-climat <- villes[, 4:12]
-rownames(climat) <- villes$city
-clim_norm <- scale(climat)
-round(head(clim_norm), 2) # Afficher seulement 2 décimales
-```
-
-## Réduction de la dimensionnalité
+# Réduction de la dimensionnalité
 
 - Comme on ne peut pas visualiser un nuage de points en 9 dimensions, il serait utile de réduire la dimensionnalité des données tout en conservant le maximum d'information sur la variation entre les villes.
 
+--
+
 - Les méthodes d'**ordination** effectuent une transformation des $p$ variables originales en un nombre plus restreint de nouvelles variables, en reproduisant le plus fidèlement possible les distances entre les points dans l'espace original en $p$ dimensions. Ex.: analyse en composantes principales.
+
+--
 
 - Les méthodes de **regroupement** (*clustering*) divisent les observations en un nombre discret de groupes (ou catégories) en fonction de leur proximité dans l'espace à $p$ dimensions. Ex.: classification hiérarchique ascendante.
 
+---
+
+class: inverse, middle
 
 # Analyse en composantes principales (ACP)
 
-## Introduction
+---
 
-- Nuage de points de 3 variables climatiques pour les 49 villes:
+# Introduction
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+Nuage de points de 3 variables climatiques pour les 49 villes:
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.dim = c(8, 6)}
 library(plotly)
 plot_ly(villes, x = ~t_mean, y = ~t_sd, z = ~p_ann) %>%
     add_markers(size = 1) %>%
     add_text(text = ~city, size = 0.5)
 ```
 
-## Introduction
+---
 
-- Considérons le cas extrême où une des trois variables est parfaitement prédite par les deux autres (collinéarité parfaite), par exemple $z = 2x - 5y$.
+# Introduction
 
-```{r, echo = FALSE}
+Considérons le cas extrême où une des trois variables est parfaitement prédite par les deux autres (collinéarité parfaite), par exemple $z = 2x - 5y$.
+
+```{r, echo = FALSE, fig.dim = c(8, 6)}
 df <- data.frame(x = rnorm(100, 0, 1), y = rnorm(100, 0, 1))
 df <- mutate(df, z = 2*x - 5*y)
 plot_ly(df, x = ~x, y = ~y, z = ~z) %>%
@@ -114,122 +140,124 @@ plot_ly(df, x = ~x, y = ~y, z = ~z) %>%
     add_mesh(opacity = 0.3)
 ```
 
-## Fonctionnement de l'ACP
+---
 
-- L'ACP est une transformation de la matrice $X$ ($n$ observations $\times ~ p$ variables, préalablement normalisées) choisie pour que:
+# Fonctionnement de l'ACP
 
-    + le premier axe dans la direction de variation maximale des données;
-    + le deuxième axe dans la direction de variation maximale qui est orthogonale (perpendiculaire) au premier;
-    + le troisième axe dans la direction de variation maximale qui est orthogonale aux deux premiers; et ainsi de suite.
+L'ACP est une transformation de la matrice $X$ ( $n$ observations $\times ~ p$ variables, préalablement normalisées) choisie pour que:
+
+--
+
+- le premier axe soit dans la direction de variation maximale des données;
     
-- Ces axes (composantes principales) sont donc orthogonaux (non-corrélés) et classés en ordre décroissant de variance expliquée.
+--
 
-## Fonctionnement de l'ACP
+- le deuxième axe soit dans la direction de variation maximale qui est orthogonale (perpendiculaire) au premier;
+    
+--
+
+- le troisième axe soit dans la direction de variation maximale qui est orthogonale aux deux premiers; et ainsi de suite.
+    
+--
+    
+Ces axes (composantes principales) sont donc orthogonaux (non-corrélés) et classés en ordre décroissant de variance expliquée.
+
+---
+
+# Fonctionnement de l'ACP
 
 - Mathématiquement, l'ACP requiert le calcul des valeurs propres et vecteurs propres de la matrice des covariances entre paires de variables dans $X$. Les vecteurs propres indiquent la direction des composantes principales et les valeurs propres indiquent la variance des données sur chaque axe.
 
+--
+
 - L'ACP est basée sur la théorie des distributions normales multivariées, donc fonctionne mieux lorsque les variables s'approchent de la normalité.
+
+--
 
 - Nous verrons au prochain cours des méthodes d'ordination adaptées aux données de présence-absence et d'abondance communes en écologie.
 
-## ACP avec R
+---
 
-```{r}
-clim_acp <- prcomp(clim_norm)
-summary(clim_acp)
-```
+# ACP avec R
 
-- Le sommaire du résultat de l'ACP indique 
-    + l'écart-type de chacune des 9 composantes principales;
-    + le rapport entre la variance d'une composante et la variance totale; et
-    + la proportion cumulative de la variance en fonction du nombre de composantes.
+- `prcomp`: Exécute une ACP à partir d'une matrice de données multivariées.
 
-## ACP avec R
+--
 
-Diagramme à barres des variances: `screeplot`.
+- Le résultat de `prcomp` indique la transformation linéaire effectuée sur les variables originales pour former les composantes principales (`$rotation`), ainsi que les coordonnées transformées de chaque observation (`$x`).
 
-```{r}
-screeplot(clim_acp)
-```
+--
 
-## ACP avec R
+- `summary`: Sommaire d'une ACP, qui donne pour chaque composante principale son écart-type, la fraction de la variance totale contenue dans cette composante et la fraction cumulative de la variance pour les composantes jusqu'à celle-ci. 
 
->- Élément `rotation`: transformation entre les variables originales (normalisées) et les composantes principales. 
+---
 
-```{r}
-round(clim_acp$rotation, 2)
-```
+# ACP avec R
 
-- Par exemple, pour la première composante principale: PC1 = 0.47 *t_mean* - 0.09 *t_diu* - 0.38 *t_sd* + 0.27 *t_max* + 0.46 *t_min* + 0.33 *p_ann* + 0.39 *p_max* - 0.09 *p_min* + 0.27 *p_cv*.
+- `biplot`: Présente un diagramme de double projection, avec la position des observations et direction des variables originales.
 
-## ACP avec R
+    + Les observations plus rapprochées sont plus similaires selon les composantes affichées.
+    + Les variables pointant dans une direction semblable sont positivement corrélées, celles pointant dans des directions opposées sont négativement corrélées.
 
->- Élément `x`: coordonnées de chaque observation sur les axes des composantes principales.
+---
 
-```{r}
-round(head(clim_acp$x), 2)
-```
-
-## Visualisation de l'ACP
-
->- Diagramme de double projection (*biplot*) 
-
-```{r, eval = FALSE}
-biplot(clim_acp)
-```
-
-```{r, echo = FALSE, fig.dim = c(6, 5)}
-biplot(clim_acp, cex = 0.7)
-```
-
-## Visualisation de l'ACP
-
->- Inspecter autres composantes avec l'argument `choices`.
-
-```{r, eval = FALSE}
-biplot(clim_acp, choices = c(1, 3))
-```
-
-```{r, echo = FALSE, fig.dim = c(6, 5)}
-biplot(clim_acp, choices = c(1, 3), cex = 0.7)
-```
-
-## ACP et régression
+# ACP et régression
 
 - L'ACP peut transformer un grand nombre de prédicteurs corrélés en un plus petit nombre de variables non-corrélées.
 
+--
+
 - Principal inconvénient: les effets sont plus difficiles à interpéter.
+
+--
 
 - Tout de même utile dans les cas où on s'intéresse d'abord à prédire la réponse et que l'effet d'un prédicteur individuel est moins important.
 
     + Exemple: Prédire la composition de végétation à partir d'images de télédétection hyperspectrale (réflectance pour des centaines de longueurs d'onde).
+    
+---
 
-## Combien de composantes principales choisir?
+# Combien de composantes choisir?
 
->- Variances associées aux composantes principales; leur moyenne est 1 pour des données normalisées.
+- Variances associées aux composantes principales; leur moyenne est 1 pour des données normalisées.
 
-```{r}
-clim_acp$sdev^2
-```
+--
 
 - Critère simple: conserver les composantes avec une variance supérieure à 1.
+
+--
+
 - D'autres critères basés sur des tests statistiques formels, voir Peres-Neto et al. (2005) pour une comparaison.
+
+--
+
 - Dans une analyse exploratoire, le choix du nombre de composantes n'est pas critique. Pour une ACP suivie d'une régression, on peut procéder par sélection de modèles.
 
+---
+
+class: inverse, middle
 
 # Classification hiérarchique ascendante
 
-## Classification hiérarchique ascendante 
+---
+
+# Classification hiérarchique ascendante 
 
 - La classification hiérarchique ascendante vise à créer des groupes d'observations semblables selon une série de variables. 
 
-- Le nom vient du fait qu'on commence avec les observations individuelles, qui sont regroupées progressivement jusqu'à ce qu'on obtienne un seul groupe. 
+--
+
+- Le nom vient du fait qu'on commence avec les observations individuelles, qui sont regroupées progressivement jusqu'à ce qu'on obtienne un seul groupe.
+
+--
 
 - La structure résultante est un arbre ou *dendrogramme* montrant les relations de proximité pour l'ensemble des observations.
 
-## Matrice de distance
+---
 
->- L'algorithme de classification hiérarchique requiert une matrice de la distance $d_{ij}$ pour chaque paire d'observations $i$ et $j$.
+# Matrice de distance
+
+- L'algorithme de classification hiérarchique requiert une matrice de la distance $d_{ij}$ pour chaque paire d'observations $i$ et $j$.
 
 $$  
 \begin{bmatrix}
@@ -241,23 +269,33 @@ d_{n1} & d_{n2} & ... & d_{n(n-1)} & 0
 \end{bmatrix}
 $$
 
+--
+
 - La fonction `dist` dans R calcule la matrice de distance entre les rangées d'une matrice. 
+
+--
 
 - Comme pour l'ACP, les différentes variables doivent être normalisées au préalable.
 
-## Matrice de distance
+---
 
->- Pour des variables numériques, la distance la plus couramment utilisée est la *distance euclidienne*:
+# Matrice de distance
 
-$$ d_{ij} = \sqrt{\sum_{k = 1}^p (x_{ik} - x_{jk})^2} $$
+- Pour des variables numériques, la distance la plus couramment utilisée est la *distance euclidienne*:
 
->- En deux dimensions, cela correspond à la distance en ligne droite calculée par le théorème de Pythagore:
+$$d_{ij} = \sqrt{\sum_{k = 1}^p (x_{ik} - x_{jk})^2}$$
 
-$$  d_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2} $$
+--
 
-## Algorithme de classification hiérarchique ascendante
+- En deux dimensions, cela correspond à la distance en ligne droite calculée par le théorème de Pythagore:
 
->- Supposons qu'on ait la matrice de distance suivante entre 4 observations.
+$$d_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2}$$
+
+---
+
+# Algorithme de classification
+
+- Supposons qu'on ait la matrice de distance suivante entre 4 observations.
 
 $$
 \begin{array}
@@ -267,16 +305,26 @@ C & 13 & 6 \\
 D & 7 & 11 & 9 
 \end{array}
 $$ 
+
+--
 
 - L'algorithme regroupe d'abord les deux observations les plus rapprochées, soit B et C (distance de 6). 
 
+--
+
 - Ensuite, il remplace B et C par une observation BC et calcule la distance entre ce groupe et chacune des autres observations existantes.
 
-## Algorithme de classification hiérarchique ascendante
+---
 
->- Différents critères possibles pour la distance entre un groupe et une observation.
+# Algorithme de classification
 
->- Utilisons une règle ou la distance à partir d'un groupe est la moyenne des distances des éléments de ce groupe.
+- Différents critères possibles pour la distance entre un groupe et une observation.
+
+--
+
+- Utilisons une règle ou la distance à partir d'un groupe est la moyenne des distances des éléments de ce groupe.
+
+--
 
 $$
 \begin{array}
@@ -287,24 +335,13 @@ D & 7 & 11 & 9
 \end{array}
 $$ 
 
+---
 
-## Algorithme de classification hiérarchique ascendante
+# Algorithme de classification
 
->- Différents critères possibles pour la distance entre un groupe et une observation.
+- Différents critères possibles pour la distance entre un groupe et une observation.
 
->- Utilisons une règle ou la distance à partir d'un groupe est la moyenne des distances des éléments de ce groupe.
-
-$$
-\begin{array}
-& & A & BC \\
-BC & 12 & \\
-D & 7 & 10 
-\end{array}
-$$ 
-
-## Algorithme de classification hiérarchique ascendante
-
->- Le nouveau groupe (BC) est traité comme une observation et on répète le processus jusqu'à ce qu'il n'y ait que deux groupes, joints à la dernière étape.
+- Utilisons une règle ou la distance à partir d'un groupe est la moyenne des distances des éléments de ce groupe.
 
 $$
 \begin{array}
@@ -314,9 +351,25 @@ D & 7 & 10
 \end{array}
 $$ 
 
-## Algorithme de classification hiérarchique ascendante
+---
 
->- Le nouveau groupe (BC) est traité comme une observation et on répète le processus jusqu'à ce qu'il n'y ait que deux groupes, joints à la dernière étape.
+# Algorithme de classification
+
+- Le nouveau groupe (BC) est traité comme une observation et on répète le processus jusqu'à ce qu'il n'y ait que deux groupes, joints à la dernière étape.
+
+$$
+\begin{array}
+& & A & BC \\
+BC & 12 & \\
+D & 7 & 10 
+\end{array}
+$$ 
+
+---
+
+# Algorithme de classification
+
+- Le nouveau groupe (BC) est traité comme une observation et on répète le processus jusqu'à ce qu'il n'y ait que deux groupes, joints à la dernière étape.
 
 $$
 \begin{array}
@@ -325,109 +378,77 @@ BC & 11
 \end{array}
 $$ 
 
+---
 
-## Classification hiérarchique avec R
-
->- Fonction `hclust` appliquée à la matrice de distance.
-
-```{r}
-clim_dist <- dist(clim_norm)
-clim_ch <- hclust(clim_dist, method = "average")
-plot(clim_ch)
-```
-
-## Critères de regroupement
+# Critères de regroupement
 
 L'argument `method` indique comment calculer la distance entre groupes A et B:
 
+--
+
 - saut minimum (`method = "single"`): distance minimale entre une observation dans A et une observation dans B.
+
+--
 
 - saut maximum (`method = "complete"`): distance maximale entre une observation dans A et une observation dans B.
 
+--
+
 - lien moyen (`method = "average"`): moyenne des distances sur l'ensemble des paires d'observations dont une est dans A et une dans B.
+
+--
 
 - la critère de Ward (`method = "ward.D2"`): regroupement qui minimise l'augmentation de la variance totale intra-groupe. 
 
-## Saut minimum
+---
 
-```{r, fig.dim = c(7, 5)}
-clim_ch_min <- hclust(clim_dist, method = "single")
-plot(clim_ch_min)
-```
+# Classification hiérarchique dans R
 
-## Saut maximum
+- `dist`: Calcule une matrice de distance.
 
-```{r, fig.dim = c(7, 5)}
-clim_ch_max <- hclust(clim_dist, method = "complete")
-plot(clim_ch_max)
-```
+- `hclust`: Effectue une classification hiérarchique ascendante à partir d'une matrice de distance, selon une méthode donnée.
 
-## Critère de Ward
+- `plot`: Appliquée au résultat de `hclust`, produit un dendrogramme.
 
-```{r, fig.dim = c(7, 5)}
-clim_ch_ward <- hclust(clim_dist, method = "ward.D2")
-plot(clim_ch_ward)
-```
+- `cutree`: Coupe le dendrogramme à une certaine hauteur *h*, ou pour obtenir un certain nombre de groupes *k*. 
 
-## Extraire des groupes d'une classification hiérarchique
+---
 
->- La fonction `cutree` permet de "couper" le dendrogramme à une certaine hauteur (argument *h*) ou pour obtenir un certain nombre de groupes (argument *k*). 
-
->- La fonction renvoie un vecteur des indices de groupes.
-
->- Exemple: Trois grands groupes du dendrogramme produit par la méthode de Ward:
-
-```{r}
-groupes <- cutree(clim_ch_ward, k = 3)
-head(groupes)
-```
-
-## Comparer les groupes à l'ordination
-
-```{r}
-ord_groupes <- data.frame(clim_acp$x[, 1:2], groupe_ward = as.factor(groupes))
-head(ord_groupes)
-```
-
-## Groupes selon la méthode de Ward
-
-```{r}
-ggplot(ord_groupes, aes(x = PC1, y = PC2, color = groupe_ward)) +
-    geom_point() +
-    geom_text(aes(label = rownames(ord_groupes)))
-```
-
-## Groupes selon le saut maximum
-
-```{r}
-ord_groupes$groupe_max <- as.factor(cutree(clim_ch_max, k = 4))
-ggplot(ord_groupes, aes(x = PC1, y = PC2, color = groupe_max)) +
-    geom_point() +
-    geom_text(aes(label = rownames(ord_groupes)))
-```
-
-
-## Résumé
+# Résumé
 
 - Les analyses multivariées servent à décrire et expliquer la distribution conjointe de plusieurs variables.
 
+--
+
 - Lorsque les variables représentent différentes unités, il est important de les normaliser afin d'obtenir des échelles comparables.
+
+--
 
 - L'ordination vise à produire dans un nombre de dimensions réduit (souvent 2) la représentation la plus fidèle possible de la variation entre les observations multivariées.
 
-## Résumé
+---
+
+# Résumé
 
 - L'analyse en composantes principales (ACP) est une méthode d'ordination qui effectue une transformation linéaire (rotation) des variables originales, afin d'obtenir des composantes principales qui sont non-corrélées et classées en ordre décroissant de variance. 
 
+--
+
 - Les coordonnées des observations et les variables originales peut être représentées simultanément dans l'espace des composantes principales (diagramme de double projection).
 
-## Résumé
+---
+
+# Résumé
 
 - Les méthodes de regroupement visent à classer les observations multivariées dans un petit nombre de groupes d'observations les plus similaires possibles. 
 
+--
+
 - La classification hiérarchique ascendante effectue un regroupement graduel à partir des observations individuelles et en fonction de différentes règles qui définissent la distance entre groupes. Cette classification produit un dendrogramme.
 
-## Références
+---
+
+# Références
 
 - Manly, B.F. et Alberto, J.A.N. (2016) *Multivariate statistical methods: a primer*. Chapman and Hall/CRC.
 
