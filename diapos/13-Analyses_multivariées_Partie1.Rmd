@@ -19,7 +19,37 @@ library(cowplot)
 
 ```{css, echo = FALSE}
 .small { font-size: 70% }
+.left {
+  float: left;
+  width: 50%;
+}
+.right {
+  float: right;
+  width: 40%;
+}
 ```
+
+
+# Question éclair
+
+.small[
+
+Choisissez les effets aléatoires appropriés pour les deux dispositifs suivants:
+
+.left[
+1. Vous mesurez la richesse spécifique du sous-bois dans des placettes autour de plusieurs sites de coupe. Pour chacun des sites, trois placettes se retrouvent dans chaque direction (nord, sud, est et ouest) autour de la portion coupée (voir diagramme). **Effets fixes**: type de sol dans la placette, direction.
+
+2. Vous mesurez la quantité d'eau transpirée par des variétés clonales de peuplier en fonction de la température et de l'humidité (effets fixes) dans plusieurs plantations. Vous supposez que les effets de la température et de l'humidité ne sont pas les mêmes selon la variété, mais l'échantillon par variété est trop petit pour modéliser ces effets séparément.   
+
+]
+
+.right[
+<img src="../images/cours13_q1.PNG">
+]
+
+]
+
+---
 
 # Objectifs
 

@@ -1,6 +1,6 @@
 ---
 title: "Analyses multivariées, Partie 2"
-date: "<br/>10 décembre 2018"
+date: "<br/>9 décembre 2019"
 output:
     html_document:
         self_contained: false
@@ -22,7 +22,7 @@ library(cowplot)
 
 - Appliquer des mesures de dissimilarité entre observations appropriées aux matrices de communauté écologique (abondance ou présence/absence).
 
-- Effectuer une ordination de données de communauté avec l'analyse de correspondance et le positionnement multidimensionnel non métrique (NMDS).
+- Comparer différentes méthodes pour effectuer une ordination de données de communauté: l'analyse de correspondance, l'analyse en coordonnées principales (PCoA) et le positionnement multidimensionnel non-métrique (NMDS).
 
 - Superposer des gradients environnementaux aux résultats d'une ordination de communautés écologiques.
 
@@ -94,7 +94,7 @@ dist(esp_hel)
 
 Remarquez que la distance entre les sites 1 et 2 (qui ont presque le même profil, mais une abondance totale différente) est beaucoup plus petite avec cette mesure plutôt que celle de Bray-Curtis. La valeur maximale des distances entre profils et de Hellinger, obtenue lorsque les sites n'ont aucune espèce en commun, n'est pas 1 mais plutôt $\sqrt{2}$ (environ 1.414).
 
-D'après Legendre et Legendre (2012), la distance de Hellinger répond de façon plus linéaire aux changements d'abondance d'une espèce. La transformation de Hellinger est donc recommandée si on veut réaliser une ACP sur des données d'abondance. Nous verrons dans la prochaine section une autre méthode d'ordination pour ce type de données, l'analyse de correspondance.
+D'après Legendre et Legendre (2012), la distance de Hellinger répond de façon plus linéaire aux changements d'abondance d'une espèce. La transformation de Hellinger est donc recommandée si on veut réaliser une ACP sur des données d'abondance. Nous verrons dans la prochaine section d'autres méthodes d'ordination pour ce type de données.
 
 Finalement, **la distance du $\chi^2$** est semblable à la distance entre profils, excepté que la contribution d'une espèce $k$ est divisée par $p_k$, la fraction de l'ensemble des individus de tous les sites provenant de l'espèce $k$. Par rapport aux autres mesures, cette distance augmente donc l'importance des espèces rares dans la détermination de la dissimilarité entre les sites.
 
@@ -111,8 +111,8 @@ La valeur maximale de $d_{(\chi^2)}$ est égale à $\sqrt{2N}$ ou $N$ est la som
 
 Laquelle de ces distances utiliser dans une analyse de regroupement, par exemple? Cela dépend de l'accent qu'on veut mettre sur divers types de différences. Notamment, on choisira:
 
-- la distance de Bray-Curtis si les différences absolues d'abondance (nombre d'individus) sont importantes;
-- la distance de Hellinger si on se préoccupe des différences relatives d'abondance (proportion d'individus) et qu'on veut accorder plus d'emphase aux espèces communes;
+- la distance de Bray-Curtis si les différences absolues d'abondance (nombre d'individus) entre sites sont importantes;
+- la distance de Hellinger si on se préoccupe des différences relatives d'abondance (proportion d'individus) entre sites et qu'on veut accorder plus d'emphase aux espèces communes;
 - la distance du $\chi^2$ si on se préoccupe des différences relatives et qu'on veut accorder une plus grande importance aux espèces rares.
 
 ## Mesures de distance pour les données de présence
@@ -176,23 +176,63 @@ La fonction `plot` représente les espèces (en rouge) et les sites (en noir) su
 plot(ac_dune)
 ```
 
-Dans l'ACP, les variables étaient représentées par des vecteurs (flèches) et il fallait interpréter la direction et la longueur de ces vecteurs. Ici, les espèces et les sites sont des points sur la même échelle; la proximité entre un site et une espèce indique une association entre les deux. Aussi, la proximité entre deux sites indiquent qu'ils ont une communauté similaire et la proximité entre deux espèces indiquent qu'elles occupent des sites similaires. Les coordonnées des espèces et des sites peuvent être extraites avec la fonction `scores(ac_dune)`.
+Dans l'ACP, les variables étaient représentées par des vecteurs (flèches) et il fallait interpréter la direction et la longueur de ces vecteurs. Ici, les espèces et les sites sont des points, dont la position peut être interprétée comme suit:
 
-Nous pouvons voir l'importance aux espèces rares accordées dans cette ordination. Par exemple, l'espèce *Chenalbu* dans le bas du graphique a un seul individu, qui se retrouve au site 13.
+1. La proximité de deux sites indique que ces sites ont une communauté similaire.
+2. La proximité de deux espèces indique que ces espèces sont présentes sur des sites similaires.
+3. Les coordonnées des espèces sur le graphique correspondent à la position moyenne des sites contenant cette espèce, où la moyenne est pondérée par l'abondance de l'espèce sur chaque site. Par exemple, l'espèce *Empenigr* est présente seulement au site 19, tandis qu'*Airaprae* est présente aux sites 17 et 19.
 
-En général, l'abondance d'une espèce n'est pas une fonction linéaire d'un gradient environnemental (ex.: température); l'espèce atteint un maximum à une valeur optimale et son abondance diminue pour des valeurs plus grandes ou plus petites de la variable environnementale. Cette non-linéarité fait qu'une série de sites ordonnés selon un gradient environnemental suivront une courbe sur un graphique d'ordination. Cela pourrait être le cas ici, avec la présence d'une spirale commençant autour du point (0, 0). Des méthodes ont été proposées pour rectifier ces courbes (*detrended correspondence analysis* ou DCA), mais ces méthodes ne sont pas recommandées, sauf dans les rares cas où l'ordination est dominée par un seul gradient important. Une meilleure solution serait de superposer le gradient environnemental au graphique de l'ordination, comme nous verrons plus tard.
+Ce troisième aspect correspond à la visualisation par défaut dans *vegan*. Si on veut plutôt que chaque site se retrouve au milieu des points représentant les espèces qui s'y trouvent, on peut ajouter l'argument `scaling = "sites"` à la fonction `plot`.
+
+Nous pouvons voir l'influence des espèces rares dans cette ordination, qui se retrouvent aux extrêmes du graphique. En contrepartie, une espèce près du centre de l'ordination est soit présente sur de nombreux sites, soit associée fortement à des sites aussi situés au centre du graphique; on ne peut pas distinguer ces deux cas sans revenir à la matrice originale.
+
+## Déformation des gradients
+
+En général, l'abondance d'une espèce n'est pas une fonction linéaire d'un gradient environnemental (ex.: température); l'espèce atteint un maximum à une valeur optimale et son abondance diminue pour des valeurs plus grandes ou plus petites de la variable environnementale. Cette non-linéarité fait qu'une série de sites ordonnés selon un gradient environnemental suivront une courbe sur un graphique d'ordination. C'est possiblement le cas pour le graphique ci-dessus (série de sites partant du milieu à droite, vers le bas à gauche puis vers le haut). Des méthodes ont été proposées pour rectifier ces courbes (*detrended correspondence analysis* ou DCA), mais ces méthodes ne sont pas recommandées, sauf dans les rares cas où nous savons d'avance que l'ordination est dominée par un seul gradient important. Une meilleure solution serait de superposer le gradient environnemental au graphique de l'ordination, comme nous verrons plus tard.
+
+## Analyse en coordonnées principales
+
+L'analyse en coordonnées principales (*principal coordinate analysis*, ou PCoA) est une méthode plus générale qui englobe l'ACP et l'analyse de correspondance comme cas particuliers. Si l'ACP vise à bien représenter la distance euclidienne entre les sites et l'analyse de correspondance est basée sur la distance du $\chi^2$, la PCoA peut être appliquée à diverses mesures de distance.
+
+Nous utiliserons la fonction `pcoa` du package *ape* pour réaliser une PCoA du jeu de données `dune`, à partir de la distance de Bray-Curtis (l'argument `correction` est expliqué ci-dessous).
+
+```{r}
+library(ape)
+dune_bray <- vegdist(dune, method = "bray")
+pcoa_dune <- pcoa(dune_bray, correction = "lingoes")
+```
+
+Les valeurs propres (*eigenvalues*) de la PCoA représentent la portion de la distance totale entre les sites contenue dans chacun des axes obtenus. Ces valeurs se retrouvent dans le tableau `values` de l'objet produit par `pcoa`.
+
+```{r}
+pcoa_dune$values
+```
+
+Dans ce tableau, on remarque que les dernières valeurs propres sont négatives; cela se produit pour certaines mesures de distance comme Bray-Curtis. La correction spécifiée comme argument dans `pcoa` transforme les distances afin que toutes les valeurs soient positives (2e colonne, *Corr_eig*). La colonne *Rel_corr_eig* peut donc être interprétée comme la proportion de la distance originale entre les sites représentée par chaque axe de la PCoA.
+
+Regardons maintenant la position des sites sur les deux premiers axes.
+
+```{r}
+biplot(pcoa_dune)
+```
+
+Cette ordination des sites est semblable à l'analyse de correspondance vue précédemment, sauf que les sites 17 et 19 sont plus proches des autres. En effet, la distance de Bray-Curtis donne moins d'importance aux espèces rares et aux sites contenant très peu d'espèces.
+
+En donnant le tableau de données original comme deuxième argument à `biplot`, on ajoute des flèches représentant la position des espèces, de façon analogue à une ACP.
+
+```{r}
+biplot(pcoa_dune, dune)
+```
+
+Nous avons vu au début de ce cours que certaines mesures de distance sont équivalentes à la distance euclidienne appliquée à des données transformées; par exemple, la distance de Hellinger est une distance euclidienne appliquée à la suite d'une transformation de Hellinger. Dans ce cas, il est plus simple d'appliquer une ACP aux données transformées, qui est équivalente à la PCoA pour la mesure de distance correspondante.
 
 ## Positionnement multidimensionnel non-métrique
 
-Une autre méthode d'ordination couramment appliquée en écologie est le positionnement multidimensionnel non-métrique (*non-metric multidimensional scaling*, ou NMDS). Cette méthode utilise comme point de départ une matrice de distance entre les sites, puis applique un algorithme itératif pour trouver une configuration de points dans un nombre réduit de dimensions (généralement 2) qui représente le mieux la distance entre les sites. 
+Une autre méthode d'ordination couramment appliquée en écologie est le positionnement multidimensionnel non-métrique (*non-metric multidimensional scaling*, ou NMDS). Comme la PCoA, le NMDS part d'une matrice de distance entre les sites, mais la méthode d'ordination est très différente.
 
-La correspondance entre la matrice de distance originale $d$ et la distance euclidienne dans l'espace réduit $\hat{d}$ est mesurée par le *stress*:
+Les méthodes vues précédemment (ACP, AC, PCoA) réalisent une rotation d'une espace multivarié afin que la portion la plus importante des distances entre sites se retrouve dans les premiers axes. En contrepartie, le NMDS spécifie au départ le nombre d'axes à utiliser (généralement 2), puis utilise un algorithme itératif qui place les sites à des positions aléatoires dans cet espace, puis les déplace graduellement jusqu'à ce que la distance entre chaque paire de sites soit le plus près possible de la distance réelle multivariée entre les sites, selon la mesure de distance choisie. La différence entre les distances dans l'espace réduit et les distances réelles est représentée par une mesure de *stress* que la méthode tente de réduire le plus possible.
 
-$$ \sqrt{\frac{\sum_{(i, j)} (d_{ij} - \hat{d_{ij}})^2}{\sum_{(i, j)} d_{ij}^2}} $$
-
-Dans cette formule, chaque somme est réalisée sur toutes les paires d'observations.
-
-Le principal avantage de cette méthode est sa flexibilité. On peut réaliser le positionnement en fonction de n'importe quelle mesure de distance. En contrepartie, il s'agit d'un algorithme heuristique qui peut ne pas converger, ou converger vers des solutions différentes selon les conditions de départ. 
+Puisque cette méthode n'a aucune restriction sur le positionnement des points dans l'espace, elle peut arriver à un graphique en 2D qui s'approche plus des distances originales entre les sites. Contrairement aux autres méthodes, elle ne donne pas l'ensemble des axes et la proportion de la distance totale représentée par chaque axe. Aussi, il s'agit d'un algorithme heuristique qui peut soit ne pas converger, soit converger vers des solutions différentes selon les positions aléatoires choisies au départ. 
 
 La fonction `metaMDS` corrige cette deuxième lacune en répétant l'algorithme à plusieurs reprises à partir de configurations initiales aléatoires, pour augmenter les chances de détecter le résultat optimal. La distance de Bray-Curtis est souvent recommandée pour l'analyse des données d'abondance avec cet algorithme et il s'agit du choix de distance par défaut pour `metaMDS`.
 
@@ -202,13 +242,12 @@ md_dune <- metaMDS(dune, distance = "bray")
 
 Durant l'exécution de la fonction, R indique le stress pour chaque répétition de l'algorithme et indique à la fin si une solution optimale a été trouvée. Si l'algorithme ne converge pas, il faut répéter `metaMDS` en indiquant un nombre d'essais (argument `try`) supérieur à 20.
 
-La fonction `plot` affiche le résultat du positionnement en deux dimensions. Le NMDS ordonne les sites, puis la position des espèces est déterminée en fonction de la position des sites où ces espèces se trouvent. Nous spécifions l'argument `type = "t"` pour afficher les noms des sites et des espèces plutôt que des points seuls.
+La fonction `plot` affiche le résultat du positionnement en deux dimensions. Le NMDS ordonne les sites, puis la position des espèces est déterminée en fonction de la position moyenne des sites où ces espèces se trouvent, de façon semblable à l'analyse de correspondance. Nous spécifions l'argument `type = "t"` pour afficher les noms des sites et des espèces plutôt que des points seuls.
 
 ```{r}
 plot(md_dune, type = "t")
 ```
 
-Remarquez que ce graphique ressemble beaucoup aux résultats de l'analyse de correspondance. Par rapport à cette dernière, la position des sites est moins influencée par les espèces rares; par exemple, le site 13 est moins éloigné du centre et plus éloigné de l'espèce *Chenalbu*.
 
 La valeur du stress est de 0.118 pour ce résultat. De façon générale, un stress inférieur à 0.1 est excellent est un stress supérieur à 0.2 est mauvais. On peut aussi utiliser la fonction `stressplot` pour vérifier le niveau de correspondance entre les distances du NMDS et la matrice de distance originale entre les sites.
 
@@ -219,7 +258,7 @@ stressplot(md_dune)
 
 # Effet de prédicteurs sur une réponse multivariée
 
-Jusqu'à présent, nous avons vu comment représenter la variation entre les communautés écologiques présentes sur divers sites. Cette dernière partie porte sur des méthodes permettant d'associer cette variation à des prédicteurs mesurés pour les mêmes sites.
+Jusqu'à présent, nous avons vu comment représenter la variation entre les communautés écologiques présentes sur divers sites. Cette dernière partie porte sur des méthodes permettant d'associer cette variation à des prédicteurs mesurés à chaque site.
 
 Nous utiliserons encore le tableau de données `dune` comme exemple, avec le tableau associé `dune.env` qui contient les valeurs de cinq variables associées aux 20 sites.
 
@@ -248,36 +287,47 @@ Dans l'ANOVA univariée, nous vérifions d'abord que la variance était constant
 
 Une deuxième technique pour déterminer l'effet de variables explicatives sur une réponse multivariée consiste à réaliser d'abord une ordination de la réponse, puis de corréler les variables au résultat de l'ordination.
 
-Si les composantes principales sont orthogonales (ce qui est le cas pour l'ACP et l'AC, mais pas le NMDS), on peut effectuer une régression séparée de chaque composante en fonction des prédicteurs. Une autre option est d'estimer simultanément la corrélation entre des variables explicatives et chacun des axes, ce qui est fait par la fonction `envfit` de *vegan*. 
+Si les composantes principales sont orthogonales (ce qui est le cas pour l'ACP, l'AC et la PCoA, mais pas le NMDS), on peut effectuer une régression séparée de chaque composante en fonction des prédicteurs. Une autre option est d'estimer simultanément la corrélation entre des variables explicatives et chacun des axes, ce qui est fait par la fonction `envfit` de *vegan*. 
 
-La fonction `envfit` requiert deux paramètres, soit le résultat d'une ordination et un tableau de données pour les prédicteurs. Ici, nous vérifions le lien entre les composantes du NMDS du tableau `dune`, l'épaisseur du sol (*A1*) et du type d'aménagement (*Management*).
+La fonction `envfit` requiert deux paramètres, soit le résultat d'une ordination et un tableau de données pour les prédicteurs. Dans l'exemple ci-dessous, nous vérifions le lien entre les composantes de la PCoA du tableau `dune`, l'épaisseur du sol (*A1*) et du type d'aménagement (*Management*).
+
+Cette fois, nous ne réalisons pas la PCoA avec le package *ape*, mais plutôt avec une fonction du package *vegan* (`wcmdscale`, pour *weighted classical multidimensional scaling*), afin que l'objet de sortie soit compatible avec `envfit`. L'argument `eig = TRUE` indique de sauvegarder les valeurs propres et `add = TRUE` effectue la correction des valeurs propres; il est équivalent à `correction = "lingoes"` pour `pcoa`.
 
 ```{r}
-envf <- envfit(md_dune, select(dune.env, A1, Management))
+pcoa_dune2 <- wcmdscale(dune_bray, eig = TRUE, add = TRUE)
+envf <- envfit(pcoa_dune2, select(dune.env, A1, Management))
 envf
 ```
 
-Pour la variable numérique *A1*, le résultat indique la magnitude et la direction de l'effet d'une augmentation de cette variable sur les deux axes du NMDS (donc un vecteur), ainsi qu'une valeur $r^2$ donnant la portion de la variance expliquée par cette corrélation. Pour une variable catégorielle comme *Management*, le résultat indique la position moyenne (centroïde) sur les deux axes des sites correspondant à chaque catégorie. 
+Pour la variable numérique *A1*, le résultat indique la magnitude et la direction de l'effet d'une augmentation de cette variable sur les deux axes de la PCoA (donc un vecteur), ainsi qu'une valeur $r^2$ donnant la portion de la variance expliquée par cette corrélation. Pour une variable catégorielle comme *Management*, le résultat indique la position moyenne (centroïde) sur les deux axes des sites correspondant à chaque catégorie. 
+
+Les valeurs $p$ pour l'effet de chaque variable dans `envfit` sont déterminées par test de permutation, comme pour la PERMANOVA. Les valeurs $p$ et les coefficients $r^2$ sont différents dans les deux cas, car la PERMANOVA évaluait l'effet des variables sur la variation multidimensionnelle totale, tandis que le résultat d'`envfit` mesure l'effet sur l'ordination en deux dimensions.
 
 Si on trace le graphique d'ordination au préalable, on peut y ajouter le vecteur *A1* et les centroïdes pour chaque type d'aménagement en appliquant la fonction `plot` au résultat d'`envfit`. 
 
 ```{r}
-plot(md_dune)
+plot(pcoa_dune2)
 plot(envf)
 ```
 
 Si plus d'une variable numérique était incluse, la longueur des vecteurs serait représentative de l'importance de l'effet de chaque variable, mesurée par le $r^2$.
 
-Les valeurs $p$ pour l'effet de chaque variable dans `envfit` sont déterminées par test de permutation, comme pour la PERMANOVA. Les valeurs $p$ et les coefficients $r^2$ sont différents dans les deux cas, car la PERMANOVA évaluait l'effet des variables sur la variation multidimensionnelle totale, tandis que le résultat d'`envfit` mesure l'effet sur l'ordination en deux dimensions.
+Avec `envfit`, on peut superposer à la fois la position des espèces et des variables environnementales, bien que cela rende le graphique un peu moins lisible:
 
-La fonction `envfit` tente d'identifier une corrélation linéaire entre une variable numérique et les axes d'ordination. Pour représenter un gradient environnemental non-linéaire comme une surface en deux dimensions, nous pouvons utiliser la fonction `ordisurf`. La surface estimée est représentée par des lignes de contour (comme une carte topographique) sur les axes de l'ordination. Dans l'exemple suivant, nous montrons les lignes de contour pour l'épaisseur du sol A1 sur les deux axes du NMDS, puis y superposons le vecteur obtenu avec `envfit`.
+```{r}
+plot(pcoa_dune2)
+plot(envfit(pcoa_dune2, dune), col = "red") # Ajouter les espèces
+plot(envf)
+```
+
+La fonction `envfit` tente d'identifier une corrélation linéaire entre une variable numérique et les axes d'ordination. Pour représenter un gradient environnemental non-linéaire comme une surface en deux dimensions, nous pouvons utiliser la fonction `ordisurf`. La surface estimée est représentée par des lignes de contour (comme une carte topographique) sur les axes de l'ordination. Dans l'exemple suivant, nous montrons les lignes de contour pour l'épaisseur du sol A1 sur les deux axes de la PCoA, puis y superposons le vecteur obtenu avec `envfit`.
 
 ```{r, include = FALSE}
-ords <- ordisurf(md_dune, dune.env$A1)
+ords <- ordisurf(pcoa_dune2, dune.env$A1)
 ```
 
 ```{r, eval = FALSE}
-ords <- ordisurf(md_dune, dune.env$A1)
+ords <- ordisurf(pcoa_dune2, dune.env$A1)
 ```
 
 ```{r}
@@ -315,13 +365,28 @@ rda_dune
 
 La régression linéaire effectuée en première étape de l'ADR compte ici 4 prédicteurs (1 pour *A1* et 3 pour le facteur à 4 niveaux *Management*). Dans ce cas, puisque la matrice $\hat{Y}$ est une combinaison linéaire des prédicteurs, elle ne peut avoir que 4 composantes principales. La résultat de l'ADR nomme ces 4 composantes "axes contraints" (RDA1 à RDA4). L'ADR effectue aussi une ACP séparée pour les résidus de la régression ($Y$ - $\hat{Y}$); cette ACP résulte en 15 axes non contraints pour les 15 degrés de liberté résiduels.
 
-Le graphique d'une ADR est appelé diagramme de triple projection (*triplot*), car il représente à la fois les observations (sites), les variables de réponse (espèce) et les prédicteurs (conditions environnementales). Notez que puisque l'ADR est basée sur l'ACP, les espèces devraient être représentées par des vecteurs ici (comme le prédicteur numérique A1), mais les flèches sont omises par *vegan* pour éviter de surcharger le graphique.
+Le graphique d'une ADR est appelé diagramme de triple projection (*triplot*), car il représente à la fois les observations (sites), les variables de réponse (espèce) et les prédicteurs (conditions environnementales). Notez que puisque l'ADR est basée sur l'ACP, les espèces devraient être représentées par des vecteurs ici (comme le prédicteur numérique A1), mais les flèches sont omises par *vegan* pour éviter de surcharger le graphique; le nom des espèces est placé à la position de la pointe de chaque vecteur.
 
 ```{r}
 plot(rda_dune)
 ```
 
 Les coordonnées des sites et espèces sur les deux premiers axes de l'ADR peuvent être consultées en appelant la fonction `scores(rda_dune)`.
+
+Aux fins de comparaison, voici le diagramme de double projection de l'ordination non contrainte avec l'estimation des effets des prédicteurs obtenue par `envfit`. Notez que la fonction `rda` sans variables prédictrices effectue une ACP.
+
+```{r}
+acp_dune <- rda(dune_hel)
+acp_envf <- envfit(acp_dune, select(dune.env, A1, Management))
+plot(acp_dune)
+plot(acp_envf)
+```
+
+Quelle est la différence entre ces deux approches? 
+
+- Avec une ordination sans contraintes comme l'ACP, on résume la variation de la *réponse* multivariée en quelques axes, puis on estime l'effet des prédicteurs sur ces axes. Cette approche est plus parcimonieuse mais court le risque de "perdre" l'effet d'un prédicteur s'il n'est pas relié principalement aux quelques premières composantes principales.
+
+- Avec une ordination sous contraintes comme l'ADR, on effectue d'abord la régression dans l'espace multivarié, puis on résume les *prédictions* de cette régression en quelques axes. Puisque cette approche réalise autant de régressions univariées qu'il y a de colonnes dans la réponse multivariée, il y a plus de chances de détecter un effet dû seulement au hasard (surajustement du modèle).
 
 Si l'analyse de redondance est la combinaison d'une régression et d'une ACP, l'**analyse canonique de correspondance** (ACC) est la combinaison d'une régression et d'une analyse de correspondance. Comme l'analyse de correspondance, l'ACC est basée sur les résidus du $\chi_{ij}$ d'un tableau de contingence. Une régression est appliquée à ces résidus en fonction des prédicteurs, puis une ordination est appliquée aux valeurs attendues estimées par cette régression. Voici un exemple avec la fonction `cca` de *vegan*:
 
@@ -336,39 +401,20 @@ Voici le diagramme de triple projection correspondant à cette analyse:
 plot(cca_dune)
 ```
 
-Aux fins de comparaison, voici le diagramme de double projection de l'ordination non contrainte (analyse de correspondance) avec l'estimation des effets des prédicteurs obtenue par `envfit`:
-
-```{r}
-plot(ac_dune)
-ac_envf <- envfit(ac_dune, select(dune.env, A1, Management))
-plot(ac_envf)
-```
-
-Quelle est la différence entre ces deux approches? 
-
-- Avec une ordination sans contraintes (ACP ou AC), on résume la variation de la *réponse* multivariée en quelques axes, puis on estime l'effet des prédicteurs sur ces axes. Cette approche est plus parcimonieuse mais court le risque de "perdre" l'effet d'un prédicteur s'il n'est pas relié principalement aux quelques premières composantes principales.
-
-- Avec une ordination sous contraintes (ADR ou ACC), on effectue d'abord la régression dans l'espace multivarié, puis on résume les *prédictions* de cette régression en quelques axes. Puisque cette approche réalise autant de régressions univariées qu'il y a de colonnes dans la réponse multivariée, il y a plus de chances de détecter un effet dû seulement au hasard (surajustement du modèle).
-
 
 # Résumé
 
 - Le package *vegan* dans R contient plusieurs outils pour l'analyse multivariée des données de communautés écologiques. Ces données prennent habituellement la forme d'une matrice indiquant l'abondance ou la présence d'espèces sur chacun des sites étudiés.
 
-- La distance euclidienne n'est pas appropriée pour les données de communautés écologiques. Nous avons présenté dans ce cours plusieurs distances conçues pour les données d'abondance (Bray-Curtis, Hellinger, $\chi^2$) ou de présence-absence (Jaccard, Sorenson). Les matrices de distance obtenues par ces méthodes peuvent être utilisées dans une analyse de regroupement et dans certaines ordinations (ex.: NMDS).
+- La distance euclidienne n'est pas appropriée pour les données de communautés écologiques. Nous avons présenté dans ce cours plusieurs distances conçues pour les données d'abondance (Bray-Curtis, Hellinger, $\chi^2$) ou de présence-absence (Jaccard, Sorenson).
 
-- L'analyse de correspondance est un type d'ordination semblable à l'analyse en composantes principales, mais adaptée aux tableaux de contingence, incluant les données d'abondance ou de présence. 
+- L'analyse de correspondance (AC) est un type d'ordination semblable à l'analyse en composantes principales, mais adaptée aux tableaux de contingence, incluant les données d'abondance ou de présence. Dans un contexte écologique, elle tend à faire ressortir les espèces rares.
 
-- Le positionnement multidimensionnel non-métrique (NMDS) est une méthode d'ordination qui optimise la position des points dans un nombre réduit de dimensions pour que leur distance soit la plus près possible d'une matrice de distance donnée.
+- L'analyse en coordonnées principales (PCoA) et le positionnement multidimensionnel non-métrique (NMDS) sont des méthodes d'ordination basées sur une matrice de distance entre sites. La PCoA effectue une transformation linéaire de la matrice de distance pour produire des axes principaux (de façon semblable à l'ACP), tandis que le NMDS est un algorithme qui déplace les points dans un nombre de dimensions choisis au hasard afin de s'approcher le plus possible des distances réelles.
 
 - La fonction `envfit` permet d'estimer simultanément l'effet de prédicteurs sur les principaux axes d'ordination. 
 
-- Quatre des méthodes d'ordination vues dans ce cours (ACP, AC, ADR et ACC) sont reliées par deux propriétés: le type de données et la présence ou non de contraintes. Dans l'ordination sous contraintes, une régression est effectuée sur les données multivariées et l'ordination est réalisée sur la partie de la réponse expliquée par les prédicteurs.
-
-|  | Sans contrainte | Avec contrainte |
-|--+-----------------+-----------------|
-| Données numériques continues (incluant des transformations des matrices d'abondance) | Analyse en composantes principales | Analyse de redondance |
-| Tableau de contingence (abondance ou présence) | Analyse de correspondance | Analyse canonique de correspondance |
+- Dans l'ordination sous contraintes, une régression est effectuée sur les données multivariées et l'ordination est réalisée sur la partie de la réponse expliquée par les prédicteurs. L'analyse de redondance est une méthode d'ordination sous contraintes basée sur l'ACP, tandis que l'analyse canonique des correspondances est basée sur l'AC.
 
 
 # Références
