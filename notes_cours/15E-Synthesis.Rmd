@@ -1,6 +1,5 @@
 ---
 title: "Course synthesis"
-date: "<br/>December 17, 2018"
 output:
     html_document:
         self_contained: false

@@ -1,10 +1,8 @@
 ---
 title: "Analyses multivariées"
-date: "5 décembre 2018"
+date: "12 décembre 2018"
 output: pdf_document
 ---
-
-Ce laboratoire doit être remis le **12 décembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 ## 1. Composition de sources minérales
 

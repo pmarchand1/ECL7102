@@ -10,7 +10,6 @@
 
 
 
-<meta name="date" content="2018-12-17" />
 
 <title>Course synthesis</title>
 
@@ -73,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +97,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +288,6 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Course synthesis</h1>
-<h4 class="date"><em><br/>December 17, 2018</em></h4>
 
 </div>
 
@@ -248,17 +315,14 @@ div.tocify {
 </div>
 <div id="structure-of-a-statistical-test" class="section level2">
 <h2>Structure of a statistical test</h2>
-<div class="figure">
-<img src="../images/synthesis_test.png" />
-
-</div>
+<p><img src="../images/synthesis_test.png" /></p>
 <div id="examples" class="section level3">
 <h3>Examples</h3>
-<table style="width:71%;">
+<table>
 <colgroup>
 <col width="2%" />
-<col width="38%" />
-<col width="29%" />
+<col width="56%" />
+<col width="41%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -301,7 +365,7 @@ div.tocify {
 <h2>Parameter estimation</h2>
 <ul>
 <li><p>Bias: systematic difference between the estimate of a parameter and its exact value.</p></li>
-<li>Standard error: standard deviation of the estimate of a parameter due to limited sampling; decreases when <span class="math inline">\(n\)</span> increases.
+<li><p>Standard error: standard deviation of the estimate of a parameter due to limited sampling; decreases when <span class="math inline">\(n\)</span> increases.</p>
 <ul>
 <li>Different from the standard deviation of the response: measures the variability between individuals, does not depend on <span class="math inline">\(n\)</span>.</li>
 </ul></li>
@@ -311,10 +375,7 @@ div.tocify {
 </div>
 <div id="test-differences-between-groups" class="section level2">
 <h2>Test differences between groups</h2>
-<div class="figure">
-<img src="../images/synthesis_anova.png" />
-
-</div>
+<p><img src="../images/synthesis_anova.png" /></p>
 <div id="assumptions-of-the-anova" class="section level3">
 <h3>Assumptions of the ANOVA</h3>
 <ul>
@@ -328,10 +389,7 @@ div.tocify {
 </div>
 <div id="regression-models" class="section level2">
 <h2>Regression models</h2>
-<div class="figure">
-<img src="../images/synthesis_regression.png" />
-
-</div>
+<p><img src="../images/synthesis_regression.png" /></p>
 <p><em>Models in gray not seen in this course.</em></p>
 <div id="assumptions-of-the-linear-regression-model" class="section level3">
 <h3>Assumptions of the linear regression model</h3>
@@ -392,7 +450,7 @@ div.tocify {
 <li><em>(Intercept)</em>: Same interpretation.</li>
 <li><em>w</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(w\)</span> if <span class="math inline">\(x\)</span> = 0.</li>
 <li><em>x</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(w\)</span> = 0.</li>
-<li><em>w:x</em>: Effect on the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> of a unit increase in <span class="math inline">\(w\)</span>, <em>OR</em> effect on the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(w\)</span> of a unit increase in <span class="math inline">\(x\)</span> (two equivalent interpretations).</li>
+<li><em>w:x</em>: Effect on the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> of a unit increase in <span class="math inline">\(w\)</span>, <em>OR</em> effect on the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(w\)</span> of a unit increase in <span class="math inline">\(x\)</span> (two equivalent interpretations).</li>
 </ul>
 </div>
 <div id="generalized-linear-models" class="section level3">
@@ -437,7 +495,7 @@ div.tocify {
 <h3>Collinearity</h3>
 <ul>
 <li><p>Problem where two or more predictors are strongly correlated.</p></li>
-<li>Different options:
+<li><p>Different options:</p>
 <ul>
 <li>Choose <em>a priori</em> which predictors to eliminate, according to our knowledge of the system.</li>
 <li>Use AIC to choose between different models that include non-collinear subsets of predictors.</li>

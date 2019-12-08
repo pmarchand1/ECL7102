@@ -184,6 +184,8 @@ Dans l'ACP, les variables étaient représentées par des vecteurs (flèches) et
 
 Ce troisième aspect correspond à la visualisation par défaut dans *vegan*. Si on veut plutôt que chaque site se retrouve au milieu des points représentant les espèces qui s'y trouvent, on peut ajouter l'argument `scaling = "sites"` à la fonction `plot`.
 
+Les coordonnées des espèces et des sites peuvent être extraites avec la fonction `scores(ac_dune)`.
+
 Nous pouvons voir l'influence des espèces rares dans cette ordination, qui se retrouvent aux extrêmes du graphique. En contrepartie, une espèce près du centre de l'ordination est soit présente sur de nombreux sites, soit associée fortement à des sites aussi situés au centre du graphique; on ne peut pas distinguer ces deux cas sans revenir à la matrice originale.
 
 ## Déformation des gradients
@@ -291,7 +293,7 @@ Si les composantes principales sont orthogonales (ce qui est le cas pour l'ACP, 
 
 La fonction `envfit` requiert deux paramètres, soit le résultat d'une ordination et un tableau de données pour les prédicteurs. Dans l'exemple ci-dessous, nous vérifions le lien entre les composantes de la PCoA du tableau `dune`, l'épaisseur du sol (*A1*) et du type d'aménagement (*Management*).
 
-Cette fois, nous ne réalisons pas la PCoA avec le package *ape*, mais plutôt avec une fonction du package *vegan* (`wcmdscale`, pour *weighted classical multidimensional scaling*), afin que l'objet de sortie soit compatible avec `envfit`. L'argument `eig = TRUE` indique de sauvegarder les valeurs propres et `add = TRUE` effectue la correction des valeurs propres; il est équivalent à `correction = "lingoes"` pour `pcoa`.
+Cette fois, nous ne réalisons pas la PCoA avec le package *ape*, mais plutôt avec une fonction du package *vegan* (`wcmdscale`, pour *weighted classical multidimensional scaling*, un synonyme de PCoA), afin que l'objet de sortie soit compatible avec `envfit`. L'argument `eig = TRUE` indique de sauvegarder les valeurs propres et `add = TRUE` effectue la correction des valeurs propres; il est équivalent à `correction = "lingoes"` pour `pcoa`.
 
 ```{r}
 pcoa_dune2 <- wcmdscale(dune_bray, eig = TRUE, add = TRUE)

@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-12-10" />
+<meta name="date" content="2019-12-09" />
 
 <title>Multivariate analysis, Part 2</title>
 
@@ -73,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -100,21 +98,82 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -203,6 +262,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -220,7 +289,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Multivariate analysis, Part 2</h1>
-<h4 class="date"><em><br/>December 10, 2018</em></h4>
+<h4 class="date"><br/>December 9, 2019</h4>
 
 </div>
 
@@ -229,7 +298,7 @@ div.tocify {
 <h1>Objectives</h1>
 <ul>
 <li><p>Apply appropriate dissimilarity measures between observations of ecological community matrices (abundance or presence / absence).</p></li>
-<li><p>Perform ordination of community data with correspondence analysis and non-metric multidimensional positioning (NMDS).</p></li>
+<li><p>Compare different methods for the ordination of community data: correspondence analysis, principal coordinate analysis (PCoA) and nonmetric multidimensional scaling (NMDS).</p></li>
 <li><p>Overlay environmental gradients to the results of an ordination of ecological communities.</p></li>
 <li><p>Use constrained ordination (redundancy analysis and canonical correspondence analysis) to represent the variation between observations explained by predictors.</p></li>
 </ul>
@@ -278,7 +347,7 @@ vegdist(esp, method = &quot;bray&quot;)</code></pre>
 <p><span class="math display">\[ d_{ij(prof)} = \sqrt{\sum_{k = 1}^p \left( \frac{y_{ik}}{y_{i \cdot}} - \frac{y_{jk}}{y_{j \cdot}} \right)^2} \]</span></p>
 <p>The <strong>Hellinger distance</strong> is similar to the distance between profiles, but it is calculated from the square root of the proportions:</p>
 <p><span class="math display">\[ d_{ij(Hel)} = \sqrt{\sum_{k = 1}^p \left( \sqrt{\frac{y_{ik}}{y_{i \cdot}}} - \sqrt{\frac{y_{jk}}{y_{j \cdot}}} \right)^2} \]</span></p>
-<p>The <code>decostand</code> function of <em>vegan</em> can perform several transformations on the community data matrices. With <code>method = &quot;total&quot;</code>, the function divides each row of the matrix by its sum (site profile); with <code>method = &quot;hellinger&quot;</code>, it applies the division then takes the square roots. The Hellinger distance can then be obtained by applying the function <code>dist</code> to the resulting matrix.</p>
+<p>The <code>decostand</code> function of <em>vegan</em> can perform several transformations on the community data matrices. With <code>method = "total"</code>, the function divides each row of the matrix by its sum (site profile); with <code>method = "hellinger"</code>, it applies the division then takes the square roots. The Hellinger distance can then be obtained by applying the function <code>dist</code> to the resulting matrix.</p>
 <pre class="r"><code>esp_hel &lt;- decostand(esp, method = &quot;hellinger&quot;)
 dist(esp_hel)</code></pre>
 <pre><code>##            site1      site2      site3
@@ -286,7 +355,7 @@ dist(esp_hel)</code></pre>
 ## site3 1.41421356 1.41421356           
 ## site4 0.60581089 0.54258112 1.41421356</code></pre>
 <p>Note that the distance between sites 1 and 2 (which have almost the same profile but a different total abundance) is much smaller with this measure than with Bray-Curtis. The maximum value for the distance between profiles or the Hellinger distance, obtained when the sites have no species in common, is not 1 but rather <span class="math inline">\(\sqrt{2}\)</span> (about 1.414).</p>
-<p>According to Legendre and Legendre (2012), the Hellinger distance responds more linearly to the changes in abundance of a species. The Hellinger transformation is therefore recommended if we want to carry out a PCA on abundance data. We will see in the next section another ordination method for this type of data, correspondence analysis.</p>
+<p>According to Legendre and Legendre (2012), the Hellinger distance responds more linearly to the changes in abundance of a species. The Hellinger transformation is therefore recommended if we want to carry out a PCA on abundance data. We will see in the next section other ordination methods for this type of data.</p>
 <p>Finally, <strong>the <span class="math inline">\(\chi^2\)</span> distance</strong> is similar to the distance between profiles, except that the contribution of a species <span class="math inline">\(k\)</span> is divided by <span class="math inline">\(p_k\)</span>, the fraction of all the individuals of all sites from that species. Compared to other measures, this distance increases the importance of rare species in the determination of dissimilarity between sites.</p>
 <p><span class="math display">\[ d_{ij(\chi^2)} = \sqrt{\sum_{k = 1}^p \frac{1}{p_k} \left( \frac{y_{ik}}{y_{i \cdot}} - \frac{y_{jk}}{y_{j \cdot}} \right)^2} \]</span></p>
 <p>In R, this distance is also calculated from a transformation with <code>decostand</code> followed by the calculation of the Euclidean distance on the transformed data.</p>
@@ -299,25 +368,22 @@ dist(esp_chi2)</code></pre>
 <p>The maximum value of <span class="math inline">\(d _{(\chi^2)}\)</span> is equal to <span class="math inline">\(\sqrt{2N}\)</span> where <span class="math inline">\(N\)</span> is the sum of all entries in the matrix. This maximum value is reached only if each of the two sites compared is composed of a single species (and a different one).</p>
 <p>Which of these distances to use in a cluster analysis, for example? It depends on the focus on different types of differences. In particular, we will choose:</p>
 <ul>
-<li>the Bray-Curtis distance if the absolute differences of abundance (number of individuals) are important;</li>
-<li>the Hellinger distance if we are concerned about the relative differences in abundance (proportion of individuals) and we want to give more emphasis to common species;</li>
+<li>the Bray-Curtis distance if the absolute differences of abundance (number of individuals) between sites are important;</li>
+<li>the Hellinger distance if we are concerned about the relative differences in abundance (proportion of individuals) between sites and we want to give more emphasis to common species;</li>
 <li>the <span class="math inline">\(\chi^2\)</span> if we are concerned about relative differences and want to give greater importance to rare species.</li>
 </ul>
 </div>
 <div id="distance-measures-for-presence-data" class="section level2">
 <h2>Distance measures for presence data</h2>
 <p>With data on the presence or absence of species, we can summarize the relationship between two sites by a 2x2 table.</p>
-<div class="figure">
-<img src="../images/pres_abs_en.png" />
-
-</div>
+<p><img src="../images/pres_abs_en.png" /></p>
 <p>In this table, <span class="math inline">\(a\)</span> represents the number of species present at both sites, <span class="math inline">\(b\)</span> the number of species present at site 1 but not at site 2, and so on.</p>
 <p>The <strong>Jaccard index</strong> measures the similarity between two sites:</p>
 <p><span class="math display">\[ J = \frac{a}{a + b + c} \]</span></p>
 <p>That index takes values between 0 (no common species) and 1 (same species). The <strong>Sorenson index</strong> is similarly defined, except that species present at both sites are counted twice.</p>
 <p><span class="math display">\[ S = \frac{2a}{2a + b + c} \]</span></p>
 <p>To define a distance (dissimilarity) from these indices, we can apply the transformation <span class="math inline">\(1 - J\)</span> or <span class="math inline">\(1 - S\)</span>. Note that neither index takes into account species absent from both sites (<span class="math inline">\(d\)</span> in the table above); as mentioned earlier, species in that group give little information on the similarity between sites.</p>
-<p>The function <code>vegdist(..., method = &quot;jaccard&quot;)</code> calculates the Jaccard distance (<span class="math inline">\(1 - J\)</span>). As for <span class="math inline">\(1 - S\)</span>, its value exactly matches the Bray-Curtis distance applied to a binary matrix.</p>
+<p>The function <code>vegdist(..., method = "jaccard")</code> calculates the Jaccard distance (<span class="math inline">\(1 - J\)</span>). As for <span class="math inline">\(1 - S\)</span>, its value exactly matches the Bray-Curtis distance applied to a binary matrix.</p>
 </div>
 </div>
 <div id="ordination-of-ecological-community-matrices" class="section level1">
@@ -377,32 +443,100 @@ summary(ac_dune, display = &quot;reg&quot;) </code></pre>
 <p>The <code>plot</code> function represents the species (in red) and the sites (in black) on the first two axes.</p>
 <pre class="r"><code>plot(ac_dune)</code></pre>
 <p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>In PCA, the variables were represented by vectors (arrows) and we interpreted the direction and length of these vectors. Here, species and sites are points on the same scale; the proximity of a site to a species indicates an association between the two. Also, the proximity between two sites indicates that they have a similar community and the proximity between two species indicates that they occupy similar sites. The coordinates of species and sites can be extracted with the <code>scores (ac_dune)</code> function.</p>
-<p>We can see the importance given to rare species granted in this ordination. For example, the species <em>Chenalbu</em> at the bottom of the graph has only one individual, which is found at site 13.</p>
-<p>In general, the abundance of a species is not a linear function of an environmental gradient (e.g., temperature); the species reaches a maximum at an optimum value and its abundance decreases for larger or smaller values of the environmental variable. Due to this non-linearity, a series of sites ordered according to an environmental gradient may follow a curve on the ordination plot. This could be the case here, with the presence of a spiral starting around the point (0, 0). Methods have been proposed to rectify these curves (detrended correspondence analysis or DCA), but these methods are not recommended, except in the rare cases where we know the ordination is dominated by a single large gradient. A better solution would be to superimpose the environmental gradient on the graph of ordination, as we will see later.</p>
+<p>In PCA, the variables were represented by vectors (arrows) and we interpreted the direction and length of these vectors. Here, species and sites are points, and we can interpret their position as follows:</p>
+<ol style="list-style-type: decimal">
+<li>Sites near each other host similar communities.</li>
+<li>Species near each other are present at similar sites.</li>
+<li>Species are located at the average position of sites where they are present, where each site is weighted by the species’ abundance at that site. So for example, species <em>Empenigr</em> is only present at site 19, whereas <em>Airaprae</em> is present at 17 and 19.</li>
+</ol>
+<p>This third point corresponds to the default visualization in <em>vegan</em>. If we instead want each site to be at the average position of species found there, we can specify the <code>scaling = "sites</code> argument in the <code>plot</code> function.</p>
+<p>The coordinates of species and sites can be extracted with the <code>scores (ac_dune)</code> function.</p>
+<p>We can see the importance given to rare species in this ordination, since they are at the edges of the graph. In contrast, a species near the centre of the ordination is either present at many sites, or strongly associated with sites also near the centre. We cannot distinguish those two cases without going back to the original data matrix.</p>
 </div>
-<div id="non-metric-multidimensional-scaling" class="section level2">
-<h2>Non-metric multidimensional scaling</h2>
-<p>Another ordination method commonly applied in ecology is non-metric multidimensional scaling (NMDS). This method uses a distance matrix between sites as a starting point, then applies an iterative algorithm to find a point configuration in a small number of dimensions (usually 2) that best represents the distance between sites.</p>
-<p>The correspondence between the original distance matrix <span class="math inline">\(d\)</span> and the Euclidean distance in the reduced space <span class="math inline">\(\hat{d}\)</span> is measured by the <em>stress</em>:</p>
-<p><span class="math display">\[ \sqrt{\frac{\sum_{(i, j)} (d_{ij} - \hat{d_{ij}})^2}{\sum_{(i, j)} d_{ij}^2}} \]</span></p>
-<p>In this formula, each sum is calculated over all pairs of observations.</p>
-<p>The main advantage of this method is its flexibility. NMDS can be performed according to any measure of multivariate distance. However, it is a heuristic algorithm that may not converge, or converge to different solutions depending on the starting conditions.</p>
-<p>The <code>metaMDS</code> function addresses the second issue by performing repeated runs of the algorithm from random initial configurations, in order to increase the chances of detecting the optimal result. The Bray-Curtis distance is often recommended for analyzing abundance data with this algorithm and is the default distance choice for <code>metaMDS</code>.</p>
+<div id="deformation-of-gradients" class="section level2">
+<h2>Deformation of gradients</h2>
+<p>In general, the abundance of a species is not a linear function of an environmental gradient (e.g., temperature); the species reaches a maximum at an optimum value and its abundance decreases for larger or smaller values of the environmental variable. Due to this non-linearity, a series of sites ordered according to an environmental gradient may follow a curve on the ordination plot. This could be the case here, with a series of sites from the middle right to the bottom left and then up. Methods have been proposed to rectify these curves (detrended correspondence analysis or DCA), but these methods are not recommended, except in the rare cases where we know in advance that the ordination is dominated by a single large gradient. A better solution would be to superimpose the environmental gradient on the graph of ordination, as we will see later.</p>
+</div>
+<div id="principal-coordinate-analysis" class="section level2">
+<h2>Principal coordinate analysis</h2>
+<p>Principal coordinate analysis (PCoA) is a more general method that includes PCA and CA as specific cases. Whereas PCA aims to represent the true Euclidean distances between sites and CA is based on the <span class="math inline">\(\chi^2\)</span> distance, PCoA can work with different distance metrics.</p>
+<p>We will use the <code>pcoa</code> function in the <em>ape</em> package to do a PCoA of the <code>dune</code> dataset, based on the Bray-Curis distance (the <code>correction</code> argument is explained later).</p>
+<pre class="r"><code>library(ape)
+dune_bray &lt;- vegdist(dune, method = &quot;bray&quot;)
+pcoa_dune &lt;- pcoa(dune_bray, correction = &quot;lingoes&quot;)</code></pre>
+<p>The eigenvalues of the PCoA represent the part of the total distance between sites contained within each of the axes. Those values can be found in the <code>values</code> table of the object produced by <code>pcoa</code>.</p>
+<pre class="r"><code>pcoa_dune$values</code></pre>
+<pre><code>##     Eigenvalues   Corr_eig Rel_corr_eig Broken_stick Cum_corr_eig
+## 1   1.716266188 1.81305186  0.295383959  0.194172671    0.2953840
+## 2   1.022398050 1.11918372  0.182338369  0.138617115    0.4777223
+## 3   0.461464091 0.55824976  0.090950529  0.110839338    0.5686729
+## 4   0.382249161 0.47903483  0.078044764  0.092320819    0.6467176
+## 5   0.279134546 0.37592022  0.061245243  0.078431930    0.7079629
+## 6   0.236630925 0.33341660  0.054320517  0.067320819    0.7622834
+## 7   0.169120371 0.26590604  0.043321640  0.058061560    0.8056050
+## 8   0.096245175 0.19303085  0.031448750  0.050125052    0.8370538
+## 9   0.074491756 0.17127743  0.027904665  0.043180608    0.8649584
+## 10  0.061711999 0.15849767  0.025822576  0.037007768    0.8907810
+## 11  0.054940459 0.15172613  0.024719351  0.031452212    0.9155004
+## 12  0.019174290 0.11595996  0.018892296  0.026401707    0.9343927
+## 13  0.016118974 0.11290464  0.018394521  0.021772078    0.9527872
+## 14  0.004000912 0.10078658  0.016420236  0.017498574    0.9692074
+## 15  0.000000000 0.07036054  0.011463200  0.013530320    0.9806706
+## 16 -0.026425126 0.05392868  0.008786106  0.009826616    0.9894567
+## 17 -0.042856993 0.04205150  0.006851066  0.006354394    0.9963078
+## 18 -0.054734175 0.02266261  0.003692212  0.003086420    1.0000000
+## 19 -0.074123061 0.00000000  0.000000000  0.000000000    1.0000000
+## 20 -0.096785671 0.00000000  0.000000000  0.000000000    1.0000000
+##    Cum_br_stick
+## 1     0.1941727
+## 2     0.3327898
+## 3     0.4436291
+## 4     0.5359499
+## 5     0.6143819
+## 6     0.6817027
+## 7     0.7397643
+## 8     0.7898893
+## 9     0.8330699
+## 10    0.8700777
+## 11    0.9015299
+## 12    0.9279316
+## 13    0.9497037
+## 14    0.9672023
+## 15    0.9807326
+## 16    0.9905592
+## 17    0.9969136
+## 18    1.0000000
+## 19    1.0000000
+## 20    1.0000000</code></pre>
+<p>In that table, we notice that the last eigenvalues are negative. This can happen for certain distance measures like Bray-Curtis. The correction given as an argument in <code>pcoa</code> transforms the distances so that all values are positive (2nd column, <code>Corr_eig</code>). The <em>Rel_corr_eig</em> column can then be interpreted as the proportion of original distances between sites represented by that axis.</p>
+<p>Let’s now look at the position of sites on the first two axes.</p>
+<pre class="r"><code>biplot(pcoa_dune)</code></pre>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>That ordination is similar to that of correspondance analysis seen earlier, but sites 17 and 19 are closer to the others. Indeed, the Bray-Curtis distance gives less importance to rare species and sites with very few species.</p>
+<p>By providing the original data matrix as a second argument in biplot, we can obtain arrows representing the position of species, similar to a PCA.</p>
+<pre class="r"><code>biplot(pcoa_dune, dune)</code></pre>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>We saw earlier in the class that certain distance measures are equivalent to the Euclidean distance in a transformed space. For example, the Hellinger distance is a Euclidean distance applied to data following a Hellinger transform. In that case, it is simpler to apply PCA to the missing data, which is equivalent to PCoA for the corresponding distance measure.</p>
+</div>
+<div id="nonmetric-multidimensional-scaling" class="section level2">
+<h2>Nonmetric multidimensional scaling</h2>
+<p>Another ordination method commonly applied in ecology is nonmetric multidimensional scaling (NMDS). Like PCoA, NMDS is based on a distance matrix between sites as a starting point, but uses a very different ordination technique.</p>
+<p>The methods seen so far (PCA, CA, PCoA) perform a rotation in multivariate space so that the most important portion of the differences between sites can be found in the first axes. NMDS requires the user to specify how many axes to use (generally 2), then uses an iterative algorithm that places points randomly in space, and gradually moves them so that the distance between points in the reduced space is maximally related to their true distance in the full space. The difference between distances in the reduced space and the true distances is represented by a stress measure, which the method tries to minimize.</p>
+<p>Since the method has no restriction on the positioning of points in space, it can produce a 2D graphic that is closer to the full distances between sites. Unlike other methods, NMDS does not include all axes, and does not provide a measure of the proportion of the total distance represented by each axis. Also, it relies on a heuristic algorithm that may not converge, or converge to different solutions based on the initial positions chosen prior to the analysis.</p>
+<p>The <code>metaMDS</code> function addresses the latter issue by performing repeated runs of the algorithm from random initial configurations, in order to increase the chances of detecting the optimal result. The Bray-Curtis distance is often recommended for analyzing abundance data with this algorithm and is the default distance choice for <code>metaMDS</code>.</p>
 <pre class="r"><code>md_dune &lt;- metaMDS(dune, distance = &quot;bray&quot;)</code></pre>
 <p>During the execution of the function, R indicates the stress for each run of the algorithm and indicates in the end whether an optimal solution has been found. If the algorithm does not converge, you must repeat <code>metaMDS</code> by specifying a number of tries (<code>try</code> argument) greater than 20.</p>
-<p>The <code>plot</code> function displays the result of NMDS in two dimensions. After NMDS orders the sites, the position of the species is determined according to the position of the sites where these species are found. We specify the argument <code>type = &quot;t&quot;</code> to display the names of sites and species rather than points alone.</p>
+<p>The <code>plot</code> function displays the result of NMDS in two dimensions. After NMDS orders the sites, the position of the species is determined according to the position of the sites where these species are found, similar to correspondance analysis. We specify the argument <code>type = "t"</code> to display the names of sites and species rather than points alone.</p>
 <pre class="r"><code>plot(md_dune, type = &quot;t&quot;)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>Note that this graph is very similar to the results of the correspondence analysis. Compared to the latter, the position of the sites is less influenced by rare species; for example, Site 13 is closer to the center and farther away from the <em>Chenalbu</em> species.</p>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>The value of stress is 0.118 for this result. In general, a stress lower than 0.1 is excellent is a stress higher than 0.2 is bad. You can also use the <code>stressplot</code> function to check the level of correspondence between NMDS distances and the original distance matrix between sites.</p>
 <pre class="r"><code>stressplot(md_dune)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 </div>
 <div id="effect-of-predictors-on-a-multivariate-response" class="section level1">
 <h1>Effect of predictors on a multivariate response</h1>
-<p>So far, we have seen how to represent the variation between ecological communities present at various sites. This last section deals with methods for associating this variation with predictors measured for the same sites.</p>
+<p>So far, we have seen how to represent the variation between ecological communities present at various sites. This last section deals with methods for associating this variation with predictors measured for each site.</p>
 <p>We will still use the <code>dune</code> data as an example, with the associated <code>dune.env</code> data frame that contains the values of five variables characterizing the 20 sites.</p>
 <pre class="r"><code>data(dune.env)
 head(dune.env)</code></pre>
@@ -428,14 +562,14 @@ head(dune.env)</code></pre>
 ## 
 ## Terms added sequentially (first to last)
 ## 
-##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)   
-## A1          1    0.7230 0.72295  5.2038 0.16817  0.003 **
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.005 **
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.025 * 
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.987   
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.449   
-## Residuals   7    0.9725 0.13893         0.22621          
-## Total      19    4.2990                 1.00000          
+##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
+## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.003 ** 
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.037 *  
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.969    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.486    
+## Residuals   7    0.9725 0.13893         0.22621           
+## Total      19    4.2990                 1.00000           
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Like the univariate ANOVA, this method considers the variables in the given order: <em>Moisture</em> gives the fraction of the distance explained after taking into account the effect of <em>A1</em>, <em>Management</em> the fraction explained after taking into account <em>A1</em> and <em>Moisture</em>, etc.</p>
@@ -444,15 +578,17 @@ head(dune.env)</code></pre>
 <div id="superposition-of-predictors-to-ordination-axes" class="section level2">
 <h2>Superposition of predictors to ordination axes</h2>
 <p>A second technique for determining the effect of explanatory variables on a multivariate response is to first perform an ordination of the response and then correlate the variables to the ordination result.</p>
-<p>If the principal components are orthogonal (which is the case for PCA and CA, but not NMDS), a separate regression of each component can be performed according to the predictors. Another option is to simultaneously estimate the correlation between explanatory variables and each of the axes, which is done by the <code>envfit</code> function of <em>vegan</em>.</p>
-<p>The <code>envfit</code> function requires two parameters, the result of an ordination and a data frame for the predictors. Here, we consider the relation between the NMDS components of <code>dune</code>, the A1 soil thickness (<em>A1</em>) and the type of managament (<em>Management</em>).</p>
-<pre class="r"><code>envf &lt;- envfit(md_dune, select(dune.env, A1, Management))
+<p>If the principal components are orthogonal (which is the case for PCA, CA and PCoA, but not NMDS), a separate regression of each component can be performed according to the predictors. Another option is to simultaneously estimate the correlation between explanatory variables and each of the axes, which is done by the <code>envfit</code> function of <em>vegan</em>.</p>
+<p>The <code>envfit</code> function requires two parameters, the result of an ordination and a data frame for the predictors. Here, we consider the relation between the PCoA components of <code>dune</code>, the A1 soil thickness (<em>A1</em>) and the type of management.</p>
+<p>This time, we do not use <code>PCoA</code> from the <em>ape</em> package, but instead use the <code>wcmdscale</code> function from <em>vegan</em>, so that the output is compatible with <code>envfit</code>. The function name is an abbreviation of “weighted classical multidimensional scaling”, which is synonymous with a PCoA. The <code>eig = TRUE</code> argument tells the function to save the eigenvalues, whereas <code>add = TRUE</code> performs the same correction as the “lingoes” method in <code>pcoa</code>.</p>
+<pre class="r"><code>pcoa_dune2 &lt;- wcmdscale(dune_bray, eig = TRUE, add = TRUE)
+envf &lt;- envfit(pcoa_dune2, select(dune.env, A1, Management))
 envf</code></pre>
 <pre><code>## 
 ## ***VECTORS
 ## 
-##      NMDS1   NMDS2     r2 Pr(&gt;r)  
-## A1 0.96474 0.26321 0.3649  0.018 *
+##       Dim1    Dim2     r2 Pr(&gt;r)  
+## A1 0.98847 0.15139 0.3845  0.016 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -461,31 +597,36 @@ envf</code></pre>
 ## ***FACTORS:
 ## 
 ## Centroids:
-##                NMDS1   NMDS2
-## ManagementBF -0.4534 -0.0102
-## ManagementHF -0.2636 -0.1282
-## ManagementNM  0.2958  0.5790
-## ManagementSF  0.1506 -0.4670
+##                 Dim1    Dim2
+## ManagementBF -0.2769  0.0034
+## ManagementHF -0.1388 -0.0651
+## ManagementNM  0.1873  0.2730
+## ManagementSF  0.0668 -0.2204
 ## 
 ## Goodness of fit:
 ##                r2 Pr(&gt;r)   
-## Management 0.4134  0.009 **
+## Management 0.4513  0.002 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
-<p>For the numeric variable <em>A1</em>, the result indicates the magnitude and direction of the effect of an increase of this variable on the two NMDS axes (hence a vector), as well as a <span class="math inline">\(r^2\)</span> value giving the portion of the variance explained by this correlation. For a categorical variable such as <em>Management</em>, the result indicates the average position (centroid) on the two axes of the sites corresponding to each category.</p>
-<p>If you draw the ordination graph first, you can add the vector <em>A1</em> and the centroids for each management type by applying the <code>plot</code> function to the <code>envfit</code> result.</p>
-<pre class="r"><code>plot(md_dune)
-plot(envf)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<p>If more than one numeric variable was included, the length of the vectors would be representative of the importance of the effect of each variable, as measured by the <span class="math inline">\(r^2\)</span>.</p>
+<p>For the numeric variable <em>A1</em>, the result indicates the magnitude and direction of the effect of an increase of this variable on the two PCoA axes (hence a vector), as well as a <span class="math inline">\(r^2\)</span> value giving the portion of the variance explained by this correlation. For a categorical variable such as <em>Management</em>, the result indicates the average position (centroid) on the two axes of the sites corresponding to each category.</p>
 <p>The <span class="math inline">\(p\)</span>-values for the effect of each variable in <code>envfit</code> are determined by permutation test, as in PERMANOVA. The <span class="math inline">\(p\)</span>-values and <span class="math inline">\(r^2\)</span> are different in each case, because PERMANOVA evaluated the effect of the variables on the total multidimensional variation, while <code>envfit</code> result measures the effect on the ordination in two dimensions.</p>
-<p>The <code>envfit</code> function attempts to identify a linear correlation between a numeric variable and the ordination axes. To represent a nonlinear environmental gradient like a two-dimensional surface, we can use the <code>ordisurf</code> function. The estimated surface is represented by contour lines (like in a topographic map) on the axes of ordination. In the following example, we show the contour lines for the A1 soil thickness on the two NMDS axes, and then superimpose the vector obtained with <code>envfit</code>.</p>
-<pre class="r"><code>ords &lt;- ordisurf(md_dune, dune.env$A1)</code></pre>
+<p>If you draw the ordination graph first, you can add the vector <em>A1</em> and the centroids for each management type by applying the <code>plot</code> function to the <code>envfit</code> result.</p>
+<pre class="r"><code>plot(pcoa_dune2)
+plot(envf)</code></pre>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>If more than one numeric variable was included, the length of the vectors would be representative of the importance of the effect of each variable, as measured by the <span class="math inline">\(r^2\)</span>.</p>
+<p>With <code>envfit</code>, we can overlay both the position of species and environmental variables, although that makes the graph more difficult to read.</p>
+<pre class="r"><code>plot(pcoa_dune2)
+plot(envfit(pcoa_dune2, dune), col = &quot;red&quot;) # Add species
+plot(envf)</code></pre>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>The <code>envfit</code> function attempts to identify a linear correlation between a numeric variable and the ordination axes. To represent a nonlinear environmental gradient like a two-dimensional surface, we can use the <code>ordisurf</code> function. The estimated surface is represented by contour lines (like in a topographic map) on the axes of ordination. In the following example, we show the contour lines for the A1 soil thickness on the two PCoA axes, and then superimpose the vector obtained with <code>envfit</code>.</p>
+<pre class="r"><code>ords &lt;- ordisurf(pcoa_dune2, dune.env$A1)</code></pre>
 <pre class="r"><code>plot(ords)
 plot(envf)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>Puisque les lignes de contour sont parallèles et également espacées, l’effet d’<em>A1</em> semble effectivement être linéaire dans cette représentation.</p>
 </div>
 <div id="constrained-ordination" class="section level2">
@@ -524,10 +665,21 @@ rda_dune</code></pre>
 ##  PC13  PC14  PC15 
 ## 0.133 0.119 0.056</code></pre>
 <p>The linear regression carried out in the first step of the RDA has 4 predictors here (1 for <em>A1</em> and 3 for the four-level factor <em>Management</em>). In this case, since the matrix <span class="math inline">\(\hat{Y}\)</span> is a linear combination of the predictors, it can only have 4 principal components. The result of the RDA names these 4 components “constrained axes” (RDA1 to RDA4). RDA also performs a separate PCA for regression residuals (<span class="math inline">\(Y\)</span> - <span class="math inline">\(\hat{Y}\)</span>); that PCA results in 15 unconstrained axes for the 15 residual degrees of freedom.</p>
-<p>The graph of a RDA is called a triplot because it represents observations (sites), response variables (species) and predictors (environmental conditions). Note that since RDA is based on PCA, species should be represented by vectors here (like the A1 numerical predictor), but the arrows are omitted by <em>vegan</em> to avoid crowding the graph.</p>
+<p>The graph of a RDA is called a triplot because it represents observations (sites), response variables (species) and predictors (environmental conditions). Note that since RDA is based on PCA, species should be represented by vectors here (like the A1 numerical predictor), but the arrows are omitted by <em>vegan</em> to avoid crowding the graph; the species name is placed where the end of the arrow would be.</p>
 <pre class="r"><code>plot(rda_dune)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <p>The coordinates of the sites and species on the first two axes of the RDA can be obtained by calling the <code>scores(rda_dune)</code> function.</p>
+<p>For comparison purposes, here is the biplot of the unconstrained ordination with the estimate of predictor effects obtained by <code>envfit</code>. Note that the <code>rda</code> function called with no predictor variables performs a PCA.</p>
+<pre class="r"><code>acp_dune &lt;- rda(dune_hel)
+acp_envf &lt;- envfit(acp_dune, select(dune.env, A1, Management))
+plot(acp_dune)
+plot(acp_envf)</code></pre>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p>What is the difference between these two approaches?</p>
+<ul>
+<li><p>With unconstrained ordination (PCA or CA), we summarize the variation of the multivariate <em>response</em> in a few axes, then we estimate the effect of the predictors on these axes. This approach is more parsimonious but runs the risk of “losing” the effect of a predictor if it is not related primarily to the first few principal components.</p></li>
+<li><p>With constrained ordination (RDA or CCA), we first perform the regression in the multivariate space, then summarize the <em>predictions</em> of this regression in a few axes. Since this approach performs as many univariate regressions as there are columns in the multivariate response, it is more likely to detect an effect due only to chance (overfitting).</p></li>
+</ul>
 <p>If redundancy analysis is the combination of a regression and a PCA, <strong>canonical correspondence analysis</strong> (CCA) is the combination of a regression and a correspondence analysis. Like correspondence analysis, CCA is based on the <span class="math inline">\(\chi_{ij}\)</span> standardized residuals of a contingency table. A regression is applied to these residuals according to the predictors, then an ordination is applied to the fitted values estimated by this regression. Here is an example with the <code>cca</code> function of <em>vegan</em>:</p>
 <pre class="r"><code>cca_dune &lt;- cca(dune ~ A1 + Management, dune.env)
 cca_dune</code></pre>
@@ -550,60 +702,24 @@ cca_dune</code></pre>
 ## 0.0317 0.0178 0.0116 0.0087 0.0047</code></pre>
 <p>Here is the triplot corresponding to this analysis:</p>
 <pre class="r"><code>plot(cca_dune)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<p>For comparison purposes, here is the biplot of the coresponding unconstrained ordination (correspondence analysis) with the estimate of predictor effects obtained by <code>envfit</code>:</p>
-<pre class="r"><code>plot(ac_dune)
-ac_envf &lt;- envfit(ac_dune, select(dune.env, A1, Management))
-plot(ac_envf)</code></pre>
-<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<p>What is the difference between these two approaches?</p>
-<ul>
-<li><p>With unconstrained ordination (PCA or CA), we summarize the variation of the multivariate <em>response</em> in a few axes, then we estimate the effect of the predictors on these axes. This approach is more parsimonious but runs the risk of “losing” the effect of a predictor if it is not related primarily to the first few principal components.</p></li>
-<li><p>With constrained ordination (RDA or CCA), we first perform the regression in the multivariate space, then summarize the <em>predictions</em> of this regression in a few axes. Since this approach performs as many univariate regressions as there are columns in the multivariate response, it is more likely to detect an effect due only to chance (overfitting).</p></li>
-</ul>
+<p><img src="14E-Multivariate_analysis_Part2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 </div>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <ul>
 <li><p>The <em>vegan</em> package in R contains several tools for multivariate analysis of ecological community data. These data usually take the form of a matrix indicating the abundance or presence of species at each of the sites studied.</p></li>
-<li><p>Euclidean distance is not appropriate for ecological community data. We have presented in this class several distances designed for abundance data (Bray-Curtis, Hellinger, <span class="math inline">\(\chi^2\)</span>) or presence-absence data (Jaccard, Sorenson). The distance matrices obtained by these methods can be used in a cluster analysis or in some ordinations (e.g. NMDS).</p></li>
-<li><p>Correspondence analysis is a type of ordination similar to principal component analysis, but adapted to contingency tables, including abundance or presence data.</p></li>
-<li><p>Nonmetric multidimensional scaling (NMDS) is an ordination method that optimizes the position of points in a small number of dimensions so that their distance is as close as possible to a given distance matrix.</p></li>
+<li><p>Euclidean distance is not appropriate for ecological community data. We have presented in this class several distances designed for abundance data (Bray-Curtis, Hellinger, <span class="math inline">\(\chi^2\)</span>) or presence-absence data (Jaccard, Sorenson).</p></li>
+<li><p>Correspondence analysis (CA) is a type of ordination similar to principal component analysis, but adapted to contingency tables, including abundance or presence data. In an ecological context, it emphasizes the rare species.</p></li>
+<li><p>Principal coordinate analysis (PCoA) and nonmetric multidimensional scaling (NMDS) are ordination methods based on a matrix of distances between sites. PCoA performs a linear transformation of the matrix to produce principal axes (similar to PCA), whereas NMDS uses an algorithm that moves the points in a number of dimensions chosen in advance to make their distances as close as possible at the real distance between them.</p></li>
 <li><p>The <code>envfit</code> function makes it possible to simultaneously estimate the effect of predictors on the main ordination axes.</p></li>
-<li><p>Four of the ordination methods seen in this course (PCA, CA, RDA and CCA) are related by two properties: the type of data and the presence or absence of constraints. In constrained ordination, a regression is performed on the multivariate data and ordination is performed on the part of the response explained by the predictors.</p></li>
+<li><p>In constrained ordination, a regression is performed on the multivariate data and ordination is performed on the part of the response explained by the predictors. Redundancy analysis is a constrained ordination based on PCA, whereas canonical correspondance analysis is based on CA.</p></li>
 </ul>
-<table style="width:54%;">
-<colgroup>
-<col width="4%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>Unconstrained</th>
-<th>Constrained</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Continuous data (including transformed abundance)</td>
-<td>Principal component analysis</td>
-<td>Redundancy analysis</td>
-</tr>
-<tr class="even">
-<td>Contingency table (abundance or presence)</td>
-<td>Correspondence analysis</td>
-<td>Canonical correspondence analysis</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
 <ul>
-<li><p>Legendre, P. and Legendre, L. (2012) <em>Numerical Ecology</em>, 3rd ed. Elsevier.</p></li>
+<li><p>Legendre, P. and Legendre, L. (2012) <em>Numerical Ecology</em>, 3rd ed. Elsevier.</p></li>
 <li><p><a href="http://cc.oulu.fi/~jarioksa/opetus/metodi/vegantutor.pdf">Tutorial</a> for the <em>vegan</em> package by Jari Oksanen.</p></li>
 </ul>
 </div>

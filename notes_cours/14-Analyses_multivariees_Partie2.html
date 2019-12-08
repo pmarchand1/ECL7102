@@ -449,6 +449,7 @@ summary(ac_dune, display = &quot;reg&quot;) </code></pre>
 <li>Les coordonnées des espèces sur le graphique correspondent à la position moyenne des sites contenant cette espèce, où la moyenne est pondérée par l’abondance de l’espèce sur chaque site. Par exemple, l’espèce <em>Empenigr</em> est présente seulement au site 19, tandis qu’<em>Airaprae</em> est présente aux sites 17 et 19.</li>
 </ol>
 <p>Ce troisième aspect correspond à la visualisation par défaut dans <em>vegan</em>. Si on veut plutôt que chaque site se retrouve au milieu des points représentant les espèces qui s’y trouvent, on peut ajouter l’argument <code>scaling = "sites"</code> à la fonction <code>plot</code>.</p>
+<p>Les coordonnées des espèces et des sites peuvent être extraites avec la fonction <code>scores(ac_dune)</code>.</p>
 <p>Nous pouvons voir l’influence des espèces rares dans cette ordination, qui se retrouvent aux extrêmes du graphique. En contrepartie, une espèce près du centre de l’ordination est soit présente sur de nombreux sites, soit associée fortement à des sites aussi situés au centre du graphique; on ne peut pas distinguer ces deux cas sans revenir à la matrice originale.</p>
 </div>
 <div id="deformation-des-gradients" class="section level2">
@@ -560,14 +561,14 @@ head(dune.env)</code></pre>
 ## 
 ## Terms added sequentially (first to last)
 ## 
-##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
-## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.010 ** 
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.026 *  
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.974    
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.442    
-## Residuals   7    0.9725 0.13893         0.22621           
-## Total      19    4.2990                 1.00000           
+##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)   
+## A1          1    0.7230 0.72295  5.2038 0.16817  0.002 **
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.007 **
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.026 * 
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.975   
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.476   
+## Residuals   7    0.9725 0.13893         0.22621          
+## Total      19    4.2990                 1.00000          
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Comme pour l’ANOVA univariée, cette méthode considère les variables dans l’ordre donné: <em>Moisture</em> donne la fraction de la distance expliquée après avoir tenu compte de l’effet de <em>A1</em>, <em>Management</em> la fraction expliquée après avoir tenu compte de <em>A1</em> et <em>Moisture</em>, etc.</p>
@@ -578,7 +579,7 @@ head(dune.env)</code></pre>
 <p>Une deuxième technique pour déterminer l’effet de variables explicatives sur une réponse multivariée consiste à réaliser d’abord une ordination de la réponse, puis de corréler les variables au résultat de l’ordination.</p>
 <p>Si les composantes principales sont orthogonales (ce qui est le cas pour l’ACP, l’AC et la PCoA, mais pas le NMDS), on peut effectuer une régression séparée de chaque composante en fonction des prédicteurs. Une autre option est d’estimer simultanément la corrélation entre des variables explicatives et chacun des axes, ce qui est fait par la fonction <code>envfit</code> de <em>vegan</em>.</p>
 <p>La fonction <code>envfit</code> requiert deux paramètres, soit le résultat d’une ordination et un tableau de données pour les prédicteurs. Dans l’exemple ci-dessous, nous vérifions le lien entre les composantes de la PCoA du tableau <code>dune</code>, l’épaisseur du sol (<em>A1</em>) et du type d’aménagement (<em>Management</em>).</p>
-<p>Cette fois, nous ne réalisons pas la PCoA avec le package <em>ape</em>, mais plutôt avec une fonction du package <em>vegan</em> (<code>wcmdscale</code>, pour <em>weighted classical multidimensional scaling</em>), afin que l’objet de sortie soit compatible avec <code>envfit</code>. L’argument <code>eig = TRUE</code> indique de sauvegarder les valeurs propres et <code>add = TRUE</code> effectue la correction des valeurs propres; il est équivalent à <code>correction = "lingoes"</code> pour <code>pcoa</code>.</p>
+<p>Cette fois, nous ne réalisons pas la PCoA avec le package <em>ape</em>, mais plutôt avec une fonction du package <em>vegan</em> (<code>wcmdscale</code>, pour <em>weighted classical multidimensional scaling</em>, un synonyme de PCoA), afin que l’objet de sortie soit compatible avec <code>envfit</code>. L’argument <code>eig = TRUE</code> indique de sauvegarder les valeurs propres et <code>add = TRUE</code> effectue la correction des valeurs propres; il est équivalent à <code>correction = "lingoes"</code> pour <code>pcoa</code>.</p>
 <pre class="r"><code>pcoa_dune2 &lt;- wcmdscale(dune_bray, eig = TRUE, add = TRUE)
 envf &lt;- envfit(pcoa_dune2, select(dune.env, A1, Management))
 envf</code></pre>
@@ -586,7 +587,7 @@ envf</code></pre>
 ## ***VECTORS
 ## 
 ##       Dim1    Dim2     r2 Pr(&gt;r)   
-## A1 0.98847 0.15139 0.3845  0.009 **
+## A1 0.98847 0.15139 0.3845   0.01 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -603,7 +604,7 @@ envf</code></pre>
 ## 
 ## Goodness of fit:
 ##                r2 Pr(&gt;r)   
-## Management 0.4513  0.005 **
+## Management 0.4513  0.003 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
