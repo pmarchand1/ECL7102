@@ -307,12 +307,12 @@ Comme dans le cas de l'ACP, il est recommandé de normaliser les variables avant
 Supposons qu'on ait la matrice de distance suivante entre 4 observations.
 
 $$
-\begin{array}
-&& A & B & C \\
+\begin{matrix}
+& A & B & C \\
 B & 11 \\
 C & 13 & 6 \\ 
 D & 7 & 11 & 9 
-\end{array}
+\end{matrix}
 $$ 
 
 1. L'algorithme regroupe d'abord les deux observations les plus rapprochées, soit B et C (distance de 6). 
@@ -322,11 +322,11 @@ $$
 Comment détermine-t-on la distance du nouveau groupe à partir des distances précédentes? Différentes règles sont possibles. Pour l'instant, utilisons une règle où la distance d'un nouveau groupe à une observation existante est la moyenne des distances entre chaque membre du groupe et l'observation.
 
 $$
-\begin{array}
-& & A & BC \\
+\begin{matrix}
+& A & BC \\
 BC & 12 & \\
 D & 7 & 10 
-\end{array}
+\end{matrix}
 $$ 
 
 3. À partir de ce moment, le nouveau groupe (BC) est traité comme une observation individuelle. Il suffit ensuite de répéter les étapes 1 et 2 jusqu'à ce qu'il n'y ait que deux groupes, qui sont joints à la dernière étape.

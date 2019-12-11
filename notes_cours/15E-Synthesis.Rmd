@@ -40,8 +40,8 @@ library(cowplot)
 
 ### Examples
 
-| | One-sample $t$-test ($n$ individuals) | One-factor ANOVA ($m$ groups of $n$ individuals) |
-|-+---------------------------+--------------------|
+|      | One-sample $t$-test ($n$ individuals) | One-factor ANOVA ($m$ groups of $n$ individuals) |
+|------+---------------------------+--------------------|
 | Null hypothesis | The mean $\bar{x}$ equals $\mu$ | Same mean in each of the $m$ groups |
 | Statistic | $t = (\bar{x} - \mu) / (s/\sqrt{n})$ | $F = MSA/MSE$
 | Distribution | $t$ with $n-1$ degrees of freedom | $F$ with $m(n-1)$ and $(m - 1)$ degrees of freedom |

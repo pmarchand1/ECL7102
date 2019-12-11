@@ -306,12 +306,12 @@ As in the case of PCA, it is recommended to standardize the variables before cal
 Suppose we have the following distance matrix between 4 observations.
 
 $$
-\begin{array}
-&& A & B & C \\
+\begin{matrix}
+& A & B & C \\
 B & 11 \\
 C & 13 & 6 \\ 
 D & 7 & 11 & 9 
-\end{array}
+\end{matrix}
 $$ 
 
 1. The algorithm first joins the two nearest observations, B and C (distance of 6) into a group.
@@ -321,11 +321,11 @@ $$
 How is the distance of the new group determined from the previous distances? Different rules are possible. For now, let's use a rule where the distance from a new group to an existing observation is the mean of the distances between each group member and the observation.
 
 $$
-\begin{array}
-& & A & BC \\
+\begin{matrix}
+& A & BC \\
 BC & 12 & \\
 D & 7 & 10 
-\end{array}
+\end{matrix}
 $$ 
 
 3. From that moment, the new group (BC) is treated as if it were an individual observation. Then just repeat steps 1 and 2 until there are only two groups, which are joined in the last step.

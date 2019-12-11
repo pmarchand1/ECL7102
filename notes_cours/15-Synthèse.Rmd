@@ -40,8 +40,8 @@ library(cowplot)
 
 ### Exemples
 
-| | test $t$ à un échantillon ($n$ individus) | ANOVA à un facteur ($m$ groupes de $n$ individus) |
-|-+---------------------------+--------------------|
+|        | test $t$ à un échantillon ($n$ individus) | ANOVA à un facteur ($m$ groupes de $n$ individus) |
+|--------+---------------------------+--------------------|
 | Hypothèse nulle | La moyenne $\bar{x}$ est égale à $\mu$ | La moyenne est la même pour les $m$ groupes |
 | Statistique | $t = (\bar{x} - \mu) / (s/\sqrt{n})$ | $F = MSA/MSE$
 | Distribution | $t$ avec $n-1$ degrés de liberté | $F$ avec $m(n-1)$ et $(m - 1)$ degrés de liberté |
