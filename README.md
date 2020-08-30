@@ -10,4 +10,4 @@ License][cc-by].
 [cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
 
 Contenu du cours ECL7102 - Analyses et modélisation des données écologiques
-offert à l'UQAT lors de la session automne 2019
+offert à l'UQAT lors de la session automne 2020
