@@ -27,15 +27,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Pourquoi écrire des programmes (ou scripts) pour réaliser ses analyses de données, plutôt que d'utiliser un logiciel à interface graphique (ex.: Excel)? Apprendre un language comme R demande plus de temps au départ, mais apporte plusieurs bénéfices.
 
-- Les scripts constituent un registre fidèle des analyses effectuées sur un jeu de données. Vous, vos collaborateurs ou d'autres chercheurs pourront facilement reproduire cette analyse à l'avenir (ex.: lorsque de nouvelles données sont disponibles).
+- Les scripts constituent un registre fidèle des analyses effectuées sur un jeu de données. Vous et vos collègues pourrez facilement reproduire cette analyse à l'avenir (ex.: lorsque de nouvelles données sont disponibles).
 
 - Les scripts permettent d'automatiser des tâches répétitives (ex.: effectuer la même analyse sur 100 fichiers de données). 
 
 ## Pourquoi programmer en R?
 
-- Les fonctions et types de données de base sont conçues pour les statistiques.
+- Les fonctions et types de données de base sont conçus pour les statistiques.
 
-- L'accès libre au logiciel facilite le partage de programmes entre chercheurs.
+- L'accès libre au logiciel facilite le partage de programmes entre groupes de recherche.
 
 - De nombreux modules existent pour des analyses spécialisées dans différents domaines, dont l'écologie.
 
@@ -95,9 +95,9 @@ cos(pi)
 
 ## Exercice 1 {#retour1}
 
-Choisissez un nombre $x$ et vérifiez dans R que la proposition suivante est vraie:
+En remplaçant $x$ par un nombre de votre choix, transcrivez dans R la proposition suivante et vérifiez qu'elle retourne `TRUE`.
 
-$$sin(x)^2 + cos(x)^2 = 1$$ 
+$$(\sin x)^2 + (\cos x)^2 = 1$$ 
 
 [Solution](#sol1)
 
@@ -123,7 +123,7 @@ x <- 5:10
 
 Notez que l'opérateur `:` est un raccourci pour l'instruction `seq(5, 10)`. 
 
->**Truc**: Pour sauver un peu de temps dans RStudio, le raccourci clavier `Alt`+`-` produit l'opérateur `<-`.
+>**Truc**: Pour économiser un peu de temps dans RStudio, le raccourci clavier `Alt`+`-` produit l'opérateur `<-`.
 
 Pour retrouver la valeur d'une variable, il suffit d'inscrire son nom:
 ```{r}
@@ -133,7 +133,7 @@ x
 Remarquez aussi que la variable `x` est apparue dans l'onglet *Environment* (coin supérieur droit) dans RStudio. Cet onglet vous permet de consulter rapidement toutes les variables actuellement en mémoire.
 
 
-## Nommer des variables (ou autres objets)
+## Règles pour les noms d'objets dans R
 
 Dans R, le nom d'un objet reconnu par le logiciel (variable, fonction, etc.) doit commencer par une lettre et peut inclure des lettres, des chiffres ainsi que les caractères `_` ou `.`. Notez que R différencie les majuscules et minuscules.
 
@@ -248,8 +248,6 @@ La fonction `str()` permet d'obtenir plus de détails sur la structure d'un obje
 str(arbres)
 ```
 
-Notez que l'espèce n'est plus une variable de type caractère, mais plutôt un facteur, c'est-à-dire une variable catégorielle codée par des nombres entiers (bouleau = 1, pin = 2, sapin = 3). Par défaut, R effectue automatiquement cette transformation lors de la création d'un tableau de données.
-
 ## Charger un tableau de données à partir d'un fichier
 
 La plupart du temps, on souhaite charger des tableaux de données existants plutôt que de les créer dans R. Nous verrons ici comment importer des données enregistrées en format CSV (*comma-separated values*).
@@ -258,11 +256,9 @@ Tout d'abord, il faut s'assurer que R pointe vers le bon répertoire de travail.
 
 Ensuite, appelons la fonction `read.csv` pour charger les données d'inventaire d'arbres dans des parcelles du Parc national de Kejimkujik (Nouvelle-Écosse):
 ```{r lire_csv}
-kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+kejim <- read.csv("cours1_kejimkujik.csv")
 str(kejim)
 ```
-
-La fonction `read.csv` requiert d'abord le nom du fichier CSV et accepte plusieurs arguments optionnels. Ici, nous spécifions `stringsAsFactors = FALSE` pour désactiver la conversion automatique des variables textuelles en facteurs.
 
 >**Trucs** 
 >
@@ -318,7 +314,7 @@ Finalement, il est possible de sélectionner des valeurs selon une condition log
 dhp5[dhp5 > 20]
 ```
 
-Il est possible de remplacer certains éléments d'un vecteur (ou d'une colonne d'un tableau de données) en combinant la sélection et l'assignation de valeur. Le code suivant remplace les valeurs de DHP inférieures à 1 par la valeur 1.
+Pour remplacer certains éléments d'un vecteur (ou d'une colonne d'un tableau de données), nous pouvons combiner la sélection et l'assignation de valeur. Le code suivant remplace les valeurs de DHP inférieures à 1 par la valeur 1.
 
 ```{r extr_rempl}
 dhp[dhp < 1] <- 1
@@ -400,7 +396,7 @@ liste1
 liste1[[3]]
 ```
 
-Une liste peut même contenir des vecteurs d'autres listes:
+Une liste peut même contenir des vecteurs ou d'autres listes:
 ```{r liste_mult}
 liste2 <- list(c(10, 20), "cd", liste1)
 str(liste2)
@@ -562,7 +558,7 @@ type_arbre("PIST")
 
 ## Sélectionner des éléments d'un objet
 
-*Ici, i,j,k et l sont des nombres entiers positifs.*
+*Ici, i, j, k et l sont des nombres entiers positifs, tandis que condition est une expression retournant vrai ou faux.*
 
 | Expression     | Résultat                                          |
 |-----------     |---------------------------------------------------|

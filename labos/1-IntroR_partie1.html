@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -304,19 +269,19 @@ div.tocify {
 <li><em>R</em> est distribué comme logiciel libre (<em>open source</em>).</li>
 </ul>
 </div>
-<div id="pourquoi-programmer-ses-analyses-de-donnees" class="section level2">
+<div id="pourquoi-programmer-ses-analyses-de-données" class="section level2">
 <h2>Pourquoi programmer ses analyses de données?</h2>
 <p>Pourquoi écrire des programmes (ou scripts) pour réaliser ses analyses de données, plutôt que d’utiliser un logiciel à interface graphique (ex.: Excel)? Apprendre un language comme R demande plus de temps au départ, mais apporte plusieurs bénéfices.</p>
 <ul>
-<li><p>Les scripts constituent un registre fidèle des analyses effectuées sur un jeu de données. Vous, vos collaborateurs ou d’autres chercheurs pourront facilement reproduire cette analyse à l’avenir (ex.: lorsque de nouvelles données sont disponibles).</p></li>
+<li><p>Les scripts constituent un registre fidèle des analyses effectuées sur un jeu de données. Vous et vos collègues pourrez facilement reproduire cette analyse à l’avenir (ex.: lorsque de nouvelles données sont disponibles).</p></li>
 <li><p>Les scripts permettent d’automatiser des tâches répétitives (ex.: effectuer la même analyse sur 100 fichiers de données).</p></li>
 </ul>
 </div>
 <div id="pourquoi-programmer-en-r" class="section level2">
 <h2>Pourquoi programmer en R?</h2>
 <ul>
-<li><p>Les fonctions et types de données de base sont conçues pour les statistiques.</p></li>
-<li><p>L’accès libre au logiciel facilite le partage de programmes entre chercheurs.</p></li>
+<li><p>Les fonctions et types de données de base sont conçus pour les statistiques.</p></li>
+<li><p>L’accès libre au logiciel facilite le partage de programmes entre groupes de recherche.</p></li>
 <li><p>De nombreux modules existent pour des analyses spécialisées dans différents domaines, dont l’écologie.</p></li>
 <li><p>Vu la grande communauté d’utilisateurs, il est facile de trouver de l’aide en ligne.</p></li>
 </ul>
@@ -340,7 +305,7 @@ div.tocify {
 <li><p>Écrire ses propres fonctions.</p></li>
 </ul>
 </div>
-<div id="operations-de-base-dans-r" class="section level1">
+<div id="opérations-de-base-dans-r" class="section level1">
 <h1>Opérations de base dans R</h1>
 <div id="r-comme-calculatrice" class="section level2">
 <h2>R comme calculatrice</h2>
@@ -354,13 +319,13 @@ div.tocify {
 <p><strong>Réponse</strong>: R indique ainsi qu’il s’agit du premier élément du résultat. Dans ce cas-ci, il ne comporte qu’un élément.</p>
 </blockquote>
 </div>
-<div id="operateurs-de-comparaison" class="section level2">
+<div id="opérateurs-de-comparaison" class="section level2">
 <h2>Opérateurs de comparaison</h2>
 <p>On utilise <code>==</code> pour vérifier si deux expressions sont égales et <code>!=</code> pour voir si elles sont différentes. R reconnaît aussi les comparaisons <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code> et <code>&gt;=</code>.</p>
 <pre class="r"><code>(4 + 3) * 2 != 4 + (3 * 2)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
-<div id="fonctions-mathematiques" class="section level2">
+<div id="fonctions-mathématiques" class="section level2">
 <h2>Fonctions mathématiques</h2>
 <p>Plusieurs fonctions mathématiques sont définies dans R, comme <code>exp</code>, <code>log</code>, <code>sqrt</code> (racine carrée), ainsi que les fonctions trigonométriques et des constantes comme <code>pi</code>.</p>
 <pre class="r"><code>cos(pi)</code></pre>
@@ -368,8 +333,8 @@ div.tocify {
 </div>
 <div id="retour1" class="section level2">
 <h2>Exercice 1</h2>
-<p>Choisissez un nombre <span class="math inline">\(x\)</span> et vérifiez dans R que la proposition suivante est vraie:</p>
-<p><span class="math display">\[sin(x)^2 + cos(x)^2 = 1\]</span></p>
+<p>En remplaçant <span class="math inline">\(x\)</span> par un nombre de votre choix, transcrivez dans R la proposition suivante et vérifiez qu’elle retourne <code>TRUE</code>.</p>
+<p><span class="math display">\[(\sin x)^2 + (\cos x)^2 = 1\]</span></p>
 <p><a href="#sol1">Solution</a></p>
 </div>
 <div id="appel-de-fonctions" class="section level2">
@@ -381,25 +346,24 @@ div.tocify {
 </ul>
 <p>Par exemple, la fonction <code>seq(a, b)</code> crée une séquence de nombres entiers entre <code>a</code> et <code>b</code>:</p>
 <pre class="r"><code>seq(1, 50)</code></pre>
-<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-## [24] 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46
-## [47] 47 48 49 50</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+## [26] 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50</code></pre>
 </div>
-<div id="creer-une-variable" class="section level2">
+<div id="créer-une-variable" class="section level2">
 <h2>Créer une variable</h2>
 <p>L’opérateur <code>&lt;-</code> permet d’assigner la valeur d’une expression à une variable. Si la variable n’existe pas, elle est créée par R à ce moment.</p>
 <pre class="r"><code>x &lt;- 5:10</code></pre>
 <p>Notez que l’opérateur <code>:</code> est un raccourci pour l’instruction <code>seq(5, 10)</code>.</p>
 <blockquote>
-<p><strong>Truc</strong>: Pour sauver un peu de temps dans RStudio, le raccourci clavier <code>Alt</code>+<code>-</code> produit l’opérateur <code>&lt;-</code>.</p>
+<p><strong>Truc</strong>: Pour économiser un peu de temps dans RStudio, le raccourci clavier <code>Alt</code>+<code>-</code> produit l’opérateur <code>&lt;-</code>.</p>
 </blockquote>
 <p>Pour retrouver la valeur d’une variable, il suffit d’inscrire son nom:</p>
 <pre class="r"><code>x</code></pre>
 <pre><code>## [1]  5  6  7  8  9 10</code></pre>
 <p>Remarquez aussi que la variable <code>x</code> est apparue dans l’onglet <em>Environment</em> (coin supérieur droit) dans RStudio. Cet onglet vous permet de consulter rapidement toutes les variables actuellement en mémoire.</p>
 </div>
-<div id="nommer-des-variables-ou-autres-objets" class="section level2">
-<h2>Nommer des variables (ou autres objets)</h2>
+<div id="règles-pour-les-noms-dobjets-dans-r" class="section level2">
+<h2>Règles pour les noms d’objets dans R</h2>
 <p>Dans R, le nom d’un objet reconnu par le logiciel (variable, fonction, etc.) doit commencer par une lettre et peut inclure des lettres, des chiffres ainsi que les caractères <code>_</code> ou <code>.</code>. Notez que R différencie les majuscules et minuscules.</p>
 <pre class="r"><code>X</code></pre>
 <pre><code>## Error in eval(expr, envir, enclos): objet &#39;X&#39; introuvable</code></pre>
@@ -411,7 +375,7 @@ div.tocify {
 </ul>
 </blockquote>
 </div>
-<div id="chaines-de-caractere" class="section level2">
+<div id="chaînes-de-caractère" class="section level2">
 <h2>Chaînes de caractère</h2>
 <p>Pour représenter des données de type textuelles, on utilise des chaînes de caractères, qui doivent être entourées de guillemets pour les différencier des commandes et objets du code.</p>
 <pre class="r"><code>s &lt;- &quot;du texte&quot;</code></pre>
@@ -425,9 +389,9 @@ div.tocify {
 <p>De nombreux sites web offre de l’information sur R. Souvent, la façon la plus rapide d’obtenir de l’aide pour un problème spécifique est d’écrire sa question dans un moteur de recherche.</p>
 </div>
 </div>
-<div id="vecteurs-et-types-de-donnees" class="section level1">
+<div id="vecteurs-et-types-de-données" class="section level1">
 <h1>Vecteurs et types de données</h1>
-<div id="proprietes-dun-vecteur" class="section level2">
+<div id="propriétés-dun-vecteur" class="section level2">
 <h2>Propriétés d’un vecteur</h2>
 <p>La variable <code>x</code> que nous avons créée plus tôt est un vecteur comprenant 6 éléments (les nombres 5 à 10). Le vecteur est la structure de données la plus simple en R; une variable comprenant un seul élément est en fait un vecteur de longueur 1. Tous les éléments d’un vecteur doivent être du même type de données. On peut déterminer la longueur d’un vecteur avec la fonction <code>length</code>, et son type avec la fonction <code>class</code>.</p>
 <pre class="r"><code>length(x)</code></pre>
@@ -435,12 +399,12 @@ div.tocify {
 <pre class="r"><code>class(x)</code></pre>
 <pre><code>## [1] &quot;integer&quot;</code></pre>
 </div>
-<div id="editeur-dans-rstudio" class="section level2">
+<div id="éditeur-dans-rstudio" class="section level2">
 <h2>Éditeur dans RStudio</h2>
 <p>Jusqu’à maintenant, nous avons entré des commandes directement dans la console. Pour sauvegarder une liste de commandes, qui deviendra éventuellement un script d’analyse, nous utiliserons l’éditeur dans RStudio (coin supérieur gauche).</p>
 <p><strong>Note</strong>: Lorsque vous ouvrez une nouvelle session sur RStudio, un script vide devrait apparaître dans l’éditeur. Si ce n’est pas le cas, allez dans <em>File -&gt; New File -&gt; R Script</em> pour créer un nouveau script.</p>
 </div>
-<div id="creer-un-vecteur" class="section level2">
+<div id="créer-un-vecteur" class="section level2">
 <h2>Créer un vecteur</h2>
 <p>La fonction <code>c</code> combine plusieurs valeurs dans un vecteur.</p>
 <p>Entrez les commandes suivantes dans l’éditeur, puis exécutez-les avec le bouton <em>Run</em> (en haut à droite de l’éditeur) ou avec le raccourci clavier <code>Ctrl</code>+<code>Enter</code>. Dans les deux cas, le curseur doit être placé sur la ligne à exécuter. Vous pouvez aussi sélectionner un bloc de lignes à exécuter d’un coup.</p>
@@ -460,7 +424,7 @@ espece &lt;- c(&quot;sapin&quot;, &quot;pin&quot;, &quot;bouleau&quot;)</code></
 </ol>
 <p><a href="#sol2">Solution</a></p>
 </div>
-<div id="operations-sur-des-vecteurs" class="section level2">
+<div id="opérations-sur-des-vecteurs" class="section level2">
 <h2>Opérations sur des vecteurs</h2>
 <p>Dans R, les opérations mathématiques de base sont vectorisées, c’est-à-dire qu’elles s’appliquent séparément à chaque élément d’un vecteur.</p>
 <pre class="r"><code>v &lt;- c(1, 4, 9)
@@ -477,7 +441,7 @@ esp_pin</code></pre>
 <pre><code>## [1] FALSE  TRUE FALSE</code></pre>
 <p>Notez que la variable <code>esp_pin</code> est de type logique (vrai/faux).</p>
 </div>
-<div id="resume-des-types-de-donnees-de-base" class="section level2">
+<div id="résumé-des-types-de-données-de-base" class="section level2">
 <h2>Résumé des types de données de base</h2>
 <ul>
 <li><code>integer</code> (nombres entiers)</li>
@@ -487,7 +451,7 @@ esp_pin</code></pre>
 </ul>
 </div>
 </div>
-<div id="tableaux-de-donnees-data-frames" class="section level1">
+<div id="tableaux-de-données-data-frames" class="section level1">
 <h1>Tableaux de données (<em>data frames</em>)</h1>
 <p>Un tableau de données est une structure de données en deux dimensions formée en combinant des vecteurs de même grandeur. Il est utilisé pour représenter une série d’observations (rangées) d’un même ensemble de variables (colonnes).</p>
 <pre class="r"><code>arbres &lt;- data.frame(espece, diam)
@@ -499,15 +463,14 @@ arbres</code></pre>
 <p>La fonction <code>str()</code> permet d’obtenir plus de détails sur la structure d’un objet.</p>
 <pre class="r"><code>str(arbres)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    3 obs. of  2 variables:
-##  $ espece: Factor w/ 3 levels &quot;bouleau&quot;,&quot;pin&quot;,..: 3 2 1
+##  $ espece: chr  &quot;sapin&quot; &quot;pin&quot; &quot;bouleau&quot;
 ##  $ diam  : num  7.5 3 1.4</code></pre>
-<p>Notez que l’espèce n’est plus une variable de type caractère, mais plutôt un facteur, c’est-à-dire une variable catégorielle codée par des nombres entiers (bouleau = 1, pin = 2, sapin = 3). Par défaut, R effectue automatiquement cette transformation lors de la création d’un tableau de données.</p>
-<div id="charger-un-tableau-de-donnees-a-partir-dun-fichier" class="section level2">
+<div id="charger-un-tableau-de-données-à-partir-dun-fichier" class="section level2">
 <h2>Charger un tableau de données à partir d’un fichier</h2>
 <p>La plupart du temps, on souhaite charger des tableaux de données existants plutôt que de les créer dans R. Nous verrons ici comment importer des données enregistrées en format CSV (<em>comma-separated values</em>).</p>
 <p>Tout d’abord, il faut s’assurer que R pointe vers le bon répertoire de travail. Dans l’onglet <em>Files</em> (coin inférieur droit de RStudio), utilisez le bouton “…” à droite pour naviguer vers le répertoire contenant le fichier de données <code>cours1_kejimkujik.csv</code>, puis cliquez sur <em>More -&gt; Set As Working Directory</em>. (On peut aussi appeler la fonction <code>setwd</code> dans R avec un chemin vers le répertoire.) Le répertoire de travail actuel s’affiche sur la ligne en haut de la console.</p>
 <p>Ensuite, appelons la fonction <code>read.csv</code> pour charger les données d’inventaire d’arbres dans des parcelles du Parc national de Kejimkujik (Nouvelle-Écosse):</p>
-<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
+<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;)
 str(kejim)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1161 obs. of  9 variables:
 ##  $ site     : chr  &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; ...
@@ -519,7 +482,6 @@ str(kejim)</code></pre>
 ##  $ nb_tiges : int  1 1 1 1 1 1 1 1 1 1 ...
 ##  $ espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
 ##  $ dhp      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
-<p>La fonction <code>read.csv</code> requiert d’abord le nom du fichier CSV et accepte plusieurs arguments optionnels. Ici, nous spécifions <code>stringsAsFactors = FALSE</code> pour désactiver la conversion automatique des variables textuelles en facteurs.</p>
 <blockquote>
 <p><strong>Trucs</strong></p>
 <p>La touche <em>Tab</em> donne accès à plusieurs types d’aide dans RStudio, dépendamment du contexte. Par exemple, on peut obtenir:</p>
@@ -544,15 +506,15 @@ str(kejim)</code></pre>
 <pre><code>## [1] 1161    9</code></pre>
 </div>
 </div>
-<div id="selectionner-des-elements-dun-vecteur-ou-dun-tableau-de-donnees" class="section level1">
+<div id="sélectionner-des-éléments-dun-vecteur-ou-dun-tableau-de-données" class="section level1">
 <h1>Sélectionner des éléments d’un vecteur ou d’un tableau de données</h1>
-<div id="extaire-une-variable-dun-tableau-de-donnees" class="section level2">
+<div id="extaire-une-variable-dun-tableau-de-données" class="section level2">
 <h2>Extaire une variable d’un tableau de données</h2>
 <p>Dans R, l’opérateur <code>$</code> permet d’extraire une partie d’un objet complexe, et en particulier, d’extraire une variable (colonne) d’un tableau de données.</p>
 <pre class="r"><code>dhp &lt;- kejim$dhp</code></pre>
 <p>Ici, le résultat <code>dhp</code> est un vecteur numérique.</p>
 </div>
-<div id="extraire-des-elements-dun-vecteur" class="section level2">
+<div id="extraire-des-éléments-dun-vecteur" class="section level2">
 <h2>Extraire des éléments d’un vecteur</h2>
 <p>Pour extraire certains éléments d’un vecteur selon leur position, on utilise les crochets (<code>[]</code>):</p>
 <pre class="r"><code>dhp[2]</code></pre>
@@ -567,7 +529,7 @@ dhp5</code></pre>
 <p>Finalement, il est possible de sélectionner des valeurs selon une condition logique. Dans l’instruction ci-dessous, R détermine les positions des valeurs <em>TRUE</em> dans le vecteur logique <code>dhp5 &gt; 20</code>, puis extrait les valeurs de <code>dhp5</code> correspondant à ses positions:</p>
 <pre class="r"><code>dhp5[dhp5 &gt; 20]</code></pre>
 <pre><code>## [1] 24.0 29.8 29.0</code></pre>
-<p>Il est possible de remplacer certains éléments d’un vecteur (ou d’une colonne d’un tableau de données) en combinant la sélection et l’assignation de valeur. Le code suivant remplace les valeurs de DHP inférieures à 1 par la valeur 1.</p>
+<p>Pour remplacer certains éléments d’un vecteur (ou d’une colonne d’un tableau de données), nous pouvons combiner la sélection et l’assignation de valeur. Le code suivant remplace les valeurs de DHP inférieures à 1 par la valeur 1.</p>
 <pre class="r"><code>dhp[dhp &lt; 1] &lt;- 1</code></pre>
 </div>
 <div id="retour3" class="section level2">
@@ -581,7 +543,7 @@ dhp5</code></pre>
 </ol>
 <p><a href="#sol3">Solution</a></p>
 </div>
-<div id="extraire-une-section-dun-tableau-de-donnees" class="section level2">
+<div id="extraire-une-section-dun-tableau-de-données" class="section level2">
 <h2>Extraire une section d’un tableau de données</h2>
 <p>On peut aussi utiliser la notation <code>[]</code> pour extraire une partie d’un tableau de données. Dans ce cas, le choix des rangées et des colonnes est séparé par une virgule:</p>
 <pre class="r"><code>kejim[1:5, 6:9]</code></pre>
@@ -615,7 +577,7 @@ str(kejim2)</code></pre>
 <p>La fonction <code>plot</code> crée différents types de graphiques selon ses arguments; en lui donnant deux vecteurs numériques, elle produit un nuage de points.</p>
 <p>Au prochain laboratoire, nous verrons comment réaliser des graphiques plus complexes et personnalisés à l’aide du package <strong>ggplot2</strong>.</p>
 </div>
-<div id="autres-structures-de-donnees" class="section level1">
+<div id="autres-structures-de-données" class="section level1">
 <h1>Autres structures de données</h1>
 <div id="matrice" class="section level2">
 <h2>Matrice</h2>
@@ -649,7 +611,7 @@ liste1</code></pre>
 ## [1] &quot;ab&quot;</code></pre>
 <pre class="r"><code>liste1[[3]]</code></pre>
 <pre><code>## [1] &quot;ab&quot;</code></pre>
-<p>Une liste peut même contenir des vecteurs d’autres listes:</p>
+<p>Une liste peut même contenir des vecteurs ou d’autres listes:</p>
 <pre class="r"><code>liste2 &lt;- list(c(10, 20), &quot;cd&quot;, liste1)
 str(liste2)</code></pre>
 <pre><code>## List of 3
@@ -745,7 +707,7 @@ mean(v_na)</code></pre>
 <pre class="r"><code>mean(v_na, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 4</code></pre>
 </div>
-<div id="ecrire-ses-propres-fonctions" class="section level1">
+<div id="écrire-ses-propres-fonctions" class="section level1">
 <h1>Écrire ses propres fonctions</h1>
 <p>Tel que mentionné plus haut, un des avantages d’un langage de programmation comme R est la possibilité d’automatiser des opérations répétitives par le biais de fonctions. Ainsi, vous pouvez définir vos propres fonctions, afin de créer un “raccourci” vers une séquence d’opérations plus simples.</p>
 <p>Voici la structure de base d’une fonction R:</p>
@@ -789,7 +751,7 @@ type_arbre &lt;- function(espece) {
 </div>
 <div id="rappel" class="section level1">
 <h1>Rappel</h1>
-<div id="fonctions-et-operations-essentielles" class="section level2">
+<div id="fonctions-et-opérations-essentielles" class="section level2">
 <h2>Fonctions et opérations essentielles</h2>
 <table>
 <thead>
@@ -884,9 +846,9 @@ type_arbre &lt;- function(espece) {
 </tbody>
 </table>
 </div>
-<div id="selectionner-des-elements-dun-objet" class="section level2">
+<div id="sélectionner-des-éléments-dun-objet" class="section level2">
 <h2>Sélectionner des éléments d’un objet</h2>
-<p><em>Ici, i,j,k et l sont des nombres entiers positifs.</em></p>
+<p><em>Ici, i, j, k et l sont des nombres entiers positifs, tandis que condition est une expression retournant vrai ou faux.</em></p>
 <table>
 <colgroup>
 <col width="17%" />
@@ -931,7 +893,7 @@ type_arbre &lt;- function(espece) {
 </table>
 </div>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <p>Le contenu de cette partie est basé sur un cours d’introduction à R préparé par Marc Mazerolle (professeur à l’U. Laval, anciennement UQAT), ainsi qu’un atelier offert par le Socio-Environmental Synthesis Center (SESYNC) et disponible en ligne à: <a href="https://cyberhelp.sesync.org/basic-R-lesson/" class="uri">https://cyberhelp.sesync.org/basic-R-lesson/</a>.</p>
 </div>
@@ -992,6 +954,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
