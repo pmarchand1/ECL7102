@@ -1,6 +1,6 @@
 ---
 title: "Introduction à R - Partie 1"
-date: "4 septembre 2019"
+date: "2 septembre 2020"
 output:
     html_document:
         self_contained: false

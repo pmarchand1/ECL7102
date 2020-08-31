@@ -1,6 +1,6 @@
 ---
 title: "Introduction to R - Part 1"
-date: "September 4, 2019"
+date: "September 2, 2020"
 output:
     html_document:
         self_contained: false
@@ -95,9 +95,9 @@ cos(pi)
 
 ## Exercise 1 {#return1}
 
-Choose a number $x$ and check using R that the following proposition is true:
+After replacing $x$ with a number of your choice, transcribe the following proposition in R and check that it returns TRUE:
 
-$$sin(x)^2 + cos(x)^2 = 1$$
+$$(\sin x)^2 + (\cos x)^2 = 1$$
 
 [Solution](#sol1)
 
@@ -133,7 +133,7 @@ x
 Also note that the `x` variable appeared in the *Environment* tab (upper right corner) in RStudio. This tab allows you to quickly consult all variables currently in memory.
 
 
-## Names of variables (or other objects)
+## Rules for naming objects in R
 
 In R, the name of an object recognized by the software (variable, function, etc.) must begin with a letter and may include letters, numbers, or the characters `_` and `.`. Note that R is case-sensitive.
 
@@ -248,7 +248,6 @@ The `str()` function provides more details about the structure of an object.
 str(trees)
 ```
 
-Note that the species is no longer a character variable, but rather a factor, that is, a categorical variable encoded by integers (birch = 1, pin = 2, fir = 3). By default, R automatically performs this transformation when creating a data frame.
 
 ## Load a data frame from a file
 
@@ -258,11 +257,10 @@ First, make sure that R points to the right working directory. In the *Files* ta
 
 Next, call the `read.csv` function to load tree inventory data from plots in the Kejimkujik National Park, Nova Scotia:
 ```{r read_csv}
-kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+kejim <- read.csv("cours1_kejimkujik.csv")
 str(kejim)
 ```
 
-The `read.csv` function first requires the name of the CSV file and accepts several optional arguments. Here, we specify `stringsAsFactors = FALSE` to disable the automatic conversion of character variables into factors.
 
 >**Tips**
 >
@@ -318,7 +316,7 @@ Finally, it is possible to select values according to a logical condition. In th
 dhp5[dhp5 > 20]
 ```
 
-We can replace specific elements in a vector (or in a data frame column) by combining selection and assignment. The code below replaces the DHP values smaller than 1 with the value 1.
+To replace specific elements in a vector (or in a data frame column), we combine selection and assignment. The code below replaces the DHP values smaller than 1 with the value 1.
 
 ```{r extr_rempl}
 dhp[dhp < 1] <- 1
@@ -396,7 +394,7 @@ list1
 list1[[3]]
 ```
 
-A list can even contain vectors from other lists:
+A list can even contain vectors or other lists:
 ```{r list_mult}
 list2 <- list(c(10, 20), "cd", list1)
 str(list2)
@@ -558,7 +556,7 @@ Operator | Usage |
 
 ## Select elements of an object
 
-*Here, i, j, k and l are positive integers.*
+*Here, i, j, k and l are positive integers, while condition is an expression that returns TRUE or FALSE.*
 
 | Expression | Result |
 | ----------- | --------------------------------------------------- |

@@ -1,3 +1,70 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,300italic,400,400italic,700,700italic');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,700,700italic');
+@import url('https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,500,500italic,700,700italic');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,300italic,400,400italic,500,500italic,700,700italic');
+
+h1 {
+  font-family: 'Montserrat', 'Arial';
+  font-weight: 500;
+  font-size: 42px;
+  margin-bottom: 1em;
+}
+
+h2, h3 {
+  font-family: 'Montserrat', 'Arial';
+}
+
+body {
+  font-family: 'Roboto','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+}
+
+.remark-code {
+  font-family: 'Roboto Mono', 'Fira Code', 'Lucida Console', Monaco, monospace;
+  font-size: 80%;
+  background: #eee!important;
+}
+
+.remark-inline-code {
+  font-family: 'Roboto Mono', 'Fira Code', 'Lucida Console', Monaco, monospace;
+  font-size: 100%;
+  background: none;
+}
+
 .remark-slide-content {
     font-size: 24px;
+/*    border-top: 80px solid #b3452c; */
+    padding: 1em 3em 1em 3em;
+}
+
+/*
+.inverse {
+    background-color: #b3452c;
+}
+*/
+
+.inverse h1 {
+    font-size: 48px;
+    border: 2px double #FAFAFA;
+    padding: 1em;
+}
+
+.title-slide {
+  background-color: #FAFAFA;
+  border-top: 80px solid #FAFAFA;
+}
+
+.title-slide h1 {
+  font-size: 48px;
+  text-align: left;
+  padding: 0px;
+}
+
+hr, .title-slide h1::after, .mline h1::after {
+  content: '';
+  display: block;
+  border: none;
+  background-color: #d3492a;
+  color: #d3492a;
+  height: 1px;
 }

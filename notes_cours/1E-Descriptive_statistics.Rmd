@@ -1,6 +1,6 @@
 ---
 title: "Descriptive statistics and graphics"
-date: "<br/>August 26, 2019"
+date: "<br/>August 31, 2020"
 output:
     html_document:
         self_contained: false
@@ -14,14 +14,69 @@ output:
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 
 # Objectives
 
+- Describe the role of statistics as part of the scientific method.
+
 - Know the types of data commonly used in statistics.
 
 - Choose appropriate summary statistics and graphical representations for different questions and types of data.
+
+
+# The role of statistics
+
+## What types of questions require statistics?
+
+The statistical methods that will be presented in this course are used throughout the natural and social sciences. There are, however, several reasons why these methods occupy a prominent place in certain disciplines, such as ecology.
+
+- We study complex systems, composed of many types of entities or individuals that interact. A given change can result in a chain of effects, feedback loops, and so on. Isolating the effect of a variable is therefore a significant challenge.
+
+- Individuals are not identical but vary on many levels.
+
+- Our ability to observe the system is limited, both in the number of variables measured, the number of individuals sampled, and the accuracy of the observations themselves.
+
+
+## The scientific method
+
+The scientific method is often presented by a diagram like the one below. On the basis of past observations, researchers pose a *hypothesis* on the functioning of a system. From this hypothesis, we deduce certain *predictions*, which are compared to the result of an *experiment* designed specifically to test the hypothesis. The result leads either to the rejection of the hypothesis or to its provisional acceptance (until a competing hypothesis is proposed on the basis of new observations or results of an experiment).
+
+<img class = "plain" src = "../images/methode_sci_en.png">
+
+In fact, every scientific study does not follow this whole pattern. Different teams can make new observations, formulate new theories or hypotheses, and design experiments to test these hypotheses. For some systems, it is not ethical or practical to perform controlled experiments, so hypotheses must be tested from observations.
+
+There are also several types of scientific questions that are not hypothesis tests. For example:
+
+- How many species of birds are unique to this region?
+
+- What is the distribution range of jack pine? How will it be changed by climate change in the 21st century?
+
+
+## Role of statistics
+
+The following four goals summarize most statistical applications:
+
+- *Describe* and summarize the characteristics of a dataset.
+
+- From measurements taken on a sample of individuals, *estimate* the characteristics of a variable, or of a relationship between variables, at the population level.
+
+- *Test* a hypothesis concerning these variables or relations between variables.
+
+- *Predict* the value of a variable for a new individual out of the sample.
+
+### Examples
+
+- What is the average diameter of the trees measured in a plot? (description, since we have measured all trees)
+
+- How many moose are there in the Parc de la Vérendrye? (estimate, since we have not seen them all)
+    + Is the population growing compared to the previous year? (hypothesis test)
+    + What will be the population in 10 years? (prediction)
+    
+
+The last three tasks (estimation, hypothesis testing and prediction) require the generalization of knowledge acquired from a limited number of observations. We will discuss them more in the following classes. For now, we focus on descriptive statistics.
 
 
 # Types of data
@@ -30,7 +85,7 @@ library(cowplot)
 
 For this lesson, we will use a tree inventory dataset from 20m x 20m plots at Kejimkujik National Park, Nova Scotia. These data are freely available on the Government of Canada Open Data Portal.
 
-Here is an overview of the data. Here, *Num_Arbre* is the tree identification number, *Nb_Tiges* is the number of stems and *DHP* is the diameter at breast height (in cm).
+Here is an overview of the data. Here, *num_arbre* is the tree identification number, *nb_tiges* is the number of stems and *dhp* is the diameter at breast height (in cm).
 
 ```{r apercu_donnees}
 kejim <- read.csv("../donnees/cours1_kejimkujik.csv")
@@ -55,10 +110,10 @@ Ordinal categorical variables are sometimes represented by numbers. However, the
 A **bar graph** is often used to visualize the number of observations in each category; in our example, the number of trees per species.
 
 ```{r bar_espece}
-compte_esp <- group_by(kejim, Espece) %>%
+compte_esp <- group_by(kejim, espece) %>%
     summarize(Compte = n()) %>%
-    mutate(Espece = reorder(Espece, Compte))
-ggplot(compte_esp, aes(x = Espece, y = Compte)) +
+    mutate(espece = reorder(espece, Compte))
+ggplot(compte_esp, aes(x = espece, y = Compte)) +
     geom_col(fill = "darkblue") +
     scale_y_continuous(expand = c(0, 0)) +
     coord_flip()
@@ -68,15 +123,14 @@ To put emphasis on the proportion of observations per category, some use **pie c
 
 ```{r circ_espece}
 compte_esp5 <- kejim %>%
-    mutate(Espece = as.character(Espece)) %>%
-    mutate(Espece = ifelse(Espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
-                           Espece, "Autres")) %>%
-    group_by(Espece) %>%
+    mutate(espece = ifelse(espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
+                           espece, "Autres")) %>%
+    group_by(espece) %>%
     summarize(Compte = n()) %>%
-    mutate(Espece = factor(Espece, 
+    mutate(espece = factor(espece, 
                   levels = c("TSCA", "ACRU", "PIST", "BEPA", "PIRU", "Autres")))
 
-ggplot(compte_esp5, aes(x = factor(1), y = Compte, fill = Espece)) +
+ggplot(compte_esp5, aes(x = factor(1), y = Compte, fill = espece)) +
     geom_col(position = position_stack(), color = "white") +
     coord_polar(theta = "y") +
     theme(axis.line = element_blank(), axis.title = element_blank(), 
@@ -95,8 +149,8 @@ For a dummy variable, the categories have no fixed order. By ordering them accor
 
 A **histogram** is obtained by counting the number of observations in bins of equal size on the axis of the observed variable. Below, the histogram of the DBH clearly shows the asymmetry of the distribution (several small diameter trees and a few trees with very large diameters). We also note that the inventory has a minimum DHH around 10 cm.
 
-```{r histo_dhp}
-dhp_histo <- ggplot(kejim, aes(x = DHP)) +
+```{r histo_dhp, warning = FALSE}
+dhp_histo <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
@@ -109,8 +163,8 @@ The approximation of the distribution by a histogram depends on the choice of bi
 The **density plot** uses a kernel density estimation method to approximate the continuous probability distribution from the observations. As with the histogram, the density plot includes a parameter that determines the resolution of the graph on the *x* axis, ranging from a smoother to a more irregular distribution.
 
 ```{r dens_dhp}
-ggplot(kejim, aes(x = DHP)) +
-    geom_density(color = "orange", fill = "orange", alpha = 0.4) +
+ggplot(kejim, aes(x = dhp)) +
+    geom_density(color = "darkorange", fill = "darkorange", alpha = 0.4) +
     scale_x_continuous(breaks = seq(0, 90, 10)) +
     scale_y_continuous(expand = c(0, 0))
 ```
@@ -148,12 +202,12 @@ Since the mean and the standard deviation have the same units, their ratio can b
 
 In our dataset, the trees have a mean DBH of 21.8 cm, with a standard deviation of 12.3 cm (CV of 56%). We add a point on the histogram to represent the mean and a line corresponding to a standard deviation on each side of the mean. Note that if the mean and standard deviation provide some information on the distribution of values, other information such as the asymmetry of the distribution is lost.
 
-```{r histo_moy_dhp}
-dhp_histo_moy <- ggplot(kejim, aes(x = DHP)) +
+```{r histo_moy_dhp, warning = FALSE}
+dhp_histo_moy <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
-    geom_point(x = mean(kejim$DHP), y = 100, color = "orange", size = 4) +
-    geom_segment(x = mean(kejim$DHP) - sd(kejim$DHP), y = 100,
-         xend = mean(kejim$DHP) + sd(kejim$DHP), yend = 100, color = "orange", size = 2) +
+    geom_point(x = mean(kejim$dhp), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim$dhp) - sd(kejim$dhp), y = 100,
+         xend = mean(kejim$dhp) + sd(kejim$dhp), yend = 100, color = "orange", size = 2) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
     scale_y_continuous(expand = c(0, 0))
@@ -184,7 +238,7 @@ Popularized by Tukey, this graph makes shows the position of the quartiles (incl
 Often, the maximum length of the whiskers is based on the IQR (1.5x the IQR, according to Tukey's convention). Extreme values beyond those limits are represented by points.
 
 ```{r boxplot_dhp}
-dhp_boxplot <- ggplot(kejim, aes(x = 0, y = DHP)) +
+dhp_boxplot <- ggplot(kejim, aes(x = 0, y = dhp)) +
     geom_boxplot(fill = "grey70", width = 0.1) +
     labs(x = "") +
     scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
@@ -196,26 +250,26 @@ dhp_boxplot + scale_x_continuous(limits = c(-0.1, 0.2))
 
 By juxtaposing the histogram of the DBH and boxplot, we see that the latter represents the essential characteristics of the distribution, including the asymmetry, the minimum DBH and the presence of some very large trees.
 
-```{r histo_boxplot}
+```{r histo_boxplot, warning = FALSE}
 plot_grid(dhp_histo_moy, dhp_boxplot + theme_nothing(), 
           rel_heights = c(0.8, 0.2), align = "v", ncol = 1)
 ```
 
 Compared to the mean and standard deviation, quantile-based statistics are less sensitive to extreme values. Let's see what happens if we remove the 18 trees (out of more than 1100) with a DBH greater than 65 cm.
 
-```{r val_extr}
-kejim_max65 <- filter(kejim, DHP <= 65)
-dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = DHP)) +
+```{r val_extr, warning = FALSE}
+kejim_max65 <- filter(kejim, dhp <= 65)
+dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
-    geom_point(x = mean(kejim_max65$DHP), y = 100, color = "orange", size = 4) +
-    geom_segment(x = mean(kejim_max65$DHP) - sd(kejim_max65$DHP), y = 100,
-                 xend = mean(kejim_max65$DHP) + sd(kejim_max65$DHP), yend = 100, 
+    geom_point(x = mean(kejim_max65$dhp), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim_max65$dhp) - sd(kejim_max65$dhp), y = 100,
+                 xend = mean(kejim_max65$dhp) + sd(kejim_max65$dhp), yend = 100, 
                  color = "orange", size = 2) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
     scale_y_continuous(expand = c(0, 0))
 
-dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = DHP)) +
+dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = dhp)) +
     geom_boxplot(fill = "grey70", width = 0.1) +
     labs(x = "") +
     scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
@@ -232,10 +286,10 @@ The exclusion of these few large trees affects the average (4% decrease) and sta
 While the boxplot represents a distribution in a very coarse way, this simplicity can be an advantage when it comes to visualizing numerous distributions side-by-side. For example, we illustrate below the distribution of DBH of the main tree species at Kejimkujik. We see immediately that the DBH of white birches is less variable and distributed more symmetrically than that of other species.
 
 ```{r box_mult2}
-kejim_sub <- filter(kejim, Espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
-    mutate(Espece = reorder(Espece, DHP, FUN = function(x) -median(x)))
+kejim_sub <- filter(kejim, espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
+    mutate(espece = reorder(espece, dhp, FUN = function(x) -median(x)))
 
-ggplot(kejim_sub, aes(x = Espece, y = DHP)) +
+ggplot(kejim_sub, aes(x = espece, y = dhp)) +
     labs(x = "", y = "Diameter at breast height (cm)") +
     geom_boxplot(fill = "grey70") +
     scale_x_discrete(labels = c("White birch", "White pine", "Eastern hemlock",
@@ -308,6 +362,32 @@ If two variables are **independent**, i.e. knowing one of them does not provide 
 This figure shows the correlation coefficients associated with different scatter plots. The first row shows the progression from two independent variables (in the middle) towards stronger positive and negative associations. The second row shows that the correlation coefficient does not depend on the slope of a linear relationship between two variables. The third row gives several examples where the linear correlation is zero, even if there are (non-linear) association patterns between the two variables.
 
 
+# Initial data analysis
+
+It is always useful to first explore the data before moving on to the modelling step. The purpose of this initial analysis is to become familiar with the dataset and identify its particularities or possible anomalies. Here are some suggested points to check.
+
+For categorical variables:
+
+- How many categories are there? 
+- Are some categories very rare?
+
+For numeric variables:
+
+- What is the range of the values? 
+- Is the distribution strongly skewed? 
+- Are there extreme values? 
+
+For all types of variables:
+
+- Are there missing values and how many?
+- Are there implausible values that could be errors? 
+
+
 # References
 
-For a more in-depth discussion of the different methods and best practices for building graphics, I recommend Claus Wilke's eBook, *Fundamentals of Data Visualization*, available freely at: https://serialmentor.com/dataviz/.
+For a more in-depth discussion of different methods and best practices to visualize data, I recommend the following online books:
+
+- Healy, K. *Data Visualization: A practical introduction*. [https://socviz.co/](https://socviz.co/)
+(physical book also available at the UQAT library)
+
+- Wilke, C.O. *Fundamentals of Data Visualization*. [https://clauswilke.com/dataviz/](https://clauswilke.com/dataviz/)

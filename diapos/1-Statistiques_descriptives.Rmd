@@ -1,23 +1,34 @@
 ---
 title: "Statistiques descriptives et représentations graphiques"
-date: "<br/>26 août 2019"
+date: "31 août 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, fig.dim = c(8, 6))
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
 library(tidyverse)
 library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
 
 
 # Objectifs
+
+- Décrire le rôle des statistiques dans la méthode scientifique.
 
 - Connaître les types de données couramment utilisés en statistiques.
 
@@ -25,22 +36,117 @@ library(cowplot)
 
 ---
 
+class: inverse, middle, center
+
+# Rôle des statistiques
+
+---
+
+# Question
+
+Quels sont des exemples de problèmes où nous devons faire appel aux statistiques ?
+
+---
+
+# Importance des statistiques
+
+- Systèmes complexes
+
+    + Plusieurs types d'entités / individus qui interagissent
+    + Chaînes de cause à effet, rétroaction, etc.
+    
+--
+
+- Variation entre individus
+
+--
+
+- Observations incomplètes
+
+    + Nombre limité de variables
+    + Nombre limité d'individus (échantillonnage)
+    + Erreurs d'observation
+
+---
+
+# Méthode scientifique
+
+<img class="plain"  src="../images/methode_sci.png">
+
+---
+
+# Méthode scientifique
+
+En pratique...
+
+- Chaque étude scientifique ne contient pas toutes les étapes des la méthode scientifique classique.
+
+--
+
+- Toutes les questions scientifiques ne sont pas des tests d'hypothèse, par exemple:
+    + Combien y a-t-il d'espèces d'oiseaux uniques à cette région?
+    + Quelle est l'aire de répartition du pin gris? Comment sera-t-elle modifiée par les changements climatiques au 21e siècle?
+
+---
+
+# Rôles des statistiques
+
+- *Décrire* les caractéristiques sommaires d'un ensemble de données.
+
+--
+
+- À partir de mesures prises sur un échantillon d'individus, *estimer* les caractéristiques d'une variable, ou d'une relation entre variables, au niveau de la population.
+
+--
+
+- *Tester* une hypothèse portant sur ces variables ou relations entre variables.
+
+--
+
+- *Prédire* la valeur d'une variable pour un nouvel individu hors de l'échantillon.
+
+---
+
+# Exemples
+
+- Quel est le diamètre moyen des arbres mesurés dans une parcelle?
+
+--
+
+- Combien y a-t-il d’orignaux dans le Parc de la Vérendrye? 
+
+--
+
+    + La population est-elle en croissance par rapport à l’année précédente?
+    
+--
+
+    + Quelle sera la population dans 10 ans? 
+    
+--
+
+Les trois dernières tâches (estimation, test d'hypothèse et prédiction) demandent de généraliser les connaissances acquises à partir d'un nombre limité d'observations.
+
+---
+
+class: inverse, middle, center
+
+# Statistiques descriptives
+
+---
+
 # Exemple
 
 Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-Écosse) 
 
-<br/>
 ```{r apercu_donnees}
 kejim <- read.csv("../donnees/cours1_kejimkujik.csv")
 head(kejim)
 ```
-<small>
 
->- *num_arbre* est le numéro d'identification de l'arbre.
->- *nb_tiges* est le nombre de tiges.
->- *dhp* est le diamètre à hauteur de poitrine en cm.
-
-</small>
+- *num_arbre* est le numéro d'identification de l'arbre.
+- *nb_tiges* est le nombre de tiges.
+- *dhp* est le diamètre à hauteur de poitrine en cm.
 
 ---
 
@@ -49,6 +155,8 @@ head(kejim)
 ## Variables numériques
 
 - Continues: Nombre infini de valeurs possibles dans un intervalle  (ex. diamètre).
+
+--
     
 - Discrètes: Seulement certaines valeurs numériques possibles dans un intervalle, généralement des nombres entiers (ex.: année, nombre de tiges).
 
@@ -60,15 +168,17 @@ head(kejim)
 
 - Nominales: Catégories sans ordre établi (ex. site, espèce).
 
+--
+
 - Ordinales: Catégories ordonnées (ex. classe de drainage: xérique, mésique, hydrique).
 
 --
 
-En pratique, pourquoi une variable ordinale est-elle différente d'une variable numérique discrète?
+En quoi une variable ordinale diffère-t-elle d'une variable numérique discrète?
     
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Visualiser la distribution d'une variable catégorielle
 
@@ -92,7 +202,6 @@ ggplot(compte_esp, aes(x = espece, y = compte)) +
 
 ```{r circ_espece, fig.dim = c(7, 5)}
 compte_esp5 <- kejim %>%
-    mutate(espece = as.character(espece)) %>%
     mutate(espece = ifelse(espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
                            espece, "Autres")) %>%
     group_by(espece) %>%
@@ -126,7 +235,7 @@ Quels sont les avantages et inconvénients de ces deux types de graphiques?
 
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Visualiser la distribution d'une variable numérique continue
 
@@ -172,7 +281,7 @@ ggplot(kejim, aes(x = dhp)) +
 
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Statistiques sommaires d'une variable numérique
 
@@ -181,6 +290,8 @@ class: inverse, middle
 # Moyenne
 
 Prenons une série de données $x_1$, $x_2$, ..., $x_n$ provenant de $n$ observations d'une variable $x$.
+
+--
 
 La moyenne de $x$ est notée $\bar{x}$ et définie comme:
 
@@ -228,9 +339,9 @@ $$\sigma_x = \sqrt{\frac{\sum_{i = 1}^{n} (x_i - \bar{x})^2}{n}}$$
 ```{r histo_moy_dhp, fig.dim = c(7, 5), warning = FALSE}
 dhp_histo_moy <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
-    geom_point(x = mean(kejim$DHP), y = 100, color = "orange", size = 4) +
-    geom_segment(x = mean(kejim$DHP) - sd(kejim$DHP), y = 100,
-         xend = mean(kejim$DHP) + sd(kejim$DHP), yend = 100, color = "orange", size = 2) +
+    geom_point(x = mean(kejim$dhp), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim$dhp) - sd(kejim$dhp), y = 100,
+         xend = mean(kejim$dhp) + sd(kejim$dhp), yend = 100, color = "orange", size = 2) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
     scale_y_continuous(expand = c(0, 0))
@@ -259,7 +370,7 @@ Basées sur la position des observations classées en ordre croissant (leur rang
 
 - Quantiles: divisent les données en $m$ groupes contenant le même nombre d'observations.
 
-    + Exemples: quartile ($m$ = 4), quintiles ($m$ = 5), centiles ($m$ = 100)
+    + Exemples: quartiles si $m$ = 4, quintiles si $m$ = 5, centiles si $m$ = 100.
 
 ---
 
@@ -329,6 +440,8 @@ plot_grid(dhp_nonextr_histo, dhp_nonextr_boxplot + theme_nothing(),
           rel_heights = c(0.8, 0.2), align = "v", ncol = 1)
 ```
 
+--
+
 L'exclusion de 18 arbres à dhp > 65 cm affecte davantage la moyenne (-4%) 
 et l'écart-type (-16%) que la médiane (-1%) et l'écart interquartile (-2%).
 
@@ -396,7 +509,7 @@ ggplot(kejim_sub, aes(x = espece, y = dhp)) +
 
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Relation entre deux variables numériques
 
@@ -404,7 +517,9 @@ class: inverse, middle
 
 # Nuage de points
 
-Exemple: Jeux de données sur le sommeil de 83 mammifères, provenant de l'étude de Savage et West (2004) et inclus avec le package *ggplot2* dans R.
+### Exemple 
+
+Jeux de données sur le sommeil de 83 mammifères, provenant de l'étude de Savage et West (2004) et inclus avec le package *ggplot2* dans R.
 
 ```{r nuage_point, fig.dim = c(7, 5)}
 data(msleep)
@@ -470,7 +585,8 @@ $$\rho_{xy} = \frac{\sigma_{xy}}{\sigma_x \sigma_y}$$
 Coefficients de corrélation pour différents nuages de points.
 
 ![](../images/Correlation_examples.png)
-<small>Source: Wikipédia</small>
+
+.font70[Source: Wikipédia]
 
 ---
 
@@ -481,3 +597,44 @@ Dans notre exemple, la corrélation entre les heures de sommeil et la masse corp
 ```{r nuage_point2}
 nuage_pts
 ```
+
+---
+
+# Analyse initiale des données
+
+- Visualiser les données avant de modéliser.
+
+--
+
+Pour les variables catégorielles:
+
+- Combien de catégories y a-t-il? 
+- Certaines catégories sont-elles très rares?
+
+--
+
+Pour les variables numériques:
+
+- Quelle est l'étendue des valeurs? 
+- La distribution est-elle fortement asymétrique? 
+- Y a-t-il des valeurs extrêmes? 
+
+---
+
+# Analyse initiale des données
+
+Pour tous les types de variables:
+
+- Y a-t-il des valeurs manquantes et combien?
+- Y a-t-il des valeurs implausibles qui pourraient être des erreurs? 
+
+---
+
+# Références
+
+Manuels en-ligne sur la visualisation des données: 
+
+- Healy, K. *Data Visualization: A practical introduction*. [https://socviz.co/](https://socviz.co/)
+(aussi disponible en format papier à la bibliothèque de l'UQAT)
+
+- Wilke, C.O. *Fundamentals of Data Visualization*. [https://clauswilke.com/dataviz/](https://clauswilke.com/dataviz/)

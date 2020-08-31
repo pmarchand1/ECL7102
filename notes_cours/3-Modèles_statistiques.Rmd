@@ -535,7 +535,7 @@ $$s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2}$$
 
 Contrairement à $s^2$, l'estimateur $s$ pour l'écart-type est biaisé, mais il demeure le plus utilisé, puisqu'il n'existe pas de formule aussi simple et non biaisée pour l'écart-type.
 
-Finalement, on utilise aussi $s$ comme estimateur de $\sigma$ pour le calcul de l'erreur-type de $\bar{x}$ ($s / \sqrt{n}$).
+Finalement, on utilise aussi $s$ comme estimateur de $\sigma$ pour le calcul de l'erreur-type de $\bar{x}$; donc cette erreur-type est estimée par $s / \sqrt{n}$.
 
 ## Degrés de liberté
 

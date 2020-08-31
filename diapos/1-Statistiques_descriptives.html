@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Statistiques descriptives et représentations graphiques</title>
     <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles-xar.css" type="text/css" />
@@ -12,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 # Statistiques descriptives et représentations graphiques
-### <br/>26 août 2019
+### 31 août 2020
 
 ---
 
@@ -22,9 +23,110 @@ class: center, middle, inverse, title-slide
 
 # Objectifs
 
+- Décrire le rôle des statistiques dans la méthode scientifique.
+
 - Connaître les types de données couramment utilisés en statistiques.
 
 - Choisir des statistiques sommaires et des représentations graphiques appropriées pour différentes questions et différents types de données.
+
+---
+
+class: inverse, middle, center
+
+# Rôle des statistiques
+
+---
+
+# Question
+
+Quels sont des exemples de problèmes où nous devons faire appel aux statistiques ?
+
+---
+
+# Importance des statistiques
+
+- Systèmes complexes
+
+    + Plusieurs types d'entités / individus qui interagissent
+    + Chaînes de cause à effet, rétroaction, etc.
+    
+--
+
+- Variation entre individus
+
+--
+
+- Observations incomplètes
+
+    + Nombre limité de variables
+    + Nombre limité d'individus (échantillonnage)
+    + Erreurs d'observation
+
+---
+
+# Méthode scientifique
+
+&lt;img class="plain"  src="../images/methode_sci.png"&gt;
+
+---
+
+# Méthode scientifique
+
+En pratique...
+
+- Chaque étude scientifique ne contient pas toutes les étapes des la méthode scientifique classique.
+
+--
+
+- Toutes les questions scientifiques ne sont pas des tests d'hypothèse, par exemple:
+    + Combien y a-t-il d'espèces d'oiseaux uniques à cette région?
+    + Quelle est l'aire de répartition du pin gris? Comment sera-t-elle modifiée par les changements climatiques au 21e siècle?
+
+---
+
+# Rôles des statistiques
+
+- *Décrire* les caractéristiques sommaires d'un ensemble de données.
+
+--
+
+- À partir de mesures prises sur un échantillon d'individus, *estimer* les caractéristiques d'une variable, ou d'une relation entre variables, au niveau de la population.
+
+--
+
+- *Tester* une hypothèse portant sur ces variables ou relations entre variables.
+
+--
+
+- *Prédire* la valeur d'une variable pour un nouvel individu hors de l'échantillon.
+
+---
+
+# Exemples
+
+- Quel est le diamètre moyen des arbres mesurés dans une parcelle?
+
+--
+
+- Combien y a-t-il d’orignaux dans le Parc de la Vérendrye? 
+
+--
+
+    + La population est-elle en croissance par rapport à l’année précédente?
+    
+--
+
+    + Quelle sera la population dans 10 ans? 
+    
+--
+
+Les trois dernières tâches (estimation, test d'hypothèse et prédiction) demandent de généraliser les connaissances acquises à partir d'un nombre limité d'observations.
+
+---
+
+class: inverse, middle, center
+
+# Statistiques descriptives
 
 ---
 
@@ -32,7 +134,6 @@ class: center, middle, inverse, title-slide
 
 Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-Écosse) 
 
-&lt;br/&gt;
 
 ```
 ##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
@@ -43,13 +144,10 @@ Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-�
 ## 5   BD        A   31    8  2004         8        1   TSCA 15.5
 ## 6   BD        A   31    8  2004         9        1   TSCA 32.0
 ```
-&lt;small&gt;
 
-&gt;- *num_arbre* est le numéro d'identification de l'arbre.
-&gt;- *nb_tiges* est le nombre de tiges.
-&gt;- *dhp* est le diamètre à hauteur de poitrine en cm.
-
-&lt;/small&gt;
+- *num_arbre* est le numéro d'identification de l'arbre.
+- *nb_tiges* est le nombre de tiges.
+- *dhp* est le diamètre à hauteur de poitrine en cm.
 
 ---
 
@@ -58,6 +156,8 @@ Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-�
 ## Variables numériques
 
 - Continues: Nombre infini de valeurs possibles dans un intervalle  (ex. diamètre).
+
+--
     
 - Discrètes: Seulement certaines valeurs numériques possibles dans un intervalle, généralement des nombres entiers (ex.: année, nombre de tiges).
 
@@ -69,15 +169,17 @@ Arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik (Nouvelle-�
 
 - Nominales: Catégories sans ordre établi (ex. site, espèce).
 
+--
+
 - Ordinales: Catégories ordonnées (ex. classe de drainage: xérique, mésique, hydrique).
 
 --
 
-En pratique, pourquoi une variable ordinale est-elle différente d'une variable numérique discrète?
+En quoi une variable ordinale diffère-t-elle d'une variable numérique discrète?
     
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Visualiser la distribution d'une variable catégorielle
 
@@ -111,7 +213,7 @@ Quels sont les avantages et inconvénients de ces deux types de graphiques?
 
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Visualiser la distribution d'une variable numérique continue
 
@@ -145,7 +247,7 @@ Estime la densité de probabilité (probabilité par unité sur l'axe des *x*) p
 
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Statistiques sommaires d'une variable numérique
 
@@ -154,6 +256,8 @@ class: inverse, middle
 # Moyenne
 
 Prenons une série de données `\(x_1\)`, `\(x_2\)`, ..., `\(x_n\)` provenant de `\(n\)` observations d'une variable `\(x\)`.
+
+--
 
 La moyenne de `\(x\)` est notée `\(\bar{x}\)` et définie comme:
 
@@ -222,7 +326,7 @@ Basées sur la position des observations classées en ordre croissant (leur rang
 
 - Quantiles: divisent les données en `\(m\)` groupes contenant le même nombre d'observations.
 
-    + Exemples: quartile ($m$ = 4), quintiles ($m$ = 5), centiles ($m$ = 100)
+    + Exemples: quartiles si `\(m\)` = 4, quintiles si `\(m\)` = 5, centiles si `\(m\)` = 100.
 
 ---
 
@@ -257,6 +361,8 @@ La distance entre les 1er et 3e quartiles se nomme écart interquartile (*interq
 # Sensibilité aux valeurs extrêmes
 
 ![](1-Statistiques_descriptives_files/figure-html/val_extr-1.png)&lt;!-- --&gt;
+
+--
 
 L'exclusion de 18 arbres à dhp &gt; 65 cm affecte davantage la moyenne (-4%) 
 et l'écart-type (-16%) que la médiane (-1%) et l'écart interquartile (-2%).
@@ -311,7 +417,7 @@ Comment pourrait-on améliorer ce graphique ?
 
 ---
 
-class: inverse, middle
+class: inverse, middle, center
 
 # Relation entre deux variables numériques
 
@@ -319,7 +425,9 @@ class: inverse, middle
 
 # Nuage de points
 
-Exemple: Jeux de données sur le sommeil de 83 mammifères, provenant de l'étude de Savage et West (2004) et inclus avec le package *ggplot2* dans R.
+### Exemple 
+
+Jeux de données sur le sommeil de 83 mammifères, provenant de l'étude de Savage et West (2004) et inclus avec le package *ggplot2* dans R.
 
 ![](1-Statistiques_descriptives_files/figure-html/nuage_point-1.png)&lt;!-- --&gt;
 
@@ -378,7 +486,8 @@ Exemple: Jeux de données sur le sommeil de 83 mammifères, provenant de l'étud
 Coefficients de corrélation pour différents nuages de points.
 
 ![](../images/Correlation_examples.png)
-&lt;small&gt;Source: Wikipédia&lt;/small&gt;
+
+.font70[Source: Wikipédia]
 
 ---
 
@@ -387,11 +496,54 @@ Coefficients de corrélation pour différents nuages de points.
 Dans notre exemple, la corrélation entre les heures de sommeil et la masse corporelle des mammifères est de -0.57.
 
 ![](1-Statistiques_descriptives_files/figure-html/nuage_point2-1.png)&lt;!-- --&gt;
+
+---
+
+# Analyse initiale des données
+
+- Visualiser les données avant de modéliser.
+
+--
+
+Pour les variables catégorielles:
+
+- Combien de catégories y a-t-il? 
+- Certaines catégories sont-elles très rares?
+
+--
+
+Pour les variables numériques:
+
+- Quelle est l'étendue des valeurs? 
+- La distribution est-elle fortement asymétrique? 
+- Y a-t-il des valeurs extrêmes? 
+
+---
+
+# Analyse initiale des données
+
+Pour tous les types de variables:
+
+- Y a-t-il des valeurs manquantes et combien?
+- Y a-t-il des valeurs implausibles qui pourraient être des erreurs? 
+
+---
+
+# Références
+
+Manuels en-ligne sur la visualisation des données: 
+
+- Healy, K. *Data Visualization: A practical introduction*. [https://socviz.co/](https://socviz.co/)
+(aussi disponible en format papier à la bibliothèque de l'UQAT)
+
+- Wilke, C.O. *Fundamentals of Data Visualization*. [https://clauswilke.com/dataviz/](https://clauswilke.com/dataviz/)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
+"highlightLines": true,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -432,9 +584,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -443,7 +611,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

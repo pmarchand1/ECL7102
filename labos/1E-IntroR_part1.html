@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-09-04" />
+<meta name="date" content="2020-09-02" />
 
 <title>Introduction to R - Part 1</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction to R - Part 1</h1>
-<h4 class="date">September 4, 2019</h4>
+<h4 class="date">September 2, 2020</h4>
 
 </div>
 
@@ -369,8 +334,8 @@ div.tocify {
 </div>
 <div id="return1" class="section level2">
 <h2>Exercise 1</h2>
-<p>Choose a number <span class="math inline">\(x\)</span> and check using R that the following proposition is true:</p>
-<p><span class="math display">\[sin(x)^2 + cos(x)^2 = 1\]</span></p>
+<p>After replacing <span class="math inline">\(x\)</span> with a number of your choice, transcribe the following proposition in R and check that it returns TRUE:</p>
+<p><span class="math display">\[(\sin x)^2 + (\cos x)^2 = 1\]</span></p>
 <p><a href="#sol1">Solution</a></p>
 </div>
 <div id="calling-functions" class="section level2">
@@ -382,9 +347,8 @@ div.tocify {
 </ul>
 <p>For example, the <code>seq(a, b)</code> function creates a sequence of integers between <code>a</code> and<code>b</code>:</p>
 <pre class="r"><code>seq(1, 50)</code></pre>
-<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-## [24] 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46
-## [47] 47 48 49 50</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+## [26] 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50</code></pre>
 </div>
 <div id="create-a-variable" class="section level2">
 <h2>Create a variable</h2>
@@ -399,8 +363,8 @@ div.tocify {
 <pre><code>## [1]  5  6  7  8  9 10</code></pre>
 <p>Also note that the <code>x</code> variable appeared in the <em>Environment</em> tab (upper right corner) in RStudio. This tab allows you to quickly consult all variables currently in memory.</p>
 </div>
-<div id="names-of-variables-or-other-objects" class="section level2">
-<h2>Names of variables (or other objects)</h2>
+<div id="rules-for-naming-objects-in-r" class="section level2">
+<h2>Rules for naming objects in R</h2>
 <p>In R, the name of an object recognized by the software (variable, function, etc.) must begin with a letter and may include letters, numbers, or the characters <code>_</code> and <code>.</code>. Note that R is case-sensitive.</p>
 <pre class="r"><code>X</code></pre>
 <pre><code>## Error in eval(expr, envir, enclos): objet &#39;X&#39; introuvable</code></pre>
@@ -502,15 +466,14 @@ trees</code></pre>
 <p>The <code>str()</code> function provides more details about the structure of an object.</p>
 <pre class="r"><code>str(trees)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    3 obs. of  2 variables:
-##  $ species: Factor w/ 3 levels &quot;birch&quot;,&quot;fir&quot;,..: 2 3 1
+##  $ species: chr  &quot;fir&quot; &quot;pine&quot; &quot;birch&quot;
 ##  $ diam   : num  7.5 3 1.4</code></pre>
-<p>Note that the species is no longer a character variable, but rather a factor, that is, a categorical variable encoded by integers (birch = 1, pin = 2, fir = 3). By default, R automatically performs this transformation when creating a data frame.</p>
 <div id="load-a-data-frame-from-a-file" class="section level2">
 <h2>Load a data frame from a file</h2>
 <p>Most of the time, we want to load tables of existing data rather than create them in R. We will see here how to import data saved in CSV format (comma-separated values).</p>
 <p>First, make sure that R points to the right working directory. In the <em>Files</em> tab (lower right corner of RStudio), use the “…” button on the right to navigate to the directory containing the data file <code>cours1_kejimkujik.csv</code>, then click on <em>More -&gt; Set As Working Directory</em>. (You can also call the <code>setwd</code> function in R with a path to the directory.) The current working directory is displayed on the line at the top of the console.</p>
 <p>Next, call the <code>read.csv</code> function to load tree inventory data from plots in the Kejimkujik National Park, Nova Scotia:</p>
-<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
+<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;)
 str(kejim)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1161 obs. of  9 variables:
 ##  $ site     : chr  &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; &quot;BD&quot; ...
@@ -522,7 +485,6 @@ str(kejim)</code></pre>
 ##  $ nb_tiges : int  1 1 1 1 1 1 1 1 1 1 ...
 ##  $ espece   : chr  &quot;TSCA&quot; &quot;TSCA&quot; &quot;TSCA&quot; &quot;ACRU&quot; ...
 ##  $ dhp      : num  16.3 24 29.8 29 15.5 32 11.3 44.8 17.2 70.5 ...</code></pre>
-<p>The <code>read.csv</code> function first requires the name of the CSV file and accepts several optional arguments. Here, we specify <code>stringsAsFactors = FALSE</code> to disable the automatic conversion of character variables into factors.</p>
 <blockquote>
 <p><strong>Tips</strong></p>
 <p>The <em>Tab</em> key gives access to several types of help in RStudio, depending on the context. For example, we can get:</p>
@@ -570,7 +532,7 @@ dhp5</code></pre>
 <p>Finally, it is possible to select values according to a logical condition. In the statement below, R determines the positions of the <em>TRUE</em> values in the <code>dhp5 &gt; 20</code> logical vector, and then extracts the values of <code>dhp5</code> corresponding to those positions:</p>
 <pre class="r"><code>dhp5[dhp5 &gt; 20]</code></pre>
 <pre><code>## [1] 24.0 29.8 29.0</code></pre>
-<p>We can replace specific elements in a vector (or in a data frame column) by combining selection and assignment. The code below replaces the DHP values smaller than 1 with the value 1.</p>
+<p>To replace specific elements in a vector (or in a data frame column), we combine selection and assignment. The code below replaces the DHP values smaller than 1 with the value 1.</p>
 <pre class="r"><code>dhp[dhp &lt; 1] &lt;- 1</code></pre>
 </div>
 <div id="return3" class="section level2">
@@ -649,7 +611,7 @@ list1</code></pre>
 ## [1] &quot;ab&quot;</code></pre>
 <pre class="r"><code>list1[[3]]</code></pre>
 <pre><code>## [1] &quot;ab&quot;</code></pre>
-<p>A list can even contain vectors from other lists:</p>
+<p>A list can even contain vectors or other lists:</p>
 <pre class="r"><code>list2 &lt;- list(c(10, 20), &quot;cd&quot;, list1)
 str(list2)</code></pre>
 <pre><code>## List of 3
@@ -886,7 +848,7 @@ tree_type &lt;- function (species) {
 </div>
 <div id="select-elements-of-an-object" class="section level2">
 <h2>Select elements of an object</h2>
-<p><em>Here, i, j, k and l are positive integers.</em></p>
+<p><em>Here, i, j, k and l are positive integers, while condition is an expression that returns TRUE or FALSE.</em></p>
 <table>
 <colgroup>
 <col width="17%" />
@@ -992,6 +954,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

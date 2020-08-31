@@ -1,6 +1,6 @@
 ---
 title: "Statistiques descriptives et représentations graphiques"
-date: "<br/>26 août 2019"
+date: "<br/>31 août 2020"
 output:
     html_document:
         self_contained: false
@@ -14,14 +14,68 @@ output:
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 
 # Objectifs
 
+- Décrire le rôle des statistiques dans la méthode scientifique.
+
 - Connaître les types de données couramment utilisés en statistiques.
 
 - Choisir des statistiques sommaires et des représentations graphiques appropriées pour différentes questions et différents types de données.
+
+
+# Rôle des statistiques
+
+## Quels types de questions font appel aux statistiques?
+
+Les méthodes statistiques qui seront présentées dans ce cours sont utilisées dans l'ensemble des sciences naturelles et sociales. Il existe toutefois plusieurs raisons pour lesquelles ces méthodes occupent une place prépondérante dans certaines disciplines, comme l'écologie.
+
+- Nous étudions des systèmes complexes, composés de nombreux types d'entités ou d'individus qui interagissent. Un changement donné peut engendrer une chaîne d'effets, des boucles de rétroaction, etc. Isoler l'effet d'une variable représente donc un défi important.
+
+- Les individus ne sont pas identiques mais varient à plusieurs niveaux.
+
+- Notre capacité d'observation du système est limitée, tant pour le nombre de variables mesurées, que le nombre d'individus échantillonnées, ainsi que par la précision des observations elles-mêmes.
+
+
+## La méthode scientifique
+
+La méthode scientifique est souvent présentée par un diagramme comme celui ci-dessous. Sur la base d'observations passées, des chercheurs émettent une *hypothèse* sur le fonctionnement d'un système. De cette hypothèse, on déduit certaines *prédictions*, qui sont comparées au résultat d'une *expérience* conçue spécifiquement pour tester l'hypothèse. Le résultat mène soit au rejet de l'hypothèse, soit à son acceptation provisoire (jusqu'à ce qu'une hypothèse compétitrice soit proposée sur la base de nouvelles observations ou résultats d'expérience).
+
+<img class="plain"  src="../images/methode_sci.png">
+
+En réalité, chaque étude scientifique ne suit pas ce schéma en entier. Différentes équipes peuvent réaliser les nouvelles observations, formuler de nouvelles théories ou hypothèses et concevoir les expériences visant à tester ces hypothèses. Pour certains systèmes, il n'est pas éthique ou pratique de réaliser des expériences contrôlées, donc les hypothèses doivent être testées à partir d'observations.
+
+Il existe aussi plusieurs questions d'intérêt scientifique qui ne sont pas des tests d'hypothèse. Par exemple:
+
+- Combien y a-t-il d'espèces d'oiseaux uniques à cette région?
+
+- Quelle est l'aire de répartition du pin gris? Comment sera-t-elle modifiée par les changements climatiques au 21e siècle?
+
+
+## Rôle des statistiques
+
+Les quatre buts suivants résument la plupart des applications des statistiques:
+
+- *Décrire* les caractéristiques sommaires d'un ensemble de données.
+
+- À partir de mesures prises sur un échantillon d'individus, *estimer* les caractéristiques d'une variable, ou d'une relation entre variables, au niveau de la population.
+
+- *Tester* une hypothèse portant sur ces variables ou relations entre variables.
+
+- *Prédire* la valeur d'une variable pour un nouvel individu hors de l'échantillon.
+
+### Exemples
+
+- Quel est le diamètre moyen des arbres mesurés dans une parcelle? (description, puisqu'on a la mesure pour tous les arbres)
+
+- Combien y a-t-il d’orignaux dans le Parc de la Vérendrye? (estimation, puisqu'on ne les a pas tous observés)
+    + La population est-elle en croissance par rapport à l’année précédente? (test d'hypothèse)
+    + Quelle sera la population dans 10 ans? (prédiction)
+    
+Les trois dernières tâches (estimation, test d'hypothèse et prédiction) demandent de généraliser les connaissances acquises à partir d'un nombre limité d'observations. Nous en discuterons davantage dans les prochains cours; pour l'instant, nous nous concentrons sur les statistiques descriptives.
 
 
 # Types de données
@@ -30,7 +84,7 @@ library(cowplot)
 
 Pour cette leçon, nous utiliserons un jeu de données provenant de l'inventaire des arbres sur des parcelles de 20m x 20m au Parc national de Kejimkujik, en Nouvelle-Écosse. Ces données sont disponibles librement sur le portail des données ouvertes du gouvernement du Canada. 
 
-Voici un aperçu des données. Ici, *Num_Arbre* est le numéro d'identification de l'arbre, *Nb_Tiges* est le nombre de tiges et *DHP* est le diamètre à hauteur de poitrine (en cm).
+Voici un aperçu des données. Ici, *num_arbre* est le numéro d'identification de l'arbre, *nb_tiges* est le nombre de tiges et *dhp* est le diamètre à hauteur de poitrine (en cm).
 
 ```{r apercu_donnees}
 kejim <- read.csv("../donnees/cours1_kejimkujik.csv")
@@ -55,10 +109,10 @@ Les variables catégorielles ordinales sont parfois représentées par des nombr
 Un **graphique à barres** est souvent utilisé pour visualiser le nombre d'observations dans chaque catégorie; dans notre exemple, le nombre d'arbres par espèce.
 
 ```{r bar_espece}
-compte_esp <- group_by(kejim, Espece) %>%
-    summarize(Compte = n()) %>%
-    mutate(Espece = reorder(Espece, Compte))
-ggplot(compte_esp, aes(x = Espece, y = Compte)) +
+compte_esp <- group_by(kejim, espece) %>%
+    summarize(compte = n()) %>%
+    mutate(espece = reorder(espece, compte))
+ggplot(compte_esp, aes(x = espece, y = compte)) +
     geom_col(fill = "darkblue") +
     scale_y_continuous(expand = c(0, 0)) +
     coord_flip()
@@ -68,15 +122,14 @@ Pour mettre l'accent sur les proportions des observations par catégorie, on uti
 
 ```{r circ_espece}
 compte_esp5 <- kejim %>%
-    mutate(Espece = as.character(Espece)) %>%
-    mutate(Espece = ifelse(Espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
-                           Espece, "Autres")) %>%
-    group_by(Espece) %>%
-    summarize(Compte = n()) %>%
-    mutate(Espece = factor(Espece, 
+    mutate(espece = ifelse(espece %in% c("TSCA", "ACRU", "PIST", "BEPA", "PIRU"), 
+                           espece, "Autres")) %>%
+    group_by(espece) %>%
+    summarize(compte = n()) %>%
+    mutate(espece = factor(espece, 
                   levels = c("TSCA", "ACRU", "PIST", "BEPA", "PIRU", "Autres")))
 
-ggplot(compte_esp5, aes(x = factor(1), y = Compte, fill = Espece)) +
+ggplot(compte_esp5, aes(x = factor(1), y = compte, fill = espece)) +
     geom_col(position = position_stack(), color = "white") +
     coord_polar(theta = "y") +
     theme(axis.line = element_blank(), axis.title = element_blank(), 
@@ -95,8 +148,8 @@ Pour une variable nominale, les catégories n'ont pas d'ordre fixe. En les ordon
 
 Un **histogramme** est obtenu en comptant le nombre d'observations dans des intervalles de taille égale sur l'axe de la variable observée. Ci-dessous, l'histogramme du DHP montre clairement l'asymétrie de la distribution (plusieurs arbres de petit diamètre et de rares arbres avec un très grand diamètre). On remarque aussi que l'inventaire comporte un DHP minimum autour de 10 cm.
 
-```{r histo_dhp}
-dhp_histo <- ggplot(kejim, aes(x = DHP)) +
+```{r histo_dhp, warning = FALSE}
+dhp_histo <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
@@ -109,8 +162,8 @@ L'approximation de la distribution par un histogramme dépend du choix de la tai
 Le **graphique de densité** utilise quant à lui une méthode d'estimation par noyau (*kernel density estimation*) pour approximer la distribution de probabilité continue à partir des observations. Comme pour l'histogramme, le graphique de densité comprend un paramètre qui détermine la résolution du graphique sur l'axe des *x*, allant d'une distribution plus lisse à une plus irrégulière. 
 
 ```{r dens_dhp}
-ggplot(kejim, aes(x = DHP)) +
-    geom_density(color = "orange", fill = "orange", alpha = 0.4) +
+ggplot(kejim, aes(x = dhp)) +
+    geom_density(color = "darkorange", fill = "darkorange", alpha = 0.4) +
     scale_x_continuous(breaks = seq(0, 90, 10)) +
     scale_y_continuous(expand = c(0, 0))
 ```
@@ -148,12 +201,12 @@ Comme la moyenne et l'écart-type ont les mêmes unités, on peut calculer leur 
 
 Dans notre jeu de données, l'ensemble des arbres a un DHP moyen de 21.8 cm, avec un écart-type de 12.3 cm (CV de 56%). Nous ajoutons un point à l'histogramme pour représenter la moyenne et une ligne correspondant à un écart-type de chaque côté de la moyenne. Notez que si la moyenne et l'écart-type donnent une certaine idée de la distribution des valeurs, d'autres informations telles que l'asymétrie de la distribution sont perdues.
 
-```{r histo_moy_dhp}
-dhp_histo_moy <- ggplot(kejim, aes(x = DHP)) +
+```{r histo_moy_dhp, warning = FALSE}
+dhp_histo_moy <- ggplot(kejim, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
-    geom_point(x = mean(kejim$DHP), y = 100, color = "orange", size = 4) +
-    geom_segment(x = mean(kejim$DHP) - sd(kejim$DHP), y = 100,
-         xend = mean(kejim$DHP) + sd(kejim$DHP), yend = 100, color = "orange", size = 2) +
+    geom_point(x = mean(kejim$dhp), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim$dhp) - sd(kejim$dhp), y = 100,
+         xend = mean(kejim$dhp) + sd(kejim$dhp), yend = 100, color = "orange", size = 2) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
     scale_y_continuous(expand = c(0, 0))
@@ -184,7 +237,7 @@ Popularisé par Tukey, ce graphique permet de visualiser la position des quartil
 Souvent, la longueur maximale de chaque moustache est déterminée par l'écart interquartile (1.5 fois l'IQR, selon la convention de Tukey). Les valeurs extrêmes au-delà de cette limite sont représentées par des points.
 
 ```{r boxplot_dhp}
-dhp_boxplot <- ggplot(kejim, aes(x = 0, y = DHP)) +
+dhp_boxplot <- ggplot(kejim, aes(x = 0, y = dhp)) +
     geom_boxplot(fill = "grey70", width = 0.1) +
     labs(x = "") +
     scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
@@ -196,7 +249,7 @@ dhp_boxplot + scale_x_continuous(limits = c(-0.1, 0.2))
 
 En juxtaposant l'histogramme du DHP et la boîte à moustaches, on voit que cette dernière représente bien les caractéristiques essentielles de la distribution, incluant l'asymétrie, le DHP minimal et la présence de quelques très grands arbres.
 
-```{r histo_boxplot}
+```{r histo_boxplot, warning = FALSE}
 plot_grid(dhp_histo_moy, dhp_boxplot + theme_nothing(), 
           rel_heights = c(0.8, 0.2), align = "v", ncol = 1)
 ```
@@ -204,19 +257,19 @@ plot_grid(dhp_histo_moy, dhp_boxplot + theme_nothing(),
 Par rapport à la moyenne et l'écart-type, les statistiques basées sur les quantiles sont moins sensibles aux valeurs extrêmes. Voyons ce qu'il arrive si nous supprimons les données des 18 arbres (sur plus de 1100) avec un DHP supérieur à 65 cm.
 
 
-```{r val_extr}
-kejim_max65 <- filter(kejim, DHP <= 65)
-dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = DHP)) +
+```{r val_extr, warning = FALSE}
+kejim_max65 <- filter(kejim, dhp <= 65)
+dhp_nonextr_histo <- ggplot(kejim_max65, aes(x = dhp)) +
     geom_histogram(color = "white", fill = "darkblue", binwidth = 5) +
-    geom_point(x = mean(kejim_max65$DHP), y = 100, color = "orange", size = 4) +
-    geom_segment(x = mean(kejim_max65$DHP) - sd(kejim_max65$DHP), y = 100,
-                 xend = mean(kejim_max65$DHP) + sd(kejim_max65$DHP), yend = 100, 
+    geom_point(x = mean(kejim_max65$dhp), y = 100, color = "orange", size = 4) +
+    geom_segment(x = mean(kejim_max65$dhp) - sd(kejim_max65$dhp), y = 100,
+                 xend = mean(kejim_max65$dhp) + sd(kejim_max65$dhp), yend = 100, 
                  color = "orange", size = 2) +
     scale_x_continuous(expand = c(0, 0), breaks = seq(0, 90, 10),
                        limits = c(0, 90)) +
     scale_y_continuous(expand = c(0, 0))
 
-dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = DHP)) +
+dhp_nonextr_boxplot <- ggplot(kejim_max65, aes(x = 0, y = dhp)) +
     geom_boxplot(fill = "grey70", width = 0.1) +
     labs(x = "") +
     scale_y_continuous(limits = c(0, 90), expand = c(0, 0), breaks = seq(0, 90, 10)) +
@@ -233,10 +286,10 @@ L'exclusion de ces quelques grands arbres affecte davantage la moyenne (diminuti
 Si la boîte à moustaches représente une distribution de manière très simplifiée, cette simplicité peut représenter un avantage lorsqu'on souhaite visualiser de nombreuses distributions côte-à-côte. Par exemple, nous illustrons ci-dessous la distribution du DHP des principales espèces d'arbres à Kejimkujik. On remarque tout de suite que le DHP des bouleaux blancs est moins variable et distribué plus symétriquement que celui des autres espèces.
 
 ```{r box_mult2}
-kejim_sub <- filter(kejim, Espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
-    mutate(Espece = reorder(Espece, DHP, FUN = function(x) -median(x)))
+kejim_sub <- filter(kejim, espece %in% c("PIRU", "BEPA", "PIST", "ACRU", "TSCA")) %>%
+    mutate(espece = reorder(espece, dhp, FUN = function(x) -median(x)))
 
-ggplot(kejim_sub, aes(x = Espece, y = DHP)) +
+ggplot(kejim_sub, aes(x = espece, y = dhp)) +
     labs(x = "", y = "Diamètre à hauteur de poitrine (cm)") +
     geom_boxplot(fill = "grey70") +
     scale_x_discrete(labels = c("Bouleau blanc", "Pin blanc", "Pruche du Canada",
@@ -309,6 +362,32 @@ Si deux variables sont **indépendantes**, c'est-à-dire que connaître l'une d'
 Cette figure indique les coefficients de corrélation associés à différents nuages de points. La première rangée montre la progression entre deux variables indépendantes (au centre) vers des associations positives et négatives de plus en plus fortes. La deuxième rangée montre que le coefficient de corrélation ne dépend pas de la pente d'une relation linéaire entre deux variables. La troisième rangée donne plusieurs exemples où la corrélation linéaire est de zéro, même s'il existe des patrons d'association (non-linéaires) entre les deux variables. 
 
 
+# Analyse initiale des données
+
+Il est toujours utile de réaliser une exploration initiale des données avant de passer à l'étape de modélisation. Le but de cette analyse initiale est de se familiariser avec le jeu de données et identifier ses particularités ou possibles anomalies. Voici quelques suggestions de points à vérifier.
+
+Pour les variables catégorielles:
+
+- Combien de catégories y a-t-il? 
+- Certaines catégories sont-elles très rares?
+
+Pour les variables numériques:
+
+- Quelle est l'étendue des valeurs? 
+- La distribution est-elle fortement asymétrique? 
+- Y a-t-il des valeurs extrêmes? 
+
+Pour tous les types de variables:
+
+- Y a-t-il des valeurs manquantes et combien?
+- Y a-t-il des valeurs implausibles qui pourraient être des erreurs? 
+
+
 # Références
 
-Pour une discussion plus approfondie des différentes méthodes et meilleures pratiques pour la construction de graphiques, je recommande le livre électronique de Claus Wilke, *Fundamentals of Data Visualization*, disponible gratuitement en ligne: https://serialmentor.com/dataviz/. 
+Pour une discussion plus approfondie des différentes méthodes et meilleures pratiques pour la construction de graphiques, je recommande les livres électroniques suivants: 
+
+- Healy, K. *Data Visualization: A practical introduction*. [https://socviz.co/](https://socviz.co/)
+(aussi disponible en format papier à la bibliothèque de l'UQAT)
+
+- Wilke, C.O. *Fundamentals of Data Visualization*. [https://clauswilke.com/dataviz/](https://clauswilke.com/dataviz/)
