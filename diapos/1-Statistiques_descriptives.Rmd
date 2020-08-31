@@ -71,7 +71,7 @@ Quels sont des exemples de problèmes où nous devons faire appel aux statistiqu
 
 # Méthode scientifique
 
-<img class="plain"  src="../images/methode_sci.png">
+.center[![](../images/methode_sci.PNG)]
 
 ---
 

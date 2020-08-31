@@ -44,7 +44,7 @@ Les méthodes statistiques qui seront présentées dans ce cours sont utilisées
 
 La méthode scientifique est souvent présentée par un diagramme comme celui ci-dessous. Sur la base d'observations passées, des chercheurs émettent une *hypothèse* sur le fonctionnement d'un système. De cette hypothèse, on déduit certaines *prédictions*, qui sont comparées au résultat d'une *expérience* conçue spécifiquement pour tester l'hypothèse. Le résultat mène soit au rejet de l'hypothèse, soit à son acceptation provisoire (jusqu'à ce qu'une hypothèse compétitrice soit proposée sur la base de nouvelles observations ou résultats d'expérience).
 
-<img class="plain"  src="../images/methode_sci.png">
+![](../images/methode_sci.PNG)
 
 En réalité, chaque étude scientifique ne suit pas ce schéma en entier. Différentes équipes peuvent réaliser les nouvelles observations, formuler de nouvelles théories ou hypothèses et concevoir les expériences visant à tester ces hypothèses. Pour certains systèmes, il n'est pas éthique ou pratique de réaliser des expériences contrôlées, donc les hypothèses doivent être testées à partir d'observations.
 
