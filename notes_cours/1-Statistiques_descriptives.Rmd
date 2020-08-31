@@ -232,7 +232,7 @@ En particulier, les quartiles servent à définir un graphique nommé **boîte �
 
 Popularisé par Tukey, ce graphique permet de visualiser la position des quartiles (incluant la médiane). La boîte située entre le 1er et le 3e quartile représente la région contenant 50% des observations. La distance entre le 1er et le 3e quartile se nomme l'écart interquartile (ou IQR pour *interquartile range*). Une moustache montre l'étendue des données de chaque côté de la boîte.
 
-![](../images/boxplot.png)
+![](../images/boxplot.PNG)
 
 Souvent, la longueur maximale de chaque moustache est déterminée par l'écart interquartile (1.5 fois l'IQR, selon la convention de Tukey). Les valeurs extrêmes au-delà de cette limite sont représentées par des points.
 

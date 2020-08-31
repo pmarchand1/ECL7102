@@ -233,7 +233,7 @@ In particular, quartiles are used to define a graph named the *boxplot*.
 
 Popularized by Tukey, this graph makes shows the position of the quartiles (including the median). The box between the 1st and 3rd quartile represents the region containing 50% of the observations. The distance between the 1st and 3rd quartile is called the interquartile range (or IQR). A whisker shows the range of the data on each side of the box.
 
-![](../images/boxplot.png)
+![](../images/boxplot.PNG)
 
 Often, the maximum length of the whiskers is based on the IQR (1.5x the IQR, according to Tukey's convention). Extreme values beyond those limits are represented by points.
 
