@@ -6,6 +6,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 ## Lecture notes
 
 1. [Descriptive statistics and graphics](notes_cours/1E-Descriptive_statistics.html) ([PDF](notes_cours/1E-Descriptive_statistics.pdf))
+2. [Sampling and parameter estimation](notes_cours/2E-Sampling_estimation.html) ([PDF](notes_cours/2E-Sampling_estimation.pdf))
 
 
 ## Labs

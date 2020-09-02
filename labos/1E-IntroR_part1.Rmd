@@ -219,7 +219,7 @@ If the two vectors do not have the same number of elements, the shortest vector 
 
 ```{r op_vect2}
 diam10 <- diam * 10
-diam
+diam10
 esp_pin <- species == "pine"
 esp_pin
 ```

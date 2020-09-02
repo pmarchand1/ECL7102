@@ -271,7 +271,7 @@ Et l'erreur-type de cette moyenne correspond à:
 
 $$s_{\bar{x}} = \sqrt{\sum_{j = 1}^{m} w_j^2 \frac{s_j^2}{n_j}}$$
 
-Dans ces équations, $n_j$ est le nombre d'observations dans l'échantillon de la strate $j$, $\bar{x}_j$ est sa moyenne et $s_j^2$ est sa variance. Notez que la fraction $s_j^2 / n$ est l'erreur-type de la moyenne de la strate $j$.
+Dans ces équations, $n_j$ est le nombre d'observations dans l'échantillon de la strate $j$, $\bar{x}_j$ est leur moyenne et $s_j^2$ est leur variance. Notez que la fraction $s_j^2 / n$ est la variance de la moyenne de la strate $j$.
 
 Le *poids* $w_j$ d'une strate est la fraction de la population ou de l'aire d'étude contenue dans cette strate. Par exemple, si le quart de l'aire d'étude fait partie de la première strate, $w_1$ = 0.25.
 

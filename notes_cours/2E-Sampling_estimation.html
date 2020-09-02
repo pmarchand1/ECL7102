@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Sampling and parameter estimation</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Sampling and parameter estimation</h1>
+<h4 class="date"><br/>Sept. 8, 2020</h4>
+
+</div>
+
+
+<div id="objectives" class="section level1">
+<h1>Objectives</h1>
+<ul>
+<li><p>Estimate the mean and variance of a population from a sample.</p></li>
+<li><p>Define the bias and standard error of an estimator.</p></li>
+<li><p>Calculate the properties of an estimator by simulation.</p></li>
+<li><p>Describe the advantages and disadvantages of different sampling methods.</p></li>
+<li><p>Choose a sampling method according to the characteristics of the population to be studied.</p></li>
+</ul>
+</div>
+<div id="statistics-parameters-and-estimators" class="section level1">
+<h1>Statistics, parameters and estimators</h1>
+<p>At the last class, we saw a series of descriptive statistics: mean, variances, quantiles and others. In general, a <em>statistic</em> is a quantity calculated from observations of random variables.</p>
+<p>A <em>parameter</em> is a characteristic of the population that is not directly measured. As we will see next week, these parameters are often part of a statistical model to describe the variation of a random variable.</p>
+<p>In this class, our main goal will be to determine to which extent a statistic calculated from observations is a good <em>estimator</em> of a given parameter.</p>
+<p>For example, if we measure the weight of red squirrels and calculate the mean (a statistic), what is our estimate of the mean weight of the red squirrel population (a parameter)? What is its margin of error?</p>
+<blockquote>
+<p>In general, a parameter is a theoretical quantity. In our example, even if we could census all the squirrels, the weight of the individuals varies constantly and the composition of the population too (because of the births, deaths and migrations).</p>
+</blockquote>
+</div>
+<div id="parameter-estimation" class="section level1">
+<h1>Parameter estimation</h1>
+<div id="estimation-of-the-mean" class="section level2">
+<h2>Estimation of the mean</h2>
+<p>Suppose we measure a variable <span class="math inline">\(x\)</span> on a sample of <span class="math inline">\(n\)</span> individuals randomly selected from a population, i.e. where each individual has the same probability of being included in the sample.</p>
+<p>We use the sample mean:</p>
+<p><span class="math display">\[\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i\]</span> as the estimator of <span class="math inline">\(\mu\)</span>, the mean of <span class="math inline">\(x\)</span> in the whole population.</p>
+<blockquote>
+<p>Note: Following a common convention in statistics, parameters are represented by Greek letters and variables or statistics are represented with Latin letters.</p>
+</blockquote>
+<p>One way to study the properties of an estimator is to <em>simulate</em> the sampling process from a known population.</p>
+<p>For this example, imagine that the 1161 trees in the Kejimkujik dataset represent the entire population, and that we sample some of those trees.</p>
+<pre class="r"><code>kejim &lt;- read.csv(&quot;../donnees/cours1_kejimkujik.csv&quot;)
+dhp &lt;- kejim$dhp
+paste(&quot;The population has a mean DBH of&quot;, round(mean(dhp), 2), &quot;cm with a standard deviation of&quot;, round(sd(dhp), 2), &quot;cm.&quot;)</code></pre>
+<pre><code>## [1] &quot;The population has a mean DBH of 21.76 cm with a standard deviation of 12.25 cm.&quot;</code></pre>
+<p>In R, the <code>sample</code> function draws a random sample from the elements of a vector.</p>
+<pre class="r"><code>mean(sample(dhp, 20)) # mean DBH for a sample of n = 20 trees</code></pre>
+<pre><code>## [1] 20.86</code></pre>
+<p>The <code>replicate</code> function repeats the same instruction a number of times; therefore we can easily generate multiple means from different possible random samples.</p>
+<pre class="r"><code># the first argument for replicate gives the number of replications
+replicate(5, mean(sample(dhp, 20)))  </code></pre>
+<pre><code>## [1] 19.5500 18.4800 20.3075 22.2800 24.4250</code></pre>
+<p>The sample mean is therefore also a random variable. As we simulate more and more samples, the resulting values become more representative of the probability of obtaining different values of that mean.</p>
+<p>The histograms below show the distributions (out of 10,000 replicates) of the mean DBH with a sample size <span class="math inline">\(n\)</span> = 10, 20 or 40.</p>
+<p><img src="2E-Sampling_estimation_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>As the sample size increases, the distribution becomes less dispersed, but also more symmetrical. Next week, we will see that it approaches a normal distribution if <span class="math inline">\(n\)</span> is large enough.</p>
+<p>For a variable <span class="math inline">\(x\)</span> that is distributed with a mean <span class="math inline">\(\mu\)</span> and a variance <span class="math inline">\(\sigma^2\)</span>, we can prove that <span class="math inline">\(\bar{x}\)</span> has a mean equal to <span class="math inline">\(\mu\)</span> and a variance equal to <span class="math inline">\(\sigma^2 / n\)</span>. The standard deviation of <span class="math inline">\(\bar{x}\)</span>, which in this context is called the <em>standard error</em>, is therefore inversely proportional to the square root of <span class="math inline">\(n\)</span>.</p>
+<p>Standard error of the mean: <span class="math display">\[\sigma_{\bar{x}} = \frac{\sigma_{x}}{\sqrt{n}}\]</span></p>
+<p>The mean and standard error of <span class="math inline">\(\bar{x}\)</span> calculated from the 10,000 samples simulated above are consistent with the theoretical predictions.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="right">Mean (cm)</th>
+<th align="right">Standard error (cm)</th>
+<th align="right"><span class="math inline">\(\sigma / \sqrt{n}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">21.77</td>
+<td align="right">3.86</td>
+<td align="right">3.87</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">21.76</td>
+<td align="right">2.74</td>
+<td align="right">2.74</td>
+</tr>
+<tr class="odd">
+<td align="right">40</td>
+<td align="right">21.76</td>
+<td align="right">1.89</td>
+<td align="right">1.94</td>
+</tr>
+</tbody>
+</table>
+<p>Since the mean of the estimator is equal to the value of the estimated parameter <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\bar{x}\)</span> is an <em>unbiased</em> estimator of <span class="math inline">\(\mu\)</span>.</p>
+</div>
+<div id="standard-deviation-or-standard-error" class="section level2">
+<h2>Standard deviation or standard error</h2>
+<p>It is important not to confuse the standard deviation of <span class="math inline">\(x\)</span> with the standard error of an estimator, such as <span class="math inline">\(\bar{x}\)</span>. The standard deviation of <span class="math inline">\(x\)</span> measures the dispersion of the individual values of the variable relative to their mean. The standard error of <span class="math inline">\(\bar{x}\)</span> measures the dispersion of the sample mean relative to the population mean. The standard error decreases with the size of the sample.</p>
+<p>Since the standard error decreases according to <span class="math inline">\(\sqrt{n}\)</span> rather than <span class="math inline">\(n\)</span>, if we want to reduce this standard error by half, we must increase the sample size by a factor of 4.</p>
+<p><img src="2E-Sampling_estimation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Note also that the standard error depends only on the size of the sample, not on the population size. This is true as long as the sample is small relative to the population. When sampling a significant fraction of the population (say more than 5%), the actual standard error is smaller than <span class="math inline">\(\sigma / \sqrt{n}\)</span>.</p>
+</div>
+<div id="estimation-of-the-variance" class="section level2">
+<h2>Estimation of the variance</h2>
+<p>To estimate the variance <span class="math inline">\(\sigma^2\)</span> of a variable <span class="math inline">\(x\)</span>, one could calculate the variance of the sample with the equation seen at the last class.</p>
+<p><span class="math display">\[s^2 = \frac{1}{n} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2  \]</span></p>
+<p>Here, we <span class="math inline">\(s^2\)</span> for the variance of a sample to differentiate from the population parameter <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>As before, we test this estimator by simulating 10,000 samples from the DBH vector with <span class="math inline">\(n\)</span> = 10, 20, and 40. The following table shows the mean of <span class="math inline">\(s^2\)</span> and its ratio to the popultion parameter <span class="math inline">\(\sigma^2\)</span> (150.1 cm<span class="math inline">\(^2\)</span>).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="right">Mean of <span class="math inline">\(s^2\)</span> (cm<span class="math inline">\(^2\)</span>)</th>
+<th align="right">Mean of <span class="math inline">\(s^2\)</span> / <span class="math inline">\(\sigma^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">136.3</td>
+<td align="right">0.90</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">143.1</td>
+<td align="right">0.95</td>
+</tr>
+<tr class="odd">
+<td align="right">40</td>
+<td align="right">146.6</td>
+<td align="right">0.97</td>
+</tr>
+</tbody>
+</table>
+<p>This result shows that the calculated variance of the sample systematically underestimates the variance of the population. It is therefore a <em>biased</em> estimator. Why is this the case?</p>
+<p>The problem is that the estimator <span class="math inline">\(s^2\)</span> is not based on the population mean, but on its estimate <span class="math inline">\(\bar{x}\)</span> calculated from the same sample. By definition, the sample is always centered on <span class="math inline">\(\bar{x}\)</span>, but <span class="math inline">\(\bar{x}\)</span> is at some distance from <span class="math inline">\(\mu\)</span>. Therefore, the squared deviations from <span class="math inline">\(\mu\)</span> are slightly larger than the deviations from <span class="math inline">\(\bar{x}\)</span>.</p>
+<p>In fact, the estimator defined above underestimates the variance of the population by a ratio <span class="math inline">\((n-1)/n\)</span>, as shown in the last column of the table (0.9 = 9/10, 0.95 = 19/20). In that case, the bias can be corrected by multiplying the estimator by <span class="math inline">\(n / (n-1)\)</span>, giving the unbiased estimator:</p>
+<p><span class="math display">\[s^2 = \frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2\]</span></p>
+<p>Its square root provides an estimator for the population standard deviation:</p>
+<p><span class="math display">\[s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2}\]</span></p>
+<p>Unlike <span class="math inline">\(s^2\)</span>, the <span class="math inline">\(s\)</span> estimator for the standard deviation is biased, but it remains the most commonly used one, since there is no simple and unbiased formula for standard deviation.</p>
+<p>Finally, we also use <span class="math inline">\(s\)</span> as the <span class="math inline">\(\sigma\)</span> estimator for calculating the standard error of <span class="math inline">\(\bar{x}\)</span>, so that standard error is estimated as <span class="math inline">\(s / \sqrt{n}\)</span>.</p>
+</div>
+<div id="degrees-of-freedom" class="section level2">
+<h2>Degrees of freedom</h2>
+<p>Another way to explain the division by (<span class="math inline">\(n - 1\)</span>) in the calculation of <span class="math inline">\(s^2\)</span> is based on the concept of degrees of freedom.</p>
+<p>The number of degrees of freedom is the number of independent data used in the calculation of a statistic. Here, <span class="math inline">\(s^2\)</span> is computed from the deviations between each observation of <span class="math inline">\(x\)</span> and its mean (<span class="math inline">\(x_i - \bar{x}\)</span>). As we saw in the first class, the definition of <span class="math inline">\(\bar{x}\)</span> ensures that the sum of these deviations is equal to 0. In this case, when we know the first <span class="math inline">\(n - 1\)</span> deviations, we can automatically deduce the last, which is not an independent data point.</p>
+</div>
+<div id="bias-and-standard-error-of-an-estimator" class="section level2">
+<h2>Bias and standard error of an estimator</h2>
+<p>The notions of bias and standard error were briefly presented in the previous section.</p>
+<p>More generally, if we estimate a parameter <span class="math inline">\(\theta\)</span> (e.g. <span class="math inline">\(\mu\)</span>) with an estimator <span class="math inline">\(\hat{\theta}\)</span> (e.g. <span class="math inline">\(\bar{x}\)</span>), we can divide the <em>mean square error</em> between <span class="math inline">\(\hat {\theta}\)</span> and <span class="math inline">\(\theta\)</span> into two components. (In the equation below, the function <span class="math inline">\(E[]\)</span> is another way of representing the mean.)</p>
+<p><span class="math display">\[E[(\hat{\theta} - \theta)^2] = E[(\hat{\theta} - E[\hat{\theta}])^2] + (E[\hat{\theta}] - \theta)^2\]</span></p>
+<p>This equation tells us that the mean square deviation between an estimator and the parameter is the sum of:</p>
+<ul>
+<li><p>the mean square deviation between the estimator and its mean (that is, the variance of the estimator, or the square of its standard error);</p></li>
+<li><p>the square of the difference between the mean of the estimator and the parameter (this difference is the bias);</p></li>
+</ul>
+<p>So, we have the following relation: <em>Mean square error = (Standard error)<span class="math inline">\(^2\)</span> + (Bias)<span class="math inline">\(^2\)</span></em>.</p>
+<p>These two sources of error have different properties. The standard error is due to the limited size of the sample and decreases as <span class="math inline">\(n\)</span> increases. Bias is a systematic error that does not depend on the size of the sample, but may be due to a biased estimator or unrepresentative sampling of the population.</p>
+</div>
+<div id="exercise" class="section level2">
+<h2>Exercise</h2>
+<p>In order to estimate the mean wood density of jack pine on a site, you first sample 9 trees, which have a mean wood density of 450 kg/m<span class="math inline">\(^3\)</span> with a standard deviation of 90 kg/m<span class="math inline">\(^3\)</span>.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>What is the standard error of this mean?</p></li>
+<li><p>If you wanted to know the mean with a standard error of no more than 10 kg/m<span class="math inline">\(^3\)</span>, how many trees do you expect to sample?</p></li>
+</ol>
+</div>
+</div>
+<div id="sampling-methods" class="section level1">
+<h1>Sampling methods</h1>
+<p>Sampling methods define criteria to obtain a sample that is <em>representative</em> of a population for the variable of interest.</p>
+<p>Representativeness can be defined as an absence of bias: even if the distribution of values changes from one sample to another, on average, this distribution corresponds to that of the entire population.</p>
+<p>In addition, we want an <em>effective</em> sampling method, that is, it allows us to estimate the desired parameters with the greatest precision for a given amount of resources (time, money).</p>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>The chaga (<em>Inonutus obliquus</em>) is a fungal parasite of birch trees found in the boreal forest. Generally consumed as a herbal tea, it is particularly sought after for its high concentration of antioxidants which could provide health benefits.</p>
+<p><img src="../images/Inonotus_obliquus.jpg" /></p>
+<p>Imagine you were charged with creating a sampling plan to estimate the abundance of chaga and its commercial harvest potential in a 120 km<span class="math inline">\(^2\)</span> (12 000 ha) region north-west of Rouyn-Noranda. How would you place your sampling units (plots) in that landscape? You have a map of forest types showing the distribution of stands identified by their dominant species.</p>
+<p><img src="../images/inventaire_en.png" /></p>
+<p><br/></p>
+</div>
+<div id="simple-random-sampling" class="section level2">
+<h2>Simple random sampling</h2>
+<p>In simple random sampling, each individual or unit of observation has the same probability of being sampled.</p>
+<p>For this type of sampling, the sample mean of the variable is an unbiased estimator of its population mean and its standard error is given by the formula seen above.</p>
+<p>In our example, we select 20 random points in the study area to locate 50 m x 50 m plots (the sampling unit).</p>
+<p><img src="../images/inventaire_srs.png" /></p>
+<p><br/></p>
+<p><em>Advantages</em></p>
+<ul>
+<li><p>This is the simplest method to obtain a representative sample.</p></li>
+<li><p>It does not require any particular knowledge about the structure of the population.</p></li>
+</ul>
+<p><em>Disadvantages</em></p>
+<ul>
+<li><p>By chance, the points of a given sample may be concentrated in a certain part of the population.</p></li>
+<li><p>As we will see, other methods may be more effective depending on the situation.</p></li>
+</ul>
+</div>
+<div id="stratified-sampling" class="section level2">
+<h2>Stratified sampling</h2>
+<p>The population or study area is divided into strata, followed by simple random sampling in each stratum.</p>
+<p>For example, instead of choosing to randomly place 20 plots in the study area, 4 could be placed in each of the 5 stand types.</p>
+<p>This method is used when we believe that the measured variable varies more between individuals of different strata than between individuals of the same stratum.</p>
+<p>Suppose we divide the population into <span class="math inline">\(m\)</span> strata and calculate the mean of <span class="math inline">\(x\)</span> for the random sample taken in each stratum. In this case, the estimator for the overall mean of <span class="math inline">\(x\)</span> is a weighted mean of the means for each stratum.</p>
+<p><span class="math display">\[\bar{x} = \sum_{j = 1}^{m} w_j \bar{x}_j\]</span></p>
+<p>The standard error of that mean is given by:</p>
+<p><span class="math display">\[s_{\bar{x}} = \sqrt{\sum_{j = 1}^{m} w_j^2 \frac{s_j^2}{n_j}}\]</span></p>
+<p>In these equations, <span class="math inline">\(n_j\)</span> is the number of observations in stratum <span class="math inline">\(j\)</span>, <span class="math inline">\(\bar{x}_j\)</span> is their mean and <span class="math inline">\(s_j\)</span> is their variance. Note that the fraction <span class="math inline">\(s_j^2 / n\)</span> is the variance of the mean of stratum <span class="math inline">\(j\)</span>.</p>
+<p>Le <em>poids</em> <span class="math inline">\(w_j\)</span> d’une strate est la fraction de la population ou de l’aire d’étude contenue dans cette strate. Par exemple, si le quart de l’aire d’étude fait partie de la première strate, <span class="math inline">\(w_1\)</span> = 0.25.</p>
+<p>The <em>weight</em> <span class="math inline">\(w_j\)</span> of a stratum is the fraction of the population or study area contained in that stratum. For example, if one quarter of the study area is in the first stratum, <span class="math inline">\(w_1\)</span> = 0.25.</p>
+<p>The more the values of <span class="math inline">\(x\)</span> are homogeneous within each stratum and different between strata, the more efficient stratified sampling will be (greater precision of the mean) compared with simple random sampling for the same total <span class="math inline">\(n\)</span>.</p>
+<p>However, this efficiency also depends on the choice of sample size in each stratum.</p>
+<ul>
+<li><p>Each stratum can be sampled in proportion to its weight <span class="math inline">\(w_j\)</span> in the population. If the variance is the same in each stratum, this choice maximizes the precision of the estimated mean.</p></li>
+<li><p>If we know that the variable varies more in certain strata, we can oversample them relative to their weight <span class="math inline">\(w_j\)</span>.</p></li>
+<li><p>If some strata are more difficult or expensive to sample, it may be necessary to undersample them relative to their weight.</p></li>
+<li><p>If we are interested not only in the overall mean, but also in the mean of each stratum, we need a sufficient number of samples in each stratum, so the smallest strata will be oversampled compared to their weight <span class="math inline">\(w_j\)</span>.</p></li>
+</ul>
+<p><em>Advantages of stratified sampling</em></p>
+<ul>
+<li><p>More efficient estimation when the distribution of the measured variable differs significantly between strata.</p></li>
+<li><p>With a sufficiently large sample, we obtain not only a good estimate of the overall mean, but also the mean of each stratum.</p></li>
+</ul>
+<p><em>Disadvantages</em></p>
+<ul>
+<li><p>This method requires some knowledge of the variation of the variable in the population in order to establish relevant strata.</p></li>
+<li><p>The result may be biased if the weights used do not correspond to the actual proportions of each stratum in the population.</p></li>
+</ul>
+</div>
+<div id="systematic-sampling" class="section level2">
+<h2>Systematic sampling</h2>
+<p>For this method, sampling points are taken at regular intervals in space, on a grid. It is important to choose randomly (as much as possible) the origin of the grid.</p>
+<p>In our example, we choose a first random point in a 2 km x 2 km square northwest of the study area, then we place the subsequent points on a grid with 2 km between successive points.</p>
+<p><img src="../images/inventaire_syst.png" /></p>
+<p><br/></p>
+<p>Imagine that the variable of interest is influenced by a spatial gradient, such as a gradual change in temperature, slope, or humidity across the study area. In this case, the values of <span class="math inline">\(x\)</span> vary more between distant points than between close points. Thus, it is advantageous to spread out the points sufficiently in space, especially along the gradient, to obtain a representative sample of the entire study area.</p>
+<p>The principle is similar to stratified sampling, where the points are distributed between strata so that each stratum is well represented. For systematic sampling, the points along the <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> axes are distributed so that all portions of the spatial gradient of the study area are well represented.</p>
+<p><em>Advantages</em></p>
+<ul>
+<li>More efficient than simple random sampling if the variable is influenced by a spatial gradient.</li>
+</ul>
+<p><em>Disadvantages</em></p>
+<ul>
+<li><p>It is sometimes not practical to place points at regular intervals (e.g. irregularly shaped study area, inaccessible places).</p></li>
+<li><p>If we want an estimate not only of the mean, but also of the variance of <span class="math inline">\(x\)</span>, then we have to repeat the systematic sampling with another grid (different random origin).</p></li>
+<li><p>This situation is rare, but if the habitat varies periodically, this type of sampling may be unrepresentative. For example, with a series of hills and valleys, each point could fall into a valley; or in an agricultural landscape, successive points could always be in the middle of the field rather than at the edge.</p></li>
+</ul>
+</div>
+<div id="cluster-and-multistage-sampling" class="section level2">
+<h2>Cluster and multistage sampling</h2>
+<p>For a large study area, transportation between sites can be time consuming and costly. In order to reduce costs while maintaining a random sampling of plots, we can use cluster or multistage sampling.</p>
+<p>In this method, the population or study area is divided into clusters. We first randomly choose a number of clusters. Then, we can sample all the individuals from the chosen clusters, or more frequently, take a random sample from each chosen cluster (multistage sampling).</p>
+<p>In our example, we divide the study area into clusters of 500 x 500 m and choose six of them at random. Then we randomly select five 50 x 50 m plots in each of the selected clusters (total of 30 plots).</p>
+<p><img src="../images/inventaire_grap.png" /></p>
+<p><br/></p>
+<p>By reducing the costs and time associated with moving between observation units, this method allows in principle to sample more individuals for the same number of resources.</p>
+<p>While <span class="math inline">\(x\)</span> varies a lot within clusters but has a similar distribution from cluster to cluster, the efficiency of this method approaches that of simple random sampling. However, as we saw earlier, two points close together often have more homogeneous characteristics than two distant points. In this case, cluster (or multistage) sampling is less efficient than other methods.</p>
+<p><em>Advantages</em></p>
+<ul>
+<li>Reduces the costs associated with sampling, allowing us to increase the sample size for a given budget.</li>
+</ul>
+<p><em>Disadvantages</em></p>
+<ul>
+<li>Less efficient sampling (less precise estimate) if the study area is heterogeneous. This disadvantage may be partially offset by the increase of <span class="math inline">\(n\)</span>.</li>
+</ul>
+</div>
+<div id="adaptive-sampling" class="section level2">
+<h2>Adaptive sampling</h2>
+<p>If we want to sample a rare species, the methods seen previously may be ineffective due to the absence of the species in most randomly selected plots.</p>
+<p>In this case, adaptive cluster sampling can be used. A number of independent plots are first sampled, but when the desired species is detected, sampling is continued with plots adjacent to the one where the species was detected.</p>
+<p>Since sampling is concentrated in areas where the species is abundant, a statistical correction must be applied to properly estimate abundance in the entire study area. I have included some articles in the references section for more information on this method.</p>
+<ul>
+<li><p>Smith, D.R., Brown, J.A. and Lo, N.C.H. (2004) Application of Adaptive Sampling to Biological Populations, in Thompson, W.L. (ed.) Sampling Rare and Elusive Species. Island Press, Washington. pp. 75-122.</p></li>
+<li><p>Talvitie, M., Leino, O. and Holopainen, M. (2006) Inventory of Sparse Forest Populations Using Adaptive Cluster Sampling. <em>Silva Fennica</em> 40, 101-108.</p></li>
+</ul>
+</div>
+<div id="other-sampling-methods" class="section level2">
+<h2>Other sampling methods</h2>
+<p>In this class, we have seen some general sampling strategies. Other methods exist to meet the need for specific fields of study.</p>
+<p>For example, in animal ecology, individuals are mobile and often difficult to detect. Methods such as site occupancy estimation and capture-mark-recapture have been developed to account for the inability to detect all individuals in a single visit to a site.</p>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<ul>
+<li><p>An estimator is biased when its mean over all possible samples differs from the value of the parameter to be estimated.</p></li>
+<li><p>The standard error measures the dispersion of an estimator from one sample to another, and decreases with the size of the sample.</p></li>
+</ul>
+<p>In addition to simple random sampling, there are other techniques that may be more effective depending on the structure of the population / study area:</p>
+<ul>
+<li><p>stratified sampling when groups (strata) can be defined where the variable being measured varies greatly from one group to another;</p></li>
+<li><p>systematic sampling when there is a spatial gradient that affects the variable being measured;</p></li>
+<li><p>cluster or multi-stage sampling when it is more practical to sample clusters of individuals in different locations;</p></li>
+<li><p>adaptive sampling to estimate the abundance of a rare species.</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

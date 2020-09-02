@@ -2,6 +2,7 @@
 title: "Introduction à R - Partie 1"
 date: "2 septembre 2020"
 output:
+    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs
@@ -219,7 +220,7 @@ Si les deux vecteurs n'ont pas le même nombre d'éléments, le vecteur le plus 
 
 ```{r op_vect2}
 diam10 <- diam * 10
-diam
+diam10
 esp_pin <- espece == "pin"
 esp_pin
 ```
