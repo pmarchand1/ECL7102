@@ -11,4 +11,5 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 ## Laboratoires
 
 1. [Introduction à R - Partie 1](labos/1-IntroR_partie1.html) ([PDF](labos/1-IntroR_partie1.pdf)) ([Données](labos/cours1_kejimkujik.csv))
+2. [Échantillonnage et estimation de paramètres](notes_cours/2-Echantillonnage_estimation.html) ([PDF](notes_cours/2-Echantillonnage_estimation.pdf))
 

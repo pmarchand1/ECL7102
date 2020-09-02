@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Échantillonnage et estimation de paramètres</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Échantillonnage et estimation de paramètres</h1>
+<h4 class="date"><br/>8 septembre 2020</h4>
+
+</div>
+
+
+<div id="objectifs" class="section level1">
+<h1>Objectifs</h1>
+<ul>
+<li><p>Estimer la moyenne et la variance d’une population à partir d’un échantillon.</p></li>
+<li><p>Définir le biais et l’erreur-type d’un estimateur.</p></li>
+<li><p>Calculer les propriétés d’un estimateur en simulant l’échantillonnage.</p></li>
+<li><p>Décrire les avantages et inconvénients de différentes méthodes d’échantillonnage.</p></li>
+<li><p>Choisir une méthode d’échantillonnage en fonction des caractéristiques de la population à étudier.</p></li>
+</ul>
+</div>
+<div id="statistiques-paramètres-et-estimateurs" class="section level1">
+<h1>Statistiques, paramètres et estimateurs</h1>
+<p>Au dernier cours, nous avons vu une série de statistiques descriptives: moyenne, variances, quantiles et autres. De façon générale, une <em>statistique</em> est une quantité calculée à partir d’observations de variables aléatoires.</p>
+<p>Un <em>paramètre</em> est une caractéristique de la population qui n’est pas mesurée directement. Comme nous verrons dans le prochain cours, ces paramètres font souvent partie d’un modèle statistique visant à décrire la variation d’une variable aléatoire.</p>
+<p>Dans ce cours, notre but principal sera de déterminer dans quelle mesure une statistique calculée à partir des observations constitue un bon <em>estimateur</em> d’un paramètre donné.</p>
+<p>Par exemple, si on mesure le poids d’écureuils roux et qu’on fait la moyenne de ces mesures (une statistique), quel est l’estimé du poids moyen de la population locale d’écureuils roux (un paramètre)? Quelle est sa marge d’erreur?</p>
+<blockquote>
+<p>En général, un paramètre demeure une quantité théorique. Dans notre exemple, même si on pouvait recenser tous les écureuils, le poids des individus varie constamment et la composition de la population aussi (en raison des naissances, décès et migrations).</p>
+</blockquote>
+</div>
+<div id="estimation-de-paramètres" class="section level1">
+<h1>Estimation de paramètres</h1>
+<div id="estimation-de-la-moyenne" class="section level2">
+<h2>Estimation de la moyenne</h2>
+<p>Supposons qu’on mesure une variable <span class="math inline">\(x\)</span> sur un échantillon de <span class="math inline">\(n\)</span> individus choisis aléatoirement dans une population, c’est-à-dire que chaque individu a une chance égale de faire partie de l’échantillon.</p>
+<p>Nous nous servons de la moyenne de l’échantillon:</p>
+<p><span class="math display">\[\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i\]</span></p>
+<p>comme estimateur du paramètre <span class="math inline">\(\mu\)</span>, qui dénote la moyenne de <span class="math inline">\(x\)</span> dans la population entière.</p>
+<blockquote>
+<p>Note: Suivant une convention commune en statistiques, les paramètres sont représentés dans ce cours par des lettres grecques, tandis que les variables ou statistiques sont représentées par des lettres latines.</p>
+</blockquote>
+<p>Une façon de déterminer les propriétés d’un estimateur est de <em>simuler</em> l’échantillonnage à partir d’une population connue.</p>
+<p>Par exemple, supposons que le tableau de données de 1161 arbres du Parc Kejimkujik, vu au dernier cours, représente la population entière et que nous échantillonnons une partie de ces arbres.</p>
+<pre class="r"><code>kejim &lt;- read.csv(&quot;../donnees/cours1_kejimkujik.csv&quot;)
+dhp &lt;- kejim$dhp
+paste(&quot;La population a un DHP moyen de&quot;, round(mean(dhp), 2), &quot;cm avec un écart-type de&quot;, round(sd(dhp), 2), &quot;cm.&quot;)</code></pre>
+<pre><code>## [1] &quot;La population a un DHP moyen de 21.76 cm avec un écart-type de 12.25 cm.&quot;</code></pre>
+<p>Dans R, la fonction <code>sample</code> sert à tirer un échantillon aléatoire des éléments d’un vecteur.</p>
+<pre class="r"><code>mean(sample(dhp, 20)) # DHP moyen d&#39;un échantillon de n = 20 arbres</code></pre>
+<pre><code>## [1] 20.86</code></pre>
+<p>La fonction <code>replicate</code> permet de répéter la même commande plusieurs fois; ainsi, nous pouvons facilement générer plusieurs moyennes provenant de différents échantillons possibles.</p>
+<pre class="r"><code># le premier argument de replicate donne le nombre de répétitions
+replicate(5, mean(sample(dhp, 20)))  </code></pre>
+<pre><code>## [1] 19.5500 18.4800 20.3075 22.2800 24.4250</code></pre>
+<p>La moyenne d’un échantillon est donc elle-même une variable aléatoire. Plus nous simulons un grand nombre d’échantillons, plus la distribution des valeurs résultantes est représentative de la probabilité d’obtenir différentes valeurs de cette moyenne.</p>
+<p>Les histogrammes ci-dessous montrent la distribution (estimée à partir de 10 000 simulations) du DHP moyen avec une taille d’échantillon <span class="math inline">\(n\)</span> = 10, 20 ou 40.</p>
+<p><img src="2-Echantillonnage_estimation_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>À mesure que la taille de l’échantillon augmente, la distribution devient moins dispersée, mais aussi plus symétrique. Au prochain cours, nous verrons qu’elle s’approche en fait d’une distribution normale lorsque <span class="math inline">\(n\)</span> est assez grand.</p>
+<p>Pour une variable <span class="math inline">\(x\)</span> dont la distribution a une moyenne <span class="math inline">\(\mu\)</span> et une variance <span class="math inline">\(\sigma^2\)</span>, on peut démontrer que <span class="math inline">\(\bar{x}\)</span> a une moyenne égale à <span class="math inline">\(\mu\)</span> et une variance égale à <span class="math inline">\(\sigma^2 / n\)</span>. L’écart-type de <span class="math inline">\(\bar{x}\)</span>, qu’on appelle dans ce contexte l’erreur-type (<em>standard error</em>), est donc inversement proportionnel à la racine carrée de <span class="math inline">\(n\)</span>.</p>
+<p>Erreur-type de la moyenne: <span class="math display">\[\sigma_{\bar{x}} = \frac{\sigma_{x}}{\sqrt{n}}\]</span></p>
+<p>La moyenne et l’erreur-type de <span class="math inline">\(\bar{x}\)</span> calculées à partir des 10 000 échantillons simulés ci-dessus concordent avec les prédictions théoriques.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="right">Moyenne (cm)</th>
+<th align="right">Erreur-type (cm)</th>
+<th align="right"><span class="math inline">\(\sigma / \sqrt{n}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">21.77</td>
+<td align="right">3.86</td>
+<td align="right">3.87</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">21.76</td>
+<td align="right">2.74</td>
+<td align="right">2.74</td>
+</tr>
+<tr class="odd">
+<td align="right">40</td>
+<td align="right">21.76</td>
+<td align="right">1.89</td>
+<td align="right">1.94</td>
+</tr>
+</tbody>
+</table>
+<p>Puisque la moyenne de l’estimateur correspond à la valeur du paramètre <span class="math inline">\(\mu\)</span> estimé, <span class="math inline">\(\bar{x}\)</span> est un estimateur <em>non-biaisé</em> de <span class="math inline">\(\mu\)</span>.</p>
+</div>
+<div id="écart-type-ou-erreur-type" class="section level2">
+<h2>Écart-type ou erreur-type</h2>
+<p>Il est important de ne pas confondre l’écart-type de <span class="math inline">\(x\)</span> avec l’erreur-type d’un estimateur, comme <span class="math inline">\(\bar{x}\)</span>. L’écart-type de <span class="math inline">\(x\)</span> mesure la dispersion des valeurs individuelles de la variable par rapport à leur moyenne. L’erreur-type de <span class="math inline">\(\bar{x}\)</span> mesure la dispersion de la moyenne d’un échantillon par rapport à la moyenne de la population. L’erreur-type diminue avec la taille de l’échantillon.</p>
+<p>Puisque l’erreur-type diminue selon <span class="math inline">\(\sqrt{n}\)</span> plutôt que <span class="math inline">\(n\)</span>, si on veut diminuer cette erreur-type de moitié, il faut multiplier la taille de l’échantillon par 4.</p>
+<p><img src="2-Echantillonnage_estimation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Notez aussi que l’erreur-type dépend seulement de la taille de l’échantillon, pas de celle de la population. Cela est vrai tant que l’échantillon est petit par rapport à la population. Lorsqu’on échantillonne une fraction significative de la population (disons plus de 5%), l’erreur-type réelle est plus petite que <span class="math inline">\(\sigma / \sqrt{n}\)</span>.</p>
+</div>
+<div id="estimation-de-la-variance" class="section level2">
+<h2>Estimation de la variance</h2>
+<p>Pour estimer la variance <span class="math inline">\(\sigma^2\)</span> d’une variable <span class="math inline">\(x\)</span>, on pourrait calculer la variance de l’échantillon avec l’équation vue au dernier cours.</p>
+<p><span class="math display">\[s^2 = \frac{1}{n} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2  \]</span></p>
+<p>Ici, la variance d’un échantillon est notée <span class="math inline">\(s^2\)</span> pour la différencier de <span class="math inline">\(\sigma^2\)</span>, le paramètre représentant la variance de la population.</p>
+<p>Comme auparavant, nous testons cet estimateur en simulant 10 000 échantillons du vecteur de DHP avec <span class="math inline">\(n\)</span> = 10, 20 et 40. Le tableau suivant montre la moyenne de <span class="math inline">\(s^2\)</span> et son ratio avec la valeur de <span class="math inline">\(\sigma^2\)</span> pour la population (150.1 cm<span class="math inline">\(^2\)</span>).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="right">Moyenne de <span class="math inline">\(s^2\)</span> (cm<span class="math inline">\(^2\)</span>)</th>
+<th align="right">Moyenne de <span class="math inline">\(s^2\)</span> / <span class="math inline">\(\sigma^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">136.3</td>
+<td align="right">0.90</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">143.1</td>
+<td align="right">0.95</td>
+</tr>
+<tr class="odd">
+<td align="right">40</td>
+<td align="right">146.6</td>
+<td align="right">0.97</td>
+</tr>
+</tbody>
+</table>
+<p>Ce résultat montre que la variance de l’échantillon ainsi calculée sous-estime systématiquement la variance de la population. Il s’agit donc d’un estimateur <em>biaisé</em>. Pourquoi est-ce le cas?</p>
+<p>Le problème est que l’estimateur <span class="math inline">\(s^2\)</span> n’est pas basé sur la moyenne de la population, mais sur son estimé <span class="math inline">\(\bar{x}\)</span> calculé à partir du même échantillon. Par définition, l’échantillon est toujours centré sur <span class="math inline">\(\bar{x}\)</span>, mais <span class="math inline">\(\bar{x}\)</span> est à une certaine distance de <span class="math inline">\(\mu\)</span>. Donc, les écarts carrés à <span class="math inline">\(\mu\)</span> sont un peu plus grands que les écarts à <span class="math inline">\(\bar{x}\)</span>.</p>
+<p>En fait, l’estimateur défini ci-dessus sous-estime la variance de la population dans un ratio <span class="math inline">\((n-1)/n\)</span>, comme le montre la dernière colonne du tableau (0.9 = 9/10, 0.95 = 19/20). Dans ce cas, on peut corriger le biais en multipliant l’estimateur par <span class="math inline">\(n/(n-1)\)</span>, ce qui donne l’estimateur non-biaisé:</p>
+<p><span class="math display">\[s^2 = \frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2\]</span></p>
+<p>Sa racine carrée constitue un estimateur pour l’écart-type de la population:</p>
+<p><span class="math display">\[s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2}\]</span></p>
+<p>Contrairement à <span class="math inline">\(s^2\)</span>, l’estimateur <span class="math inline">\(s\)</span> pour l’écart-type est biaisé, mais il demeure le plus utilisé, puisqu’il n’existe pas de formule aussi simple et non biaisée pour l’écart-type.</p>
+<p>Finalement, on utilise aussi <span class="math inline">\(s\)</span> comme estimateur de <span class="math inline">\(\sigma\)</span> pour le calcul de l’erreur-type de <span class="math inline">\(\bar{x}\)</span>; donc cette erreur-type est estimée par <span class="math inline">\(s / \sqrt{n}\)</span>.</p>
+</div>
+<div id="degrés-de-liberté" class="section level2">
+<h2>Degrés de liberté</h2>
+<p>Une autre façon d’expliquer la division par (<span class="math inline">\(n - 1\)</span>) dans le calcul de <span class="math inline">\(s^2\)</span> fait appel au concept de degrés de liberté.</p>
+<p>Le nombre de degrés de liberté correspond au nombre de données indépendantes utilisées dans le calcul d’une statistique. Ici, <span class="math inline">\(s^2\)</span> est calculée à partir des déviations entre chaque observation de <span class="math inline">\(x\)</span> et leur moyenne (<span class="math inline">\(x_i - \bar{x}\)</span>). Comme nous avons vu au premier cours, la définition de <span class="math inline">\(\bar{x}\)</span> assure que la somme de ces déviations est égale à 0. Dans ce cas, lorsqu’on connaît les <span class="math inline">\(n - 1\)</span> premières déviations, on peut automatiquement déduire la dernière, qui n’est donc pas une donnée indépendante.</p>
+</div>
+<div id="biais-et-erreur-type-dun-estimateur" class="section level2">
+<h2>Biais et erreur-type d’un estimateur</h2>
+<p>Les notions de biais et d’erreur-type ont été présentées brièvement plus haut.</p>
+<p>Plus généralement, si on estimons un paramètre <span class="math inline">\(\theta\)</span> (ex.: <span class="math inline">\(\mu\)</span>) avec un estimateur <span class="math inline">\(\hat{\theta}\)</span> (ex.: <span class="math inline">\(\bar{x}\)</span>), on peut décomposer l’erreur carrée moyenne (<em>mean square error</em>) entre <span class="math inline">\(\hat{\theta}\)</span> et <span class="math inline">\(\theta\)</span> en deux composantes. <em>Note</em>: Dans l’équation ci-dessous, la fonction <span class="math inline">\(E[]\)</span> est une autre façon de représenter l’opération de la moyenne.</p>
+<p><span class="math display">\[ E[(\hat{\theta} - \theta)^2] = E[(\hat{\theta} - E[\hat{\theta}])^2] + (E[\hat{\theta}] - \theta)^2 \]</span></p>
+<p>Cette équation nous dit que l’écart carré moyen entre un estimateur et le paramètre est la somme de:</p>
+<ul>
+<li><p>l’écart carré moyen entre l’estimateur et la moyenne de l’estimateur (autrement dit, la variance de l’estimateur, ou le carré de son erreur-type);</p></li>
+<li><p>le carré de l’écart entre la moyenne de l’estimateur et le paramètre (cet écart est le biais);</p></li>
+</ul>
+<p>Donc, on a la relation suivante: <em>Erreur carrée moyenne = (Erreur-type)<span class="math inline">\(^2\)</span> + (Biais)<span class="math inline">\(^2\)</span></em>.</p>
+<p>Ces deux sources d’erreur ont des propriétés différentes. L’erreur-type est due à la taille limitée de l’échantillon et diminue lorsque <span class="math inline">\(n\)</span> augmente. Le biais est une erreur systématique qui ne dépend pas de la taille de l’échantillon, mais peut être dû à un estimateur biaisé où à un échantillonnage non représentatif de la population.</p>
+</div>
+<div id="exercice" class="section level2">
+<h2>Exercice</h2>
+<p>Afin d’estimer la densité moyenne du bois de pin gris sur un site, vous échantillonnez d’abord 9 arbres, qui ont une densité moyenne de 450 kg/m<span class="math inline">\(^3\)</span> avec un écart-type de 90 kg/m<span class="math inline">\(^3\)</span>.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Quelle est l’erreur-type de cette moyenne?</p></li>
+<li><p>Si vous vouliez connaître la moyenne avec une erreur-type d’au plus 10 kg/m<span class="math inline">\(^3\)</span>, combien d’arbres vous attendez-vous à devoir échantillonner?</p></li>
+</ol>
+</div>
+</div>
+<div id="méthodes-déchantillonnage" class="section level1">
+<h1>Méthodes d’échantillonnage</h1>
+<p>Le méthodes d’échantillonnage définissent des critères pour obtenir un échantillon qui soit <em>représentatif</em> d’une population pour la variable qu’on souhaite mesurer.</p>
+<p>La représentativité peut être définie comme une absence de biais: même si la distribution des valeurs change d’un échantillon à l’autre, en moyenne, cette distribution correspond à celle de la population entière.</p>
+<p>De plus, nous voulons une méthode d’échantillonnage <em>efficace</em>, c’est-à-dire qu’elle nous permet d’estimer une caractéristique de la population avec la précision maximale pour une quantité de ressources (temps, argent) donnée.</p>
+<div id="exemple" class="section level2">
+<h2>Exemple</h2>
+<p>Le chaga (<em>Inonutus obliquus</em>) est un champignon parasite du bouleau qu’on retrouve en forêt boréale. Généralement préparé en infusion, il est recherché notamment pour sa grande concentration en antioxidants qui apporterait des bénéfices sur la santé.</p>
+<p><img src="../images/Inonotus_obliquus.jpg" /></p>
+<p>Imaginez avoir la tâche de réaliser un plan d’échantillonnage pour estimer l’abondance du chaga et la possibilité de récolte commerciale dans une région de 120 km<span class="math inline">\(^2\)</span> (12 000 hectares) au nord-ouest de Rouyn-Noranda. Comment disposerez-vous vos unités d’échantillonnage (placettes) dans ce territoire? Vous avez à votre disposition une carte écoforestière montrant la distribution des peuplements forestiers par espèce dominante.</p>
+<p><img src="../images/inventaire_fr.png" /></p>
+<p><br/></p>
+</div>
+<div id="échantilonnage-aléatoire-simple" class="section level2">
+<h2>Échantilonnage aléatoire simple</h2>
+<p>Dans un échantillonnage aléatoire simple, chaque individu ou unité d’observation a la même probabilité de faire partie de l’échantillon.</p>
+<p>Pour ce type d’échantillonnage, la moyenne d’une variable dans l’échantillon est un estimateur non-biaisé de la moyenne de cette variable dans la population et son erreur-type est donnée par la formule vue précédemment dans ce cours.</p>
+<p>Dans notre exemple, nous choisissons 20 points aléatoires dans l’aire d’étude pour y situer des placettes de 50 m x 50 m (l’unité d’échantillonnage).</p>
+<p><img src="../images/inventaire_srs.png" /></p>
+<p><br/></p>
+<p><em>Avantages</em></p>
+<ul>
+<li><p>C’est la méthode la plus simple permettant d’obtenir un échantillon représentatif.</p></li>
+<li><p>Elle ne requiert pas de connaissances particulières sur la structure de la population.</p></li>
+</ul>
+<p><em>Inconvénients</em></p>
+<ul>
+<li><p>Par hasard, les points d’un échantilon donné peuvent être concentrés dans une certaine partie de la population.</p></li>
+<li><p>Comme nous allons le voir, d’autres méthodes peuvent être plus efficaces selon la situation.</p></li>
+</ul>
+</div>
+<div id="échantillonnage-stratifié" class="section level2">
+<h2>Échantillonnage stratifié</h2>
+<p>On divise la population ou l’aire d’étude en strates, puis on effectue un échantillonnage aléatoire simple dans chaque strate.</p>
+<p>Par exemple, au lieu de choisir placer aléatoirement 20 placettes dans l’aire d’étude, on pourrait en placer 4 dans chacun des 5 types de peuplement.</p>
+<p>Cette méthode est utilisée lorsqu’on croit que la variable mesurée varie plus entre individus de strates différentes qu’entre individus d’une même strate.</p>
+<p>Supposons qu’on divise la population en <span class="math inline">\(m\)</span> strates et qu’on calcule la moyenne de <span class="math inline">\(x\)</span> pour l’échantillon aléatoire pris dans chaque strate. Dans ce cas, l’estimateur de la moyenne globale de <span class="math inline">\(x\)</span> est un moyenne pondérée des moyennes de chaque strate.</p>
+<p><span class="math display">\[\bar{x} = \sum_{j = 1}^{m} w_j \bar{x}_j\]</span></p>
+<p>Et l’erreur-type de cette moyenne correspond à:</p>
+<p><span class="math display">\[s_{\bar{x}} = \sqrt{\sum_{j = 1}^{m} w_j^2 \frac{s_j^2}{n_j}}\]</span></p>
+<p>Dans ces équations, <span class="math inline">\(n_j\)</span> est le nombre d’observations dans l’échantillon de la strate <span class="math inline">\(j\)</span>, <span class="math inline">\(\bar{x}_j\)</span> est sa moyenne et <span class="math inline">\(s_j^2\)</span> est sa variance. Notez que la fraction <span class="math inline">\(s_j^2 / n\)</span> est l’erreur-type de la moyenne de la strate <span class="math inline">\(j\)</span>.</p>
+<p>Le <em>poids</em> <span class="math inline">\(w_j\)</span> d’une strate est la fraction de la population ou de l’aire d’étude contenue dans cette strate. Par exemple, si le quart de l’aire d’étude fait partie de la première strate, <span class="math inline">\(w_1\)</span> = 0.25.</p>
+<p>Plus les valeurs de <span class="math inline">\(x\)</span> sont homogènes dans chaque strate et différentes entre les strates, plus l’échantillonnage stratifié sera efficace (estimation plus précise de la moyenne) par rapport à l’échantillonnage aléatoire simple avec le même <span class="math inline">\(n\)</span> total.</p>
+<p>Toutefois, cette efficacité dépend aussi du choix de la taille de l’échantillon dans chaque strate.</p>
+<ul>
+<li><p>On peut échantillonner chaque strate en proportion de son poids <span class="math inline">\(w_j\)</span> dans la population. Si la variance est la même dans chaque strate, ce choix maximise la précision de la moyenne estimée.</p></li>
+<li><p>Si on sait que la variable varie davantage dans certaines strates, on peut sur-échantillonner celles-ci par rapport à leur poids <span class="math inline">\(w_j\)</span>.</p></li>
+<li><p>Si certaines strates sont plus difficiles ou coûteuses à échantillonner, il est possible qu’on doive les sous-échantillonner par rapport à leur poids.</p></li>
+<li><p>Si on s’intéresse non seulement à la moyenne globale, mais aussi à la moyenne par strate, il faut un nombre suffisant d’échantillons dans chaque strate, donc les plus petites strates seront sur-échantillonnées par rapport à leur poids <span class="math inline">\(w_j\)</span>.</p></li>
+</ul>
+<p><em>Avantages de l’échantillonnage stratifié</em></p>
+<ul>
+<li><p>Estimation plus efficace lorsque la distribution de la variable mesurée diffère de façon importante entre les strates.</p></li>
+<li><p>Avec un échantillon suffisant, on obtient non seulement un bon estimé de la moyenne globale, mais aussi par strate.</p></li>
+</ul>
+<p><em>Inconvénients</em></p>
+<ul>
+<li><p>Cette méthode demande une certaine connaissance de la variation de la variable dans la population afin d’établir des strates pertinentes.</p></li>
+<li><p>Le résultat peut être biaisé si les poids utilisés ne correspondent pas aux proportions réelles de chaque strate dans la population.</p></li>
+</ul>
+</div>
+<div id="échantillonnage-systématique" class="section level2">
+<h2>Échantillonnage systématique</h2>
+<p>Pour cette méthode, les points d’échantillonnage sont pris à intervalles réguliers dans l’espace, sur une grille. Il est important de choisir aléatoirement (autant que possible) l’origine de la grille.</p>
+<p>Dans notre exemple, nous choisissons un premier point aléatoire dans un carré de 2 km x 2 km au nord-ouest de l’aire d’étude, puis nous plaçons les points subséquents sur une grille avec 2 km entre points successifs.</p>
+<p><img src="../images/inventaire_syst.png" /></p>
+<p><br/></p>
+<p>Imaginons que la variable qui nous intéresse est influencée par un gradient spatial, par exemple une variation de température, de pente ou d’humidité graduelle d’un bout à l’autre de l’aire d’étude. Dans ce cas, les valeurs de <span class="math inline">\(x\)</span> varient davantage entre points éloignés qu’entre points rapprochés. Ainsi, on a avantage à disperser les points suffisamment dans l’espace, spécialement le long du gradient, pour obtenir un échantillon représentatif de l’aire d’étude en entier.</p>
+<p>Le principe est semblable à l’échantillonnage stratifié, où l’on répartissait les points entre strates pour que chaque strate soit bien représentée. Pour l’échantillonnage systématique, on répartit les points le long des axe <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> pour que toutes les portions du gradient spatial de l’aire d’étude soient bien représentées.</p>
+<p><em>Avantages</em></p>
+<ul>
+<li>Plus efficace que l’échantillonnage aléatoire simple si la variable est influencée par un gradient spatial.</li>
+</ul>
+<p><em>Désavantages</em></p>
+<ul>
+<li><p>Il n’est parfois pas pratique de placer les points à intervalles réguliers (ex.: aire d’étude de forme irrégulière, endroits inaccessibles).</p></li>
+<li><p>Si on veut une estimation non seulement de la moyenne, mais aussi de la variance de <span class="math inline">\(x\)</span>, alors il faut répéter l’échantillonnage systématique avec une autre grille (origine aléatoire différente).</p></li>
+<li><p>Cette situation est rare, mais si l’habitat varie de façon périodique, ce type d’échantillonnage peut être non représentatif. Par exemple, avec une série de collines et vallées, chaque point pourrait tomber dans une vallée; ou dans un paysage agricole, les points successifs pourraient toujours être au milieu du champ plutôt qu’en bordure.</p></li>
+</ul>
+</div>
+<div id="échantillonnage-par-grappe-et-multi-stade" class="section level2">
+<h2>Échantillonnage par grappe et multi-stade</h2>
+<p>Pour une grande aire d’étude, le transport entre sites peut représenter un temps et un coût considérable. Afin de diminuer les coûts tout en conservant une sélection aléatoire des placettes, on peut utiliser un échantillonnage par grappe (<em>cluster sampling</em>) et multi-stade (<em>multistage sampling</em>).</p>
+<p>Dans cette méthode, on divise la population ou l’aire d’étude en grappes. On choisit d’abord aléatoirement un nombre de grappes. Ensuite, on peut échantillonner tous les individus des grappes choisies, ou plus fréquemment, prendre un échantillon aléatoire de chaque grappe choisie (échantillonnage multi-stade).</p>
+<p>Pour notre exemple, nous divisons l’aire d’étude en grappes de 500 x 500 m et en choisissons 6 aléatoirement. Ensuite, nous choisissons aléatoirement 5 placettes de 50 x 50 m dans chacune des grappes choisies (total de 30 placettes).</p>
+<p><img src="../images/inventaire_grap.png" /></p>
+<p><br/></p>
+<p>En réduisant les coûts et le temps associés au déplacement entre unités d’observation, cette méthode permet en principe d’échantillonner plus d’individus pour le même nombre de ressources.</p>
+<p>Si <span class="math inline">\(x\)</span> varie beaucoup à l’intérieur des grappes mais que sa distribution est semblable d’une grappe à l’autre, l’efficacité de cette méthode s’approche de celle de l’échantillonnage aléatoire simple. Toutefois, comme nous avons vu plus tôt, deux points rapprochés l’un de l’autre ont souvent des caractéristiques plus homogènes que deux points éloignés. Dans ce cas, l’échantillonnage par grappe (ou multi-stade) est moins efficace que les autre méthodes.</p>
+<p><em>Avantages</em></p>
+<ul>
+<li>Réduit les coûts liés à l’échantillonnage, permettant d’augmenter la taille de l’échantillon pour un budget donné.</li>
+</ul>
+<p><em>Désavantages</em></p>
+<ul>
+<li>Échantillonnage moins efficace (estimation moins précise) si la région d’étude est hétérogène. Ce désavantage peut être en partie compensé par l’augmentation de <span class="math inline">\(n\)</span>.</li>
+</ul>
+</div>
+<div id="échantillonnage-adaptatif" class="section level2">
+<h2>Échantillonnage adaptatif</h2>
+<p>Si on veut échantillonner une espèce rare, les méthodes vues précédemment peuvent être inefficaces dû à l’absence de l’espèce dans la plupart des placettes sélectionnées aléatoirement.</p>
+<p>Dans ce cas, on peut avoir recours à l’échantillonnage adaptatif par grappes (<em>adaptive cluster sampling</em>). On commence par échantillonner une nombre de placettes indépendantes, mais lorsqu’on détecte l’espèce voulue, on poursuit l’échantillonnage avec des placettes adjacentes à celle où l’espèce a été détectée.</p>
+<p>Puisque l’échantillonnage est concentré sur les régions où l’espèce est abondante, il faut appliquer une correction statistique pour bien estimer l’abondance sur l’ensemble de l’aire d’étude. Les articles suivants donnent plus d’information sur cette méthode:</p>
+<ul>
+<li><p>Smith, D.R., Brown, J.A. et Lo, N.C.H. (2004) Application of Adaptive Sampling to Biological Populations, dans Thompson, W.L. (ed.) Sampling Rare and Elusive Species. Island Press, Washington. pp. 75-122.</p></li>
+<li><p>Talvitie, M., Leino, O. et Holopainen, M. (2006) Inventory of Sparse Forest Populations Using Adaptive Cluster Sampling. <em>Silva Fennica</em> 40, 101-108.</p></li>
+</ul>
+</div>
+<div id="autres-méthodes-déchantillonnage" class="section level2">
+<h2>Autres méthodes d’échantillonnage</h2>
+<p>Dans ce cours, nous avons vu quelques stratégies d’échantillonnage générales. D’autres méthodes existent pour répondre au besoin de domaines précis.</p>
+<p>Par exemple, en écologie animale, les individus sont mobiles et souvent difficiles à détecter. Des méthodes comme l’estimation d’occupation des sites et la capture-marquage-recapture ont été développées pour tenir compte de l’impossibilité de détecter tous les individus lors d’une seule visite à un site.</p>
+</div>
+</div>
+<div id="résumé" class="section level1">
+<h1>Résumé</h1>
+<ul>
+<li><p>Un estimateur est biaisé lorsque sa moyenne sur l’ensemble des échantillons possibles diffère de la valeur du paramètre à estimer.</p></li>
+<li><p>L’erreur-type mesure la dispersion d’un estimateur d’un échantillon à l’autre, elle diminue avec la taille de l’échantillon.</p></li>
+</ul>
+<p>En plus de l’échantillonnage aléatoire simple, il existe d’autres techniques qui peuvent être plus efficaces dépendamment de la structure de la population / de l’aire d’étude:</p>
+<ul>
+<li><p>l’échantillonnage stratifié lorsqu’on peut définir des groupes (strates) où la variable mesurée varie grandement d’un groupe à l’autre;</p></li>
+<li><p>l’échantillonnage systématique en présence d’un gradient spatial qui a un effet sur la variable mesurée;</p></li>
+<li><p>l’échantillonnage par grappe ou multi-stade s’il faut pour des raisons pratiques échantillonner les individus en groupes rapprochés;</p></li>
+<li><p>l’échantillonnage adaptatif pour estimer l’abondance d’une espèce rare.</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
