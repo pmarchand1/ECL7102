@@ -164,9 +164,7 @@ group_by(kejim, ...) %>%
 
 # Count trees by site and year
 
-compte_site_annee <- kejim %>%
-    group_by(...) %>%
-    summarize(...)
+compte_site_annee <- count(kejim, ...)
 
 
 # Exercise 6

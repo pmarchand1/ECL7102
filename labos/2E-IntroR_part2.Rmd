@@ -1,6 +1,6 @@
 ---
 title: "Introduction to R - Part 2"
-date: "September 11, 2019"
+date: "September 9, 2020"
 output:
     html_document:
         self_contained: false
@@ -386,14 +386,15 @@ group_by(kejim, espece) %>%
 
 - The `summarize` function is similar to `mutate`: both create new columns. However, `mutate` outputs a new value for each row of the input data frame, while `summarize` outputs a single value per group.
 
-In addition to `mean`,` summarize` accepts any function that calculates a value from a group of values, e.g. `sum`, `min`, `max`, `sd`, and many others. A special function, `n()`, returns the number of observations in each group. The following example shows how to count the number of trees by site and year.
+In addition to `mean`,` summarize` accepts any function that calculates a value from a group of values, e.g. `sum`, `min`, `max`, `sd`, and many others. 
+
+To count the number of observations in each group, we only need a single function, `count`. The following example shows how to count the number of trees by site and year.
 
 ```{r}
-compte_site_annee <- kejim %>%
-    group_by(site, annee) %>%
-    summarize(compte = n())
+compte_site_annee <- count(kejim, site, annee)
 head(compte_site_annee)
 ```
+
 
 ## Exercise 6 {#retour6}
 
@@ -441,10 +442,10 @@ Note that the `kejim_esp` data frame has 1070 rows, 91 fewer than `kejim`. This 
 
 - *R for Data Science* (http://r4ds.had.co.nz), specifically Chapters 3 (*Data Visualisation*) and 5 (*Data transformation*).
 
-- Cheat sheet for *dplyr* and *tidyr*:
-https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+- Cheat sheet for *dplyr*:
+https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf.
 
-- Cheat sheet for *ggplot2*: https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf.
+- Cheat sheet for *ggplot2*: https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf.
 
 - Reference website for all *ggplot2* functions: https://ggplot2.tidyverse.org/reference/index.html.
 

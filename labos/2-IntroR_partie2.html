@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction à R - Partie 2</h1>
-<h4 class="date">11 septembre 2019</h4>
+<h4 class="date">9 septembre 2020</h4>
 
 </div>
 
@@ -320,29 +285,28 @@ div.tocify {
 <li><p>Pour <strong>charger</strong> un package dans votre session R courante et ainsi avoir accès à ses fonctions, utilisez la fonction <code>library</code>, ex.: <code>library(ggplot2)</code>. Notez que les guillemets ne sont pas requis cette fois.</p></li>
 </ul>
 </div>
-<div id="visualisation-des-donnees-avec-ggplot2" class="section level1">
+<div id="visualisation-des-données-avec-ggplot2" class="section level1">
 <h1>Visualisation des données avec <em>ggplot2</em></h1>
 <p>Il existe plusieurs façons de produire des graphiques dans R. Nous utiliserons dans ce cours le package <em>ggplot2</em>, qui permet de réaliser plusieurs types de graphiques avec la même structure de code et offre une grande gamme d’options pour personnaliser l’apparence des graphiques.</p>
 <pre class="r"><code>library(ggplot2)</code></pre>
-<div id="creer-un-nuage-de-points" class="section level2">
+<div id="créer-un-nuage-de-points" class="section level2">
 <h2>Créer un nuage de points</h2>
 <p>Le jeu de données <code>msleep</code> inclus avec <em>ggplot2</em> comporte des données sur le sommeil de 83 espèces de mammifères.</p>
 <pre class="r"><code>msleep</code></pre>
 <pre><code>## # A tibble: 83 x 11
-##    name  genus vore  order conservation sleep_total sleep_rem sleep_cycle
-##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-##  1 Chee~ Acin~ carni Carn~ lc                  12.1      NA        NA    
-##  2 Owl ~ Aotus omni  Prim~ &lt;NA&gt;                17         1.8      NA    
-##  3 Moun~ Aplo~ herbi Rode~ nt                  14.4       2.4      NA    
-##  4 Grea~ Blar~ omni  Sori~ lc                  14.9       2.3       0.133
-##  5 Cow   Bos   herbi Arti~ domesticated         4         0.7       0.667
-##  6 Thre~ Brad~ herbi Pilo~ &lt;NA&gt;                14.4       2.2       0.767
-##  7 Nort~ Call~ carni Carn~ vu                   8.7       1.4       0.383
-##  8 Vesp~ Calo~ &lt;NA&gt;  Rode~ &lt;NA&gt;                 7        NA        NA    
-##  9 Dog   Canis carni Carn~ domesticated        10.1       2.9       0.333
-## 10 Roe ~ Capr~ herbi Arti~ lc                   3        NA        NA    
-## # ... with 73 more rows, and 3 more variables: awake &lt;dbl&gt;, brainwt &lt;dbl&gt;,
-## #   bodywt &lt;dbl&gt;</code></pre>
+##    name  genus vore  order conservation sleep_total sleep_rem sleep_cycle awake
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+##  1 Chee~ Acin~ carni Carn~ lc                  12.1      NA        NA      11.9
+##  2 Owl ~ Aotus omni  Prim~ &lt;NA&gt;                17         1.8      NA       7  
+##  3 Moun~ Aplo~ herbi Rode~ nt                  14.4       2.4      NA       9.6
+##  4 Grea~ Blar~ omni  Sori~ lc                  14.9       2.3       0.133   9.1
+##  5 Cow   Bos   herbi Arti~ domesticated         4         0.7       0.667  20  
+##  6 Thre~ Brad~ herbi Pilo~ &lt;NA&gt;                14.4       2.2       0.767   9.6
+##  7 Nort~ Call~ carni Carn~ vu                   8.7       1.4       0.383  15.3
+##  8 Vesp~ Calo~ &lt;NA&gt;  Rode~ &lt;NA&gt;                 7        NA        NA      17  
+##  9 Dog   Canis carni Carn~ domesticated        10.1       2.9       0.333  13.9
+## 10 Roe ~ Capr~ herbi Arti~ lc                   3        NA        NA      21  
+## # ... with 73 more rows, and 2 more variables: brainwt &lt;dbl&gt;, bodywt &lt;dbl&gt;</code></pre>
 <p>Entrez le code suivant pour produire un nuage de points montrant le nombre d’heures de la phase REM (<em>sleep_rem</em>) en fonction du nombre total d’heures de sommeil.</p>
 <pre class="r"><code>ggplot(data = msleep, mapping = aes(x = sleep_total, y = sleep_rem)) +
     geom_point()</code></pre>
@@ -393,6 +357,8 @@ head(kejim)</code></pre>
 <pre class="r"><code>ggplot(kejim, aes(x = espece, y = dhp)) +
     geom_boxplot() +
     geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun.y = &quot;mean&quot;)</code></pre>
+<pre><code>## Warning: Ignoring unknown parameters: fun.y</code></pre>
+<pre><code>## No summary function supplied, defaulting to `mean_se()`</code></pre>
 <p><img src="2-IntroR_partie2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Produisons maintenant un histogramme du DHP pour l’ensemble des arbres avec <code>geom_histogram</code>. L’histogramme représente une seule variable, donc nous n’avons pas besoin de spécifier <em>y</em> dans <code>aes</code>.</p>
 <pre class="r"><code>ggplot(kejim, aes(x = dhp)) +
@@ -470,7 +436,7 @@ dens</code></pre>
 <p><img src="2-IntroR_partie2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>Le but de cette partie était de donner un aperçu des possibilités de <em>ggplot2</em>. Des références plus complètes sur ce package sont indiquées au bas de la page.</p>
 </div>
-<div id="resume" class="section level2">
+<div id="résumé" class="section level2">
 <h2>Résumé</h2>
 <ul>
 <li><p>Le code d’un graphique est composé de plusieurs fonctions séparées par <code>+</code>.</p></li>
@@ -480,9 +446,9 @@ dens</code></pre>
 </ul>
 </div>
 </div>
-<div id="remaniement-des-donnees-avec-dplyr" class="section level1">
+<div id="remaniement-des-données-avec-dplyr" class="section level1">
 <h1>Remaniement des données avec <em>dplyr</em></h1>
-<div id="organisation-des-donnees" class="section level2">
+<div id="organisation-des-données" class="section level2">
 <h2>Organisation des données</h2>
 <p>Le package <em>dplyr</em> regroupe des fonctions qui simplifient plusieurs opérations couramment appliquées à des tableaux de données dans R. Ces fonctions sont adaptées à des tableaux de données suivant une forme normale:</p>
 <ul>
@@ -560,7 +526,7 @@ head(acru30)</code></pre>
 </div>
 <div id="retour4" class="section level2">
 <h2>Exercice 4</h2>
-<p>Produisez un tableau des observations de l’année 2014, excluant les individu de l’espèce <em>TSCA</em> (pruche du Canada).</p>
+<p>Produisez un tableau des observations de l’année 2014, excluant les individus de l’espèce <em>TSCA</em> (pruche du Canada).</p>
 <p><a href="#sol4">Solution</a></p>
 </div>
 <div id="trier-les-observations-avec-arrange" class="section level2">
@@ -599,7 +565,7 @@ head(acru_select)</code></pre>
 ## 5  CLT  2009 9.70
 ## 6  CLT  2009 9.80</code></pre>
 </div>
-<div id="sequencer-des-operations-avec" class="section level2">
+<div id="séquencer-des-opérations-avec" class="section level2">
 <h2>Séquencer des opérations avec <code>%&gt;%</code></h2>
 <p>Il arrive souvent qu’on veuille appliquer une série d’opérations à un tableau de données, sans conserver les résultats intermédiaires. Pour ce faire, <em>dplyr</em> procure un raccourci grâce à l’opérateur <code>%&gt;%</code>, nommé <em>pipe</em> (tuyau) en anglais.</p>
 <p>L’opérateur <code>%&gt;%</code> a pour effet de passer le résultat d’une fonction comme premier argument de la fonction suivante. Par exemple, trois des opérations que nous avons effectuées plus tôt (choisir les arbres d’espèce ACRU, trier par DHP et extraire le site, l’année et le DHP) peuvent être combinées dans la séquence suivante.</p>
@@ -623,7 +589,7 @@ head(acru)</code></pre>
 <p>En utilisant <code>%&gt;%</code>, produisez un tableau des observations de sapin baumier (ABBA) de plus de 15 cm de DHP, triées en ordre chronologique.</p>
 <p><a href="#sol5">Solution</a></p>
 </div>
-<div id="creer-des-variables-derivees-avec-mutate" class="section level2">
+<div id="créer-des-variables-dérivées-avec-mutate" class="section level2">
 <h2>Créer des variables dérivées avec <em>mutate</em></h2>
 <p>La fonction <code>mutate</code> permet de créer des variables dérivées de colonnes existantes du tableau de données. Par exemple, nous pouvons calculer le DHP en millimètres.</p>
 <pre class="r"><code>kejim_dhp_mm &lt;- mutate(kejim, dhp_mm = dhp * 10)
@@ -641,6 +607,7 @@ head(kejim_dhp_mm)</code></pre>
 <p>Ces deux fonctions sont souvent utilisées ensemble: <code>group_by</code> divise un tableau de données en groupes selon la valeur d’une ou plusieurs variables et <code>summarize</code> calcule une ou plusieurs quantités sommaires pour chaque groupe. L’exemple suivant calcule la moyenne et l’écart-type du DHP par espèce.</p>
 <pre class="r"><code>group_by(kejim, espece) %&gt;%
     summarize(moyDHP = mean(dhp), etDHP = sd(dhp))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 13 x 3
 ##    espece moyDHP etDHP
 ##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
@@ -662,28 +629,24 @@ head(kejim_dhp_mm)</code></pre>
 <li><p>Parmi les colonnes du tableau original, seules celles définissant les groupes sont retenues par <code>summarize</code>.</p></li>
 <li><p>La fonction <code>summarize</code> est semblable à <code>mutate</code>: toutes deux créent de nouvelles colonnes. Toutefois, <code>mutate</code> définit une nouvelle valeur pour chaque rangée du tableau original, tandis que <code>summarize</code> définit une valeur par groupe.</p></li>
 </ul>
-<p>En plus de <code>mean</code>, <code>summarize</code> accepte n’importe quelle fonction qui calcule une valeur à partir d’un groupe de valeurs, ex.: <code>sum</code>, <code>min</code>, <code>max</code>, <code>sd</code>, et plusieurs autres. Une fonction spéciale, <code>n()</code>, renvoie le nombre d’observations dans chaque groupe. L’exemple suivant montre comment compter le nombre d’arbres mesurées par site et par année.</p>
-<pre class="r"><code>compte_site_annee &lt;- kejim %&gt;%
-    group_by(site, annee) %&gt;%
-    summarize(compte = n())
+<p>En plus de <code>mean</code>, <code>summarize</code> accepte n’importe quelle fonction qui calcule une valeur à partir d’un groupe de valeurs, ex.: <code>sum</code>, <code>min</code>, <code>max</code>, <code>sd</code>, et plusieurs autres.</p>
+<p>Pour compter le nombre d’observations par groupe, nous avons seulement besoin de la fonction <code>count</code>. L’exemple suivant montre comment compter le nombre d’arbres mesurées par site et par année.</p>
+<pre class="r"><code>compte_site_annee &lt;- count(kejim, site, annee)
 head(compte_site_annee)</code></pre>
-<pre><code>## # A tibble: 6 x 3
-## # Groups:   site [2]
-##   site  annee compte
-##   &lt;chr&gt; &lt;int&gt;  &lt;int&gt;
-## 1 BD     2004     45
-## 2 BD     2009     42
-## 3 BD     2014     44
-## 4 CFR    2004     48
-## 5 CFR    2009     47
-## 6 CFR    2014     45</code></pre>
+<pre><code>##   site annee  n
+## 1   BD  2004 45
+## 2   BD  2009 42
+## 3   BD  2014 44
+## 4  CFR  2004 48
+## 5  CFR  2009 47
+## 6  CFR  2014 45</code></pre>
 </div>
 <div id="retour6" class="section level2">
 <h2>Exercice 6</h2>
 <p>Classez les espèces du jeu de données <code>kejim</code> en ordre décroissant de leur diamètre maximal.</p>
 <p><a href="#sol6">Solution</a></p>
 </div>
-<div id="joindre-deux-tableaux-de-donnees" class="section level2">
+<div id="joindre-deux-tableaux-de-données" class="section level2">
 <h2>Joindre deux tableaux de données</h2>
 <p>Le fichier <a href="codes_especes.csv">codes_especes.csv</a> contient un tableau de correspondance entre les codes d’espèces du tableau <code>kejim</code> et les noms communs français et anglais de ces espèces.</p>
 <pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, stringsAsFactors = FALSE,
@@ -701,24 +664,24 @@ head(codes_esp)</code></pre>
 <pre class="r"><code>kejim_esp &lt;- inner_join(kejim, codes_esp)</code></pre>
 <pre><code>## Joining, by = &quot;espece&quot;</code></pre>
 <pre class="r"><code>head(kejim_esp)</code></pre>
-<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
-## 1   BD        A   31    8  2004         1        1   TSCA 16.3
-## 2   BD        A   31    8  2004         2        1   TSCA 24.0
-## 3   BD        A   31    8  2004         6        1   TSCA 29.8
-## 4   BD        A   31    8  2004         7        1   ACRU 29.0
-## 5   BD        A   31    8  2004         8        1   TSCA 15.5
-## 6   BD        A   31    8  2004         9        1   TSCA 32.0
-##         nom_espece    species_name
-## 1 Pruche du Canada Eastern Hemlock
-## 2 Pruche du Canada Eastern Hemlock
-## 3 Pruche du Canada Eastern Hemlock
-## 4     Érable rouge       Red Maple
-## 5 Pruche du Canada Eastern Hemlock
-## 6 Pruche du Canada Eastern Hemlock</code></pre>
+<pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp       nom_espece
+## 1   BD        A   31    8  2004         1        1   TSCA 16.3 Pruche du Canada
+## 2   BD        A   31    8  2004         2        1   TSCA 24.0 Pruche du Canada
+## 3   BD        A   31    8  2004         6        1   TSCA 29.8 Pruche du Canada
+## 4   BD        A   31    8  2004         7        1   ACRU 29.0     Érable rouge
+## 5   BD        A   31    8  2004         8        1   TSCA 15.5 Pruche du Canada
+## 6   BD        A   31    8  2004         9        1   TSCA 32.0 Pruche du Canada
+##      species_name
+## 1 Eastern Hemlock
+## 2 Eastern Hemlock
+## 3 Eastern Hemlock
+## 4       Red Maple
+## 5 Eastern Hemlock
+## 6 Eastern Hemlock</code></pre>
 <p>La jointure (<em>join</em>) est un concept provenant des bases de données relationnelles. Comme on peut voir ici, la fonction <code>inner_join</code> a rattaché à chaque rangée du premier tableau (<code>kejim</code>) les données d’une rangée du deuxième tableau (<code>codes_esp</code>) qui correspondait à la même valeur d’<code>espece</code>. Par défaut, <em>dplyr</em> suppose que la correspondance doit être faite sur les colonnes de même nom, mais il est possible de spécifier autrement.</p>
 <p>Notez que le tableau <code>kejim_esp</code> compte 1070 rangées, 91 de moins que le tableau <code>kejim</code>. Cela est dû au fait que certains codes d’espèce de <code>kejim</code> sont absents du tableau <code>codes_esp</code>. Pour garder les rangées du premier tableau sans correspondance dans le deuxième (et ajouter des valeurs manquantes aux colonnes de nom d’espèce), il faut utiliser un type de jointure différente, <code>left_join</code>. Nous n’avons pas le temps de discuter des différents types de jointure, mais vous pouvez consulter l’aide-mémoire <em>dplyr</em> dans les références en bas de page pour plus d’information.</p>
 </div>
-<div id="resume-des-fonctions-de-dplyr" class="section level2">
+<div id="résumé-des-fonctions-de-dplyr" class="section level2">
 <h2>Résumé des fonctions de <em>dplyr</em></h2>
 <table>
 <colgroup>
@@ -764,12 +727,12 @@ head(codes_esp)</code></pre>
 </table>
 </div>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <ul>
 <li><p><em>R for Data Science</em> (<a href="http://r4ds.had.co.nz" class="uri">http://r4ds.had.co.nz</a>), particulièrement les chapitres 3 (<em>Data Visualisation</em>) et 5 (<em>Data transformation</em>).</p></li>
-<li><p>Aide-mémoire pour <em>dplyr</em> et <em>tidyr</em>: <a href="https://www.rstudio.com/wp-content/uploads/2016/01/data-wrangling-french.pdf" class="uri">https://www.rstudio.com/wp-content/uploads/2016/01/data-wrangling-french.pdf</a></p></li>
-<li><p>Aide-mémoire pour les différentes fonctions de <em>ggplot2</em>: <a href="https://thinkr.fr/pdf/ggplot2-french-cheatsheet.pdf" class="uri">https://thinkr.fr/pdf/ggplot2-french-cheatsheet.pdf</a>.</p></li>
+<li><p>Aide-mémoire pour <em>dplyr</em>: <a href="https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf" class="uri">https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf</a>.</p></li>
+<li><p>Aide-mémoire pour <em>ggplot2</em>: <a href="https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf" class="uri">https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf</a>.</p></li>
 <li><p>Site de référence pour toutes les fonctions de <em>ggplot2</em>: <a href="https://ggplot2.tidyverse.org/reference/index.html" class="uri">https://ggplot2.tidyverse.org/reference/index.html</a>.</p></li>
 </ul>
 </div>
@@ -835,6 +798,7 @@ head(kejim2014)</code></pre>
 <pre class="r"><code>group_by(kejim, espece) %&gt;%
     summarize(maxDHP = max(dhp)) %&gt;%
     arrange(desc(maxDHP))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 13 x 2
 ##    espece maxDHP
 ##    &lt;chr&gt;   &lt;dbl&gt;
@@ -873,6 +837,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
