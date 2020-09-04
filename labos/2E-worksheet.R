@@ -176,8 +176,7 @@ compte_site_annee <- count(kejim, ...)
 
 # Join two data frames
 
-codes_esp <- read.csv("codes_especes.csv", stringsAsFactors = FALSE,
-                      encoding = "UTF-8")
+codes_esp <- read.csv("codes_especes.csv", encoding = "UTF-8")
 
 kejim_esp <- ...
 

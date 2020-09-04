@@ -330,7 +330,7 @@ div.tocify {
 <div id="retour1" class="section level2">
 <h2>Exercice 1</h2>
 <p>Chargez le <a href="cours1_kejimkujik.csv">jeu de données du Parc national de Kejimkujik</a> que nous avons utilisé lors du premier laboratoire:</p>
-<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
+<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;)
 head(kejim)</code></pre>
 <pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3
@@ -356,9 +356,7 @@ head(kejim)</code></pre>
 <p>Nous pouvons aussi représenter des statistiques sommaires d’un ensemble de points, comme leur moyenne.</p>
 <pre class="r"><code>ggplot(kejim, aes(x = espece, y = dhp)) +
     geom_boxplot() +
-    geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun.y = &quot;mean&quot;)</code></pre>
-<pre><code>## Warning: Ignoring unknown parameters: fun.y</code></pre>
-<pre><code>## No summary function supplied, defaulting to `mean_se()`</code></pre>
+    geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun = &quot;mean&quot;)</code></pre>
 <p><img src="2-IntroR_partie2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Produisons maintenant un histogramme du DHP pour l’ensemble des arbres avec <code>geom_histogram</code>. L’histogramme représente une seule variable, donc nous n’avons pas besoin de spécifier <em>y</em> dans <code>aes</code>.</p>
 <pre class="r"><code>ggplot(kejim, aes(x = dhp)) +
@@ -649,8 +647,7 @@ head(compte_site_annee)</code></pre>
 <div id="joindre-deux-tableaux-de-données" class="section level2">
 <h2>Joindre deux tableaux de données</h2>
 <p>Le fichier <a href="codes_especes.csv">codes_especes.csv</a> contient un tableau de correspondance entre les codes d’espèces du tableau <code>kejim</code> et les noms communs français et anglais de ces espèces.</p>
-<pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, stringsAsFactors = FALSE,
-                      encoding = &quot;UTF-8&quot;)
+<pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, encoding = &quot;UTF-8&quot;)
 head(codes_esp)</code></pre>
 <pre><code>##   espece             nom_espece   species_name
 ## 1   ABBA          Sapin baumier     Balsam Fir

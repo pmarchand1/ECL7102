@@ -85,7 +85,7 @@ Ce premier exemple illustre la structure de base pour la production d'un graphiq
 Chargez le [jeu de données du Parc national de Kejimkujik](cours1_kejimkujik.csv) que nous avons utilisé lors du premier laboratoire:
 
 ```{r}
-kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+kejim <- read.csv("cours1_kejimkujik.csv")
 head(kejim)
 ```
 
@@ -115,7 +115,7 @@ Nous pouvons aussi représenter des statistiques sommaires d'un ensemble de poin
 ```{r}
 ggplot(kejim, aes(x = espece, y = dhp)) +
     geom_boxplot() +
-    geom_point(color = "red", stat = "summary", fun.y = "mean")
+    geom_point(color = "red", stat = "summary", fun = "mean")
 ```
 
 Produisons maintenant un histogramme du DHP pour l'ensemble des arbres avec `geom_histogram`. L'histogramme représente une seule variable, donc nous n'avons pas besoin de spécifier *y* dans `aes`. 
@@ -410,8 +410,7 @@ Classez les espèces du jeu de données `kejim` en ordre décroissant de leur di
 Le fichier [codes_especes.csv](codes_especes.csv) contient un tableau de correspondance entre les codes d'espèces du tableau `kejim` et les noms communs français et anglais de ces espèces. 
 
 ```{r}
-codes_esp <- read.csv("codes_especes.csv", stringsAsFactors = FALSE,
-                      encoding = "UTF-8")
+codes_esp <- read.csv("codes_especes.csv", encoding = "UTF-8")
 head(codes_esp)
 ```
 

@@ -84,7 +84,7 @@ This first example illustrates the basic structure for producing a graph with *g
 First, load the [Kejimkujik National Park Dataset](cours1_kejimkujik.csv) that we used in the first lab:
 
 ```{r}
-kejim <- read.csv("cours1_kejimkujik.csv", stringsAsFactors = FALSE)
+kejim <- read.csv("cours1_kejimkujik.csv")
 head(kejim)
 ```
 
@@ -114,7 +114,7 @@ We can also represent summary statistics of a set of points, such as their mean.
 ```{r}
 ggplot(kejim, aes(x = espece, y = dhp)) +
     geom_boxplot() +
-    geom_point(color = "red", stat = "summary", fun.y = "mean")
+    geom_point(color = "red", stat = "summary", fun = "mean")
 ```
 
 Now, we produce a histogram of the DBH for all trees with `geom_histogram`. The histogram represents a single variable, so we do not need to specify *y* in `aes`.
@@ -280,7 +280,7 @@ head(acru)
 
 Here is the same operation with the function `filter`.
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(dplyr)
 
 acru <- filter(kejim, espece == "ACRU")
@@ -407,8 +407,7 @@ Sort the species in `kejim` in descending order of maximum diameter.
 The file `codes_especes.csv` contains a data frame matching species codes from `kejim` to the species common names in French and English.
 
 ```{r}
-codes_esp <- read.csv("codes_especes.csv", stringsAsFactors = FALSE,
-                      encoding = "UTF-8")
+codes_esp <- read.csv("codes_especes.csv", encoding = "UTF-8")
 head(codes_esp)
 ```
 

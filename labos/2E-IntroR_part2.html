@@ -331,7 +331,7 @@ div.tocify {
 <div id="retour1" class="section level2">
 <h2>Exercise 1</h2>
 <p>First, load the <a href="cours1_kejimkujik.csv">Kejimkujik National Park Dataset</a> that we used in the first lab:</p>
-<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;, stringsAsFactors = FALSE)
+<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;)
 head(kejim)</code></pre>
 <pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         1        1   TSCA 16.3
@@ -357,9 +357,7 @@ head(kejim)</code></pre>
 <p>We can also represent summary statistics of a set of points, such as their mean.</p>
 <pre class="r"><code>ggplot(kejim, aes(x = espece, y = dhp)) +
     geom_boxplot() +
-    geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun.y = &quot;mean&quot;)</code></pre>
-<pre><code>## Warning: Ignoring unknown parameters: fun.y</code></pre>
-<pre><code>## No summary function supplied, defaulting to `mean_se()`</code></pre>
+    geom_point(color = &quot;red&quot;, stat = &quot;summary&quot;, fun = &quot;mean&quot;)</code></pre>
 <p><img src="2E-IntroR_part2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Now, we produce a histogram of the DBH for all trees with <code>geom_histogram</code>. The histogram represents a single variable, so we do not need to specify <em>y</em> in <code>aes</code>.</p>
 <pre class="r"><code>ggplot(kejim, aes(x = dhp)) +
@@ -492,17 +490,9 @@ head(acru)</code></pre>
 ## 25   BD        B   26    8  2004         4        1   ACRU 29.8
 ## 34   BD        B   26    8  2004        14        1   ACRU 33.0</code></pre>
 <p>Here is the same operation with the function <code>filter</code>.</p>
-<pre class="r"><code>library(dplyr)</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.0.2</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>acru &lt;- filter(kejim, espece == &quot;ACRU&quot;)
+<pre class="r"><code>library(dplyr)
+
+acru &lt;- filter(kejim, espece == &quot;ACRU&quot;)
 head(acru)</code></pre>
 <pre><code>##   site parcelle jour mois annee num_arbre nb_tiges espece  dhp
 ## 1   BD        A   31    8  2004         7        1   ACRU 29.0
@@ -658,8 +648,7 @@ head(compte_site_annee)</code></pre>
 <div id="join-two-data-frames" class="section level2">
 <h2>Join two data frames</h2>
 <p>The file <code>codes_especes.csv</code> contains a data frame matching species codes from <code>kejim</code> to the species common names in French and English.</p>
-<pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, stringsAsFactors = FALSE,
-                      encoding = &quot;UTF-8&quot;)
+<pre class="r"><code>codes_esp &lt;- read.csv(&quot;codes_especes.csv&quot;, encoding = &quot;UTF-8&quot;)
 head(codes_esp)</code></pre>
 <pre><code>##   espece             nom_espece   species_name
 ## 1   ABBA          Sapin baumier     Balsam Fir
