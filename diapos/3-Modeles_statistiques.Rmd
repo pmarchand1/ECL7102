@@ -1,0 +1,758 @@
+---
+title: "Modèles statistiques et intervalles de confiance"
+date: "14 septembre 2020"
+output: 
+  xaringan::moon_reader:
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
+library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
+```
+
+
+# Objectifs
+
+- Décrire les caractéristiques et l'utilité des distributions normale et log-normale.
+
+- Connaître la relation entre densité de probabilité et probabilité cumulative pour une variable continue, et calculer ces quantités dans R.
+
+- Comparer des données à une distribution de référence avec un diagramme quantile-quantile.
+
+- Interpréter un intervalle de confiance et calculer l'intervalle de confiance pour la moyenne d'une distribution normale.
+
+---
+
+class: center, inverse, middle
+
+# Distributions statistiques
+
+---
+
+# Distribution discrète
+
+- Distribution statistique (ou loi de probabilité): fonction qui associe une probabilité à chaque valeur possible d'une variable aléatoire.
+
+- Pour une variable discrète, chaque valeur a une masse de probabilité, dont la somme doit être égale à 1.
+
+---
+
+# Distribution discrète
+
+- Exemple: Lancer un dé équilibré à six faces.
+
+- Une distribution *uniforme* assigne la même probabilité à chaque valeur.
+
+```{r fig.dim = c(5, 4)}
+ggplot(NULL, aes(x = 1:6, y = 1/6)) +
+    labs(x = "x", y = "Probabilité de x") +
+    geom_bar(stat = "identity") +
+    scale_x_continuous(breaks = 1:6) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 0.2))
+```
+
+---
+
+# Distribution continue
+
+- Pour une variable continue, chaque valeur a une *densité de probabilité*.
+
+- Voici une distribution uniforme continue entre 0 et 6.
+
+```{r fig.dim = c(6, 5)}
+ggplot(NULL, aes(x = c(-1E-6, 1E-6, 6 - 1E-6, 6 + 1E-6), y = c(0, 1/6, 1/6, 0))) +
+    labs(x = "x", y = "Densité de probabilité de x") +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 0.2)) +
+    geom_line(color = "blue")
+```
+
+---
+
+# Distribution continue
+
+- Pour calculer la probabilité d'un intervalle donné, on calcule l'intégrale (aire sous la courbe) de la densité.
+
+- Ex.: Probabilté que $x$ soit dans l'intervalle (2.5, 3) est 1/12.
+
+```{r fig.dim = c(6, 5)}
+ggplot(NULL, aes(x = c(-1E-6, 1E-6, 6 - 1E-6, 6 + 1E-6), y = c(0, 1/6, 1/6, 0))) +
+    labs(x = "x", y = "Densité de probabilité de x") +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 0.2)) +
+    geom_line(color = "blue") +
+    geom_rect(xmin = 2.5, xmax = 3, ymin = 0, ymax = 1/6, fill = "blue")
+```
+
+---
+
+# Simuler des valeurs aléatoires dans R
+
+Le code R ci-dessous génère 10 valeurs aléatoires tirées de la distribution uniforme (continue) entre 0 et 6.
+
+```{r echo = TRUE}
+x <- runif(n = 10, min = 0, max = 6)
+round(x, 2) # round affiche les valeurs avec 2 décimales
+```
+
+---
+
+# Simuler des valeurs aléatoires dans R
+
+Voici les histogrammes des valeurs obtenues pour différents $n$. Que remarquez-vous? 
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+df <- data.frame(n = c(100, 500, 2000, 10000)) %>%
+    mutate(x = map(n, ~ runif(n = ., min = 0, max = 6))) %>%
+    unnest()
+ggplot(df, aes(x = x)) +
+    labs(title = "Histogramme de runif(n, 0, 6)") +
+    geom_histogram(color = "white") +
+    facet_wrap(~ n, scales = "free", labeller = function(x) label_both(x, sep = " = ")) +
+    theme(strip.background = element_blank(), strip.text = element_text(face = "bold"))
+```
+
+---
+
+# Loi des grands nombres
+
+- Nous avons illustré la distribution d'une variable en *simulant* un échantillon (10 000 valeurs).
+
+- *Loi des grands nombres*: Plus un échantillon aléatoire est grand, plus la distribution des valeurs s'approche de la distribution théorique.
+
+---
+
+class: center, inverse, middle
+
+# La distribution normale
+
+---
+
+# Motivation
+
+- Dans un système complexe, les variables que nous observons résultent de l'effet combiné de nombreux processus que nous ne pouvons pas directement percevoir. 
+
+--
+
+- Lorsque de nombreux facteurs agissent indépendamment sur une même variable, leur effet total tend à converger vers certaines distributions statistiques bien connues.
+
+---
+
+# Distribution d'une somme de $n$ variables
+
+- Voici une fonction dans R qui calcule la somme de $n$ observations tirées d'une distribution uniforme entre 0 et 6.
+
+- Nous générons 10 000 valeurs de cette somme (avec `replicate`) pour visualiser sa distribution.
+
+```{r echo = TRUE}
+# Somme de n variables aléatoires uniformes entre min et max
+somme_unif <- function(n, min, max) {
+    sum(runif(n, min, max))
+}
+
+n <- 10
+x <- replicate(10000, somme_unif(n, 0, 6))
+```
+
+---
+
+# Distribution d'une somme de $n$ variables
+
+```{r, warning = FALSE}
+df <- data.frame(n = c(2, 5, 10, 20)) %>%
+    mutate(x = map(n, ~ replicate(10000, somme_unif(., 0, 6)))) %>%
+    unnest()
+ggplot(df, aes(x = x)) +
+    geom_histogram(color = "white") + 
+    facet_wrap(~n, scales = "free", labeller = function(x) label_both(x, sep = " = ")) +
+    theme(strip.background = element_blank(), strip.text = element_text(face = "bold"))
+```
+
+---
+
+# Théorème de la limite centrale
+
+Si on additionne un grand nombre de variables aléatoires indépendantes, peu importe leur distribution, la distribution de la somme s'approche d'une distribution normale.*
+
+--
+
+.font70[
+
+\* Certaines conditions s'appliquent.
+
+]
+
+---
+
+# Distribution normale (ou gaussienne)
+
+Formule pour la densité de probabilité:
+
+$$f(x) = \frac{1}{\sigma \sqrt{2 \pi}} e^{-\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2}$$
+
+Deux paramètres: $\mu$ (moyenne) et $\sigma$ (écart-type).
+
+---
+
+# Distribution normale
+
+```{r fig.dim = c(10, 5), warning = FALSE}
+p1 <- ggplot(data.frame(x = c(-10, 10)), aes(x)) +
+    labs(y = "f(x)", title = expression(mu == 0), color = expression(sigma)) +
+    stat_function(aes(color = "0.5"), fun = dnorm, args = list(mean = 0, sd = 0.5), size = 1) +
+    stat_function(aes(color = "1"), fun = dnorm, args = list(mean = 0, sd = 1), size = 1) +
+    stat_function(aes(color = "3"), fun = dnorm, args = list(mean = 0, sd = 3), size = 1) +
+    scale_color_brewer(palette = "Dark2") +
+    theme(legend.position = c(0.7, 0.5))
+
+p2 <- ggplot(data.frame(x = c(-6, 8)), aes(x)) +
+    labs(y = "f(x)", title = expression(sigma == 1), color = expression(mu)) +
+    stat_function(aes(color = "-1"), fun = dnorm, args = list(mean = -1, sd = 1), size = 1) +
+    stat_function(aes(color = "0"), fun = dnorm, args = list(mean = 0, sd = 1), size = 1) +
+    stat_function(aes(color = "2"), fun = dnorm, args = list(mean = 2, sd = 1), size = 1) +
+    scale_color_brewer(palette = "Dark2") +
+    theme(legend.position = c(0.7, 0.5))
+
+plot_grid(p1, p2, nrow = 1)
+```
+
+---
+
+# Distribution normale centrée réduite
+
+Si $x$ suit une distribution normale avec comme paramètres $\mu$, $\sigma$.
+
+$$z = \frac{x - \mu}{\sigma}$$
+
+--
+
+Alors $z$ suit une distribution normale centrée réduite $(\mu = 0, \sigma = 1)$:
+
+$$f(z) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} z^2}$$
+
+---
+
+# Distribution cumulative
+
+- La distribution cumulative d'une variable aléatoire (aussi appelée fonction de répartition) correspond pour chaque valeur $x$ à la probabilité que la valeur de la variable soit inférieure ou égale à $x$. 
+
+--
+
+- Elle est donc égale à l'aire sous la courbe de la densité de probabilité à gauche de $x$. 
+
+---
+
+# Distribution cumulative
+
+Distribution cumulative $F(z)$ d'une variable normale centrée réduite
+
+```{r}
+
+plot_c <- function(q) {
+    ggplot(NULL, aes(x = c(-3, 3))) +
+    labs(x = "z", y = "F(z)") +
+    stat_function(fun = pnorm) +
+    geom_point(aes(x = q, y = pnorm(q)), color = "blue", size = 2) +
+    scale_y_continuous(expand = c(0, 0))
+} 
+
+plot_d <- function(q) {
+    ggplot(NULL, aes(x = c(-3, 3))) +
+    labs(x = "z", y = "f(z)") +
+    stat_function(fun = dnorm) +
+    stat_function(fun = function(x) ifelse(x <= q, dnorm(x), NA), geom = "area", fill = "blue") +
+    scale_y_continuous(expand = c(0, 0))
+}
+
+plot_grid(plot_c(-1.5), plot_c(0), plot_c(1.25),
+          plot_d(-1.5), plot_d(0), plot_d(1.25), nrow = 2, align = "v")
+```
+
+---
+
+# Distribution cumulative
+
+- La distribution cumulative d'une variable aléatoire (aussi appelée fonction de répartition) correspond pour chaque valeur $x$ à la probabilité que la valeur de la variable soit inférieure ou égale à $x$. 
+
+- Elle est donc égale à l'aire sous la courbe de la densité de probabilité à gauche de $x$. 
+
+- À partir de la distribution cumulative $F(x)$, on peut facilement calculer la probabilité dans un intervalle $(x_1, x_2)$ en faisant la soustraction $F(x_2)$ - $F(x_1)$. 
+
+---
+
+# Fonctions de distribution dans R
+
+Quatre fonctions dans R permettent de travailler avec la distribution normale:
+
+- `rnorm(n, mean, sd)` génère `n` valeurs aléatoires à partir d'une distribution normale avec de moyenne `mean` et d'écart-type `sd`.
+
+- `dnorm(x, mean, sd)` donne la densité de probabilité associée à la valeur `x`.
+
+- `pnorm(q, mean, sd)` donne la probabilité cumulative associée à une valeur `q`. 
+
+- `qnorm(p, mean, sd)` donne la valeur (`q` pour quantile) associé à une probabilité cumulative `p` donnée.
+
+---
+
+# Fonctions de distribution dans R
+
+La probabilité cumulative à 2 écarts-type est de 98%.
+```{r echo = TRUE}
+pnorm(2, mean = 0, sd = 1)
+```
+
+--
+
+La probabilité d'être à $\pm$ 1 écart-type de la moyenne est de 68%.
+```{r echo = TRUE}
+pnorm(1, mean = 0, sd = 1) - pnorm(-1, mean = 0, sd = 1)
+```
+
+--
+
+Le troisième quartile est à 0.67 écart-type au-dessus de la moyenne.
+```{r echo = TRUE}
+qnorm(0.75, mean = 0, sd = 1)
+```
+
+---
+
+# Diagramme quantile-quantile
+
+- Le diagramme quantile-quantile (*Q-Q plot*) sert à visualiser la correspondance entre deux distributions statistiques.
+
+- Le plus souvent, nous voulons comparer un échantillon à une distribution théorique donnée.
+
+- Dans ce cas, on place les observations en ordre croissant et on associe chaque observation au quantile correspondant de la distribution théorique.
+
+---
+
+# Diagramme quantile-quantile
+
+Fonctions `qqnorm` et `qqline` dans R
+
+```{r echo = TRUE, fig.dim = c(5, 4)}
+test <- rnorm(99, mean = 6, sd = 4)
+
+qqnorm(test)
+qqline(test)
+```
+
+---
+
+# Exemple
+
+- Histogramme du DHP des arbres du jeu de données de Kejimkujik.
+
+```{r}
+kejim <- read.csv("../donnees/cours1_kejimkujik.csv")
+dhp <- kejim$dhp
+ggplot(kejim, aes(x = dhp)) +
+    geom_histogram(color = "white", fill = "blue", binwidth = 5) +
+    scale_y_continuous(expand = c(0, 0))
+```
+
+---
+
+# Diagramme quantile-quantile
+
+```{r, fig.dim = c(8,6)}
+qqnorm(dhp)
+qqline(dhp)
+```
+
+---
+
+# Exercice
+
+Voici un diagramme quantile-quantile comparant un échantillon à une distribution normale. Pouvez-vous décrire comment cet échantillon diffère de la distribution théorique? 
+
+```{r echo = FALSE, fig.dim = c(8, 6)}
+tval <- rt(100, df = 2)
+qqnorm(tval)
+qqline(tval)
+```
+
+---
+
+class: center, inverse, middle
+
+# La distribution log-normale
+
+---
+
+# Distribution log-normale
+
+- Une variable $x$ suit une distribution log-normale si $y = log(x)$ suit une distribution normale.
+
+--
+
+- Équivalent: si $y$ suit une distribution normale, $x = e^y$ suit une distribution log-normale.
+
+--
+
+```{r echo = FALSE, fig.dim = c(9, 5)}
+p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+    labs(title = "Distribution normale", x = "y", y = "f(y)") +
+    stat_function(fun = dnorm) +
+    scale_y_continuous(expand = c(0, 0))
+p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+    labs(title = "Distribution log-normale", x = "x", y = "f(x)") +
+    stat_function(fun = dlnorm) +
+    scale_y_continuous(expand = c(0, 0))
+plot_grid(p1, p2, nrow = 1)
+```
+
+---
+
+# Propriétés des logarithmes
+
+- $log(x)$ est seulement défini pour $x > 0$.
+
+- $log(x) = 0$ si $x = 1$. Un logarithme négatif ou positif représente une valeur de $x$ inférieure ou supérieure à 1, respectivement.
+
+--
+
+- Le logarithme transforme les multiplications en additions et les divisions en soustractions. 
+
+$$log(xw) = log(x) + log(w)$$
+
+$$log(x/v) = log(x) - log(v)$$
+    
+--
+
+- Donc, dans une échelle logarithmique, la distance entre deux nombres est proportionnelle à leur ratio dans l'échelle originale. 
+
+---
+
+# Propriétés des logarithmes
+
+- Si nous ne spécifions pas, les logarithmes sont des logarithmes naturels (base $e$). Toutefois, un changement de base correspond seulement à un changement d'échelle et n'affecte pas la forme de la distribution. Par exemple, pour convertir en base 10:
+
+$$log_{10}(x) = \frac{log(x)}{log(10)}$$
+
+---
+
+# Utilité de la distribution log-normale
+
+- Si la distribution normale est associée à des processus additifs, la distribution log-normale est associée à des processus multiplicatifs. 
+
+--
+
+- Exemple: Une population croît de 5%, 10% et 3% lors de trois années consécutives. 
+    + La croissance totale est 1.05 x 1.10 x 1.03 = 1.19. 
+
+---
+
+# Exemple
+
+- Diagramme quantile-quantile de log(DHP) pour les arbres du jeu de données de Kejimkujik.
+
+```{r}
+qqnorm(log(dhp))
+qqline(log(dhp))
+```
+
+---
+
+# Transformation logarithmique
+
+- Dans ce cours, nous verrons plusieurs méthodes qui supposent que la variable observée est expliquée par des effets additifs, avec une composante aléatoire suivant une distribution normale.
+
+--
+
+- Transformation logarithmique: convertit une variable log-normale en variable normale.
+
+--
+
+- Attention à l'interprétation des résultats.
+
+---
+
+# Transformation logarithmique
+
+```{r fig.dim = c(8, 4)}
+p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+    labs(title = "Échelle logarithmique", x = "y", y = "f(y)") +
+    stat_function(fun = dnorm, color = "blue", size = 1) +
+    stat_function(fun = function(x) dnorm(x, 0, 0.5), color = "orange", size = 1) +
+    scale_y_continuous(expand = c(0, 0))
+p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+    labs(title = "Échelle originale", x = "x", y = "f(x)") +
+    stat_function(fun = dlnorm, color = "blue", size = 1) +
+    stat_function(fun = function(x) dlnorm(x, 0, 0.5), color = "orange", size = 1) +
+    scale_y_continuous(expand = c(0, 0))
+plot_grid(p1, p2, nrow = 1)
+```
+
+--
+
+- La moyenne de $log(x)$ n'est *pas* égale au logarithme de la moyenne de $x$.
+
+---
+
+# Exercice
+
+Parmi les variables suivantes, lesquelles s'approchent à votre avis le plus d'une distribution normale, et pourquoi?
+
+(a) La température moyenne de septembre (variation d'une année à l'autre) à Rouyn-Noranda.
+
+(b) La population des municipalités du Québec.
+
+(c) Le nombre d'abonnés par compte dans un réseau social (ex.: Twitter).
+
+(d) Les ventes hebdomadaires de pain dans un supermarché.
+
+---
+
+# Résumé
+
+- Une distribution discrète est représentée par une fonction de masse de probabilité; une distribution continue est représentée par une fonction de densité de probabilité. 
+
+--
+
+- La distribution cumulative d'une variable au point $x$ donne la probabilité que cette variable soit inférieure ou égale à $x$.
+
+--
+
+- Quelques distributions continues: uniforme, normale, log-normale.
+
+---
+
+# Résumé
+
+- La distribution normale est caractérisée par sa moyenne $\mu$ et son écart-type $\sigma$.
+
+--
+
+- Toute distribution normale peut être ramenée à la distribution normale centrée réduite $(\mu = 0, \sigma = 1)$ avec la transformation linéaire: $z = (x - \mu)/\sigma$.
+
+--
+
+- La transformation logarithmique convertit les effets multiplicatifs en effets additifs, et les distributions log-normales en distributions normales.
+
+--
+
+- Le diagramme quantile-quantile permet de comparer visuellement des données à une distribution de référence.
+
+---
+
+class: center, inverse, middle
+
+# Intervalle de confiance
+
+---
+
+# Estimateur normalement distribué
+
+- $x$ est une variable avec moyenne $\mu$ et écart-type $\sigma$ dans la population.
+
+- Supposons que $\bar{x}$ suit une distribution normale.
+
+--
+
+    + En pratique, soit $x$ suit une distribution normale, soit l'échantillon est assez grand pour que le théorème de la limite centrale s'applique.
+    
+--
+    
+- Définissons une variable normale centrée réduite $z$:
+
+$$ z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} $$
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Exemple: l'intervalle entre le premier quartile (25%) et le troisième quartile (75%) a une probabilité de 50%.
+
+--
+
+- Pour une variable normale centrée réduite, cet intervalle correspond à (-0.674, 0.674).
+
+```{r echo = TRUE}
+c(qnorm(0.25), qnorm(0.75))
+```
+
+---
+
+# Intervalle de probabilité déterminée
+ 
+- Convertissons cet intervalle de $z$ en intervalle de $\bar{x}$:
+
+$$ \left( -0.674 \le \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \le 0.674 \right)$$
+
+--
+
+$$ \left( - 0.674 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 0.674 \frac{\sigma}{\sqrt{n}} \right)$$
+
+--
+
+- La probabilité que $\bar{x}$ se trouve à $\pm$ 0.674 erreur-type de $\mu$ est égale à 50%.
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Définissons $z_p$ comme la valeur de $z$ correspondant à une probabilité cumulative $p$. Ex.: $z_{0.25}$ est le premier quartile. 
+
+--
+
+- Alors l'intervalle contenant 50% de la probabilité s'écrit:
+
+$$\left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\sigma}{\sqrt{n}} \right)$$
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Pour un intervalle avec probabilité de 90%, on exclut 5% de chaque côté ( $z_{0.05}$ et $z_{0.95}$ ). 
+
+```{r echo = FALSE}
+ggplot(NULL, aes(x = c(-3, 3))) +
+    labs(x = "z", y = "f(z)") +
+    stat_function(fun = dnorm) +
+    stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.95), dnorm(x), NA), geom = "area", fill = "red") +
+    scale_y_continuous(expand = c(0, 0))
+```
+
+---
+
+# Intervalle de probabilité déterminée
+
+- De façon générale, si $\alpha$ est la probabilité exclue, l'intervalle contenant (100% - $\alpha$) de la distribution de $\bar{x}$ correspond à:
+
+$$\left( z_{\alpha/2} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{1-\alpha/2} \frac{\sigma}{\sqrt{n}} \right)$$
+
+---
+
+# Intervalle de probabilité déterminée
+
+- Pour des raisons historiques, l'intervalle de 95% correspondant à $\alpha$ = 0.05 est le plus souvent utilisé:
+
+$$\left( z_{0.025} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le  z_{0.975} \frac{\sigma}{\sqrt{n}} \right)$$
+
+--
+
+- En remplaçant les quantiles par leur valeur, on obtient:
+
+$$\left(- 1.96 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 1.96 \frac{\sigma}{\sqrt{n}} \right)$$
+
+---
+
+# Intervalle de confiance
+
+- Si on calcule la moyenne $\bar{x}$ d'un échantillon (et que $\bar{x}$ suit une distribution normale), la probabilité que notre estimé $\bar{x}$ se trouve à $\pm$ 1.96 erreurs-type du paramètre $\mu$ est de 95%.
+
+--
+
+- Après avoir calculé $\bar{x}$ et ainsi que l'erreur-type, nous établissons un intervalle de 1.96 erreurs-type autour de $\bar{x}$:
+
+$$\left(\bar{x} - 1.96 \frac{\sigma}{\sqrt{n}}, \bar{x} + 1.96 \frac{\sigma}{\sqrt{n}} \right)$$
+
+--
+
+- Selon ce modèle, pour 95% des échantillons possibles de $x$, l'intervalle ainsi calculé contiendra la valeur de $\mu$. 
+
+--
+
+- Il s'agit donc d'un **intervalle de confiance** à 95% pour $\bar{x}$. 
+
+---
+
+# Intervalle de confiance
+
+- La probabilité associée à un intervalle de confiance est basée sur la variabilité de $\bar{x}$ d'un échantillon à l'autre. Elle constitue une probabilité *a priori* (avant d'avoir échantillonné).
+
+- Le paramètre $\mu$ est fixe. Une fois que l'estimé $\bar{x}$ est obtenu pour un échantillon donné, l'intervalle de confiance contient $\mu$ ou ne le contient pas. 
+
+--
+
+- Parce que le paramètre $\mu$ n'est pas une variable aléatoire, il n'a pas de distribution statistique. 
+
+- Il est donc erroné d'affirmer, après avoir calculé un intervalle de confiance pour un échantillon donné, que "le paramètre $\mu$ a 95% de probabilité d'être à l'intérieur de cet intervalle".
+
+---
+
+# Intervalle de confiance d'une moyenne
+
+- L'intervalle de confiance à 100% - $\alpha$ de la moyenne $\bar{x}$ est donné par:
+
+$$\left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alpha/2} \frac{\sigma}{\sqrt{n}} \right)$$
+
+--
+
+- En pratique, on ne connaît pas $\sigma$.
+
+--
+
+- Si on remplace $\sigma$ par son estimé $s$, la probabilité de l'intervalle devient inférieure à 100% - $\alpha$. Il faut donc élargir l'intervalle afin de compenser pour la connaissance imparfaite de l'écart-type.
+
+---
+
+# Distribution $t$ de Student
+
+- Lorsqu'on utilise un estimé de l'écart-type, l'intervalle de confiance n'est plus basé sur la distribution normale centrée réduite $z$, mais plutôt sur la distribution $t$.
+
+- La distribution $t$ comporte un paramètre, le nombre de degrés de liberté, égal ici à $n - 1$. 
+
+--
+
+- La version corrigée de l'intervalle de confiance à 100% - $\alpha$ pour $\bar{x}$ est:
+
+$$\left( \bar{x} + t_{(n-1)\alpha/2} \frac{s}{\sqrt{n}}, \bar{x} + t_{(n-1)1 - \alpha/2} \frac{s}{\sqrt{n}} \right)$$
+
+---
+
+# Distribution $t$ de Student
+
+- Comparaison de la distribution normale centrée réduite $z$ avec des distributions $t$ à 4 et 9 degrés de liberté.
+
+```{r echo = FALSE, warning = FALSE}
+
+ggplot(data.frame(x = c(-4, 4)), aes(x)) +
+    labs(y = "f(x)", color = "Distribution") +
+    stat_function(aes(color = "z"), fun = dnorm, args = list(mean = 0, sd = 1), size = 1) +
+    stat_function(aes(color = "t[4]"), fun = dt, args = list(df = 4), size = 1) +
+    stat_function(aes(color = "t[9]"), fun = dt, args = list(df = 9), size = 1) +
+    scale_color_brewer(palette = "Dark2", 
+                       labels = c(expression(t[4]), expression(t[9]), expression(z))) +
+    theme(legend.position = c(0.8, 0.5))
+```
+
+---
+
+# Distribution $t$ de Student
+
+- Plus le nombre de degrés de liberté est petit, plus la distribution $t$ s'éloigne de la normale. 
+
+--
+
+- En particulier, l'écart-type augmente et les valeurs loins de la moyenne ont une probabilité plus grande, ce qui explique que l'intervalle de confiance construit à partir de la distribution $t$ est plus large. 
+
+--
+
+- La distribution $t$ a aussi une forme différente. Même comparée à une distribution normale de même écart-type, la distribution $t$ a une plus grande probabilité d'obtenir des valeurs extrêmes.
+
+---
+
+# Résumé
+
+- Un intervalle de confiance est défini autour d'un estimé de manière à ce que sur l'ensemble des échantillons possibles, il y ait une probabilité spécifique que l'intervalle de confiance obtenu contienne la valeur du paramètre à estimer.
+
+--
+
+- La distribution $t$ de Student remplace la distribution normale centrée réduite pour estimer l'intervalle de confiance de la moyenne d'un échantillon, lorsque l'écart-type de la population est inconnu. Cette distribution a des valeurs extrêmes plus fréquentes que la distribution normale, surtout lorsque le nombre de degrés de liberté est faible.
+

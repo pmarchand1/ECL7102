@@ -7,6 +7,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 
 1. [Statistiques descriptives et graphiques](notes_cours/1-Statistiques_descriptives.html) ([PDF](notes_cours/1-Statistiques_descriptives.pdf))
 2. [Échantillonnage et estimation de paramètres](notes_cours/2-Echantillonnage_estimation.html) ([PDF](notes_cours/2-Echantillonnage_estimation.pdf))
+3. [Modèles statistiques et intervalles de confiance](notes_cours/3-Modeles_statistiques.html) ([PDF](notes_cours/3-Modeles_statistiques.pdf))
 
 
 ## Laboratoires

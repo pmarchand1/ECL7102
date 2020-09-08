@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title>Statistical models, parameters and estimators</title>
+<title>Statistical models and confidence intervals</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -287,37 +252,20 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Statistical models, parameters and estimators</h1>
-<h4 class="date"><br/>Sept. 9, 2019</h4>
+<h1 class="title toc-ignore">Statistical models and confidence intervals</h1>
+<h4 class="date"><br/>Sept. 14, 2020</h4>
 
 </div>
 
 
 <div id="objectives" class="section level1">
 <h1>Objectives</h1>
-<p>Statistical distributions</p>
 <ul>
-<li>Describe the characteristics and use of normal and log-normal distributions.</li>
-<li>Know the relationship between probability density and cumulative probability for a continuous variable, and calculate these quantities in R.</li>
-<li>Compare data to a reference distribution with a quantile-quantile plot.</li>
+<li><p>Describe the characteristics and use of normal and log-normal distributions.</p></li>
+<li><p>Know the relationship between probability density and cumulative probability for a continuous variable, and calculate these quantities in R.</p></li>
+<li><p>Compare data to a reference distribution with a quantile-quantile plot.</p></li>
+<li><p>Interpret a confidence interval and calculate the confidence interval for the mean of a normal distribution.</p></li>
 </ul>
-<p>Parameter estimation</p>
-<ul>
-<li>Estimate the mean and variance of a population from a sample.</li>
-<li>Define the bias and standard error of an estimator.</li>
-<li>Calculate the properties of an estimator by simulation.</li>
-<li>Interpret a confidence interval and calculate the confidence interval for the mean of a normal distribution.</li>
-</ul>
-</div>
-<div id="statistics-parameters-and-estimators" class="section level1">
-<h1>Statistics, parameters and estimators</h1>
-<p>At the last class, we saw a series of descriptive statistics: mean, variances, quantiles and others. In general, a <em>statistic</em> is a quantity calculated from observations of random variables.</p>
-<p>In this class, we will consider the observations as the result of a random process described by a statistical model including some <em>parameters</em>. Our main goal will be to determine to what extent a statistic computed from the observations constitutes a good <em>estimator</em> of the desired parameter.</p>
-<p>For example, if we measure the weight of red squirrels and average these measurements (a statistic), what is our estimate of the average weight of the red squirrel population (a parameter)? What is its margin of error?</p>
-<blockquote>
-<p>In general, a parameter is a theoretical quantity. In our example, even if we could census all the squirrels, the weight of the individuals varies constantly and the composition of the population too (because of the births, deaths and migrations).</p>
-</blockquote>
-<p>At the end of the course, we will be able to describe the <em>bias</em>, <em>variance</em> and <em>confidence interval</em> of an estimator. Before we get there, we will first review the basic mathematical concepts for describing statistical models, as well as a particularly important model, the normal distribution.</p>
 </div>
 <div id="probability-distributions" class="section level1">
 <h1>Probability distributions</h1>
@@ -328,7 +276,7 @@ div.tocify {
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 </div>
 <div id="continuous-distribution" class="section level2">
-<h2>Continuous Distribution</h2>
+<h2>Continuous distribution</h2>
 <p>When the variable is continuous, the number of possible values is infinite, so the probability of precisely obtaining a given value is zero. The distribution function therefore associates a <em>density</em> of probability with a given value.</p>
 <p>For example, here is a uniform probability distribution between 0 and 6. The probability density is constant (1/6) in the interval and zero outside.</p>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
@@ -342,7 +290,7 @@ div.tocify {
 <p>In R, the following command generates ten random values (<code>n = 10</code>) drawn from the (continuous) uniform distribution between 0 and 6, which we saw in the preceding section.</p>
 <pre class="r"><code>x &lt;- runif(n = 10, min = 0, max = 6)
 round(x, 2) # round shows values with 2 decimals</code></pre>
-<pre><code>##  [1] 5.63 4.16 0.77 3.56 0.99 5.94 0.26 1.58 5.73 5.74</code></pre>
+<pre><code>##  [1] 5.02 5.02 3.36 5.26 4.66 4.25 3.09 0.92 5.38 0.42</code></pre>
 <p>The histograms below show the distribution of values within samples with different <span class="math inline">\(n\)</span>. What do you notice?</p>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>The <code>runif</code> function simulates sampling from a variable that follows a uniform distribution. The greater the size of that random sample, the more the distribution of values in the sample approaches the population distribution. This is what we call the <strong>law of large numbers</strong>.</p>
@@ -391,16 +339,17 @@ x &lt;- replicate(10000, sum_unif(n, 0, 6))</code></pre>
 <p>In other words, any normal distribution can be obtained from <span class="math inline">\(f(z)\)</span> by moving the center by a distance <span class="math inline">\(\mu\)</span> and widening the distribution by a factor <span class="math inline">\(\sigma\)</span>.</p>
 <p>The values of <span class="math inline">\(z\)</span> represent the distance from the mean, expressed in standard deviation units, eg: <span class="math inline">\(z\)</span> = -1.5 means one standard deviation and half below average.</p>
 </div>
-<div id="cumulative-distribution" class="section level2">
-<h2>Cumulative distribution</h2>
+</div>
+<div id="cumulative-distribution" class="section level1">
+<h1>Cumulative distribution</h1>
 <p>We have previously seen that the probability that a continuous random variable is found in a certain interval corresponds to the area under the curve (the integral) of the probability density in this interval.</p>
 <p>The cumulative distribution of a random variable is, for each value <span class="math inline">\(x\)</span>, the probability that the value of the variable is less than or equal to <span class="math inline">\(x\)</span>. It is therefore equal to the area under the curve of the probability density on the left of <span class="math inline">\(x\)</span>.</p>
 <p>Here is an illustration of the cumulative distribution <span class="math inline">\(F(z)\)</span> of a standard normal variable <span class="math inline">\(z\)</span>.</p>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>From the cumulative distribution <span class="math inline">\(F(x)\)</span>, we can easily calculate the probability in an interval (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>) by subtraction, i.e. <span class="math inline">\(F(x_2)\)</span> - <span class="math inline">\(F(x_1)\)</span>.</p>
 </div>
-<div id="distribution-functions-in-r" class="section level2">
-<h2>Distribution functions in R</h2>
+<div id="distribution-functions-in-r" class="section level1">
+<h1>Distribution functions in R</h1>
 <p>R provides four functions to work with the normal distribution. In each case, the mean (<code>mean</code>) and standard deviation (<code>sd</code>) of the distribution must be specified.</p>
 <ul>
 <li><p><code>rnorm(n, mean, sd)</code> generates <code>n</code> random values from a normal distribution with average<code>mean</code> and standard deviation <code>sd</code>.</p></li>
@@ -426,8 +375,8 @@ x &lt;- replicate(10000, sum_unif(n, 0, 6))</code></pre>
 <pre class="r"><code>qnorm(0.75, mean = 0, sd = 1)</code></pre>
 <pre><code>## [1] 0.6744898</code></pre>
 </div>
-<div id="quantile-quantile-plot" class="section level2">
-<h2>Quantile-quantile plot</h2>
+<div id="quantile-quantile-plot" class="section level1">
+<h1>Quantile-quantile plot</h1>
 <p>The quantile-quantile plot (or Q-Q plot) is used to visualize the correspondence between two statistical distributions; most often, we want to compare a sample to a given theoretical distribution.</p>
 <p>For example, suppose we have 99 observations of a variable and we want to check that its distribution is approximately normal. We sort the observations in ascending order and associate the first observation with the 1st percentile of the standard normal distribution, the second observation with the 2nd percentile, and so on until the 99th percentile. If the sample comes from a normal distribution, the scatter plot produced by this association will form a straight line.</p>
 <p><em>Indeed, if <span class="math inline">\(x\)</span> follows a normal distribution, then <span class="math inline">\(x = \mu + \sigma z\)</span> where <span class="math inline">\(z\)</span> is a standard normal variable.</em></p>
@@ -453,7 +402,6 @@ qqline(dhp)</code></pre>
 </ul>
 <p>Thus, the Q-Q plot indicates that the distribution is asymmetrical with quantiles closer together on the left and further away on the right. Since this is a fairly obvious difference, it could be detected more easily with a histogram (below). However, the Q-Q plot can detect more subtle differences, so it is useful to learn how to read and interpret this graph.</p>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-</div>
 <div id="exercise" class="section level2">
 <h2>Exercise</h2>
 <p>Here is a quantile-quantile plot comparing a sample to a normal distribution. Describe how this sample differs from the theoretical distribution.</p>
@@ -502,10 +450,10 @@ qqline(log(dhp))</code></pre>
 <h2>Exercise</h2>
 <p>Among the following variables, which ones do you think would most likely follow a normal distribution, and why?</p>
 <ol style="list-style-type: lower-alpha">
-<li>The mean temperature in September in Rouyn-Noranda.</li>
-<li>The population of cities and towns in Québec.</li>
-<li>The number of followers of a social media account (e.g. Twitter).</li>
-<li>The time runners take to complete a marathon.</li>
+<li><p>The mean temperature in September (varying across years) in Rouyn-Noranda.</p></li>
+<li><p>The population of cities and towns in Québec.</p></li>
+<li><p>The number of followers of a social media account (e.g. Twitter).</p></li>
+<li><p>Weekly bread sales at a supermarket.</p></li>
 </ol>
 </div>
 </div>
@@ -520,132 +468,6 @@ qqline(log(dhp))</code></pre>
 <li><p>A logarithmic transformation converts multiplicative effects into additive effects, and log-normal distributions into normal distributions.</p></li>
 <li><p>The quantile-quantile plot provides a visual way to compare data to a reference distribution.</p></li>
 </ul>
-</div>
-<div id="parameter-estimation" class="section level1">
-<h1>Parameter estimation</h1>
-<div id="estimation-of-the-mean" class="section level2">
-<h2>Estimation of the mean</h2>
-<p>Suppose we measure a variable <span class="math inline">\(x\)</span> on a sample of <span class="math inline">\(n\)</span> randomly selected individuals in a population. We use the sample mean:</p>
-<p><span class="math display">\[\bar{x} = \frac{1}{n} \sum_{i = 1}^{n} x_i\]</span> as the estimator of <span class="math inline">\(\mu\)</span>, the mean of the population distribution of <span class="math inline">\(x\)</span>. For now, we do not assume that <span class="math inline">\(x\)</span> follows a normal distribution.</p>
-<p>For this example, imagine that the 1161 trees in the Kejimkujik dataset represent the entire population, and that we sample some of those trees.</p>
-<pre class="r"><code># dhp is the vector of DBH for 1161 trees
-paste(&quot;The population has a mean DBH of&quot;, round(mean(dhp), 2), &quot;cm with a standard deviation of&quot;, round(sd(dhp), 2), &quot;cm.&quot;)</code></pre>
-<pre><code>## [1] &quot;The population has a mean DBH of 21.76 cm with a standard deviation of 12.25 cm.&quot;</code></pre>
-<p>In R, the <code>sample</code> function draws a random sample from the elements of a vector.</p>
-<pre class="r"><code>mean(sample(dhp, 20)) # mean DBH for a sample of n = 20 trees</code></pre>
-<pre><code>## [1] 25.245</code></pre>
-<p>The histograms below show the distributions (out of 10,000 replicates) of the mean DBH with a sample size <span class="math inline">\(n\)</span> = 10, 20 or 40.</p>
-<p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<p>As the sample size increases, the distribution becomes less dispersed, but also more symmetrical. This second observation is a consequence of the central limit theorem. Since the mean is calculated from the sum of the sampled values, its distribution approaches the normal distribution for a sufficiently large <span class="math inline">\(n\)</span>.</p>
-<p>For a variable <span class="math inline">\(x\)</span> that is distributed with a mean <span class="math inline">\(\mu\)</span> and a variance <span class="math inline">\(\sigma^2\)</span>, we can prove that <span class="math inline">\(\bar{x}\)</span> has a mean equal to <span class="math inline">\(\mu\)</span> and a variance equal to <span class="math inline">\(\sigma^2 / n\)</span>. The standard deviation of <span class="math inline">\(\bar{x}\)</span>, which in this context is called the <em>standard error</em>, is therefore inversely proportional to the square root of <span class="math inline">\(n\)</span>.</p>
-<p>Standard error of the mean: <span class="math display">\[\sigma_{\bar{x}} = \frac{\sigma_{x}}{\sqrt{n}}\]</span></p>
-<p>The mean and standard error of <span class="math inline">\(\bar{x}\)</span> calculated from the 10,000 samples simulated above are consistent with the theoretical predictions.</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">n</th>
-<th align="right">Mean (cm)</th>
-<th align="right">Standard error (cm)</th>
-<th align="right"><span class="math inline">\(\sigma / \sqrt{n}\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">21.76</td>
-<td align="right">3.85</td>
-<td align="right">3.87</td>
-</tr>
-<tr class="even">
-<td align="right">20</td>
-<td align="right">21.81</td>
-<td align="right">2.75</td>
-<td align="right">2.74</td>
-</tr>
-<tr class="odd">
-<td align="right">40</td>
-<td align="right">21.78</td>
-<td align="right">1.91</td>
-<td align="right">1.94</td>
-</tr>
-</tbody>
-</table>
-<p>Since the mean of the estimator is equal to the value of the estimated parameter (<span class="math inline">\(\mu\)</span>), <span class="math inline">\(\bar{x}\)</span> is an <em>unbiased</em> estimator of <span class="math inline">\(\mu\)</span>.</p>
-</div>
-<div id="standard-deviation-or-standard-error" class="section level2">
-<h2>Standard deviation or standard error</h2>
-<p>It is important not to confuse the standard deviation of <span class="math inline">\(x\)</span> with the standard error of an estimator, such as <span class="math inline">\(\bar{x}\)</span>. The standard deviation of <span class="math inline">\(x\)</span> measures the dispersion of the individual values of the variable relative to their mean. The standard error of <span class="math inline">\(\bar{x}\)</span> measures the dispersion of the sample mean relative to the population mean. The standard error decreases with the size of the sample.</p>
-<p>Since the standard error decreases according to <span class="math inline">\(\sqrt{n}\)</span> rather than <span class="math inline">\(n\)</span>, if we want to reduce this standard error by half, we must increase the sample size by a factor of 4.</p>
-<p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-<p>Note also that the standard error depends only on the size of the sample, not on the population size. This is true as long as the sample is small relative to the population. When sampling a significant fraction of the population (say more than 5%), the actual standard error is smaller than <span class="math inline">\(\sigma / \sqrt{n}\)</span>.</p>
-</div>
-<div id="estimation-of-the-variance" class="section level2">
-<h2>Estimation of the variance</h2>
-<p>To estimate the variance <span class="math inline">\(\sigma^2\)</span> of a variable <span class="math inline">\(x\)</span>, one could calculate the variance of the sample with the equation seen at the last class.</p>
-<p><span class="math display">\[s^2 = \frac{1}{n} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2  \]</span></p>
-<p>Here, we <span class="math inline">\(s^2\)</span> for the variance of a sample to differentiate from the population parameter <span class="math inline">\(\sigma^2\)</span>.</p>
-<p>As before, we test this estimator by simulating 10,000 samples from the DBH vector with <span class="math inline">\(n\)</span> = 10, 20, and 40. The following table shows the average of <span class="math inline">\(s^2\)</span> and its ratio to the popultion parameter <span class="math inline">\(\sigma^2\)</span> (150.1 cm<span class="math inline">\(^2\)</span>).</p>
-<table>
-<thead>
-<tr class="header">
-<th align="right">n</th>
-<th align="right">Mean of <span class="math inline">\(s^2\)</span> (cm<span class="math inline">\(^2\)</span>)</th>
-<th align="right">Mean of <span class="math inline">\(s^2\)</span> / <span class="math inline">\(\sigma^2\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">136.3</td>
-<td align="right">0.90</td>
-</tr>
-<tr class="even">
-<td align="right">20</td>
-<td align="right">143.1</td>
-<td align="right">0.95</td>
-</tr>
-<tr class="odd">
-<td align="right">40</td>
-<td align="right">146.6</td>
-<td align="right">0.97</td>
-</tr>
-</tbody>
-</table>
-<p>This result shows that the calculated variance of the sample systematically underestimates the variance of the population. It is therefore a <em>biased</em> estimator. Why is this the case?</p>
-<p>The problem is that the estimator <span class="math inline">\(s^2\)</span> is not based on the population mean, but on its estimate <span class="math inline">\(\bar{x}\)</span> calculated from the same sample. By definition, the sample is always centered on <span class="math inline">\(\bar{x}\)</span>, but <span class="math inline">\(\bar{x}\)</span> is at some distance from <span class="math inline">\(\mu\)</span>. Therefore, the deviations from <span class="math inline">\(\mu\)</span> are slightly larger than the deviations from <span class="math inline">\(\bar{x}\)</span>.</p>
-<p>In fact, the estimator defined above underestimates the variance of the population by a ratio <span class="math inline">\((n-1)/n\)</span>, as shown in the last column of the table (0.9 = 9/10, 0.95 = 19/20). In that case, the bias can be corrected by multiplying the estimator by <span class="math inline">\(n / (n-1)\)</span>, giving the unbiased estimator:</p>
-<p><span class="math display">\[s^2 = \frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2\]</span></p>
-<p>Its square root provides an estimator for the population standard deviation:</p>
-<p><span class="math display">\[s = \sqrt{\frac{1}{n - 1} \sum_{i = 1}^n \left( x_i - \bar{x} \right)^2}\]</span></p>
-<p>Unlike <span class="math inline">\(s^2\)</span>, the <span class="math inline">\(s\)</span> estimator for the standard deviation is biased, but it remains the most commonly used one, since there is no simple and unbiased formula for standard deviation.</p>
-<p>Finally, we also use <span class="math inline">\(s\)</span> as the <span class="math inline">\(\sigma\)</span> estimator for calculating the standard error of <span class="math inline">\(\bar{x}\)</span> (<span class="math inline">\(s / \sqrt{n}\)</span>).</p>
-</div>
-<div id="degrees-of-freedom" class="section level2">
-<h2>Degrees of freedom</h2>
-<p>Another way to explain the division by (<span class="math inline">\(n - 1\)</span>) in the calculation of <span class="math inline">\(s^2\)</span> is based on the concept of degrees of freedom.</p>
-<p>The number of degrees of freedom is the number of independent data used in the calculation of a statistic. Here, <span class="math inline">\(s^2\)</span> is computed from the deviations between each observation of <span class="math inline">\(x\)</span> and its mean (<span class="math inline">\(x_i - \bar{x}\)</span>). As we saw in the first class, the definition of <span class="math inline">\(\bar{x}\)</span> ensures that the sum of these deviations is equal to 0. In this case, when we know the first <span class="math inline">\(n - 1\)</span> deviations, we can automatically deduce the last, which is not an independent data point.</p>
-</div>
-<div id="bias-and-standard-error-of-an-estimator" class="section level2">
-<h2>Bias and standard error of an estimator</h2>
-<p>The notions of bias and standard error were briefly presented in the previous section.</p>
-<p>More generally, if we estimate a parameter <span class="math inline">\(\theta\)</span> (e.g. <span class="math inline">\(\mu\)</span>) with an estimator <span class="math inline">\(\hat{\theta}\)</span> (e.g. <span class="math inline">\(\bar{x}\)</span>), we can divide the <em>mean square error</em> between <span class="math inline">\(\hat {\theta}\)</span> and <span class="math inline">\(\theta\)</span> into two components. (In the equation below, the function <span class="math inline">\(E[]\)</span> is another way of representing the mean.)</p>
-<p><span class="math display">\[E[(\hat{\theta} - \theta)^2] = E[(\hat{\theta} - E[\hat{\theta}])^2] + (E[\hat{\theta}] - \theta)^2\]</span></p>
-<p>This equation tells us that the mean square deviation between an estimator and the parameter is the sum of:</p>
-<ul>
-<li><p>the mean square deviation between the estimator and its mean (that is, the variance of the estimator, or the square of its standard error);</p></li>
-<li><p>the square of the difference between the mean of the estimator and the parameter (this difference is the bias);</p></li>
-</ul>
-<p>So, we have the following relation: <em>Mean square error = (Standard error)<span class="math inline">\(^2\)</span> + (Bias)<span class="math inline">\(^2\)</span></em>.</p>
-<p>These two sources of error have different properties. The standard error is due to the limited size of the sample and decreases as <span class="math inline">\(n\)</span> increases. Bias is a systematic error that does not depend on the size of the sample, but may be due to a biased estimator or unrepresentative sampling of the population.</p>
-</div>
-<div id="exercise-2" class="section level2">
-<h2>Exercise</h2>
-<p>In order to estimate the average wood density of jack pine on a site, you first sample 9 trees, which have an average wood density of 450 kg/m<span class="math inline">\(^3\)</span> with a standard deviation of 90 kg/m<span class="math inline">\(^3\)</span>.</p>
-<ol style="list-style-type: lower-alpha">
-<li><p>What is the standard error of this mean?</p></li>
-<li><p>If you wanted to know the average with a standard error of no more than 10 kg/m<span class="math inline">\(^3\)</span>, how many trees do you expect to sample?</p></li>
-</ol>
-</div>
 </div>
 <div id="confidence-interval" class="section level1">
 <h1>Confidence interval</h1>
@@ -666,26 +488,26 @@ paste(&quot;The population has a mean DBH of&quot;, round(mean(dhp), 2), &quot;c
 <p><em>Note</em>: By default, <code>qnorm</code> uses the parameters <code>mean = 0</code> and <code>sd = 1</code>.</p>
 <p>The interval is symmetrical around the mean (0) since the normal distribution is symmetrical and our chosen quantiles are equally distant from 50%.</p>
 <p>Let’s convert this interval of <span class="math inline">\(z\)</span> to an interval of <span class="math inline">\(\bar{x}\)</span>:</p>
-<p><span class="math display">\[ \left( -0.674 \le \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \le 0.674 \right)\]</span></p>
-<p><span class="math display">\[ \left( - 0.674 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 0.674 \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left( -0.674 \le \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \le 0.674 \right)\]</span></p>
+<p><span class="math display">\[\left( - 0.674 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 0.674 \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>There is a 50% probability that the sample mean <span class="math inline">\(\bar{x}\)</span> is in a range of 0.674 standard errors on each side of the parameter <span class="math inline">\(\mu\)</span>.</p>
 <p>Suppose we represent the value of <span class="math inline">\(z\)</span> corresponding to a cumulative probability <span class="math inline">\(p\)</span> as <span class="math inline">\(z_p\)</span>. For example, <span class="math inline">\(z_{0.25}\)</span> is the first quartile. Thus, we rewrite the interval above as:</p>
-<p><span class="math display">\[ \left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>For a 90% probability interval, we would replace <span class="math inline">\(z_{0.25}\)</span> and <span class="math inline">\(z_{0.75}\)</span> with <span class="math inline">\(z_{0.05}\)</span> and <span class="math inline">\(z_{0.95}\)</span>. Indeed, a 90% interval excludes 10% of the distribution and since we want a centered interval, we exclude 5% of both ends of the distribution, as indicated by the red part of the distribution in the graph below.</p>
-<p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>More generally, if we represent the probability outside the interval as <span class="math inline">\(\alpha\)</span>, an interval containing (100% - <span class="math inline">\(\alpha\)</span>) of the distribution of <span class="math inline">\(\bar{x}\)</span> is given by:</p>
-<p><span class="math display">\[ \left( z_{\alpha/2} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{1-\alpha/2} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left( z_{\alpha/2} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{1-\alpha/2} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>For historical reasons, the 95% interval corresponding to <span class="math inline">\(\alpha\)</span> = 0.05 is used most often:</p>
-<p><span class="math display">\[ \left( z_{0.025} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le  z_{0.975} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left( z_{0.025} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le  z_{0.975} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>By replacing the quantiles by their values, we obtain:</p>
-<p><span class="math display">\[ \left(- 1.96 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 1.96 \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left(- 1.96 \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le 1.96 \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 </div>
 <div id="confidence-interval-1" class="section level2">
 <h2>Confidence interval</h2>
 <p>To summarize, if we sample a variable <span class="math inline">\(x\)</span> and calculate its sample mean <span class="math inline">\(\bar{x}\)</span>, we can say, for example, that we have a 95% probability of getting an estimate <span class="math inline">\(\bar{x}\)</span> that is <span class="math inline">\(\pm\)</span> 1.96 standard errors around the parameter <span class="math inline">\(\mu\)</span>, which is unknown.</p>
 <p><em>This always assumes our model is good, that is, the <span class="math inline">\(\bar{x}\)</span> statistic is well represented by a normal distribution.</em></p>
 <p>So, after calculating <span class="math inline">\(\bar{x}\)</span> and calculating its standard error, we establish an interval of 1.96 standard errors on each side of <span class="math inline">\(\bar{x}\)</span>:</p>
-<p><span class="math display">\[ \left(\bar{x} - 1.96 \frac{\sigma}{\sqrt{n}}, \bar{x} + 1.96 \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left(\bar{x} - 1.96 \frac{\sigma}{\sqrt{n}}, \bar{x} + 1.96 \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>According to our model, we can say that for 95% of the possible samples of <span class="math inline">\(x\)</span>, the interval thus calculated will contain the value of <span class="math inline">\(\mu\)</span>. This is a 95% <strong>confidence interval</strong> for <span class="math inline">\(\bar{x}\)</span>.</p>
 </div>
 <div id="interpretation-of-the-confidence-interval" class="section level2">
@@ -699,17 +521,17 @@ paste(&quot;The population has a mean DBH of&quot;, round(mean(dhp), 2), &quot;c
 <div id="confidence-interval-of-a-mean" class="section level2">
 <h2>Confidence interval of a mean</h2>
 <p>We have seen that the (100% - <span class="math inline">\(\alpha\)</span>) confidence interval of the mean <span class="math inline">\(\bar{x}\)</span> is given by:</p>
-<p><span class="math display">\[ \left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alpha/2} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left( \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{x} + z_{1 - \alpha/2} \frac{\sigma}{\sqrt{n}} \right)\]</span></p>
 <p>The only problem with this equation is that we do not know the parameter <span class="math inline">\(\sigma\)</span>. And if we replace <span class="math inline">\(\sigma\)</span> with its estimator <span class="math inline">\(s\)</span>, the probability associated with the interval becomes less than (100% - <span class="math inline">\(\alpha\)</span>). In practice, we need to widen the interval to take into account our imperfect knowledge of the standard deviation of the data.</p>
 <p>The solution to this problem was discovered by William Gosset, who published it under the pseudonym Student. When using an estimate of the standard deviation, the confidence interval is no longer based on the standard normal distribution <span class="math inline">\(z\)</span>, but on the Student <span class="math inline">\(t\)</span> distribution.</p>
 <p>The <span class="math inline">\(t\)</span> distribution has a parameter, the number of degrees of freedom, which in this case corresponds to <span class="math inline">\(n\)</span> - 1. Thus, the corrected version of the (100% - <span class="math inline">\(\alpha\)</span>) confidence interval for <span class="math inline">\(\bar{x}\)</span> is:</p>
-<p><span class="math display">\[ \left( \bar{x} + t_{(n-1)\alpha/2} \frac{s}{\sqrt{n}}, \bar{x} + t_{(n-1)1 - \alpha/2} \frac{s}{\sqrt{n}} \right)\]</span></p>
+<p><span class="math display">\[\left( \bar{x} + t_{(n-1)\alpha/2} \frac{s}{\sqrt{n}}, \bar{x} + t_{(n-1)1 - \alpha/2} \frac{s}{\sqrt{n}} \right)\]</span></p>
 <p>where the <span class="math inline">\(n-1\)</span> in parentheses indicates the number of degrees of freedom of the <span class="math inline">\(t\)</span> distribution.</p>
 </div>
 <div id="the-t-distribution" class="section level2">
 <h2>The t Distribution</h2>
 <p>The graph below compares the standard normal distribution (<span class="math inline">\(z\)</span>) with <span class="math inline">\(t\)</span> distributions having 4 and 9 degrees of freedom. The smaller the number of degrees of freedom, the further the <span class="math inline">\(t\)</span> distribution is from the normal. In particular, the standard deviation increases and values far from the mean have a higher probability, which explains why the confidence interval constructed from the <span class="math inline">\(t\)</span> distribution is wider.</p>
-<p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>While this is difficult to tell from the graph, the <span class="math inline">\(t\)</span> distribution also has a different shape. Even when compared with a normal distribution with the same standard deviation, the <span class="math inline">\(t\)</span> distribution puts a greater probability on extreme values (very far from the mean).</p>
 <p>When the number of degrees of freedom is high, such as when we compute the mean of a large sample, the <span class="math inline">\(t\)</span> distribution approaches the standard normal distribution.</p>
 </div>
@@ -747,6 +569,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
