@@ -473,7 +473,7 @@ dens</code></pre>
 ## 7    A   birch     26
 ## 8    B   birch     45
 ## 9    C   birch      8</code></pre>
-<p>By formatting your data in this way, it will also be easier to visualize (as we will see later) and to model in R.</p>
+<p>By formatting your data in this way, it will also be easier to visualize (as we saw in the previous section) and to model in R.</p>
 <p>The <em>tidyr</em> package contains functions to automatically convert an array of data between the two formats above. We do not have time to cover this package today, but you can find more information in the references at the bottom of the page.</p>
 <p>For this lab, we will use the Kejimkujik National Park dataset, which is already in normal form.</p>
 </div>
@@ -567,6 +567,9 @@ head(acru_select)</code></pre>
 <div id="chain-operations-with" class="section level2">
 <h2>Chain operations with <code>%&gt;%</code></h2>
 <p>We often want to apply a series of operations to a data frame, without keeping the intermediate results. <em>dplyr</em> provides a useful shortcut for this purpose with the <code>%&gt;%</code> (called <em>pipe</em>) operator.</p>
+<blockquote>
+<p>The keyboard shortcut for %&gt;% in RStudio is Ctrl + Shift + M.</p>
+</blockquote>
 <p>The <code>%&gt;%</code> operator has the effect of passing the result of a function as the first argument of the following function. For example, three of the operations we did earlier (select ACRU trees, sort by DBH and extract site, year, and DBH) can be combined in the following sequence.</p>
 <pre class="r"><code>acru &lt;- kejim %&gt;%
     filter(espece == &quot;ACRU&quot;) %&gt;%

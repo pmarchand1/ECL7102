@@ -263,7 +263,7 @@ library(tidyr)
 gather(arbre_df, key = "species", value = "number", fir:birch)
 ```
 
-By formatting your data in this way, it will also be easier to visualize (as we will see later) and to model in R.
+By formatting your data in this way, it will also be easier to visualize (as we saw in the previous section) and to model in R.
 
 The *tidyr* package contains functions to automatically convert an array of data between the two formats above. We do not have time to cover this package today, but you can find more information in the references at the bottom of the page.
 
@@ -342,6 +342,8 @@ head(acru_select)
 ## Chain operations with `%>%`
 
 We often want to apply a series of operations to a data frame, without keeping the intermediate results. *dplyr* provides a useful shortcut for this purpose with the `%>%` (called *pipe*) operator.
+
+> The keyboard shortcut for %>% in RStudio is Ctrl + Shift + M.
 
 The `%>%` operator has the effect of passing the result of a function as the first argument of the following function. For example, three of the operations we did earlier (select ACRU trees, sort by DBH and extract site, year, and DBH) can be combined in the following sequence.
 
