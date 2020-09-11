@@ -2,6 +2,7 @@
 title: "Statistical models and confidence intervals"
 date: "<br/>Sept. 14, 2020"
 output:
+    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs
@@ -143,7 +144,7 @@ If a variable $x$ follows a normal (also called Gaussian) distribution, its prob
 
 $$f(x) = \frac{1}{\sigma \sqrt{2 \pi}} e^{-\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2}$$
 
-This distribution has two *parameters*, $\mu$ (which is the average of $x$) and $\ sigma$ (which is its standard deviation).
+This distribution has two *parameters*, $\mu$ (which is the mean of $x$) and $\sigma$ (which is its standard deviation).
 
 On a graph of $f(x)$, $\mu$ is the position of the center of the distribution, while $\sigma$ is its dispersion; as $\sigma$ increases, the distribution widens and becomes less concentrated around its mean.
 
@@ -181,7 +182,7 @@ $$f(z) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} z^2}$$
 
 In other words, any normal distribution can be obtained from $f(z)$ by moving the center by a distance $\mu$ and widening the distribution by a factor $\sigma$.
 
-The values of $z$ represent the distance from the mean, expressed in standard deviation units, eg: $z$ = -1.5 means one standard deviation and half below average.
+The values of $z$ represent the distance from the mean, expressed in standard deviation units, eg: $z$ = -1.5 means one standard deviation and half below the mean.
 
 # Cumulative distribution
 
@@ -192,9 +193,8 @@ The cumulative distribution of a random variable is, for each value $x$, the pro
 Here is an illustration of the cumulative distribution $F(z)$ of a standard normal variable $z$.
 
 ```{r echo = FALSE, warning = FALSE}
-
 plot_c <- function(q) {
-    ggplot(NULL, aes(x = c(-3, 3))) +
+    ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "F(z)") +
     stat_function(fun = pnorm) +
     geom_point(aes(x = q, y = pnorm(q)), color = "blue", size = 2) +
@@ -202,7 +202,7 @@ plot_c <- function(q) {
 } 
 
 plot_d <- function(q) {
-    ggplot(NULL, aes(x = c(-3, 3))) +
+    ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "f(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(x <= q, dnorm(x), NA), geom = "area", fill = "blue") +
@@ -219,7 +219,7 @@ From the cumulative distribution $F(x)$, we can easily calculate the probability
 
 R provides four functions to work with the normal distribution. In each case, the mean (`mean`) and standard deviation (`sd`) of the distribution must be specified.
 
-- `rnorm(n, mean, sd)` generates `n` random values from a normal distribution with average` mean` and standard deviation `sd`.
+- `rnorm(n, mean, sd)` generates `n` random values from a normal distribution with a given `mean` and standard deviation (`sd`).
 
 - `dnorm(x, mean, sd)` gives the probability density associated with a value `x`.
 
@@ -281,9 +281,9 @@ qqline(dhp)
 
 The distribution is clearly not normal. More specifically, we find that:
 
-- For the values below the average (on the left), the points are above the line, so the quantiles of the sample are higher than those of a normal distribution. Being higher, they are closer to the mean.
+- For the values below the mean (on the left), the points are above the line, so the quantiles of the sample are higher than those of a normal distribution. Being higher, they are closer to the mean.
 
-- For values above the mean (on the right), the quantiles of the sample are also higher than those of the normal distribution. But in this case, they would then be farther from the average.
+- For values above the mean (on the right), the quantiles of the sample are also higher than those of the normal distribution. But in this case, they would then be farther from the mean.
 
 Thus, the Q-Q plot indicates that the distribution is asymmetrical with quantiles closer together on the left and further away on the right. Since this is a fairly obvious difference, it could be detected more easily with a histogram (below). However, the Q-Q plot can detect more subtle differences, so it is useful to learn how to read and interpret this graph.
 
@@ -313,11 +313,11 @@ A variable $x$ follows a log-normal distribution if $y = log(x)$ follows a norma
 Equivalently, if $y$ follows a normal distribution, $x = e^y$ follows a log-normal distribution.
 
 ```{r echo = FALSE, warning = FALSE}
-p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+p1 <- ggplot(NULL) + xlim(-3, 3) +
     labs(title = "Normal distribution", x = "y", y = "f(y)") +
     stat_function(fun = dnorm) +
     scale_y_continuous(expand = c(0, 0))
-p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+p2 <- ggplot(NULL) + xlim(exp(-5), exp(2)) +
     labs(title = "Log-normal distribution", x = "x", y = "f(x)") +
     stat_function(fun = dlnorm) +
     scale_y_continuous(expand = c(0, 0))
@@ -361,12 +361,12 @@ In the next few weeks, we will see several statistical methods that all assume t
 Thus, if the process we are interested in is multiplicative and the measured variable approaches a log-normal distribution, we can model this variable after applying a logarithmic transformation. However, you must be cautious when interpreting the results. In particular, the mean of $log(x)$ is *not* equal to the logarithm of the mean of $x$, as this graph shows.
 
 ```{r echo = FALSE, warning = FALSE}
-p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+p1 <- ggplot(NULL) + xlim(-3, 3) +
     labs(title = "Logarithmic scale", x = "y", y = "f(y)") +
     stat_function(fun = dnorm, color = "blue", size = 1) +
     stat_function(fun = function(x) dnorm(x, 0, 0.5), color = "orange", size = 1) +
     scale_y_continuous(expand = c(0, 0))
-p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+p2 <- ggplot(NULL) + xlim(exp(-5), exp(2)) +
     labs(title = "Original scale", x = "x", y = "f(x)") +
     stat_function(fun = dlnorm, color = "blue", size = 1) +
     stat_function(fun = function(x) dlnorm(x, 0, 0.5), color = "orange", size = 1) +
@@ -397,7 +397,7 @@ Among the following variables, which ones do you think would most likely follow 
 
 - Examples of continuous distributions: uniform, normal, log-normal. (We will see more examples of discrete distributions later in the session.)
 
-- The normal distribution is characterized by its average $\mu$ and its standard deviation $\sigma$.
+- The normal distribution is characterized by its mean $\mu$ and its standard deviation $\sigma$.
 
 - Any normal distribution can be reduced to the standard normal distribution ($\mu$ = 0, $\sigma$ = 1) with the linear transformation: $z = (x - \mu) / \sigma$.
 
@@ -449,7 +449,7 @@ $$\left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\
 For a 90% probability interval, we would replace $z_{0.25}$ and $z_{0.75}$ with $z_{0.05}$ and $z_{0.95}$. Indeed, a 90% interval excludes 10% of the distribution and since we want a centered interval, we exclude 5% of both ends of the distribution, as indicated by the red part of the distribution in the graph below.
 
 ```{r echo = FALSE, warning = FALSE}
-ggplot(NULL, aes(x = c(-3, 3))) +
+ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "f(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.95), dnorm(x), NA), geom = "area", fill = "red") +
@@ -524,10 +524,6 @@ While this is difficult to tell from the graph, the $t$ distribution also has a 
 When the number of degrees of freedom is high, such as when we compute the mean of a large sample, the $t$ distribution approaches the standard normal distribution.
 
 # Summary
-
-- An estimator is biased when its average over all possible samples differs from the value of the parameter to be estimated.
-
-- The standard error measures the dispersion of an estimator from one sample to another, and decreases with the size of the sample.
 
 - A confidence interval is defined around an estimate so that across all the possible samples, there is a specific probability that the confidence interval obtained contains the value of the parameter to be estimated.
 

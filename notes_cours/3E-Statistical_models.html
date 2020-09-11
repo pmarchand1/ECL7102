@@ -323,7 +323,7 @@ x &lt;- replicate(10000, sum_unif(n, 0, 6))</code></pre>
 <h2>Normal distribution</h2>
 <p>If a variable <span class="math inline">\(x\)</span> follows a normal (also called Gaussian) distribution, its probability density is given by:</p>
 <p><span class="math display">\[f(x) = \frac{1}{\sigma \sqrt{2 \pi}} e^{-\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2}\]</span></p>
-<p>This distribution has two <em>parameters</em>, <span class="math inline">\(\mu\)</span> (which is the average of <span class="math inline">\(x\)</span>) and <span class="math inline">\(\ sigma\)</span> (which is its standard deviation).</p>
+<p>This distribution has two <em>parameters</em>, <span class="math inline">\(\mu\)</span> (which is the mean of <span class="math inline">\(x\)</span>) and <span class="math inline">\(\sigma\)</span> (which is its standard deviation).</p>
 <p>On a graph of <span class="math inline">\(f(x)\)</span>, <span class="math inline">\(\mu\)</span> is the position of the center of the distribution, while <span class="math inline">\(\sigma\)</span> is its dispersion; as <span class="math inline">\(\sigma\)</span> increases, the distribution widens and becomes less concentrated around its mean.</p>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-8-1.png" width="100%" /></p>
 </div>
@@ -337,7 +337,7 @@ x &lt;- replicate(10000, sum_unif(n, 0, 6))</code></pre>
 <p>The variable <span class="math inline">\(z\)</span> then follows a standard normal distribution, that is, with <span class="math inline">\(\mu\)</span> = 0 and <span class="math inline">\(\sigma\)</span> = 1:</p>
 <p><span class="math display">\[f(z) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} z^2}\]</span></p>
 <p>In other words, any normal distribution can be obtained from <span class="math inline">\(f(z)\)</span> by moving the center by a distance <span class="math inline">\(\mu\)</span> and widening the distribution by a factor <span class="math inline">\(\sigma\)</span>.</p>
-<p>The values of <span class="math inline">\(z\)</span> represent the distance from the mean, expressed in standard deviation units, eg: <span class="math inline">\(z\)</span> = -1.5 means one standard deviation and half below average.</p>
+<p>The values of <span class="math inline">\(z\)</span> represent the distance from the mean, expressed in standard deviation units, eg: <span class="math inline">\(z\)</span> = -1.5 means one standard deviation and half below the mean.</p>
 </div>
 </div>
 <div id="cumulative-distribution" class="section level1">
@@ -352,7 +352,7 @@ x &lt;- replicate(10000, sum_unif(n, 0, 6))</code></pre>
 <h1>Distribution functions in R</h1>
 <p>R provides four functions to work with the normal distribution. In each case, the mean (<code>mean</code>) and standard deviation (<code>sd</code>) of the distribution must be specified.</p>
 <ul>
-<li><p><code>rnorm(n, mean, sd)</code> generates <code>n</code> random values from a normal distribution with average<code>mean</code> and standard deviation <code>sd</code>.</p></li>
+<li><p><code>rnorm(n, mean, sd)</code> generates <code>n</code> random values from a normal distribution with a given <code>mean</code> and standard deviation (<code>sd</code>).</p></li>
 <li><p><code>dnorm(x, mean, sd)</code> gives the probability density associated with a value <code>x</code>.</p></li>
 <li><p><code>pnorm(q, mean, sd)</code> gives the cumulative probability associated with a value <code>q</code>.</p></li>
 <li><p><code>qnorm(p, mean, sd)</code> gives the value (<code>q</code> for quantile) associated with a given cumulative probability <code>p</code>.</p></li>
@@ -397,8 +397,8 @@ qqline(dhp)</code></pre>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>The distribution is clearly not normal. More specifically, we find that:</p>
 <ul>
-<li><p>For the values below the average (on the left), the points are above the line, so the quantiles of the sample are higher than those of a normal distribution. Being higher, they are closer to the mean.</p></li>
-<li><p>For values above the mean (on the right), the quantiles of the sample are also higher than those of the normal distribution. But in this case, they would then be farther from the average.</p></li>
+<li><p>For the values below the mean (on the left), the points are above the line, so the quantiles of the sample are higher than those of a normal distribution. Being higher, they are closer to the mean.</p></li>
+<li><p>For values above the mean (on the right), the quantiles of the sample are also higher than those of the normal distribution. But in this case, they would then be farther from the mean.</p></li>
 </ul>
 <p>Thus, the Q-Q plot indicates that the distribution is asymmetrical with quantiles closer together on the left and further away on the right. Since this is a fairly obvious difference, it could be detected more easily with a histogram (below). However, the Q-Q plot can detect more subtle differences, so it is useful to learn how to read and interpret this graph.</p>
 <p><img src="3E-Statistical_models_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
@@ -463,7 +463,7 @@ qqline(log(dhp))</code></pre>
 <li><p>A discrete distribution is represented by a probability mass function; a continuous distribution is represented by a probability density function.</p></li>
 <li><p>The cumulative distribution of a variable at a point <span class="math inline">\(x\)</span> gives the probability that this variable is less than or equal to <span class="math inline">\(x\)</span>.</p></li>
 <li><p>Examples of continuous distributions: uniform, normal, log-normal. (We will see more examples of discrete distributions later in the session.)</p></li>
-<li><p>The normal distribution is characterized by its average <span class="math inline">\(\mu\)</span> and its standard deviation <span class="math inline">\(\sigma\)</span>.</p></li>
+<li><p>The normal distribution is characterized by its mean <span class="math inline">\(\mu\)</span> and its standard deviation <span class="math inline">\(\sigma\)</span>.</p></li>
 <li><p>Any normal distribution can be reduced to the standard normal distribution (<span class="math inline">\(\mu\)</span> = 0, <span class="math inline">\(\sigma\)</span> = 1) with the linear transformation: <span class="math inline">\(z = (x - \mu) / \sigma\)</span>.</p></li>
 <li><p>A logarithmic transformation converts multiplicative effects into additive effects, and log-normal distributions into normal distributions.</p></li>
 <li><p>The quantile-quantile plot provides a visual way to compare data to a reference distribution.</p></li>
@@ -539,8 +539,6 @@ qqline(log(dhp))</code></pre>
 <div id="summary-1" class="section level1">
 <h1>Summary</h1>
 <ul>
-<li><p>An estimator is biased when its average over all possible samples differs from the value of the parameter to be estimated.</p></li>
-<li><p>The standard error measures the dispersion of an estimator from one sample to another, and decreases with the size of the sample.</p></li>
 <li><p>A confidence interval is defined around an estimate so that across all the possible samples, there is a specific probability that the confidence interval obtained contains the value of the parameter to be estimated.</p></li>
 <li><p>Due to the central limit theorem, the difference between the sample mean and the population mean often follows an approximately normal distribution.</p></li>
 <li><p>Student’s <span class="math inline">\(t\)</span> distribution replaces the standard normal distribution when estimating the confidence interval for the sample mean, when the population standard deviation is unknown. That distribution has more frequent extreme values, especially with a low number of degrees of freedom.</p></li>

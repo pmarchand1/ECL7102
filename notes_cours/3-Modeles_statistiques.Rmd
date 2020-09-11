@@ -194,9 +194,9 @@ La distribution cumulative d'une variable aléatoire (aussi appelée fonction de
 Voici une illustration de la distribution cumulative $F(z)$ d'une variable normale centrée réduite $z$.
 
 ```{r echo = FALSE, warning = FALSE}
-
 plot_c <- function(q) {
-    ggplot(NULL, aes(x = c(-3, 3))) +
+  ggplot(NULL) +
+    xlim(-3, 3) +
     labs(x = "z", y = "F(z)") +
     stat_function(fun = pnorm) +
     geom_point(aes(x = q, y = pnorm(q)), color = "blue", size = 2) +
@@ -204,7 +204,8 @@ plot_c <- function(q) {
 } 
 
 plot_d <- function(q) {
-    ggplot(NULL, aes(x = c(-3, 3))) +
+  ggplot(NULL) +
+    xlim(-3, 3) +
     labs(x = "z", y = "f(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(x <= q, dnorm(x), NA), geom = "area", fill = "blue") +
@@ -316,11 +317,11 @@ Une variable $x$ suit une distribution log-normale si $y = log(x)$ suit une dist
 De façon équivalente, si $y$ suit une distribution normale, $x = e^y$ suit une distribution log-normale.
 
 ```{r echo = FALSE, warning = FALSE}
-p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+p1 <- ggplot(NULL) + xlim(-3, 3) +
     labs(title = "Distribution normale", x = "y", y = "f(y)") +
     stat_function(fun = dnorm) +
     scale_y_continuous(expand = c(0, 0))
-p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+p2 <- ggplot(NULL) + xlim(exp(-5), exp(2)) +
     labs(title = "Distribution log-normale", x = "x", y = "f(x)") +
     stat_function(fun = dlnorm) +
     scale_y_continuous(expand = c(0, 0))
@@ -364,12 +365,12 @@ Dans les prochaines semaines, nous verrons plusieurs méthodes statistiques qui 
 Ainsi, si le processus qui nous intéresse est plutôt multiplicatif et que la variable mesurée s'approche d'une distribution log-normale, nous pouvons modéliser cette variable après lui avoir appliqué une transformation logarithmique. Il faut toutefois être prudent lors de l'interprétation des résultats. En particulier, la moyenne de $log(x)$ n'est *pas* égale au logarithme de la moyenne de $x$, comme le montre ce graphique.
 
 ```{r echo = FALSE, warning = FALSE}
-p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+p1 <- ggplot(NULL) + xlim(-3, 3) +
     labs(title = "Échelle logarithmique", x = "y", y = "f(y)") +
     stat_function(fun = dnorm, color = "blue", size = 1) +
     stat_function(fun = function(x) dnorm(x, 0, 0.5), color = "orange", size = 1) +
     scale_y_continuous(expand = c(0, 0))
-p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+p2 <- ggplot(NULL) + xlim(exp(-5), exp(2)) +
     labs(title = "Échelle originale", x = "x", y = "f(x)") +
     stat_function(fun = dlnorm, color = "blue", size = 1) +
     stat_function(fun = function(x) dlnorm(x, 0, 0.5), color = "orange", size = 1) +
@@ -451,7 +452,7 @@ $$ \left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{
 Pour un intervalle de probabilité de 90%, nous remplacerions $z_{0.25}$ et $z_{0.75}$ par $z_{0.05}$ et $z_{0.95}$. En effet, un intervalle de 90% exclut 10% de la distribution et puisqu'on souhaite un intervalle centré, on exclut 5% des deux extrémités de la distribution, tel qu'indiqué par la section coloriée en rouge ci-dessous.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = c(-3, 3))) +
+ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "f(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.95), dnorm(x), NA), geom = "area", fill = "red") +

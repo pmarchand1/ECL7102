@@ -122,7 +122,7 @@ Il est important de ne pas confondre l'écart-type de $x$ avec l'erreur-type d'u
 Puisque l'erreur-type diminue selon $\sqrt{n}$ plutôt que $n$, si on veut diminuer cette erreur-type de moitié, il faut multiplier la taille de l'échantillon par 4. 
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = c(10, 100))) +
+ggplot(NULL) +
     stat_function(fun = function(x) x^(-0.5), geom = "line", size = 1) +
     labs(x = "n", y = expression(1/sqrt(n))) +
     geom_segment(aes(x = 0, xend = 20, y = 1/sqrt(20), yend = 1/sqrt(20)),

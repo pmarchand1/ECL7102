@@ -120,7 +120,7 @@ It is important not to confuse the standard deviation of $x$ with the standard e
 Since the standard error decreases according to $\sqrt{n}$ rather than $n$, if we want to reduce this standard error by half, we must increase the sample size by a factor of 4.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = c(10, 100))) +
+ggplot(NULL) +
     stat_function(fun = function(x) x^(-0.5), geom = "line", size = 1) +
     labs(x = "n", y = expression(1/sqrt(n))) +
     geom_segment(aes(x = 0, xend = 20, y = 1/sqrt(20), yend = 1/sqrt(20)),
@@ -137,7 +137,6 @@ ggplot(NULL, aes(x = c(10, 100))) +
                  linetype = "dotted") +
     scale_x_continuous(breaks = seq(10, 80, 10), limits = c(0, 90), expand = c(0, 0)) +
     scale_y_continuous(breaks = seq(0, 0.3, 0.05), limits = c(0, 0.35), expand = c(0, 0))
-    
 ```
 
 Note also that the standard error depends only on the size of the sample, not on the population size. This is true as long as the sample is small relative to the population. When sampling a significant fraction of the population (say more than 5%), the actual standard error is smaller than $\sigma / \sqrt{n}$.
@@ -269,8 +268,6 @@ The standard error of that mean is given by:
 $$s_{\bar{x}} = \sqrt{\sum_{j = 1}^{m} w_j^2 \frac{s_j^2}{n_j}}$$
 
 In these equations, $n_j$ is the number of observations in stratum $j$, $\bar{x}_j$ is their mean and $s_j$ is their variance. Note that the fraction $s_j^2 / n$ is the variance of the mean of stratum $j$.
-
-Le *poids* $w_j$ d'une strate est la fraction de la population ou de l'aire d'étude contenue dans cette strate. Par exemple, si le quart de l'aire d'étude fait partie de la première strate, $w_1$ = 0.25.
 
 The *weight* $w_j$ of a stratum is the fraction of the population or study area contained in that stratum. For example, if one quarter of the study area is in the first stratum, $w_1$ = 0.25.
 
