@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-09-16" />
+
+<title>Sampling and parameter estimation</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Sampling and parameter estimation</h1>
+<h4 class="date">September 16, 2020</h4>
+
+</div>
+
+
+<p>In this lab, you will apply the concepts from the two last classes, in addition to learning how to create analysis reports with R Markdown.</p>
+<div id="introduction-to-r-markdown" class="section level1">
+<h1>Introduction to R Markdown</h1>
+<div id="create-a-r-markdown-document" class="section level2">
+<h2>Create a R Markdown document</h2>
+<p>The R Markdown format allows you to combine text, chunks of R code, and results in one document. This tutorial is a very brief introduction to R Markdown. A more complete tutorial can be found at <a href="https://rmarkdown.rstudio.com/lesson-1.html" class="uri">https://rmarkdown.rstudio.com/lesson-1.html</a>.</p>
+<p>In RStudio, create a new R Markdown document with the menu commands <em>File -&gt; New File -&gt; R Markdown…</em>. Choose the Word (.docx) output format.</p>
+<blockquote>
+<p>The advantage of the Word format is that it is possible to edit the resulting document in Word. This is the recommended format for handing in assignments in this course. The PDF format is also useful for producing documents, while the HTML format allows you to publish the results on the web. Note that all materials in this course are produced using R Markdown!</p>
+</blockquote>
+<p>The file created already contains sample R Markdown text. Save the file (give it the name <code>example.Rmd</code>) and press the <strong>Knit</strong> button to produce the .docx file.</p>
+<p><img src = "../images/knit_cap.png" width=300></p>
+<p>When reading the description of the different parts of the document, compare the .Rmd file and the result in Word.</p>
+</div>
+<div id="components-of-a-r-markdown-document" class="section level2">
+<h2>Components of a R Markdown document</h2>
+<div id="header" class="section level3">
+<h3>Header</h3>
+<p>The header of the file contains information such as title, date, and output format. It begins and ends with a block of three dashes <code>---</code>.</p>
+</div>
+<div id="r-code-chunks" class="section level3">
+<h3>R code chunks</h3>
+<p>The R code chunks have a gray background when displayed in RStudio. They start and end with three backticks ```.</p>
+<p>The shortcut <strong>Ctrl + Alt + I</strong> automatically inserts a new code chunk into the document.</p>
+<p>The first code chunk (which contains <code>knitr::opts_chunk$set(echo = TRUE)</code>) is used to specify certain parameters. You can ignore it for now.</p>
+<p>Look at the second chunk that contains <code>summary(cars)</code>. To the right of the three backticks on the first line, you find the chunk header surrounded by braces: <code>{r cars}</code>. It starts with <code>r</code> to indicate that it is code R, while<code>cars</code> is the name of the chunk. (It is optional to name the chunks.) The green arrow on the far right is used to execute the code and display the result.</p>
+<p>Now look at the Word file. There you will find the code chunk followed by the result.</p>
+<p>The second code chunk <code>plot(pressure)</code> produces the graph that you see in the Word document. The chunk header contains the option <code>echo = FALSE</code> which means that the code is invisible, only the result appears in Word.</p>
+</div>
+<div id="markdown-text" class="section level3">
+<h3>Markdown text</h3>
+<p>The rest of the document is composed of text with some Markdown language markers for the layout.</p>
+<p>Here are some examples of layout markers and their output.</p>
+<p><code># Level 1 Header</code></p>
+</div>
+</div>
+</div>
+<div id="level-1-header" class="section level1">
+<h1>Level 1 Header</h1>
+<p><code>## Level 2 Header</code></p>
+<div id="level-2-header" class="section level2">
+<h2>Level 2 Header</h2>
+<p><code>### Level 3 Header</code></p>
+<div id="level-3-header" class="section level3">
+<h3>Level 3 Header</h3>
+<p><code>Text in *italic*</code></p>
+<p>Text in <em>italic</em></p>
+<p><code>Text in **bold**</code></p>
+<p>Text in <strong>bold</strong></p>
+<p><code>- List Item</code> <br> <code>- List Item</code> <br></p>
+<ul>
+<li>List item</li>
+<li>List item</li>
+</ul>
+<p>You can now replace the code and text in the example with your answers to the following exercises.</p>
+</div>
+</div>
+</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
+<div id="characteristics-of-three-species-of-penguins" class="section level2">
+<h2>1. Characteristics of three species of penguins</h2>
+<p>For this exercise, we will use a dataset containing measurements taken on 344 penguins from three species (Adelie, Chinstrap and Gentoo) present on the Palmer Archipelago of Antarctica.</p>
+<p>To load a dataset from a R package, you must first load the package, then read the dataset with the <code>data</code> function. Here, we will load the <code>penguins</code> dataset from the <code>palmerpenguins</code> package.</p>
+<pre class="r"><code>library(palmerpenguins)
+data(penguins)
+head(penguins)</code></pre>
+<pre><code>## # A tibble: 6 x 8
+##   species island bill_length_mm bill_depth_mm flipper_length_~ body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Adelie  Torge~           39.1          18.7              181        3750 male 
+## 2 Adelie  Torge~           39.5          17.4              186        3800 fema~
+## 3 Adelie  Torge~           40.3          18                195        3250 fema~
+## 4 Adelie  Torge~           NA            NA                 NA          NA &lt;NA&gt; 
+## 5 Adelie  Torge~           36.7          19.3              193        3450 fema~
+## 6 Adelie  Torge~           39.3          20.6              190        3650 male 
+## # ... with 1 more variable: year &lt;int&gt;</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Let’s first visualize part of the data. With <em>ggplot2</em>, produce a scatterplot of the flipper length vs. the bill length of the penguins, using colors to differentiate the species.</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)
+ggplot(penguins, aes(x = flipper_length_mm, y = bill_length_mm, color = species)) +
+    geom_point()</code></pre>
+<p><img src="3RE-Sampling_estimation_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>How would you calculate the mean of <code>flipper_length_mm</code> and its 95% confidence interval by species?</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>What quantities do you need for this calculation?</li>
+</ol>
+<p><strong>The mean, standard error (which depends on the standard deviation and sample size) and the probabilities of the <span class="math inline">\(t\)</span> distribution for <span class="math inline">\(p\)</span> = 0.025 and <span class="math inline">\(p\)</span> = 0.975.</strong></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Using the <em>dplyr</em> package, calculate the mean, sample size, standard deviation and standard error of the mean of <code>flipper_length_mm</code> for each species. Save the result in a data frame <code>fl_stat</code>.</li>
+</ol>
+<p><em>Hints</em></p>
+<ul>
+<li>Only keep rows where <code>flipper_length_mm</code> is not missing, using the condition <code>!is.na(flipper_length_mm)</code>.</li>
+<li>In <code>summarize</code>, you can use the <code>n()</code> function to count the number of rows per group, e.g.: <code>summarize(n = n(), ...)</code>. This is preferrable to using the <code>count</code> function when you want to calculate both the number of observations as well as other summary statistics.</li>
+</ul>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>fl_stat &lt;- penguins %&gt;%
+    filter(!is.na(flipper_length_mm)) %&gt;%
+    group_by(species) %&gt;%
+    summarize(n = n(), moy = mean(flipper_length_mm), 
+              ecart_type = sd(flipper_length_mm)) %&gt;%
+    mutate(err_type = ecart_type / sqrt(n))
+fl_stat</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   species       n   moy ecart_type err_type
+##   &lt;fct&gt;     &lt;int&gt; &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Adelie      151  190.       6.54    0.532
+## 2 Chinstrap    68  196.       7.13    0.865
+## 3 Gentoo      123  217.       6.48    0.585</code></pre>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>During the class on statistical distributions, we saw the functions <code>rnorm</code>,<code>dnorm</code>, <code>pnorm</code> and<code>qnorm</code> which calculate values from the normal distribution. Similar functions exist for the <span class="math inline">\(t\)</span> distribution (<code>rt</code>,<code>dt</code>, <code>pt</code>,<code>qt</code>). Let’s use the function <code>qt(p, df)</code> to determine the interval corresponding to 95% of the probability. What values of <span class="math inline">\(p\)</span> (cumulative probability) should we use? How many degrees of freedom (<span class="math inline">\(df\)</span>) based on sample size <span class="math inline">\(n\)</span>?</li>
+</ol>
+<p><strong><span class="math inline">\(p\)</span> = 0.025 and 0.975, <span class="math inline">\(df = n - 1\)</span>.</strong></p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Create two new columns in <code>fl_stat</code> containing the minimum<code>ic_min</code> and the maximum <code>ic_max</code> of the confidence interval. Define these columns as functions of the mean, standard error and sample size.</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>fl_stat &lt;- fl_stat %&gt;%
+    mutate(ic_min = moy + qt(0.025, df = n - 1) * err_type,
+           ic_max = moy + qt(0.975, df = n - 1) * err_type)
+fl_stat</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   species       n   moy ecart_type err_type ic_min ic_max
+##   &lt;fct&gt;     &lt;int&gt; &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Adelie      151  190.       6.54    0.532   189.   191.
+## 2 Chinstrap    68  196.       7.13    0.865   194.   198.
+## 3 Gentoo      123  217.       6.48    0.585   216.   218.</code></pre>
+<ol start="6" style="list-style-type: lower-alpha">
+<li>Finally, use the <code>geom_pointrange</code> graph type of <em>ggplot2</em> to visualize the confidence interval for each species. This type of graph requires the specification of <code>y</code> (central point), <code>ymin</code> (minimum of range) and <code>ymax</code> (maximum of range) in the <code>aes</code> function.</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>ggplot(fl_stat, aes(x = species, y = moy, ymin = ic_min, ymax = ic_max)) +
+    geom_pointrange()</code></pre>
+<p><img src="3RE-Sampling_estimation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="mean-dbh-of-species-sampled-at-kejimkujik-national-park" class="section level2">
+<h2>2. Mean DBH of species sampled at Kejimkujik National Park</h2>
+<p>Based on the code written in the last exercise, produce a graph of the mean DBH with the 95% confidence interval for all species in the data frame from the file <code>cours1_kejimkujik.csv</code>.</p>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;)
+
+kejim_stats &lt;- group_by(kejim, espece) %&gt;%
+    summarize(moy = mean(dhp), ec_type = sd(dhp), n = n()) %&gt;%
+    mutate(err_type = ec_type / sqrt(n),
+           ic_min = moy + qt(0.025, df = n - 1) * err_type, 
+           ic_max = moy + qt(0.975, df = n - 1) * err_type)
+
+ggplot(kejim_stats, aes(x = espece, y = moy, ymin = ic_min, ymax = ic_max)) +
+    geom_pointrange()</code></pre>
+<p><img src="3RE-Sampling_estimation_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Then, from the data and graph, answer the following questions.</p>
+<ol style="list-style-type: lower-alpha">
+<li>What is the confidence interval of the mean DBH for white pine (<em>PIST</em>)? Assuming that the sampled individuals are representative of the population on this site, how do you interpret this interval?</li>
+</ol>
+<p><strong>CI: 20.1 to 25.3 cm. If we repeatedly sampled this many white pines (131) in this population, then in 95% of the cases, the confidence interval around the sample mean would include the population mean of DBH.</strong></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>If the sample is representative of each species, can it be easily determined which species has the smallest mean DBH, or which has the highest mean DBH, in this population?</li>
+</ol>
+<p><strong>There are two candidate species for smallest mean DBH (ABBA and ACPE), and two candidates for largest mean DBH (BEAL and POTR). However, the confidence intervals overlap, showing we would need more data to identify the smallest or largest mean.</strong></p>
+</div>
+<div id="stratified-sampling-simulation" class="section level2">
+<h2>3. Stratified sampling simulation</h2>
+<p>For this exercise, we will compare simple and stratified sampling using simulated samples from the <code>penguins</code> dataset. Here is the distribution of flipper lengths for each species in the original data frame. Note that we have created a new <code>fl</code> table that contains only those individuals where flipper length was measured.</p>
+<pre class="r"><code>fl &lt;- filter(penguins, !is.na(flipper_length_mm))
+ggplot(fl, aes(x = species, y = flipper_length_mm)) + 
+    geom_boxplot()</code></pre>
+<p><img src="3RE-Sampling_estimation_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>In <em>dplyr</em>, the <code>sample_n(df, n)</code> function returns a data frame containing <code>n</code> randomly selected observations from the data frame <code>df</code>. It can also be used with <code>group_by</code> to choose <code>n</code> observations by group.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Create two functions <code>fl_alea</code> and <code>fl_strat</code>. The first function chooses 30 random observations of <code>fl</code>, then returns the mean of <code>flipper_length_mm</code> for these observations. The second chooses 10 random observations from each of the three species, then returns the mean of <code>flipper_length_mm</code> (overall mean, not by species). Make sure that each of the two functions returns a vector of length 1.</li>
+</ol>
+<p><em>Note</em>: You can write these functions without arguments (empty parentheses after <code>function</code>), as in the example below.</p>
+<pre class="r"><code>fl_alea &lt;- function() {
+    # Insert function code here
+}</code></pre>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>fl_alea &lt;- function() {
+    samp &lt;- sample_n(fl, 30)
+    mean(samp$flipper_length_mm)
+}
+
+fl_strat &lt;- function() {
+    samp &lt;- group_by(fl, species) %&gt;%
+        sample_n(10)
+    mean(samp$flipper_length_mm)
+}
+
+fl_alea()</code></pre>
+<pre><code>## [1] 202.3667</code></pre>
+<pre class="r"><code>fl_strat()</code></pre>
+<pre><code>## [1] 201.3</code></pre>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Generate a vector of 1000 results of each function with <code>replicate</code>, as follows:</li>
+</ol>
+<pre class="r"><code>rep_alea &lt;- replicate(1000, fl_alea())
+rep_strat &lt;- replicate(1000, fl_strat())</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Calculate the standard error of each mean (from the standard deviation of <code>rep_alea</code> and <code>rep_strat</code>). Before running the calculation, can you predict which method will be more precise and why?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>sd(rep_alea)</code></pre>
+<pre><code>## [1] 2.438234</code></pre>
+<pre class="r"><code>sd(rep_strat)</code></pre>
+<pre><code>## [1] 1.155974</code></pre>
+<p><strong>The standard error for stratified sampling (standard deviation of rep_strat) is about 2 times smaller than that of simple random sampling (standard deviation of rep_alea), i.e. 1.2 vs. 2.4. This is because flipper length is more variable between species than within each species.</strong></p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

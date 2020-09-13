@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Échantillonnage et estimation de paramètres</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Échantillonnage et estimation de paramètres</h1>
+<h4 class="date">16 septembre 2020</h4>
+
+</div>
+
+
+<p>Dans ce laboratoire, vous appliquerez les concepts vus lors des deux derniers cours, en plus d’apprendre à créer des rapports d’analyse avec R Markdown.</p>
+<div id="introduction-à-r-markdown" class="section level1">
+<h1>Introduction à R Markdown</h1>
+<div id="créer-un-document-r-markdown" class="section level2">
+<h2>Créer un document R Markdown</h2>
+<p>Le format R Markdown permettent de combiner du texte, des blocs de code R et leurs résultats dans un même document. Nous présenterons brièvement la création et l’édition de ces document aujourd’hui, mais vous pouvez aussi consulter des tutoriels plus complets comme ceux-ci:</p>
+<ul>
+<li><a href="https://rmarkdown.rstudio.com/lesson-1.html" class="uri">https://rmarkdown.rstudio.com/lesson-1.html</a> (site officiel, en anglais)</li>
+<li><a href="http://larmarange.github.io/analyse-R/rmarkdown-les-rapports-automatises.html" class="uri">http://larmarange.github.io/analyse-R/rmarkdown-les-rapports-automatises.html</a> (en français).</li>
+</ul>
+<p>Pour créer un nouveau document R Markdown à partir de RStudio, allez au menu <em>File -&gt; New File -&gt; R Markdown…</em>. Choisissez le format de sortie Word (.docx).</p>
+<blockquote>
+<p>L’avantage du format Word est qu’il est possible d’éditer le document résultant dans Word. C’est le format recommandé pour la remise des travaux dans ce cours. Le format PDF est aussi utile pour la production de documents, tandis que le format HTML permet de diffuser des résultats sur le web. Notez que tout le matériel de ce cours est produit avec R Markdown!</p>
+</blockquote>
+<p>Le fichier créé contient déjà un exemple de texte R Markdown. Sauvegardez le fichier (donnons-lui le nom <code>exemple.Rmd</code>) et appuyez sur le bouton <strong>Knit</strong> pour produire le document Word.</p>
+<p><img src="../images/knit_cap.png" width=300></p>
+<p>En lisant la description des différentes parties du document, comparez le fichier .Rmd et le résultat .docx.</p>
+</div>
+<div id="composantes-des-documents-r-markdown" class="section level2">
+<h2>Composantes des documents R Markdown</h2>
+<div id="en-tête" class="section level3">
+<h3>En-tête</h3>
+<p>L’en-tête du fichier contient des informations comme le titre, la date et le format de sortie. Elle commence et se termine par un bloc de trois tirets <code>---</code>.</p>
+</div>
+<div id="blocs-de-code-r" class="section level3">
+<h3>Blocs de code R</h3>
+<p>Les sections de code R ont un arrière-plan gris dans le document affiché dans RStudio. Elles commencent et se terminent avec trois accents graves ```.</p>
+<p>Le raccourci <strong>Ctrl+Alt+I</strong> insère automatiquement un nouveau bloc de code dans le document.</p>
+<p>Le premier bloc de code (qui contient <code>knitr::opts_chunk$set(echo = TRUE)</code>) sert à spécifier certains paramètres. Vous pouvez l’ignorer pour l’instant.</p>
+<p>Regardez le deuxième bloc qui contient <code>summary(cars)</code>. À droite des trois accents graves sur la première ligne, vous trouvez l’en-tête du bloc entre accolades: <code>{r cars}</code>. Elle commence avec <code>r</code> pour indiquer qu’il s’agit de code R, tandis que <code>cars</code> est le nom du bloc. (Il est optionnel de nommer les blocs.) La flèche verte tout à fait à droite permet d’exécuter le code et d’afficher le résultat.</p>
+<p>Regardez maintenant le fichier Word. Vous y trouverez le bloc de code suivi du résultat.</p>
+<p>Le deuxième bloc de code <code>plot(pressure)</code> produit le graphique que vous voyez dans le document Word. L’en-tête du bloc contient l’option <code>echo = FALSE</code> ce qui signifie que le code est invisible, seul le résultat apparaît dans Word.</p>
+</div>
+<div id="texte-markdown" class="section level3">
+<h3>Texte Markdown</h3>
+<p>Le reste du document est composé de texte avec quelques indications du langage Markdown pour la mise en page.</p>
+<p>Voici quelques exemples d’indications de mise en page et le résultat.</p>
+<p><code># En-tête de niveau 1</code></p>
+</div>
+</div>
+</div>
+<div id="en-tête-de-niveau-1" class="section level1">
+<h1>En-tête de niveau 1</h1>
+<p><code>## En-tête de niveau 2</code></p>
+<div id="en-tête-de-niveau-2" class="section level2">
+<h2>En-tête de niveau 2</h2>
+<p><code>### En-tête de niveau 3</code></p>
+<div id="en-tête-de-niveau-3" class="section level3">
+<h3>En-tête de niveau 3</h3>
+<p><code>Texte en *italique*</code></p>
+<p>Texte en <em>italique</em></p>
+<p><code>Texte en **gras**</code></p>
+<p>Texte en <strong>gras</strong></p>
+<p><code>- Élément de liste</code><br> <code>- Élément de liste</code><br></p>
+<ul>
+<li>Élément de liste</li>
+<li>Élément de liste</li>
+</ul>
+<p>Vous pouvez maintenant remplacer le code et le texte de l’exemple par vos réponses aux exercices qui suivront.</p>
+</div>
+</div>
+</div>
+<div id="exercices" class="section level1">
+<h1>Exercices</h1>
+<div id="caractéristiques-des-manchots-de-trois-espèces" class="section level2">
+<h2>1. Caractéristiques des manchots de trois espèces</h2>
+<p>Pour cet exercice, nous utiliserons un jeu de données qui contient différentes mesures prises sur 344 manchots de l’archipel de Palmer (Antarctique), provenant de trois espèces: le manchot Adélie, le manchot à jugulaire (<em>Chinstrap</em>) et le manchot papou (<em>Gentoo</em>).</p>
+<p>Pour charger un jeu de données contenu dans un package, vous devez d’abord charger le package, puis lire le jeu de données avec la fonction <code>data</code>. Ici, nous voulons charger le jeu de données <code>penguins</code> du package <code>palmerpenguins</code>.</p>
+<pre class="r"><code>library(palmerpenguins)
+data(penguins)
+head(penguins)</code></pre>
+<pre><code>## # A tibble: 6 x 8
+##   species island bill_length_mm bill_depth_mm flipper_length_~ body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Adelie  Torge~           39.1          18.7              181        3750 male 
+## 2 Adelie  Torge~           39.5          17.4              186        3800 fema~
+## 3 Adelie  Torge~           40.3          18                195        3250 fema~
+## 4 Adelie  Torge~           NA            NA                 NA          NA &lt;NA&gt; 
+## 5 Adelie  Torge~           36.7          19.3              193        3450 fema~
+## 6 Adelie  Torge~           39.3          20.6              190        3650 male 
+## # ... with 1 more variable: year &lt;int&gt;</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Nous allons d’abord visualiser une partie des données. À l’aide de <em>ggplot2</em>, produisez un nuage de points reliant la longueur de la nageoire (<code>flipper_length_mm</code>) à la longueur du bec (<code>bill_length_mm</code>) des manchots, en différenciant les espèces (<code>species</code>) par un code de couleurs.</li>
+</ol>
+<p>Comment procéderiez-vous pour calculer la moyenne de <code>flipper_length_mm</code> et son intervalle de confiance à 95% pour chaque espèce?</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>De quelles quantités avez-vous besoin pour ce calcul?</p></li>
+<li><p>En utlisant le package <em>dplyr</em>, calculez la moyenne, le taille de l’échantillon, l’écart-type et l’erreur-type de la moyenne de <code>flipper_length_mm</code> pour les manchots de chaque espèce. Sauvegardez le résultat dans un tableau de données <code>fl_stat</code>.</p></li>
+</ol>
+<p><em>Indices</em></p>
+<ul>
+<li>Conservez seulement les rangées où <code>flipper_length_mm</code> n’est pas une valeur manquante (condition <code>!is.na(flipper_length_mm)</code>).</li>
+<li>Dans <code>summarize</code>, vous pouvez utiliser la fonction <code>n()</code> pour compter le nombre de rangées par groupe, ex.: <code>summarize(n = n(), ...)</code>. Cette option est préférable à la fonction <code>count</code> lorsque vous voulez calculer à la fois le nombre d’observations et d’autres statistiques sommaires.</li>
+</ul>
+<ol start="4" style="list-style-type: lower-alpha">
+<li><p>Durant le cours sur les distributions statistiques, nous avons vu les fonctions <code>rnorm</code>, <code>dnorm</code>, <code>pnorm</code> et <code>qnorm</code> qui permettent de calculer des valeurs à partir de la distribution normale. Des fonctions similaires existent pour la distribution <span class="math inline">\(t\)</span> (<code>rt</code>, <code>dt</code>, <code>pt</code>, <code>qt</code>). Utilisons la fonction <code>qt(p, df)</code> pour déterminer l’intervalle correspondant à 95% de la probabilité. Quelles valeurs de <span class="math inline">\(p\)</span> (la probabilité cumulative) utiliser? Quel nombre de degrés de liberté (<span class="math inline">\(df\)</span>) en fonction de la taille de l’échantillon <span class="math inline">\(n\)</span>?</p></li>
+<li><p>Créez deux nouvelles colonnes dans <code>fl_stat</code> contenant le minimum <code>ic_min</code> et le maximum <code>ic_max</code> de l’intervalle de confiance. Définissez ces colonnes en fonction de la moyenne, de l’erreur-type et de <span class="math inline">\(n\)</span>.</p></li>
+<li><p>Finalement, utilisez le type de graphique <code>geom_pointrange</code> (intervalle de points) de <em>ggplot2</em> pour visualiser l’intervalle de confiance pour chaque espèce. Ce type de graphique demande la spécification de <code>y</code> (point central), <code>ymin</code> (minimum de l’intervalle) et <code>ymax</code> (maximum de l’intervalle) dans la fonction <code>aes</code>.</p></li>
+</ol>
+</div>
+<div id="dhp-moyen-des-espèces-échantillonnées-au-parc-national-de-kejimkujik" class="section level2">
+<h2>2. DHP moyen des espèces échantillonnées au Parc national de Kejimkujik</h2>
+<p>En vous basant sur le code écrit au dernier exercice, produisez un graphique du DHP moyen avec l’intervalle de confiance à 95% pour chaque espèce dans le tableau de données du fichier <code>cours1_kejimkujik.csv</code>.</p>
+<p>Ensuite, à partir des données et du graphique, répondez aux questions suivantes.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Quel est l’intervalle de confiance du DHP moyen pour le pin blanc (<em>PIST</em>)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?</p></li>
+<li><p>Si l’échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?</p></li>
+</ol>
+</div>
+<div id="simulation-déchantillonnage-stratifié" class="section level2">
+<h2>3. Simulation d’échantillonnage stratifié</h2>
+<p>Pour cet exercice, nous comparerons l’échantillonnage simple et stratifié à partir d’échantillons simulés du tableau de données <code>penguins</code>. Voici la distribution des longueurs de nageoires pour chaque espèce dans le tableau de données original. Notez que nous avons créé un nouveau tableau <code>fl</code> qui contient seulement les individus où la longueur de nageoire a été mesurée.</p>
+<pre class="r"><code>fl &lt;- filter(penguins, !is.na(flipper_length_mm))
+ggplot(fl, aes(x = species, y = flipper_length_mm)) + 
+    geom_boxplot()</code></pre>
+<p><img src="3-Echantillonnage_estimation_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Dans <em>dplyr</em>, la fonction <code>sample_n(tab, n)</code> retourne un tableau de données contenant <code>n</code> observations choisies au hasard du tableau <code>tab</code>. On peut aussi l’utiliser avec <code>group_by</code> pour choisir <code>n</code> observations par groupe.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Créez deux fonctions <code>fl_alea</code> et <code>fl_strat</code>. La première fonction choisit 30 observations au hasard de <code>fl</code>, puis retourne la moyenne de <code>flipper_length_mm</code> pour ces observations. La deuxième choisit 10 observations au hasard de chacune des trois espèces, plus retourne la moyenne de <code>flipper_length_mm</code> (globale, pas par espèce). Assurez-vous que chacune des deux fonctions retourne un vecteur de longueur 1.</li>
+</ol>
+<p><em>Note</em>: Vous pouvez écrire ces fonctions sans arguments (parenthèses vides après <code>function</code>), comme dans l’exemple ci-dessous.</p>
+<pre class="r"><code>fl_alea &lt;- function() {
+    # Insérer code de la fonction ici
+}</code></pre>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Générez un vecteur 1000 résultats de chaque fonction avec <code>replicate</code>, comme suit:</li>
+</ol>
+<pre class="r"><code>rep_alea &lt;- replicate(1000, fl_alea())
+rep_strat &lt;- replicate(1000, fl_strat())</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Calculez l’erreur-type de chaque moyenne (à partir des écarts-type de <code>rep_alea</code> et <code>rep_strat</code>). Avant de faire le calcul, pouvez-vous deviner quelle méthode sera la plus précise? Pour quelle raison?</li>
+</ol>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
