@@ -1,6 +1,6 @@
 ---
 title: "Tests d'hypothèse"
-date: "<br/>16 septembre 2019"
+date: "<br/>21 septembre 2020"
 output:
     html_document:
         self_contained: false
@@ -12,8 +12,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
+set.seed(7102)
 ```
 
 # Objectifs
@@ -57,7 +59,7 @@ La distribution $t$ cumulative (fonction `pt` dans R) nous donne la probabilité
 Cette probabilité (21.9%) correspond à la portion de l'aire sous la courbe coloriée dans le graphique ci-dessous:
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(x > humid_t, dt(x, df = 8), NA), geom = "area", fill = "red") +
@@ -67,7 +69,7 @@ ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
 Puisque notre question était: "Quelle est la probabilité de la moyenne de l'échantillon soit aussi éloignée de la valeur de référence?", il faut aussi considérer la probabilité d'obtenir un écart négatif plus grand que l'écart positif observé, i.e. une valeur de la statistique $t$ inférieure à -0.815. Comme la distribution $t$ est symétrique, cette probabilité est aussi égale à 21.9%, donc la probabilité d'avoir obtenu une moyenne plus éloignée de 50 que celle observée est de 43.8%, tel qu'illustré sur le graphique suivant.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(abs(x) > humid_t, dt(x, df = 8), NA), geom = "area", fill = "red") +
@@ -134,14 +136,14 @@ Le seuil $\alpha$ doit être choisi avant l'analyse des données.
 Pour un test bilatéral, on rejette une fraction $\alpha / 2$ de chaque extrême de la distribution (comme pour l'intervalle de confiance). Pour un test unilatéral, on rejette une fraction $\alpha$ d'une extrême de la distribution. Voici une illustration des deux cas avec $\alpha = 0.05$.
 
 ```{r echo = FALSE}
-p1 <- ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+p1 <- ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(abs(x) > qt(0.975, df = 8), dt(x, df = 8), NA), 
                   geom = "area", fill = "red") +
     scale_y_continuous(expand = c(0, 0))
 
-p2 <- ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+p2 <- ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(x > qt(0.95, df = 8), dt(x, df = 8), NA), 
@@ -163,7 +165,7 @@ Voici les quatre scénarios possibles selon que $H_0$ soit vraie ou fausse et qu
 |$H_0$ fausse|    erreur de type II     | décision correcte|
 
 
-*Note*: La vérité d'$H_0$ pour une hypothèse nulle du type $\mu = 0$ est plutôt une abstraction. En pratique, la différence entre deux traitements peut être très faible, mais ne sera jamais parfaitement nulle. Néanmoins, on peut concevoir une hypothèse nulle qui soit vraie à une certaine précision.
+*Note*: La vérité d'$H_0$ pour une hypothèse nulle du type $\mu = 0$ est plutôt une abstraction. En pratique, la différence entre deux traitements peut être très faible, mais ne sera presque jamais parfaitement nulle. Néanmoins, on peut concevoir une hypothèse nulle qui soit vraie à une certaine précision.
 
 Une **erreur de type I** survient lorsqu'on rejette $H_0$ bien que celle-ci soit vraie. Le seuil de signification $\alpha$ correspond à la probabilité de ce type d'erreur si $H_0$ est vraie.
 
@@ -186,7 +188,7 @@ Par exemple, calculons la puissance de notre test sur les données d'humidité (
 Puisque $\alpha = 0.05$ et que notre test est bilatéral, l'hypothèse nulle sera rejetée pour les valeurs de $z$ correspondant à une probabilité cumulative < 0.025 et > 0.975.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-3, 3, 0.1))) +
+ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -203,7 +205,7 @@ qnorm(0.975)
 En raison du biais, la moyenne mesurée à partir de l'échantillon suivra une distribution normale avec le même écart-type, mais centrée sur $z = 2$. Cette distribution est la courbe en bleu sur le graphique ci-dessous.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
+ggplot(NULL) + xlim(-3, 5) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -231,7 +233,7 @@ Si on prend seulement la section coloriée en bleu du graphique ci-dessus, la mo
 Voici un cas plus extrême, lorsque le biais réel est à $z = 0.5$ (l'effet réel est la moitié de l'erreur-type).
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
+ggplot(NULL) + xlim(-3, 5) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -258,10 +260,10 @@ Gelman et Carlin (2014) qualifient ces deux derniers cas d'erreurs de type M (er
 
 - La seule façon de réduire tous ces types d'erreurs est d'augmenter la taille de l'échantillon. La taille d'échantillon appropriée dépend à la fois de la magnitude de l'effet qu'on souhaite mesurer et de la variabilité des données. 
 
-- On ne peut *pas* calculer la puissance après coup à partir de l'effet mesuré. Comme nous avons vu, cet effet peut êter fortement biaisé si la puissance réelle est faible.
+- On ne peut *pas* calculer la puissance après coup à partir de l'effet mesuré. Comme nous avons vu, cet effet peut être fortement biaisé si la puissance réelle est faible.
 
 
-# Applications du test t
+# Applications du test $t$
 
 ## Comparer la moyenne d'un échantillon à une valeur de référence
 
@@ -291,7 +293,7 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 Considérons un sous-ensemble des données composé des placettes traitées avec les produits A et B, et testons l'hypothèse nulle selon laquelle les deux produits ont la même efficacité: $\mu_A = \mu_B$, ou de façon équivalente, $\mu_A - \mu_B = 0$. 
 
-Pour deux échantillons indépendants suivant chacun une distribution normale, la différence des moyennes $\bar{x}_A - \bar{x}_B$ divisée par son erreur-type suit aussi une distribution $t$:
+Pour deux échantillons indépendants suivant chacun une distribution normale, selon l'hypothèse nulle où ces deux distributions ont la même moyenne, la différence des moyennes estimées $\bar{x}_A - \bar{x}_B$ divisée par l'erreur-type de cette différence suit aussi une distribution $t$:
 
 $$t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}$$
 Il reste à déterminer l'erreur-type de la différence entre deux moyennes et le nombre de degrés de liberté de cette distribution $t$.
@@ -306,7 +308,7 @@ Le calcul du nombre de degrés de liberté est plus complexe. Selon l'approximat
 
 $$df = \frac{\left(s_A^2 / n_A + s_B^2 / n_B \right)^2}{\frac{\left( s_A^2 / n_A \right) ^2}{n_A - 1} + \frac{\left( s_B^2/n_B \right)^2}{n_B - 1}}$$
 
-Voici le code pour comparer la moyenne des échantillons traités par les produits A et B avec `t.test`.
+Ces formules sont présentées ici à titre d'information, mais heureusement, les logiciels statistiques font ces calculs pour nous. Voici le code R pour comparer la moyenne des échantillons traités par les produits A et B avec `t.test`.
 
 ```{r, message = FALSE, warning = FALSE}
 library(dplyr)
@@ -374,9 +376,9 @@ t.test(humi$mesureA, humi$mesureB)
 Lorsque deux groupes sont appariés, le nombre de degrés de liberté du test $t$ est plus petit, puisque nous avons 9 paires indépendantes plutôt que 18 points indépendants. Malgré cela, la puissance du test augmente si l'utilisation de paires permet de séparer l'effet du traitement d'autres sources de variation qui influencent la réponse entre les paires. Ici, on veut séparer la différence de mesure de l'humidité entre les deux appareils de la variation de l'humidité entre différents points de la placette. 
 
 
-# Validité des résultats du test t
+# Validité des résultats du test $t$
 
-## Suppositions du test t
+## Suppositions du test $t$
 
 Le test $t$ requiert que:
 
@@ -398,7 +400,7 @@ L'indépendance des observations dépend de l'échantillonnage ou du plan d'exp�
     * Dans le premier cas, une transformation (ex.: logarithmique) peut produire une distribution plus symétrique qui convient au test $t$.
     * Dans le deuxième cas, on a recours à des méthodes moins sensibles aux valeurs extrêmes (plus robustes). 
 
-## Autres options en alternative au test t
+## Autres options en alternative au test $t$
 
 Le test de **Wilcoxon-Mann-Whitney** est basé le rang des observations. Pour le test bilatéral avec deux échantillons A et B indépendants, l'hypothèse nulle est qu'en tirant au hasard un élément de chaque groupe $x_A$ et $x_B$, les probabilités $P(x_A > x_B)$ et $P(x_A < x_B)$ sont égales. Habituellement, cela équivaut à affirmer que la médiane est la même pour les deux groupes.
 
@@ -419,7 +421,7 @@ D'autres méthodes non-paramétriques sont basées sur un ré-échantillonnage d
     * Statistique, distribution de référence et seuil de signification
     * Puissance d'un test
     
-- Utilisation du test t
+- Utilisation du test $t$
     * Comparer la moyenne d'un échantillon à une valeur de référence
     * Comparer la moyenne de deux échantillons indépendants ou appariés
     * Suppositions: indépendance des observations, distribution normale de la moyenne

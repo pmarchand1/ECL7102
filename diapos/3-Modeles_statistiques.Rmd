@@ -87,7 +87,7 @@ ggplot(NULL, aes(x = c(-1E-6, 1E-6, 6 - 1E-6, 6 + 1E-6), y = c(0, 1/6, 1/6, 0)))
 
 - Pour calculer la probabilité d'un intervalle donné, on calcule l'intégrale (aire sous la courbe) de la densité.
 
-- Ex.: Probabilté que $x$ soit dans l'intervalle (2.5, 3) est 1/12.
+- Ex.: Probabilité que $x$ soit dans l'intervalle (2.5, 3) est 1/12.
 
 ```{r fig.dim = c(6, 5)}
 ggplot(NULL, aes(x = c(-1E-6, 1E-6, 6 - 1E-6, 6 + 1E-6), y = c(0, 1/6, 1/6, 0))) +
@@ -262,7 +262,7 @@ Distribution cumulative $F(z)$ d'une variable normale centrée réduite
 ```{r}
 
 plot_c <- function(q) {
-    ggplot(NULL, aes(x = c(-3, 3))) +
+    ggplot(NULL) + xlim(c(-3, 3)) +
     labs(x = "z", y = "F(z)") +
     stat_function(fun = pnorm) +
     geom_point(aes(x = q, y = pnorm(q)), color = "blue", size = 2) +
@@ -270,7 +270,7 @@ plot_c <- function(q) {
 } 
 
 plot_d <- function(q) {
-    ggplot(NULL, aes(x = c(-3, 3))) +
+    ggplot(NULL) + xlim(c(-3, 3)) +
     labs(x = "z", y = "f(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(x <= q, dnorm(x), NA), geom = "area", fill = "blue") +
@@ -405,11 +405,11 @@ class: center, inverse, middle
 --
 
 ```{r echo = FALSE, fig.dim = c(9, 5)}
-p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+p1 <- ggplot(NULL) + xlim(c(-3, 3)) +
     labs(title = "Distribution normale", x = "y", y = "f(y)") +
     stat_function(fun = dnorm) +
     scale_y_continuous(expand = c(0, 0))
-p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+p2 <- ggplot(NULL) + xlim(exp(-5), exp(2)) +
     labs(title = "Distribution log-normale", x = "x", y = "f(x)") +
     stat_function(fun = dlnorm) +
     scale_y_continuous(expand = c(0, 0))
@@ -485,12 +485,12 @@ qqline(log(dhp))
 # Transformation logarithmique
 
 ```{r fig.dim = c(8, 4)}
-p1 <- ggplot(NULL, aes(x = c(-3, 3))) +
+p1 <- ggplot(NULL) + xlim(c(-3, 3)) +
     labs(title = "Échelle logarithmique", x = "y", y = "f(y)") +
     stat_function(fun = dnorm, color = "blue", size = 1) +
     stat_function(fun = function(x) dnorm(x, 0, 0.5), color = "orange", size = 1) +
     scale_y_continuous(expand = c(0, 0))
-p2 <- ggplot(NULL, aes(x = c(exp(-5), exp(2)))) +
+p2 <- ggplot(NULL) + xlim(exp(-5), exp(2)) +
     labs(title = "Échelle originale", x = "x", y = "f(x)") +
     stat_function(fun = dlnorm, color = "blue", size = 1) +
     stat_function(fun = function(x) dlnorm(x, 0, 0.5), color = "orange", size = 1) +
@@ -621,7 +621,7 @@ $$\left( z_{0.25} \frac{\sigma}{\sqrt{n}} \le \bar{x} - \mu \le z_{0.75} \frac{\
 - Pour un intervalle avec probabilité de 90%, on exclut 5% de chaque côté ( $z_{0.05}$ et $z_{0.95}$ ). 
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = c(-3, 3))) +
+ggplot(NULL) + xlim(c(-3, 3)) +
     labs(x = "z", y = "f(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.95), dnorm(x), NA), geom = "area", fill = "red") +
@@ -740,7 +740,7 @@ ggplot(data.frame(x = c(-4, 4)), aes(x)) +
 
 --
 
-- En particulier, l'écart-type augmente et les valeurs loins de la moyenne ont une probabilité plus grande, ce qui explique que l'intervalle de confiance construit à partir de la distribution $t$ est plus large. 
+- En particulier, l'écart-type augmente et les valeurs loin de la moyenne ont une probabilité plus grande, ce qui explique que l'intervalle de confiance construit à partir de la distribution $t$ est plus large. 
 
 --
 

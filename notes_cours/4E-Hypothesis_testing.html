@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-09-16" />
+<meta name="date" content="2020-09-21" />
 
 <title>Hypothesis testing</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Hypothesis testing</h1>
-<h4 class="date"><br/>September 16, 2019</h4>
+<h4 class="date"><br/>September 21, 2020</h4>
 
 </div>
 
@@ -403,7 +368,7 @@ humid_t</code></pre>
 </tr>
 </tbody>
 </table>
-<p><em>Note</em>: The truth of <span class="math inline">\(H_0\)</span> for a null hypothesis of the type <span class="math inline">\(\mu = 0\)</span> is somewhat of an abstraction. In practice, the difference between two treatments can be very small, but will never be perfectly zero. Nevertheless, one can conceive a null hypothesis that is true up to a certain precision.</p>
+<p><em>Note</em>: The truth of <span class="math inline">\(H_0\)</span> for a null hypothesis of the type <span class="math inline">\(\mu = 0\)</span> is somewhat of an abstraction. In practice, the difference between two treatments can be very small, but will almost never be perfectly zero. Nevertheless, one can conceive a null hypothesis that is true up to a certain precision.</p>
 <p>A <strong>type I</strong> error occurs when <span class="math inline">\(H_0\)</span> is rejected even though it is true. The significance threshold <span class="math inline">\(\alpha\)</span> is the probability of this type of error if <span class="math inline">\(H_0\)</span> is true.</p>
 <p>A <strong>type II</strong> error occurs when <span class="math inline">\(H_0\)</span> is not rejected even if it is false. The probability of this type of error is denoted by <span class="math inline">\(\beta\)</span>. More often, we are interested in (<span class="math inline">\(1 - \beta\)</span>), the probability of rejecting <span class="math inline">\(H_0\)</span> when it is false (of detecting a significant difference when there is one). This probability is called the <strong>power</strong> of the test.</p>
 <div id="question" class="section level3">
@@ -456,7 +421,7 @@ humid_t</code></pre>
 </div>
 </div>
 <div id="applications-of-the-t-test" class="section level1">
-<h1>Applications of the t-test</h1>
+<h1>Applications of the <span class="math inline">\(t\)</span>-test</h1>
 <div id="comparing-the-sample-mean-to-a-reference-value" class="section level2">
 <h2>Comparing the sample mean to a reference value</h2>
 <p>The first application of the <span class="math inline">\(t\)</span>-test consists in comparing the mean of a sample to a fixed value (for example, a theoretical prediction or a very precise reference value).</p>
@@ -489,13 +454,13 @@ t.test(humidite, mu = 50)</code></pre>
     geom_boxplot()</code></pre>
 <p><img src="4E-Hypothesis_testing_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Let’s consider a subset of the data consisting of plots treated with products A and B, and test the null hypothesis that the two products have the same efficiency: <span class="math inline">\(\mu_A = \mu_B\)</span>, or equivalently, <span class="math inline">\(\mu_A - \mu_B = 0\)</span>.</p>
-<p>For two independent samples, each with a normal distribution, the difference of the means <span class="math inline">\(\bar{x}_A - \bar{x}_B\)</span> divided by its standard error also follows a <span class="math inline">\(t\)</span> distribution:</p>
+<p>For two independent samples each following a normal distribution, under the null hypothesis that these two distributions have the same mean, the difference of the estimated means <span class="math inline">\(\bar{x}_A - \bar{x}_B\)</span> divided by its standard error also follows a <span class="math inline">\(t\)</span> distribution:</p>
 <p><span class="math display">\[t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}\]</span> We still need to determine the standard error of the difference between the two means and the number of degrees of freedom of this <span class="math inline">\(t\)</span> distribution.</p>
 <p>The variance of a difference between two independent random variables is equal to the sum of the variances of the variables taken separately. Thus, the standard error of the difference can be related to the variance and size of each of the two samples.</p>
 <p><span class="math display">\[\sigma_{\bar{x}_A - \bar{x}_B}^2 = \sigma_{\bar{x}_A}^2 + \sigma_{\bar{x}_B}^2\]</span> <span class="math display">\[\sigma_{\bar{x}_A - \bar{x}_B}^2 = \frac{s_A^2}{n_A} + \frac{s_B^2}{n_B}\]</span> <span class="math display">\[\sigma_{\bar{x}_A - \bar{x}_B} = \sqrt{\frac{s_A^2}{n_A} + \frac{s_B^2}{n_B}}\]</span></p>
 <p>The calculation of the degrees of freedom is more complex. According to Welch’s approximation:</p>
 <p><span class="math display">\[df = \frac{\left(s_A^2 / n_A + s_B^2 / n_B \right)^2}{\frac{\left( s_A^2 / n_A \right) ^2}{n_A - 1} + \frac{\left( s_B^2/n_B \right)^2}{n_B - 1}}\]</span></p>
-<p>Here is the R code to compare the means of the samples treated by products A and B.</p>
+<p>These formulas are presented here for your information, but fortunately, statistical software performs these computations for us. Here is the R code to compare the means of the samples treated by products A and B.</p>
 <pre class="r"><code>library(dplyr)
 insectesAB &lt;- filter(InsectSprays, spray %in% c(&quot;A&quot;, &quot;B&quot;))
 t.test(count ~ spray, data = insectesAB)</code></pre>
@@ -610,9 +575,9 @@ t.test(humi$diff)</code></pre>
 </div>
 </div>
 <div id="validity-of-t-test-results" class="section level1">
-<h1>Validity of t-test results</h1>
+<h1>Validity of <span class="math inline">\(t\)</span>-test results</h1>
 <div id="assumptions-of-the-t-test" class="section level2">
-<h2>Assumptions of the t-test</h2>
+<h2>Assumptions of the <span class="math inline">\(t\)</span>-test</h2>
 <p>The <span class="math inline">\(t\)</span>-test requires that:</p>
 <ul>
 <li><p>the observations are independent of each other (for paired groups, pairs of observations must be independent); and</p></li>
@@ -624,12 +589,12 @@ t.test(humi$diff)</code></pre>
 <h2>Normality of the data</h2>
 <ul>
 <li><p>The <span class="math inline">\(t\)</span>-test is rather robust, i.e. its conclusions are little affected by small to moderate deviations from the assumption of normality.</p></li>
-<li>There are tests of the normality of a sample (e.g. Shapiro-Wilk test). However, these are rarely necessary.
+<li><p>There are tests of the normality of a sample (e.g. Shapiro-Wilk test). However, these are rarely necessary.</p>
 <ul>
 <li>With a large sample, the distribution of the sample mean is almost normal (central limit theorem) even if the data is not.</li>
 <li>With a small sample, the power of the normality test is low.</li>
 </ul></li>
-<li>The <span class="math inline">\(t\)</span>-test is less reliable when the distribution is strongly asymmetrical or has outliers.
+<li><p>The <span class="math inline">\(t\)</span>-test is less reliable when the distribution is strongly asymmetrical or has outliers.</p>
 <ul>
 <li>In the first case, a transformation (e.g. logarithmic) can produce a more symmetric distribution that is suitable for the <span class="math inline">\(t\)</span>-test.</li>
 <li>In the second case, methods less sensitive to extreme values (more robust) are used.</li>
@@ -637,7 +602,7 @@ t.test(humi$diff)</code></pre>
 </ul>
 </div>
 <div id="alternatives-to-the-t-test" class="section level2">
-<h2>Alternatives to the t-test</h2>
+<h2>Alternatives to the <span class="math inline">\(t\)</span>-test</h2>
 <p>The <strong>Wilcoxon-Mann-Whitney</strong> test is based on the rank of the observations. For the two-sided test with two independent samples A and B, the null hypothesis is that if we drew one element from each group <span class="math inline">\(x_A\)</span> and <span class="math inline">\(x_B\)</span> at random, the probabilities <span class="math inline">\(P(x_A &gt; x_B)\)</span> and <span class="math inline">\(P(x_A &lt; x_B)\)</span> are equal. Usually, this means the median is the same for both groups.</p>
 <p>This test is performed by the <code>wilcox.test</code> function in R, whose structure is similar to <code>t.test</code>.</p>
 <p>Since the test is based on the order of observations rather than their value, it is less sensitive to extreme values, just like the median is less sensitive to extreme values than the mean.</p>
@@ -645,8 +610,8 @@ t.test(humi$diff)</code></pre>
 <p>Other non-parametric methods are based on re-sampling observations to obtain a confidence interval. This type of method, including the <em>bootstrap</em>, will be part of the advanced statistics course (ECL 8202, offered at the winter semester).</p>
 </div>
 </div>
-<div id="recall" class="section level1">
-<h1>Recall</h1>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
 <ul>
 <li>General concepts of hypothesis testing
 <ul>
@@ -717,6 +682,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

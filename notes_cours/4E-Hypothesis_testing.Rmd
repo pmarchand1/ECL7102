@@ -1,6 +1,6 @@
 ---
 title: "Hypothesis testing"
-date: "<br/>September 16, 2019"
+date: "<br/>September 21, 2020"
 output:
     html_document:
         self_contained: false
@@ -12,8 +12,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
+set.seed(7102)
 ```
 
 # Objectives
@@ -57,7 +59,7 @@ The cumulative $t$ distribution (`pt` function in R) gives us the probability of
 This probability (21.9%) matches the filled fraction of the area under the curve in the graph below:
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(x > humid_t, dt(x, df = 8), NA), geom = "area", fill = "red") +
@@ -67,7 +69,7 @@ ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
 Since our question was: "What is the probability of the sample mean being that far from the reference value?", we must also consider the probability of obtaining a negative difference greater than the observed positive difference, i.e. a value of the $t$ statistic less than -0.815. Since the $t$ distribution is symmetrical, this probability is also 21.9%, so the probability of the mean being that far from the reference point is 43.8%, as shown in the graph below.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(abs(x) > humid_t, dt(x, df = 8), NA), geom = "area", fill = "red") +
@@ -134,14 +136,14 @@ The $\alpha$ threshold must be chosen before data analysis.
 For a two-sided test, we reject a fraction $\alpha / 2$ from each end of the distribution (as for a confidence interval). For a one-sided test, we reject a fraction $\alpha$ from one end of the distribution. Here is an illustration of the two cases with $\alpha = 0.05$.
 
 ```{r echo = FALSE}
-p1 <- ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+p1 <- ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(abs(x) > qt(0.975, df = 8), dt(x, df = 8), NA), 
                   geom = "area", fill = "red") +
     scale_y_continuous(expand = c(0, 0))
 
-p2 <- ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+p2 <- ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(x > qt(0.95, df = 8), dt(x, df = 8), NA), 
@@ -162,7 +164,7 @@ Here are the four possible scenarios depending if $H_0$ is true or false and if 
 |$H_0$ is true  |    correct decision   | type I error      |
 |$H_0$ is false |    type II error      | correct decision  |
 
-*Note*: The truth of $H_0$ for a null hypothesis of the type $\mu = 0$ is somewhat of an abstraction. In practice, the difference between two treatments can be very small, but will never be perfectly zero. Nevertheless, one can conceive a null hypothesis that is true up to a certain precision.
+*Note*: The truth of $H_0$ for a null hypothesis of the type $\mu = 0$ is somewhat of an abstraction. In practice, the difference between two treatments can be very small, but will almost never be perfectly zero. Nevertheless, one can conceive a null hypothesis that is true up to a certain precision.
 
 A **type I** error occurs when $H_0$ is rejected even though it is true. The significance threshold $\alpha$ is the probability of this type of error if $H_0$ is true.
 
@@ -185,7 +187,7 @@ For example, let's calculate the power of the test using the soil moisture data 
 Since $\alpha = 0.05$ and our test is two-sided, the null hypothesis will be rejected for values of $z$ corresponding to a cumulative probability < 0.025 and > 0.975.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-3, 3, 0.1))) +
+ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -202,7 +204,7 @@ qnorm(0.975)
 Due to the bias, the sample mean will follow a normal distribution with the same standard deviation, but centered on $z = 2$. This distribution is shown in blue in the graph below.
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
+ggplot(NULL) + xlim(-3, 5) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -230,7 +232,7 @@ If we consider only the filled blue section of the graph above, the mean of $z$ 
 Here is a more extreme case, when the true bias is at $z = 0.5$ (the actual effect is 1/2 the standard error).
 
 ```{r echo = FALSE}
-ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
+ggplot(NULL) + xlim(-3, 5) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -260,7 +262,7 @@ Gelman and Carlin (2014) describe the latter two cases as type M (error on the m
 - It is incorrect to calculate the power after the test based on the measured effect. As we have seen, this effect can be strongly overestimated if the real power is low.
 
 
-# Applications of the t-test
+# Applications of the $t$-test
 
 ## Comparing the sample mean to a reference value
 
@@ -290,7 +292,7 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 Let's consider a subset of the data consisting of plots treated with products A and B, and test the null hypothesis that the two products have the same efficiency: $\mu_A = \mu_B$, or equivalently, $\mu_A - \mu_B = 0$.
 
-For two independent samples, each with a normal distribution, the difference of the means $\bar{x}_A - \bar{x}_B$ divided by its standard error also follows a $t$ distribution:
+For two independent samples each following a normal distribution, under the null hypothesis that these two distributions have the same mean, the difference of the estimated means $\bar{x}_A - \bar{x}_B$ divided by its standard error also follows a $t$ distribution:
 
 $$t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}$$
 We still need to determine the standard error of the difference between the two means and the number of degrees of freedom of this $t$ distribution.
@@ -305,7 +307,7 @@ The calculation of the degrees of freedom is more complex. According to Welch's 
 
 $$df = \frac{\left(s_A^2 / n_A + s_B^2 / n_B \right)^2}{\frac{\left( s_A^2 / n_A \right) ^2}{n_A - 1} + \frac{\left( s_B^2/n_B \right)^2}{n_B - 1}}$$
 
-Here is the R code to compare the means of the samples treated by products A and B.
+These formulas are presented here for your information, but fortunately, statistical software performs these computations for us. Here is the R code to compare the means of the samples treated by products A and B.
 
 ```{r, message = FALSE, warning = FALSE}
 library(dplyr)
@@ -372,9 +374,9 @@ t.test(humi$mesureA, humi$mesureB)
 When two groups are paired, the number of degrees of freedom of the $t$-test is smaller, since we have 9 independent pairs rather than 18 independent points. Despite this, the power of the test increases if the use of pairs makes it possible to separate the effect of the treatment from other sources of variation that influence the response between the pairs. Here, we want to separate the difference in soil moisture measurements between the two devices from the variation in moisture between different points of the plot.
 
 
-# Validity of t-test results
+# Validity of $t$-test results
 
-## Assumptions of the t-test
+## Assumptions of the $t$-test
 
 The $t$-test requires that:
 
@@ -396,7 +398,7 @@ The independence of observations depends on sampling or experimental design (ran
     * In the first case, a transformation (e.g. logarithmic) can produce a more symmetric distribution that is suitable for the $t$-test.
     * In the second case, methods less sensitive to extreme values (more robust) are used.
 
-## Alternatives to the t-test
+## Alternatives to the $t$-test
 
 The **Wilcoxon-Mann-Whitney** test is based on the rank of the observations. For the two-sided test with two independent samples A and B, the null hypothesis is that if we drew one element from each group $x_A$ and $x_B$ at random, the probabilities $P(x_A > x_B)$ and $P(x_A < x_B)$ are equal. Usually, this means the median is the same for both groups.
 
@@ -409,7 +411,7 @@ However, being a non-parametric test (which does not depend on a specific distri
 Other non-parametric methods are based on re-sampling observations to obtain a confidence interval. This type of method, including the *bootstrap*, will be part of the advanced statistics course (ECL 8202, offered at the winter semester).
 
 
-# Recall
+# Summary
 
 - General concepts of hypothesis testing
     * Null and alternative hypothesis
