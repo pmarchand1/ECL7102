@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title>Tests d’hypothèse sur la moyenne</title>
+<title>Tests d’hypothèses</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +19,9 @@
 <script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="libs/navigation-1.1/tabsets.js"></script>
 <link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="libs/highlightjs-9.12.0/highlight.js"></script>
@@ -69,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -85,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -96,22 +96,154 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 
 
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -120,63 +252,57 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Tests d’hypothèse sur la moyenne</h1>
-<h4 class="date"><em>19 septembre 2018</em></h4>
+<h1 class="title toc-ignore">Tests d’hypothèses</h1>
+<h4 class="date">23 septembre 2020</h4>
 
 </div>
 
 
-<div id="tests-dhypothese" class="section level2">
-<h2>1. Tests d’hypothèse</h2>
-<p>Lesquelles des affirmations suivantes sont exactes?</p>
-<ol style="list-style-type: lower-alpha">
-<li><p>La valeur <span class="math inline">\(p\)</span> est la probabilité que l’hypothèse nulle soit vraie.</p></li>
-<li><p>Plus le seuil de signification <span class="math inline">\(\alpha\)</span> est élevé, plus il est difficile de rejeter l’hypothèse nulle.</p></li>
-<li><p>Pour un test <span class="math inline">\(t\)</span> à un échantillon, si on rejette l’hypothèse nulle <span class="math inline">\(\mu = 10\)</span> avec un seuil <span class="math inline">\(\alpha = 0.01\)</span>, alors l’intervalle de confiance à 99% de la moyenne de l’échantillon <span class="math inline">\(\bar{x}\)</span> ne contient pas la valeur 10.</p></li>
-<li><p>Pour le test <span class="math inline">\(t\)</span> comparant deux échantillons avec l’hypothèse nulle <span class="math inline">\(\mu_A = \mu_B\)</span>, une valeur <span class="math inline">\(p\)</span> plus petite signifie que la différence entre les moyennes est plus élevée.</p></li>
-<li><p>Dans un plan d’expérience, l’assignation aléatoire des traitements vise à assurer que les différences mesurées entre les groupes soient bien dues au traitement.</p></li>
-</ol>
-</div>
+<p>Ce laboratoire doit être remis le <strong>30 septembre à 17h sur Moodle</strong>. Dans votre réponse pour chaque question, veuillez inclure le code R utilisé (s’il y a lieu) et les résultats obtenus.</p>
 <div id="concentration-dozone-dans-trois-jardins" class="section level2">
-<h2>2. Concentration d’ozone dans trois jardins</h2>
+<h2>1. Concentration d’ozone dans trois jardins</h2>
 <p>Pour cet exercice, nous utiliserons le tableau de données <code>gardens.csv</code>, qui provient du manuel <em>Statistics: An Introduction Using R</em> de Michael Crawley. Ces données représentent les concentrations d’ozone (en parties par 100 millions ou pphm) mesurées dans trois jardins (A, B et C) lors de différentes journées.</p>
-<pre class="r"><code>gardens &lt;- read.csv(&quot;gardens.csv&quot;)</code></pre>
+<pre class="r"><code>gardens &lt;- read.csv(&quot;gardens.csv&quot;)
+head(gardens)</code></pre>
+<pre><code>##   Ozone Garden
+## 1     3      A
+## 2     4      A
+## 3     4      A
+## 4     3      A
+## 5     2      A
+## 6     3      A</code></pre>
 <ol style="list-style-type: lower-alpha">
-<li><p>Observez la distribution des mesures d’ozone dans chaque jardin. Quel type de graphique pourriez-vous utiliser?</p></li>
+<li><p>Visualisez les mesures d’ozone en fonction du jardin avec un graphique de type <code>geom_jitter</code> dans <em>ggplot2</em>. Quel est l’avantage de ce type de graphique ici, comparé à <code>geom_point</code> ou <code>geom_boxplot</code>?</p></li>
 <li><p>Quelle est la moyenne et l’écart-type de la concentration d’ozone dans chaque jardin? Est-ce que la moyenne est une bonne indicatrice de la valeur “typique” dans chaque jardin?</p></li>
 <li><p>À partir de ces données, testez l’hypothèse nulle selon laquelle les jardins A et B reçoivent la même concentration d’ozone en moyenne. Quel est votre estimé de la différence entre les moyennes et son intervalle de confiance à 99%? Est-ce que ce test donne une bonne idée de la différence entre les deux jardins? Expliquez votre réponse.</p></li>
 <li><p>Répétez l’exercice précédent pour l’hypothèse nulle selon laquelle les jardins A et C reçoivent la même concentration d’ozone en moyenne. Commentez sur la différence entre ce résultat et le résultat précédent.</p></li>
 </ol>
 </div>
-<div id="afficher-lestime-dun-test-t" class="section level2">
-<h2>3. Afficher l’estimé d’un test <em>t</em></h2>
-<p>On peut sauvegarder le résultat d’un test <span class="math inline">\(t\)</span> dans une variable, par exemple:</p>
-<pre class="r"><code>res_t &lt;- t.test(Ozone ~ Garden, data = filter(gardens, Garden != &quot;C&quot;),
-       conf.level = 0.99)</code></pre>
-<p>Ensuite, on peut accéder aux différentes parties du résultat avec l’opérateur <code>$</code>.</p>
-<pre class="r"><code>res_t$p.value</code></pre>
-<pre><code>## [1] 0.001114539</code></pre>
-<pre class="r"><code>res_t$estimate</code></pre>
-<pre><code>## mean in group A mean in group B 
-##               3               5</code></pre>
-<p>Créez une fonction qui accepte comme argument une variable de résultat d’un test <span class="math inline">\(t\)</span> (réalisé sur 2 échantillons) et qui affiche l’estimé de la différence avec son intervalle de confiance. Arrondissez les nombres à une décimale. Par exemple, pour le résultat <code>res_t</code> ci-dessus, la fonction devrait produire le texte: “-2 (-3.5, -0.5)”.</p>
-<p><strong>Indices</strong></p>
-<ul>
-<li><p>Utilisez la fonction <code>round</code> pour arrondir une variable numérique.</p></li>
-<li><p>La fonction <code>paste0</code> permet de coller ensemble des nombres et des chaînes de caractère. Par exemple:</p></li>
-</ul>
-<pre class="r"><code>t &lt;- 6
-paste0(&quot;Il est &quot;, t, &quot; heures.&quot;)</code></pre>
-<pre><code>## [1] &quot;Il est 6 heures.&quot;</code></pre>
-<p><em>Note</em>: La fonction <code>paste</code> fonctionne de la même façon mais place des espaces entre les éléments.</p>
-</div>
-<div id="experience-avec-groupes-apparies" class="section level2">
-<h2>4. Expérience avec groupes appariés</h2>
-<p>Donnez un exemple d’expérience dont les résultats pourraient être analysés avec un test <span class="math inline">\(t\)</span> pour deux groupes appariés.</p>
+<div id="effet-des-feuilles-mortes-sur-lapport-en-azote-de-semis" class="section level2">
+<h2>2. Effet des feuilles mortes sur l’apport en azote de semis</h2>
+<p>Le tableau de données <code>nconc.csv</code> présente les résultats d’une expérience (fictive) visant à estimer l’effet des feuilles mortes sur l’apporte en azote de semis.</p>
+<pre class="r"><code>nconc &lt;- read.csv(&quot;nconc.csv&quot;)
+nconc</code></pre>
+<pre><code>##   plot   litter no_litter
+## 1    1 1.859543 1.8073724
+## 2    2 1.461364 0.7367826
+## 3    3 1.488136 1.6332546
+## 4    4 1.325093 1.1615338
+## 5    5 1.600666 0.9864743
+## 6    6 2.038625 1.9011473
+## 7    7 1.788214 1.3162220
+## 8    8 1.994081 1.7849742</code></pre>
+<p>Huit placettes (<code>plot</code>) ont été délimitées dans une forêt et divisées en deux moitiés. Dans chaque placette, une moitié (choisie au hasard) a reçu le traitement qui consistait à enlever systématiquement les feuilles mortes au sol. Les deux dernières colonnes du tableau montrent la concentration d’azote (en % de la biomasse) pour les semis de la moitié non-traitée (<code>litter</code>) et de la moitié traitée (<code>no_litter</code>).</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Quel est l’avantage d’avoir effectué l’expérience de cette façon plutôt que d’avoir enlevé complètement les feuilles mortes de quatre placettes sur huit? Quel type de test <span class="math inline">\(t\)</span> est approprié ici pour déterminer l’effet du traitement sur la concentration moyenne d’azote des semis?</p></li>
+<li><p>Effectuez le test <span class="math inline">\(t\)</span> choisi et déterminez si le traitement a un effet significatif à un seuil <span class="math inline">\(\alpha = 0.05\)</span>. Quel est l’effet moyen estimé (n’oubliez pas d’interpréter le signe de la différence) et son intervalle de confiance?</p></li>
+</ol>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -191,6 +317,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

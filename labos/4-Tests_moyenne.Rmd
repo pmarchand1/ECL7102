@@ -1,42 +1,31 @@
 ---
-title: "Tests d'hypothèse sur la moyenne"
-date: "19 septembre 2018"
-output: 
+title: "Tests d'hypothèses"
+date: "23 septembre 2020"
+output:
     html_document:
         self_contained: false
         lib_dir: libs
         theme: spacelab
+        toc: true
+        toc_float: true
 ---
+
+Ce laboratoire doit être remis le **30 septembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure le code R utilisé (s'il y a lieu) et les résultats obtenus.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-library(dplyr)
 ```
 
-## 1. Tests d'hypothèse
-
-Lesquelles des affirmations suivantes sont exactes?
-
-a) La valeur $p$ est la probabilité que l'hypothèse nulle soit vraie.
-
-b) Plus le seuil de signification $\alpha$ est élevé, plus il est difficile de rejeter l'hypothèse nulle.
-
-c) Pour un test $t$ à un échantillon, si on rejette l'hypothèse nulle $\mu = 10$ avec un seuil $\alpha = 0.01$, alors l'intervalle de confiance à 99% de la moyenne de l'échantillon $\bar{x}$ ne contient pas la valeur 10.
-
-d) Pour le test $t$ comparant deux échantillons avec l'hypothèse nulle $\mu_A = \mu_B$, une valeur $p$ plus petite signifie que la différence entre les moyennes est plus élevée.
-
-e) Dans un plan d'expérience, l'assignation aléatoire des traitements vise à assurer que les différences mesurées entre les groupes soient bien dues au traitement.
-
-
-## 2. Concentration d'ozone dans trois jardins
+## 1. Concentration d'ozone dans trois jardins
 
 Pour cet exercice, nous utiliserons le tableau de données `gardens.csv`, qui provient du manuel *Statistics: An Introduction Using R* de Michael Crawley. Ces données représentent les concentrations d'ozone (en parties par 100 millions ou pphm) mesurées dans trois jardins (A, B et C) lors de différentes journées.
 
 ```{r}
 gardens <- read.csv("gardens.csv")
+head(gardens)
 ```
 
-a) Observez la distribution des mesures d'ozone dans chaque jardin. Quel type de graphique pourriez-vous utiliser? 
+a) Visualisez les mesures d'ozone en fonction du jardin avec un graphique de type `geom_jitter` dans *ggplot2*. Quel est l'avantage de ce type de graphique ici, comparé à `geom_point` ou `geom_boxplot`?
 
 b) Quelle est la moyenne et l'écart-type de la concentration d'ozone dans chaque jardin? Est-ce que la moyenne est une bonne indicatrice de la valeur "typique" dans chaque jardin?
 
@@ -45,38 +34,17 @@ c) À partir de ces données, testez l'hypothèse nulle selon laquelle les jardi
 d) Répétez l'exercice précédent pour l'hypothèse nulle selon laquelle les jardins A et C reçoivent la même concentration d'ozone en moyenne. Commentez sur la différence entre ce résultat et le résultat précédent.
 
 
-## 3. Afficher l'estimé d'un test *t*
+## 2. Effet des feuilles mortes sur l'apport en azote de semis
 
-On peut sauvegarder le résultat d'un test $t$ dans une variable, par exemple:
-
-```{r}
-res_t <- t.test(Ozone ~ Garden, data = filter(gardens, Garden != "C"),
-       conf.level = 0.99)
-```
-
-Ensuite, on peut accéder aux différentes parties du résultat avec l'opérateur `$`.
+Le tableau de données `nconc.csv` présente les résultats d'une expérience (fictive) visant à estimer l'effet des feuilles mortes sur l'apporte en azote de semis.  
 
 ```{r}
-res_t$p.value
-res_t$estimate
+nconc <- read.csv("nconc.csv")
+nconc
 ```
 
-Créez une fonction qui accepte comme argument une variable de résultat d'un test $t$ (réalisé sur 2 échantillons) et qui affiche l'estimé de la différence avec son intervalle de confiance. Arrondissez les nombres à une décimale. Par exemple, pour le résultat `res_t` ci-dessus, la fonction devrait produire le texte: "-2 (-3.5, -0.5)".
+Huit placettes (`plot`) ont été délimitées dans une forêt et divisées en deux moitiés. Dans chaque placette, une moitié (choisie au hasard) a reçu le traitement qui consistait à enlever systématiquement les feuilles mortes au sol. Les deux dernières colonnes du tableau montrent la concentration d'azote (en % de la biomasse) pour les semis de la moitié non-traitée (`litter`) et de la moitié traitée (`no_litter`). 
 
-**Indices**
+a) Quel est l'avantage d'avoir effectué l'expérience de cette façon plutôt que d'avoir enlevé complètement les feuilles mortes de quatre placettes sur huit? Quel type de test $t$ est approprié ici pour déterminer l'effet du traitement sur la concentration moyenne d'azote des semis?
 
-- Utilisez la fonction `round` pour arrondir une variable numérique.
-
-- La fonction `paste0` permet de coller ensemble des nombres et des chaînes de caractère. Par exemple:
-
-```{r}
-t <- 6
-paste0("Il est ", t, " heures.")
-```
-
-*Note*: La fonction `paste` fonctionne de la même façon mais place des espaces entre les éléments.
-
-
-## 4. Expérience avec groupes appariés
-
-Donnez un exemple d'expérience dont les résultats pourraient être analysés avec un test $t$ pour deux groupes appariés.
+b) Effectuez le test $t$ choisi et déterminez si le traitement a un effet significatif à un seuil $\alpha = 0.05$. Quel est l'effet moyen estimé (n'oubliez pas d'interpréter le signe de la différence) et son intervalle de confiance?

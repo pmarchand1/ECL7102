@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2018-09-19" />
+<meta name="date" content="2020-09-23" />
 
 <title>Hypothesis tests on the mean</title>
 
@@ -20,6 +20,9 @@
 <script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="libs/navigation-1.1/tabsets.js"></script>
 <link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="libs/highlightjs-9.12.0/highlight.js"></script>
@@ -70,9 +73,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -86,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -97,22 +97,154 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 
 
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -122,66 +254,48 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Hypothesis tests on the mean</h1>
-<h4 class="date"><em>September 19, 2018</em></h4>
+<h4 class="date">September 23, 2020</h4>
 
 </div>
 
 
-<div id="hypothesis-tests" class="section level2">
-<h2>1. Hypothesis tests</h2>
-<p>Which of the following statements are true?</p>
-<ol style="list-style-type: lower-alpha">
-<li>The <span class="math inline">\(p\)</span> value is the probability that the null hypothesis is true.</li>
-</ol>
-<ol start="2" style="list-style-type: lower-alpha">
-<li>The higher the significance threshold <span class="math inline">\(\alpha\)</span>, the more difficult it is to reject the null hypothesis.</li>
-</ol>
-<ol start="3" style="list-style-type: lower-alpha">
-<li><p>For a one-sample <span class="math inline">\(t\)</span>-test, if we reject the null hypothesis <span class="math inline">\(\mu = 10\)</span> with a threshold <span class="math inline">\(\alpha = 0.01\)</span>, then the 99% confidence interval of the sample mean <span class="math inline">\(\bar{x}\)</span> does not contain the value 10.</p></li>
-<li><p>For the <span class="math inline">\(t\)</span>-test comparing two samples with the null hypothesis <span class="math inline">\(\mu_A = \mu_B\)</span>, a smaller value <span class="math inline">\(p\)</span> means that there is a greater difference between the means.</p></li>
-<li><p>In experimental design, random assignment of treatments is intended to ensure that the differences measured between groups are due to the treatment.</p></li>
-</ol>
-</div>
+<p>Answers for this lab must be submitted before <strong>September 30th at 5pm on Moodle</strong>. In your answer for each question, please include the R code used (if applicable) and the results obtained.</p>
 <div id="ozone-concentration-in-three-gardens" class="section level2">
-<h2>2. Ozone concentration in three gardens</h2>
+<h2>1. Ozone concentration in three gardens</h2>
 <p>For this exercise, we will use the <code>gardens.csv</code> dataset, which comes from Michael Crawley’s book <em>Statistics: An Introduction Using R</em>. These data represent ozone concentrations (in parts per 100 million or pphm) measured in three gardens (A, B and C) on different days.</p>
 <pre class="r"><code>gardens &lt;- read.csv(&quot;gardens.csv&quot;)</code></pre>
 <ol style="list-style-type: lower-alpha">
-<li><p>Observe the distribution of ozone measurements in each garden. What type of graph could you use?</p></li>
+<li><p>Observe the distribution of ozone measurements in each garden with a graph of type <code>geom_jitter</code> in <em>ggplot2</em>. What is the advantage of that type of graph for this dataset, compared with <code>geom_point</code> or <code>geom_boxplot</code>?</p></li>
 <li><p>What is the mean and standard deviation of the ozone concentration in each garden? Is the mean a good indicator of the “typical” value in each garden?</p></li>
 <li><p>From these data, test the null hypothesis that gardens A and B receive the same mean ozone concentration. What is your estimate of the difference between the mean and its 99% confidence interval? Does this test give a good idea of the difference between the two gardens? Explain your answer.</p></li>
-<li><p>Repeat the previous exercise for the null hypothesis that gardens A and C receive the same average ozone concentration. Comment on the difference between this result and the previous result.</p></li>
+<li><p>Repeat the previous exercise for the null hypothesis that gardens A and C receive the same mean ozone concentration. Comment on the difference between this result and the previous result.</p></li>
 </ol>
 </div>
-<div id="display-the-estimate-of-a-t-test" class="section level2">
-<h2>3. Display the estimate of a <em>t</em>-test</h2>
-<p>We can save the result of a <span class="math inline">\(t\)</span>-test in a variable, for example:</p>
-<pre class="r"><code>res_t &lt;- t.test(Ozone ~ Garden, data = filter(gardens, Garden != &quot;C&quot;),
-       conf.level = 0.99)</code></pre>
-<p>Then, we can access different parts of that result with the <code>$</code> operator.</p>
-<pre class="r"><code>res_t$p.value</code></pre>
-<pre><code>## [1] 0.001114539</code></pre>
-<pre class="r"><code>res_t$estimate</code></pre>
-<pre><code>## mean in group A mean in group B 
-##               3               5</code></pre>
-<p>Create a function that takes one argument, which is the result of a <span class="math inline">\(t\)</span>-test (performed on 2 samples), and that displays the estimate of the difference between the means with its confidence interval. Round the numbers to one decimal place. For example, for the result <code>res_t</code> above, the function should produce the text: “-2 (-3.5, -0.5)”.</p>
-<p><strong>Hint</strong></p>
-<ul>
-<li><p>Use the <code>round</code> function to round a numeric variable.</p></li>
-<li><p>The <code>paste0</code> function allows you to paste numbers and character strings together. For example:</p></li>
-</ul>
-<pre class="r"><code>t &lt;- 6
-paste0(&quot;It is &quot;, t, &quot; o&#39;clock.&quot;)</code></pre>
-<pre><code>## [1] &quot;It is 6 o&#39;clock.&quot;</code></pre>
-<p><em>Note</em>: The function <code>paste</code> works in the same way, but adds a space between each element.</p>
-</div>
-<div id="experiment-with-paired-samples" class="section level2">
-<h2>4. Experiment with paired samples</h2>
-<p>Give one example of an experiment where the results could be analyzed with a paired sample <span class="math inline">\(t\)</span>-test.</p>
+<div id="effect-of-dead-leaves-on-the-nitrogen-supply-of-seedlings" class="section level2">
+<h2>2. Effect of dead leaves on the nitrogen supply of seedlings</h2>
+<p>The <code>nconc.csv</code> dataset present the results of a (fictitious) experiment to estimate the effect of dead leaves on the nitrogen supply of seedlings.</p>
+<pre class="r"><code>nconc &lt;- read.csv(&quot;nconc.csv&quot;)
+nconc</code></pre>
+<pre><code>##   plot   litter no_litter
+## 1    1 1.859543 1.8073724
+## 2    2 1.461364 0.7367826
+## 3    3 1.488136 1.6332546
+## 4    4 1.325093 1.1615338
+## 5    5 1.600666 0.9864743
+## 6    6 2.038625 1.9011473
+## 7    7 1.788214 1.3162220
+## 8    8 1.994081 1.7849742</code></pre>
+<p>Eight plots were delimited in a forest and divided into two halves. In each plot, one half (chosen at random) was treated by systematically removing dead leaves from the ground. The last two columns of the data frame show the nitrogen concentration (expressed as a % of biomass) for the seedlings of the untreated (<code>litter</code>) and treated (<code>no_litter</code>) halves.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>What is the advantage of conducting the experiment in this manner rather than completely removing the dead leaves from four of the eight plots? What type of <span class="math inline">\(t\)</span> test is appropriate here to determine the effect of the treatment on the mean nitrogen concentration of the seedlings?</p></li>
+<li><p>Perform the <span class="math inline">\(t\)</span> test you selected and determine if the treatment has a significant effect at a significance threshold of <span class="math inline">\(\alpha = 0.05\)</span>. What is the estimated mean effect (remember to interpret the sign of the difference) and its confidence interval?</p></li>
+</ol>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -196,6 +310,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
-    <title>Tests d’hypothèse</title>
+    <title>Tests d’hypothèses</title>
     <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles-xar.css" type="text/css" />
@@ -11,18 +12,13 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Tests d’hypothèse
-### <br/>16 septembre 2019
+# Tests d’hypothèses
+### 21 septembre 2020
 
 ---
 
 
 
-
-&lt;style type="text/css"&gt;
-.small .remark-code { font-size: 50% }
-
-&lt;/style&gt;
 
 # Objectifs
 
@@ -95,7 +91,7 @@ Probabilité d'une valeur `\(t\)` plus élevée que celle de notre échantillon,
 
 --
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -103,19 +99,21 @@ Probabilité d'une valeur `\(t\)` plus élevée que celle de notre échantillon,
 
 Probabilité d'obtenir un plus grand écart, positif ou négatif (valeur *p*): 0.438.
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
 
 ---
 
 # Test d'une hypothèse statistique
 
-Un test d'hypothèse statistique vise à déterminer si une variation observée dans un échantillon de données est compatible avec un modèle "par défaut" (l'hypothèse nulle), ou si les observations sont si improbables selon cette hypothèse nulle qu'elle doit être rejetée au profit d'une hypothèse alternative.
+Un test d'hypothèse statistique vise à déterminer si une variation observée dans un échantillon de données est compatible avec un modèle "par défaut" (l'**hypothèse nulle**), ou si les observations sont si improbables selon cette hypothèse nulle qu'elle doit être rejetée au profit d'une **hypothèse alternative**.
 
 ---
 
 # Hypothèse nulle et alternative
 
 - L'hypothèse nulle correspond souvent à une absence d'effet: aucune différence entre deux traitements, absence de corrélation entre deux variables, etc. 
+
+--
 
 - Dans notre exemple précédent, l'hypothèse nulle `\(H_0\)` est `\(\mu = 50\)`. L'hypothèse alternative `\(H_a\)` est sa négation: `\(\mu \neq 50\)`.
 
@@ -191,11 +189,11 @@ Quel serait un exemple d'hypothèse nulle et d'hypothèse alternative dans votre
 
 --
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Types d'erreur et puissance d'un test
 
@@ -249,7 +247,7 @@ Dans notre exemple du début du cours, pourrions-nous calculer la puissance du t
 
 - Avec `\(\alpha = 0.05\)` l'hypothèse nulle est rejetée si `\(F(z) &lt; 0.025\)` ou `\(F(z) &gt; 0.975\)` (prob. cumul.).
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -257,13 +255,13 @@ Dans notre exemple du début du cours, pourrions-nous calculer la puissance du t
 
 - Moyenne de l'échantillon suit une distribution normale centrée sur `\(z = 2\)` (biais réel).
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
 
 ---
 
 # Puissance d'un test
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
 
 - Puissance du test: Probabilité que la moyenne obtenue soit plus grande que la valeur critique de `\(z\)` correspondant à `\(F(z) = 0.975\)`
 
@@ -286,7 +284,7 @@ Dans notre exemple du début du cours, pourrions-nous calculer la puissance du t
 
 (b) Pour le test illustré, si on obtient un résultat significatif (rejet de l'hypothèse nulle), est-ce que le biais mesuré est un bon estimé du biais réel de l'appareil? Pourquoi?
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -294,7 +292,7 @@ Dans notre exemple du début du cours, pourrions-nous calculer la puissance du t
 
 Si le biais réel est à `\(z = 0.5\)` (1/2 erreur-type).
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
 
 --
 
@@ -320,9 +318,9 @@ Si le biais réel est à `\(z = 0.5\)` (1/2 erreur-type).
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
-# Applications du test t
+# Applications du test `\(t\)`
 
 ---
 
@@ -373,7 +371,7 @@ t.test(humidite, mu = 50)
 
 1. Que signifie chacun des éléments de ce résultat de la fonction `t.test`?
 
-2. Quel est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de `\(\bar{x}\)` nous dit sur le résultat du test de l'hypothèse nulle `\(\mu = 50\)` avec un seuil `\(\alpha = 0.05\)`?
+2. Quelle est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de `\(\bar{x}\)` nous dit sur le résultat du test de l'hypothèse nulle `\(\mu = 50\)` avec un seuil `\(\alpha = 0.05\)`?
 
 ---
 
@@ -389,47 +387,13 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
     geom_boxplot()
 ```
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
-
----
-
-# Question éclair
-
-Lesquelles des affirmations suivantes sont exactes?
-
-a) La valeur `\(p\)` est la probabilité que l'hypothèse nulle soit vraie.
-
-b) Plus le seuil de signification `\(\alpha\)` est petit, plus il est difficile de rejeter l'hypothèse nulle.
-
-c) Pour un test `\(t\)` à un échantillon, si on rejette l'hypothèse nulle `\(\mu = 10\)` avec un seuil `\(\alpha = 0.01\)`, alors l'intervalle de confiance à 99% de `\(\bar{x}\)` ne contient pas la valeur 10.
-
-d) Pour le test `\(t\)` comparant deux échantillons avec l'hypothèse nulle `\(\mu_A = \mu_B\)`, une valeur `\(p\)` plus petite signifie que la différence entre les moyennes est plus élevée.
-
----
-
-# Question éclair
-
-Lesquelles des affirmations suivantes sont exactes?
-
-a) La valeur `\(p\)` est la probabilité que l'hypothèse nulle soit vraie. **Faux, la valeur *p* est la probabilité d'avoir observé une valeur plus extrême de la statistique du test *si* l'hypothèse nulle est vraie.**
-
-b) Plus le seuil de signification `\(\alpha\)` est petit, plus il est difficile de rejeter l'hypothèse nulle. **Vrai.**
-
-c) Pour un test `\(t\)` à un échantillon, si on rejette l'hypothèse nulle `\(\mu = 10\)` avec un seuil `\(\alpha = 0.01\)`, alors l'intervalle de confiance à 99% de `\(\bar{x}\)` ne contient pas la valeur 10. **Vrai.**
-
-d) Pour le test `\(t\)` comparant deux échantillons avec l'hypothèse nulle `\(\mu_A = \mu_B\)`, une valeur `\(p\)` plus petite signifie que la différence entre les moyennes est plus élevée. **Faux, cela dépend aussi de la variabilité des données et de la taille de l'échantillon.**
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
 
 ---
 
 # Comparer deux moyennes
 
-
-```r
-ggplot(InsectSprays, aes(x = spray, y = count)) + 
-    geom_boxplot()
-```
-
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
 
 - Testons l'hypothèse nulle selon laquelle produits A et B ont la même efficacité: `\(\mu_A - \mu_B = 0\)`. 
 
@@ -437,7 +401,7 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 # Différence entre deux moyennes
 
-Pour deux échantillons indépendants suivant chacun une distribution normale, la différence des moyennes `\(\bar{x}_A - \bar{x}_B\)` divisée par son erreur-type suit aussi une distribution `\(t\)`:
+Pour deux échantillons indépendants suivant chacun une distribution normale, selon l'hypothèse nulle où ces deux distributions ont la même moyenne, la différence des moyennes estimées `\(\bar{x}_A - \bar{x}_B\)` divisée par l'erreur-type de cette différence suit aussi une distribution `\(t\)`:
 
 `$$t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}$$`
 ---
@@ -468,7 +432,7 @@ Nombre de degrés de liberté donné par l'approximation de Welch:
 
 ```r
 library(dplyr)
-insectesAB &lt;- InsectSprays[InsectSprays$spray %in% c("A", "B"), ]
+insectesAB &lt;- filter(InsectSprays, spray %in% c("A", "B"))
 t.test(count ~ spray, data = insectesAB)
 ```
 
@@ -527,7 +491,7 @@ Si on s'intéresse seulement au cas où l'insecticide B est plus efficace que A,
 
 ---
 
-# Test t unilatéral
+# Test `\(t\)` unilatéral
 
 Dans le cas où notre hypothèse alternative est `\(\bar{x}_A - \bar{x}_B &gt; 0\)`, on spécifie `alternative = "greater"`.
 
@@ -625,10 +589,11 @@ t.test(humi$diff)
 
 # Exercice
 
-.small[
-
+.font70[
 Comparez le test avec données appariées (haut) au résultat supposant des échantillons indépendants (bas).
+]
 
+.code50[
 
 ```
 ## 
@@ -657,7 +622,6 @@ Comparez le test avec données appariées (haut) au résultat supposant des éch
 ## mean of x mean of y 
 ##  50.76667  51.26667
 ```
-
 ]
 
 ---
@@ -670,7 +634,7 @@ Comparez le test avec données appariées (haut) au résultat supposant des éch
 
 ---
 
-# Suppositions du test t
+# Suppositions du test `\(t\)`
 
 - Le test `\(t\)` requiert que:
 
@@ -700,7 +664,7 @@ Comparez le test avec données appariées (haut) au résultat supposant des éch
 
 ---
 
-# Autres options en alternative au test t
+# Autres options en alternative au test `\(t\)`
 
 Test de **Wilcoxon-Mann-Whitney**
 
@@ -715,7 +679,7 @@ Test de **Wilcoxon-Mann-Whitney**
 
 ---
 
-# Autres options en alternative au test t
+# Autres options en alternative au test `\(t\)`
 
 Test de **Wilcoxon-Mann-Whitney**
 
@@ -733,7 +697,7 @@ Test de **Wilcoxon-Mann-Whitney**
 
 ---
 
-# Autres options en alternative au test t
+# Autres options en alternative au test `\(t\)`
 
 - D'autres méthodes non-paramétriques sont basées sur un ré-échantillonnage des observations afin d'obtenir un intervalle de confiance. 
 
@@ -754,7 +718,7 @@ Test de **Wilcoxon-Mann-Whitney**
     
 --
     
-- Utilisation du test t
+- Utilisation du test `\(t\)`
 
     * Comparer la moyenne d'un échantillon à une valeur de référence
     * Comparer la moyenne de deux échantillons indépendants ou appariés
@@ -762,7 +726,7 @@ Test de **Wilcoxon-Mann-Whitney**
     
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Présentation et interprétation des tests d'hypothèse
 
@@ -782,7 +746,7 @@ class: inverse, middle
 
 Les deux effets ci-dessous ont une valeur `\(p\)` = 0.01.
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -790,7 +754,7 @@ Les deux effets ci-dessous ont une valeur `\(p\)` = 0.01.
 
 Les deux effets ont le même intervalle de confiance, mais la distribution des observations est différente.
 
-![](4-Tests_hypothese_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+![](4-Tests_hypothese_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -808,7 +772,7 @@ En résumé, il faut communiquer au moins trois résultats d'un test statistique
 
 # Effet significatif vs. important
 
-- L'effet d'un traitement n'est jamais exactement zéro.
+- L'effet d'un traitement n'est presque jamais exactement zéro.
 
 --
 
@@ -833,13 +797,13 @@ En résumé, il faut communiquer au moins trois résultats d'un test statistique
 
 --
 
-- Nous verrons certaines solutions au problème des comparaisons multiples lors des prochain cours.
+- Nous verrons certaines solutions au problème des comparaisons multiples lors des prochains cours.
 
 ---
 
 # Attention aux comparaisons multiples
 
-- La publication d'une étude montrant avec `\(p &lt; 0.05\)` ne signifie pas que l'hypothèse nulle est définitivement rejetée.
+- La publication d'une étude avec `\(p &lt; 0.05\)` ne signifie pas que l'hypothèse nulle est définitivement rejetée.
 
 --
 
@@ -852,7 +816,9 @@ En résumé, il faut communiquer au moins trois résultats d'un test statistique
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
+"highlightLines": true,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -893,9 +859,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -904,7 +886,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

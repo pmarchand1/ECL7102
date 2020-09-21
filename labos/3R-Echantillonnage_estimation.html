@@ -362,6 +362,7 @@ ggplot(penguins, aes(x = flipper_length_mm, y = bill_length_mm, color = species)
 <li>Dans <code>summarize</code>, vous pouvez utiliser la fonction <code>n()</code> pour compter le nombre de rangées par groupe, ex.: <code>summarize(n = n(), ...)</code>. Cette option est préférable à la fonction <code>count</code> lorsque vous voulez calculer à la fois le nombre d’observations et d’autres statistiques sommaires.</li>
 </ul>
 <p><strong>Solution</strong></p>
+<p>Après avoir utilisé <code>group_by</code> et <code>summarize</code> pour calculer la taille de l’échantillon, la moyenne et l’écart-type par espèce, nous utilisons <code>mutate</code> pour calculer l’erreur-type à partir de l’écart-type et de la taille de l’échantillon.</p>
 <pre class="r"><code>fl_stat &lt;- penguins %&gt;%
     filter(!is.na(flipper_length_mm)) %&gt;%
     group_by(species) %&gt;%
@@ -383,6 +384,7 @@ fl_stat</code></pre>
 <li>Créez deux nouvelles colonnes dans <code>fl_stat</code> contenant le minimum <code>ic_min</code> et le maximum <code>ic_max</code> de l’intervalle de confiance. Définissez ces colonnes en fonction de la moyenne, de l’erreur-type et de <span class="math inline">\(n\)</span>.</li>
 </ol>
 <p><strong>Solution</strong></p>
+<p>On utilise <code>mutate</code> pour créer de nouvelles colonnes et on calcule à quoi elles doivent correspondre, soit la valeur minimale et maximale de l’intervalle de confiance. Ces valeurs se calculent comme la moyenne plus la valeur des quantiles appropriés de la distribution <span class="math inline">\(t\)</span> (fonction <code>qt</code> avec les paramètres décrits à la réponse en d) fois l’erreur-type.</p>
 <pre class="r"><code>fl_stat &lt;- fl_stat %&gt;%
     mutate(ic_min = moy + qt(0.025, df = n - 1) * err_type,
            ic_max = moy + qt(0.975, df = n - 1) * err_type)
@@ -397,6 +399,7 @@ fl_stat</code></pre>
 <li>Finalement, utilisez le type de graphique <code>geom_pointrange</code> (intervalle de points) de <em>ggplot2</em> pour visualiser l’intervalle de confiance pour chaque espèce. Ce type de graphique demande la spécification de <code>y</code> (point central), <code>ymin</code> (minimum de l’intervalle) et <code>ymax</code> (maximum de l’intervalle) dans la fonction <code>aes</code>.</li>
 </ol>
 <p><strong>Solution</strong></p>
+<p>On veut un graphique qui présente les moyennes et les intervalles de confiance ayant pour bornes <code>ic_min</code> et <code>ic_max</code>.</p>
 <pre class="r"><code>ggplot(fl_stat, aes(x = species, y = moy, ymin = ic_min, ymax = ic_max)) +
     geom_pointrange()</code></pre>
 <p><img src="3R-Echantillonnage_estimation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
@@ -420,11 +423,11 @@ ggplot(kejim_stats, aes(x = espece, y = moy, ymin = ic_min, ymax = ic_max)) +
 <ol style="list-style-type: lower-alpha">
 <li>Quel est l’intervalle de confiance du DHP moyen pour le pin blanc (<em>PIST</em>)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?</li>
 </ol>
-<p><strong>IC: 20.1 à 25.3 cm. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l’intervalle de confiance autour de la moyenne de l’échantillon contiendrait la moyenne du DHP de la population.</strong></p>
+<p><strong>IC: 20.1 à 25.3 cm, en regardant la ligne de l’espèce PIST dans le tableau de données <code>kejim_stats</code>. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l’intervalle de confiance autour de la moyenne de l’échantillon contiendrait la moyenne du DHP de la population, dans les autres 5% des cas les intervalles ne contiendraient pas la moyenne de la population.</strong></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Si l’échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?</li>
 </ol>
-<p><strong>Il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu’il faudrait plus de données pour départager les deux espèces.</strong></p>
+<p><strong>D’après le graphique, il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu’il faudrait plus de données pour départager les deux espèces.</strong></p>
 </div>
 <div id="simulation-déchantillonnage-stratifié" class="section level2">
 <h2>3. Simulation d’échantillonnage stratifié</h2>

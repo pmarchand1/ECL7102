@@ -359,6 +359,7 @@ ggplot(penguins, aes(x = flipper_length_mm, y = bill_length_mm, color = species)
 <li>In <code>summarize</code>, you can use the <code>n()</code> function to count the number of rows per group, e.g.: <code>summarize(n = n(), ...)</code>. This is preferrable to using the <code>count</code> function when you want to calculate both the number of observations as well as other summary statistics.</li>
 </ul>
 <p><strong>Solution</strong></p>
+<p>After using <code>group_by</code> and <code>summarize</code> to calculate the sample size, the mean and the standard deviation by species, we use <code>mutate</code> to calculate the standard error from the standard deviation and the sample size.</p>
 <pre class="r"><code>fl_stat &lt;- penguins %&gt;%
     filter(!is.na(flipper_length_mm)) %&gt;%
     group_by(species) %&gt;%
@@ -380,6 +381,7 @@ fl_stat</code></pre>
 <li>Create two new columns in <code>fl_stat</code> containing the minimum<code>ic_min</code> and the maximum <code>ic_max</code> of the confidence interval. Define these columns as functions of the mean, standard error and sample size.</li>
 </ol>
 <p><strong>Solution</strong></p>
+<p>We use <code>mutate</code> to create new columns and we calculate them with the formula for the minimum and maximum of the confidence intervals. These are obtained by taking the mean and adding the values of the proper quantiles of the <span class="math inline">\(t\)</span> distribution (calculated with <code>qt</code> and the parameters specified in d) above), multiplied by the standard error.</p>
 <pre class="r"><code>fl_stat &lt;- fl_stat %&gt;%
     mutate(ic_min = moy + qt(0.025, df = n - 1) * err_type,
            ic_max = moy + qt(0.975, df = n - 1) * err_type)
@@ -393,6 +395,7 @@ fl_stat</code></pre>
 <ol start="6" style="list-style-type: lower-alpha">
 <li>Finally, use the <code>geom_pointrange</code> graph type of <em>ggplot2</em> to visualize the confidence interval for each species. This type of graph requires the specification of <code>y</code> (central point), <code>ymin</code> (minimum of range) and <code>ymax</code> (maximum of range) in the <code>aes</code> function.</li>
 </ol>
+<p>We need a graph that shows the means and the confidence intervals with limits <code>ic_min</code> and <code>ic_max</code>.</p>
 <p><strong>Solution</strong></p>
 <pre class="r"><code>ggplot(fl_stat, aes(x = species, y = moy, ymin = ic_min, ymax = ic_max)) +
     geom_pointrange()</code></pre>
@@ -417,11 +420,11 @@ ggplot(kejim_stats, aes(x = espece, y = moy, ymin = ic_min, ymax = ic_max)) +
 <ol style="list-style-type: lower-alpha">
 <li>What is the confidence interval of the mean DBH for white pine (<em>PIST</em>)? Assuming that the sampled individuals are representative of the population on this site, how do you interpret this interval?</li>
 </ol>
-<p><strong>CI: 20.1 to 25.3 cm. If we repeatedly sampled this many white pines (131) in this population, then in 95% of the cases, the confidence interval around the sample mean would include the population mean of DBH.</strong></p>
+<p><strong>CI: 20.1 to 25.3 cm, by looking at the row for species PIST in the <code>kejim_stats</code> data frame. If we repeatedly sampled this many white pines (131) in this population, then in 95% of the cases, the confidence interval around the sample mean would include the population mean of DBH, in the other 5% of the cases the interval would not include the population mean.</strong></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>If the sample is representative of each species, can it be easily determined which species has the smallest mean DBH, or which has the highest mean DBH, in this population?</li>
 </ol>
-<p><strong>There are two candidate species for smallest mean DBH (ABBA and ACPE), and two candidates for largest mean DBH (BEAL and POTR). However, the confidence intervals overlap, showing we would need more data to identify the smallest or largest mean.</strong></p>
+<p><strong>According to the graph, there are two candidate species for smallest mean DBH (ABBA and ACPE), and two candidates for largest mean DBH (BEAL and POTR). However, the confidence intervals overlap, showing we would need more data to identify the smallest or largest mean.</strong></p>
 </div>
 <div id="stratified-sampling-simulation" class="section level2">
 <h2>3. Stratified sampling simulation</h2>

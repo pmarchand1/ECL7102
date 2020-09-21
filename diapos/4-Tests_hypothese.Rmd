@@ -1,24 +1,28 @@
 ---
-title: "Tests d'hypothèse"
-date: "<br/>16 septembre 2019"
+title: "Tests d'hypothèses"
+date: "21 septembre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(7, 5))
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
-```
-
-```{css echo  = FALSE}
-.small .remark-code { font-size: 50% }
-
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
 
 # Objectifs
@@ -35,7 +39,7 @@ library(cowplot)
 
 Nous voulons vérifier l'absence de biais d'un humidimètre, en mesurant l'humidité relative du sol à 9 endroits dans une placette de 1 m<sup>2</sup>. Nous savons que la vraie moyenne est 50%.
 
-```{r}
+```{r, echo = TRUE}
 humidite <- c(47, 50, 48, 50, 54, 49, 56, 52, 51)
 humid_moy <- mean(humidite)
 humid_et <- sd(humidite) / sqrt(length(humidite))
@@ -60,7 +64,7 @@ $$ t_{n-1} = \frac{\bar{x} - \mu}{s / \sqrt{n}} $$
 
 --
 
-```{r}
+```{r, echo = TRUE}
 humid_t <- (humid_moy - 50) / humid_et
 humid_t
 ```
@@ -71,14 +75,14 @@ humid_t
 
 Probabilité d'une valeur $t$ plus élevée que celle de notre échantillon, si $\mu$ = 50:
 
-```{r}
+```{r, echo = TRUE}
 1 - pt(humid_t, df = 8)
 ```
 
 --
 
-```{r echo = FALSE, fig.dim = c(5, 3)}
-ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+```{r echo = FALSE, fig.dim = c(6, 4)}
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(x > humid_t, dt(x, df = 8), NA), geom = "area", fill = "red") +
@@ -91,8 +95,8 @@ ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
 
 Probabilité d'obtenir un plus grand écart, positif ou négatif (valeur *p*): 0.438.
 
-```{r echo = FALSE, fig.dim = c(6, 4)}
-ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+```{r echo = FALSE}
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(abs(x) > humid_t, dt(x, df = 8), NA), geom = "area", fill = "red") +
@@ -103,13 +107,15 @@ ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
 
 # Test d'une hypothèse statistique
 
-Un test d'hypothèse statistique vise à déterminer si une variation observée dans un échantillon de données est compatible avec un modèle "par défaut" (l'hypothèse nulle), ou si les observations sont si improbables selon cette hypothèse nulle qu'elle doit être rejetée au profit d'une hypothèse alternative.
+Un test d'hypothèse statistique vise à déterminer si une variation observée dans un échantillon de données est compatible avec un modèle "par défaut" (l'**hypothèse nulle**), ou si les observations sont si improbables selon cette hypothèse nulle qu'elle doit être rejetée au profit d'une **hypothèse alternative**.
 
 ---
 
 # Hypothèse nulle et alternative
 
 - L'hypothèse nulle correspond souvent à une absence d'effet: aucune différence entre deux traitements, absence de corrélation entre deux variables, etc. 
+
+--
 
 - Dans notre exemple précédent, l'hypothèse nulle $H_0$ est $\mu = 50$. L'hypothèse alternative $H_a$ est sa négation: $\mu \neq 50$.
 
@@ -185,15 +191,15 @@ Quel serait un exemple d'hypothèse nulle et d'hypothèse alternative dans votre
 
 --
 
-```{r echo = FALSE, fig.dim = c(8, 4)}
-p1 <- ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+```{r echo = FALSE, fig.dim = c(10, 5)}
+p1 <- ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(abs(x) > qt(0.975, df = 8), dt(x, df = 8), NA), 
                   geom = "area", fill = "red") +
     scale_y_continuous(expand = c(0, 0))
 
-p2 <- ggplot(NULL, aes(x = seq(-4, 4, 0.1))) +
+p2 <- ggplot(NULL) + xlim(-4, 4) +
     labs(x = "t", y = "p(t)") +
     stat_function(fun = function(x) dt(x, df = 8)) +
     stat_function(fun = function(x) ifelse(x > qt(0.95, df = 8), dt(x, df = 8), NA), 
@@ -205,7 +211,7 @@ plot_grid(p1, p2, nrow = 1)
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Types d'erreur et puissance d'un test
 
@@ -259,8 +265,8 @@ Dans notre exemple du début du cours, pourrions-nous calculer la puissance du t
 
 - Avec $\alpha = 0.05$ l'hypothèse nulle est rejetée si $F(z) < 0.025$ ou $F(z) > 0.975$ (prob. cumul.).
 
-```{r echo = FALSE, fig.dim = c(5, 3)}
-ggplot(NULL, aes(x = seq(-3, 3, 0.1))) +
+```{r echo = FALSE, fig.dim = c(6, 4)}
+ggplot(NULL) + xlim(-3, 3) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -274,8 +280,8 @@ ggplot(NULL, aes(x = seq(-3, 3, 0.1))) +
 
 - Moyenne de l'échantillon suit une distribution normale centrée sur $z = 2$ (biais réel).
 
-```{r echo = FALSE, fig.dim = c(7, 5)}
-gr_puis <- ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
+```{r echo = FALSE}
+gr_puis <- ggplot(NULL) + xlim(-3, 5) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -299,7 +305,7 @@ gr_puis
 
 --
 
-```{r}
+```{r, echo = TRUE}
 1 - pnorm(qnorm(0.975), mean = 2)
 ```
 
@@ -311,7 +317,7 @@ gr_puis
 
 (b) Pour le test illustré, si on obtient un résultat significatif (rejet de l'hypothèse nulle), est-ce que le biais mesuré est un bon estimé du biais réel de l'appareil? Pourquoi?
 
-```{r echo = FALSE, fig.dim = c(5, 3)}
+```{r echo = FALSE, fig.dim = c(6, 4)}
 gr_puis
 ```
 
@@ -322,7 +328,7 @@ gr_puis
 Si le biais réel est à $z = 0.5$ (1/2 erreur-type).
 
 ```{r echo = FALSE, fig.dim = c(7, 5)}
-ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
+ggplot(NULL) + xlim(-4, 4) +
     labs(x = "z", y = "p(z)") +
     stat_function(fun = dnorm) +
     stat_function(fun = function(x) ifelse(abs(x) > qnorm(0.975), dnorm(x), NA),
@@ -357,9 +363,9 @@ ggplot(NULL, aes(x = seq(-3, 5, 0.1))) +
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
-# Applications du test t
+# Applications du test $t$
 
 ---
 
@@ -367,7 +373,7 @@ class: inverse, middle
 
 **Exemple**: Comparaison d'un échantillon de 9 valeurs d'humidité à une moyenne de référence de 50.
 
-```{r}
+```{r, echo = TRUE}
 humidite <- c(47, 50, 48, 50, 54, 49, 56, 52, 51)
 t.test(humidite, mu = 50)
 ```
@@ -385,7 +391,7 @@ t.test(humidite, mu = 50)
 
 1. Que signifie chacun des éléments de ce résultat de la fonction `t.test`?
 
-2. Quel est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de $\bar{x}$ nous dit sur le résultat du test de l'hypothèse nulle $\mu = 50$ avec un seuil $\alpha = 0.05$?
+2. Quelle est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de $\bar{x}$ nous dit sur le résultat du test de l'hypothèse nulle $\mu = 50$ avec un seuil $\alpha = 0.05$?
 
 ---
 
@@ -395,38 +401,10 @@ t.test(humidite, mu = 50)
 
 --
 
-```{r, fig.dim = c(6, 4)}
+```{r, echo = TRUE, fig.dim = c(6, 4)}
 ggplot(InsectSprays, aes(x = spray, y = count)) + 
     geom_boxplot()
 ```
-
----
-
-# Question éclair
-
-Lesquelles des affirmations suivantes sont exactes?
-
-a) La valeur $p$ est la probabilité que l'hypothèse nulle soit vraie.
-
-b) Plus le seuil de signification $\alpha$ est petit, plus il est difficile de rejeter l'hypothèse nulle.
-
-c) Pour un test $t$ à un échantillon, si on rejette l'hypothèse nulle $\mu = 10$ avec un seuil $\alpha = 0.01$, alors l'intervalle de confiance à 99% de $\bar{x}$ ne contient pas la valeur 10.
-
-d) Pour le test $t$ comparant deux échantillons avec l'hypothèse nulle $\mu_A = \mu_B$, une valeur $p$ plus petite signifie que la différence entre les moyennes est plus élevée.
-
----
-
-# Question éclair
-
-Lesquelles des affirmations suivantes sont exactes?
-
-a) La valeur $p$ est la probabilité que l'hypothèse nulle soit vraie. **Faux, la valeur *p* est la probabilité d'avoir observé une valeur plus extrême de la statistique du test *si* l'hypothèse nulle est vraie.**
-
-b) Plus le seuil de signification $\alpha$ est petit, plus il est difficile de rejeter l'hypothèse nulle. **Vrai.**
-
-c) Pour un test $t$ à un échantillon, si on rejette l'hypothèse nulle $\mu = 10$ avec un seuil $\alpha = 0.01$, alors l'intervalle de confiance à 99% de $\bar{x}$ ne contient pas la valeur 10. **Vrai.**
-
-d) Pour le test $t$ comparant deux échantillons avec l'hypothèse nulle $\mu_A = \mu_B$, une valeur $p$ plus petite signifie que la différence entre les moyennes est plus élevée. **Faux, cela dépend aussi de la variabilité des données et de la taille de l'échantillon.**
 
 ---
 
@@ -443,7 +421,7 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 # Différence entre deux moyennes
 
-Pour deux échantillons indépendants suivant chacun une distribution normale, la différence des moyennes $\bar{x}_A - \bar{x}_B$ divisée par son erreur-type suit aussi une distribution $t$:
+Pour deux échantillons indépendants suivant chacun une distribution normale, selon l'hypothèse nulle où ces deux distributions ont la même moyenne, la différence des moyennes estimées $\bar{x}_A - \bar{x}_B$ divisée par l'erreur-type de cette différence suit aussi une distribution $t$:
 
 $$t = \frac{\bar{x}_A - \bar{x}_B}{\sigma_{\bar{x}_A - \bar{x}_B}}$$
 ---
@@ -471,9 +449,9 @@ $$df = \frac{\left(s_A^2 / n_A + s_B^2 / n_B \right)^2}{\frac{\left( s_A^2 / n_A
 
 # Comparer deux moyennes
 
-```{r, message = FALSE, warning = FALSE}
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
 library(dplyr)
-insectesAB <- InsectSprays[InsectSprays$spray %in% c("A", "B"), ]
+insectesAB <- filter(InsectSprays, spray %in% c("A", "B"))
 t.test(count ~ spray, data = insectesAB)
 ```
 
@@ -483,7 +461,7 @@ t.test(count ~ spray, data = insectesAB)
 
 - Si on sait que la variance de chaque groupe est égale, on peut spécifier `var.equal = TRUE`.
 
-```{r}
+```{r, echo = TRUE}
 t.test(count ~ spray, data = insectesAB, var.equal = TRUE)
 ```
 
@@ -503,11 +481,11 @@ Si on s'intéresse seulement au cas où l'insecticide B est plus efficace que A,
 
 ---
 
-# Test t unilatéral
+# Test $t$ unilatéral
 
 Dans le cas où notre hypothèse alternative est $\bar{x}_A - \bar{x}_B > 0$, on spécifie `alternative = "greater"`.
 
-```{r}
+```{r, echo = TRUE}
 t.test(count ~ spray, data = insectesAB, alternative = "greater")
 ```
 
@@ -532,7 +510,7 @@ humi
 
 Il s'agit de mesures appariées (une paire de mesures par point), donc nous spécifions `paired = TRUE`.
 
-```{r}
+```{r, echo = TRUE}
 t.test(humi$mesureA, humi$mesureB, paired = TRUE)
 ```
 
@@ -542,7 +520,7 @@ t.test(humi$mesureA, humi$mesureB, paired = TRUE)
 
 Ce test est équivalent à un test $t$ pour un échantillon (comparaison du vecteur des différences à une valeur de référence 0).
 
-```{r}
+```{r, echo = TRUE}
 humi$diff <- humi$mesureA - humi$mesureB
 t.test(humi$diff)
 ```
@@ -551,15 +529,15 @@ t.test(humi$diff)
 
 # Exercice
 
-.small[
-
+.font70[
 Comparez le test avec données appariées (haut) au résultat supposant des échantillons indépendants (bas).
+]
 
+.code50[
 ```{r echo = FALSE}
 t.test(humi$mesureA, humi$mesureB, paired = TRUE)
 t.test(humi$mesureA, humi$mesureB)
 ```
-
 ]
 
 ---
@@ -572,7 +550,7 @@ t.test(humi$mesureA, humi$mesureB)
 
 ---
 
-# Suppositions du test t
+# Suppositions du test $t$
 
 - Le test $t$ requiert que:
 
@@ -602,7 +580,7 @@ t.test(humi$mesureA, humi$mesureB)
 
 ---
 
-# Autres options en alternative au test t
+# Autres options en alternative au test $t$
 
 Test de **Wilcoxon-Mann-Whitney**
 
@@ -617,7 +595,7 @@ Test de **Wilcoxon-Mann-Whitney**
 
 ---
 
-# Autres options en alternative au test t
+# Autres options en alternative au test $t$
 
 Test de **Wilcoxon-Mann-Whitney**
 
@@ -635,7 +613,7 @@ Test de **Wilcoxon-Mann-Whitney**
 
 ---
 
-# Autres options en alternative au test t
+# Autres options en alternative au test $t$
 
 - D'autres méthodes non-paramétriques sont basées sur un ré-échantillonnage des observations afin d'obtenir un intervalle de confiance. 
 
@@ -656,7 +634,7 @@ Test de **Wilcoxon-Mann-Whitney**
     
 --
     
-- Utilisation du test t
+- Utilisation du test $t$
 
     * Comparer la moyenne d'un échantillon à une valeur de référence
     * Comparer la moyenne de deux échantillons indépendants ou appariés
@@ -664,7 +642,7 @@ Test de **Wilcoxon-Mann-Whitney**
     
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Présentation et interprétation des tests d'hypothèse
 
@@ -729,7 +707,7 @@ En résumé, il faut communiquer au moins trois résultats d'un test statistique
 
 # Effet significatif vs. important
 
-- L'effet d'un traitement n'est jamais exactement zéro.
+- L'effet d'un traitement n'est presque jamais exactement zéro.
 
 --
 
@@ -754,13 +732,13 @@ En résumé, il faut communiquer au moins trois résultats d'un test statistique
 
 --
 
-- Nous verrons certaines solutions au problème des comparaisons multiples lors des prochain cours.
+- Nous verrons certaines solutions au problème des comparaisons multiples lors des prochains cours.
 
 ---
 
 # Attention aux comparaisons multiples
 
-- La publication d'une étude montrant avec $p < 0.05$ ne signifie pas que l'hypothèse nulle est définitivement rejetée.
+- La publication d'une étude avec $p < 0.05$ ne signifie pas que l'hypothèse nulle est définitivement rejetée.
 
 --
 

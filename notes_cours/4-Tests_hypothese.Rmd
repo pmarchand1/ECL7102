@@ -1,5 +1,5 @@
 ---
-title: "Tests d'hypothèse"
+title: "Tests d'hypothèses"
 date: "<br/>21 septembre 2020"
 output:
     html_document:
@@ -280,7 +280,7 @@ t.test(humidite, mu = 50)
 
 1. Que signifie chacun des éléments de ce résultat de la fonction `t.test`?
 
-2. Quel est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de $\bar{x}$ nous dit sur le résultat du test de l'hypothèse nulle $\mu = 50$ avec un seuil $\alpha = 0.05$?
+2. Quelle est la relation entre un intervalle de confiance et un test d'hypothèse? Qu'est-ce que l'intervalle de confiance à 95% de $\bar{x}$ nous dit sur le résultat du test de l'hypothèse nulle $\mu = 50$ avec un seuil $\alpha = 0.05$?
 
 ## Comparer les moyennes de deux échantillons indépendants
 

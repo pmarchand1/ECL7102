@@ -131,6 +131,8 @@ c) En utlisant le package *dplyr*, calculez la moyenne, le taille de l'échantil
 
 **Solution**
 
+Après avoir utilisé `group_by` et `summarize` pour calculer la taille de l'échantillon, la moyenne et l'écart-type par espèce, nous utilisons `mutate` pour calculer l'erreur-type à partir de l'écart-type et de la taille de l'échantillon.
+
 ```{r, message = FALSE, warning = FALSE}
 fl_stat <- penguins %>%
     filter(!is.na(flipper_length_mm)) %>%
@@ -149,6 +151,8 @@ e) Créez deux nouvelles colonnes dans `fl_stat` contenant le minimum `ic_min` e
 
 **Solution**
 
+On utilise `mutate` pour créer de nouvelles colonnes et on calcule à quoi elles doivent correspondre, soit la valeur minimale et maximale de l'intervalle de confiance. Ces valeurs se calculent comme la moyenne plus la valeur des quantiles appropriés de la distribution $t$ (fonction `qt` avec les paramètres décrits à la réponse en d) fois l'erreur-type.
+
 ```{r}
 fl_stat <- fl_stat %>%
     mutate(ic_min = moy + qt(0.025, df = n - 1) * err_type,
@@ -159,6 +163,8 @@ fl_stat
 f) Finalement, utilisez le type de graphique `geom_pointrange` (intervalle de points) de *ggplot2* pour visualiser l'intervalle de confiance pour chaque espèce. Ce type de graphique demande la spécification de `y` (point central), `ymin` (minimum de l'intervalle) et `ymax` (maximum de l'intervalle) dans la fonction `aes`.
 
 **Solution**
+
+On veut un graphique qui présente les moyennes et les intervalles de confiance ayant pour bornes `ic_min` et `ic_max`.
 
 ```{r}
 ggplot(fl_stat, aes(x = species, y = moy, ymin = ic_min, ymax = ic_max)) +
@@ -188,11 +194,11 @@ Ensuite, à partir des données et du graphique, répondez aux questions suivant
 
 a) Quel est l'intervalle de confiance du DHP moyen pour le pin blanc (*PIST*)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?
 
-**IC: 20.1 à 25.3 cm. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l'intervalle de confiance autour de la moyenne de l'échantillon contiendrait la moyenne du DHP de la population.**
+**IC: 20.1 à 25.3 cm, en regardant la ligne de l'espèce PIST dans le tableau de données `kejim_stats`. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l'intervalle de confiance autour de la moyenne de l'échantillon contiendrait la moyenne du DHP de la population, dans les autres 5% des cas les intervalles ne contiendraient pas la moyenne de la population.**
 
 b) Si l'échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?
 
-**Il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu'il faudrait plus de données pour départager les deux espèces.**
+**D'après le graphique, il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu'il faudrait plus de données pour départager les deux espèces.**
 
 
 ## 3. Simulation d'échantillonnage stratifié

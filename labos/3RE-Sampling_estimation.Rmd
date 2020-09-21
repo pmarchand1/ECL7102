@@ -129,6 +129,8 @@ c) Using the *dplyr* package, calculate the mean, sample size, standard deviatio
 
 **Solution**
 
+After using `group_by` and `summarize` to calculate the sample size, the mean and the standard deviation by species, we use `mutate` to calculate the standard error from the standard deviation and the sample size.
+
 ```{r, message = FALSE, warning = FALSE}
 fl_stat <- penguins %>%
     filter(!is.na(flipper_length_mm)) %>%
@@ -147,6 +149,8 @@ e) Create two new columns in `fl_stat` containing the minimum` ic_min` and the m
 
 **Solution**
 
+We use `mutate` to create new columns and we calculate them with the formula for the minimum and maximum of the confidence intervals. These are obtained by taking the mean and adding the values of the proper quantiles of the $t$ distribution (calculated with `qt` and the parameters specified in d) above), multiplied by the standard error.
+
 ```{r}
 fl_stat <- fl_stat %>%
     mutate(ic_min = moy + qt(0.025, df = n - 1) * err_type,
@@ -155,6 +159,8 @@ fl_stat
 ```
 
 f) Finally, use the `geom_pointrange` graph type of *ggplot2* to visualize the confidence interval for each species. This type of graph requires the specification of `y` (central point), `ymin` (minimum of range) and `ymax` (maximum of range) in the `aes` function.
+
+We need a graph that shows the means and the confidence intervals with limits `ic_min` and `ic_max`.
 
 **Solution**
 
@@ -186,11 +192,11 @@ Then, from the data and graph, answer the following questions.
 
 a) What is the confidence interval of the mean DBH for white pine (*PIST*)? Assuming that the sampled individuals are representative of the population on this site, how do you interpret this interval?
 
-**CI: 20.1 to 25.3 cm. If we repeatedly sampled this many white pines (131) in this population, then in 95% of the cases, the confidence interval around the sample mean would include the population mean of DBH.**
+**CI: 20.1 to 25.3 cm, by looking at the row for species PIST in the `kejim_stats` data frame. If we repeatedly sampled this many white pines (131) in this population, then in 95% of the cases, the confidence interval around the sample mean would include the population mean of DBH, in the other 5% of the cases the interval would not include the population mean.**
 
 b) If the sample is representative of each species, can it be easily determined which species has the smallest mean DBH, or which has the highest mean DBH, in this population?
 
-**There are two candidate species for smallest mean DBH (ABBA and ACPE), and two candidates for largest mean DBH (BEAL and POTR). However, the confidence intervals overlap, showing we would need more data to identify the smallest or largest mean.**
+**According to the graph, there are two candidate species for smallest mean DBH (ABBA and ACPE), and two candidates for largest mean DBH (BEAL and POTR). However, the confidence intervals overlap, showing we would need more data to identify the smallest or largest mean.**
 
 
 ## 3. Stratified sampling simulation
