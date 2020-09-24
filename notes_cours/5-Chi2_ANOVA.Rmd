@@ -1,6 +1,6 @@
 ---
 title: "Tableaux de contingence et ANOVA"
-date: "<br/>23 septembre 2019"
+date: "<br/>28 septembre 2020"
 output:
     html_document:
         self_contained: false
@@ -12,24 +12,17 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
+set.seed(2017)
 ```
 
-# Plan général
+<br/>
 
 Au dernier cours, nous avons utilisé le test $t$ pour déterminer si la valeur moyenne d'une variable différait entre deux groupes. L'analyse de la variance (ANOVA) dont nous commencerons à discuter aujourd'hui permet d'étendre cette comparaison à plusieurs groupes. 
 
-De façon plus générale, nous pourrions dire que le test $t$ et l'ANOVA portent sur l'effet de prédicteurs catégoriels (ex.: différents traitements) sur une réponse numérique. Un autre test que nous utiliserons ce cours-ci est le test du $\chi^2$, qui vise à détecter une association entre deux variables catégorielles. 
-
-Plus tard dans la session, nous nous concentrerons sur les modèles de régression. Ceux-ci ont une portée plus large puisqu'ils permettent de relier une variable réponse à des prédicteurs catégoriels et numériques. En particulier, nous verrons que le test $t$ et l'ANOVA sont des exemples de modèles de régression linéaire.
-
-
-|                      | Réponse catégorielle    | Réponse numérique |
-|----------------------|-------------------------+-------------------|
-|Prédicteur catégoriel |  Test du $\chi^2$     | Test $t$ (2 catégories) ou ANOVA (plus de 2 catégories) |
-|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |
-
+Avant de présenter l'ANOVA, nous discuterons d'un autre test, le test du $\chi^2$, qui vise à détecter une association entre deux variables catégorielles. 
 
 # Objectifs
 
@@ -75,7 +68,7 @@ $$ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} $$
 
 La statistique $\chi^2$ mesure donc la somme des déviations entre les fréquences observées et attendues (normalisées par la valeur attendue). Lorsque les $\hat{f_i}$ pour chaque catégorie sont assez grandes (typiquement, 5 ou plus), cette statistique suit approximativement une distribution $\chi^2_{k-1}$, où $k - 1$ est le nombre de degrés de liberté.
 
-**Rappel**: Le nombre de degrés de liberté correspond au nombre de valeurs indépendantes utilisées pour le calcul d'une statistique. Ici, le $\chi^2$ est calculé à partir des déviations entre fréquence observée et fréquence attendue pour $k$ catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des $f_i$ et des $\hat{f_i}$ est le même) il y a $k - 1$ déviations indépendantes.
+> *Rappel*: Le nombre de degrés de liberté correspond au nombre de valeurs indépendantes utilisées pour le calcul d'une statistique. Ici, le $\chi^2$ est calculé à partir des déviations entre fréquence observée et fréquence attendue pour $k$ catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des $f_i$ et des $\hat{f_i}$ est le même) il y a $k - 1$ déviations indépendantes.
 
 $$ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} $$, donc $$\sum_{i=1}^k (f_i - \hat{f_i}) = 0$$
 
@@ -151,7 +144,7 @@ Notons le total de la rangée $i$ par $N_i$, le total de la colonne $j$ par $N_j
 
 La probabilité conjointe de deux variables indépendantes est le produit des probabilités des variables prises séparément, ex.: (prob. que l'arbre est un sapin vivant) = (prob. que l'arbre est un sapin) x (prob. que l'arbre est vivant). Ainsi, les fréquences attendues d'après l'hypothèse nulle sont calculées comme suit.
 
-$$ \hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}$$
+$$ \hat{f_{ij}} = N \hat{p_i} \hat{p_j} = \frac{N_i N_j}{N}$$
 
 Si l'hypothèse nulle est exacte, la statistique $\chi^2$ suit alors une distribution avec $(r - 1) \times (c - 1)$ degrés de libertés. Dans notre exemple, $df = 2$. En effet, puisque les fréquences attendues sont basées sur les totaux de chaque rangée et de chaque colonne, la somme des déviations dans chaque rangée et chaque colonne doit être zéro. 
 
@@ -200,15 +193,19 @@ Supposons que nous souhaitons comparer la moyenne d'une variable entre plusieurs
 
 Pour un échantillon divisé en plusieurs groupes, l'analyse de la variance (ANOVA) compare la variation entre observations à l'intérieur de chaque groupe à la variation entre les groupes. Elle permet donc de tester globalement l'hypothèse nulle selon laquelle les observations de chaque groupe proviennent de populations avec la même moyenne.
 
-Comme exemple, prenons les 10 premières observations de chaque espèce dans le jeu de données `iris` inclus avec R. Voici la distribution de la largeur des sépales pour cet échantillon.
+Comme exemple, prenons le jeu de données `penguins` du package *palmerpenguins*, qui contient des mesures prises sur différentes espèces de manchots de l'archipel de Palmer en Antarctique. Nous choisissons un échantillon aléatoire de 12 individus de chaque espèce avec les fonctions `group_by` et `sample_n` de *dplyr*. Le graphique suivant montre la variation de la longueur des nageoires (`flipper_length_mm`) selon l'espèce pour cet échantillon.
 
-```{r}
-iris_ech <- iris[c(1:10, 51:60, 101:110), ]
-ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
+```{r, warning = FALSE, message = FALSE}
+library(palmerpenguins)
+penguins_ech <- penguins %>%
+    filter(!is.na(flipper_length_mm)) %>%
+    group_by(species) %>%
+    sample_n(12)
+ggplot(penguins_ech, aes(x = species, y = flipper_length_mm)) +
     geom_boxplot()
 ```
 
-Ce graphique montre la variation d'une variable numérique en fonction d'une variable catégorielle (ou facteur) qui comporte trois catégories.
+Ici, nous avons donc une variable numérique qui varie en fonction d'une variable catégorielle (ou facteur) comportant trois catégories.
 
 ## Modèle d'ANOVA à un facteur
 
@@ -231,7 +228,6 @@ Si $\bar{y}$ est la moyenne globale des observations de $y$ et $\bar{y_i}$ est l
 $$ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l \sum_{k = i}^n (\bar{y_i} - \bar{y})^2 $$
 
 Puisque le dernier terme ne dépend pas de $k$, on peut ré-écrire l'équation:
-
 
 $$ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2 $$
 
@@ -267,7 +263,6 @@ $$ y_{ik} = \mu + \alpha_i + \epsilon_{ik} $$
 
 $$ \epsilon_{ik} \sim N(0, \sigma) $$
 
-
 La moyenne du carré des résidus (*MSE*) est un estimateur de la variance du modèle ($\sigma^2$). 
 
 Si l'hypothèse nulle est exacte et qu'il n'y a pas de différence systématique entre les groupes (autrement dit, tous les $\alpha_i$ sont égaux à 0 dans le modèle), alors la moyenne du carré des différences de groupe (*MSA*) est aussi un estimateur de $\sigma^2$. En effet, selon l'hypothèse nulle, les différents groupes sont des échantillons indépendants de la même population. Dans ce cas, le terme *MSA* correspond à la variance de $\bar{y_i}$ multipliée par $n$ (le nombre d'observations par groupe). La variance d'une moyenne de $n$ observations est justement égale à $\sigma^2 / n$, où $\sigma^2$ est la variance des observations individuelles.
@@ -275,7 +270,6 @@ Si l'hypothèse nulle est exacte et qu'il n'y a pas de différence systématique
 Si *MSA* et *MSE* sont deux estimateurs de la même variance selon l'hypothèse nulle, alors leur ratio $F = MSA / MSE$ suit la distribution $F$. Cette distribution comporte deux paramètres ($d_1$ et $d_2$) correspondant aux degrés de liberté de *MSA* et *MSE*. 
 
 ![](../images/distr_f.png)
-
 
 En contrepartie, si l'hypothèse nulle est fausse, on s'attend à ce que la valeur de *MSA* soit plus élevée par rapport à *MSE*, puisque les différences systématiques entre groupes s'ajouteront aux variations aléatoires de l'échantillonnage. Il s'agit donc d'un test unilatéral: la valeur $p$ est la probabilité d'un ratio $F$ égal ou supérieur à celui observé dans nos données.
 
@@ -285,27 +279,31 @@ Pour que le modèle sur lequel est basé l'ANOVA soit valide, les résidus doive
 
 - L'indépendance des résidus signifie notamment que les facteurs non-mesurés qui influencent la réponse sont distribués de façon similaire pour chaque groupe. Pour un plan expérimental, l'assignation aléatoire des traitements aide à assurer cette indépendance.
 
-- Comme le test $t$, l'ANOVA tolère bien des déviations faibles à modérées par rapport à la distribution normale. 
+- Comme le test $t$, l'ANOVA tolère bien des déviations faibles à modérées par rapport à la distribution normale.
 
 - Contrairement au test $t$, l'égalité des variances entre groupes (**homoscédasticité**) est essentielle pour l'ANOVA. Si cette supposition n'est pas respectée, il faut transformer les données ou avoir recours à un modèle plus complexe, comme nous verrons plus loin.
 
 Les calculs présentés plus haut s'appliquent seulement à un échantillon **équilibré**, c'est-à-dire que le nombre d'observations est le même dans chaque groupe. Pour le cours d'aujourd'hui, nous nous limiterons aux échantillons équilibrés. Afin de réaliser une ANOVA non-équilibrée dans R, il faut faire appel aux méthodes de régression linéaire que nous verrons lors des prochains cours.
 
-
 # Exemples d'ANOVA à un facteur
 
-Avec la fonction `aov` dans R, réalisons une ANOVA de la largeur des sépales en fonction de l'espèce d'iris, à partir de l'échantillon du jeu de données `iris` choisi au début de cette section.
+Avec la fonction `aov` dans R, réalisons une ANOVA de la longueur des nageoires en fonction de l'espèce de manchot, à partir de l'échantillon du jeu de données `penguins` choisi au début de cette section.
 
 ```{r}
-anova1 <- aov(Sepal.Width ~ Species, data = iris_ech) 
+anova1 <- aov(flipper_length_mm ~ species, data = penguins_ech) 
 summary(anova1)
 ```
 
-La fonction `aov` requiert une description du modèle avec la formule `reponse ~ predicteur`, ainsi que le nom du tableau de données contenant ces variables (argument `data`). En appliquant la fonction `summary` au résultat d'une ANOVA, on obtient le tableau d'ANOVA tel que présenté plus haut, en plus de valeur de la statistique $F$ et sa valeur $p$ (`Pr(>F)`). Avec un seuil de 0.05, l'hypothèse nulle que les espèces ont la même largeur moyenne des sépales serait rejetée.
+La fonction `aov` requiert une description du modèle avec la formule `reponse ~ predicteur`, ainsi que le nom du tableau de données contenant ces variables (argument `data`). En appliquant la fonction `summary` au résultat d'une ANOVA, on obtient le tableau d'ANOVA tel que présenté plus haut, en plus de valeur de la statistique $F$ et sa valeur $p$ (`Pr(>F)`). Avec un seuil de 0.05, l'hypothèse nulle que la longueur moyenne des nageoires est la même pour toutes les espèces serait rejetée.
 
 Pour vérifier que nos données sont conformes aux suppositions du modèle, nous devons consulter les graphiques de diagnostic, obtenus en appliquant la fonction `plot` au résultat.
 
-```{r}
+```{r, eval = FALSE}
+plot(anova1)
+```
+
+```{r, echo = FALSE}
+par(mfrow = c(2, 2))
 plot(anova1)
 ```
 
@@ -317,24 +315,23 @@ Pour afficher les moyennes par groupe, il faut faire appel à la fonction `coef`
 coef(anova1)
 ```
 
-Par défaut, le terme `(Intercept)` est la moyenne du premier groupe (ici, l'espèce *setosa*), tandis que les autres coefficients indiquent la différence entre les autres groupes et cette première moyenne. La moyenne de l'espèce *versicolor* est 3.31 - 0.44 = 2.87 tandis que la moyenne de l'espèce *virginica* est 3.31 - 0.37 = 2.94. Le résultat ne nous dit pas lesquelles de ces différences sont significatives.
+Par défaut, le terme `(Intercept)` est la moyenne du premier groupe (ici, l'espèce *Adelie*), tandis que les autres coefficients indiquent la différence entre les autres groupes et cette première moyenne. La moyenne de l'espèce *Chinstrap* est 190.4 + 3.4 = 193.8 tandis que la moyenne de l'espèce *Gentoo* est 190.4 + 28.6 = 219.0. Le résultat ne nous dit pas lesquelles de ces différences sont significatives.
 
 S'il n'y a que deux groupes, l'ANOVA est équivalente à un test $t$ entre deux échantillons à variance égale.
 
 ```{r, warning = FALSE, message = FALSE}
 library(dplyr)
-iris_2sp <- filter(iris_ech, Species != "setosa")
-anova2 <- aov(Sepal.Width ~ Species, data = iris_2sp)
+penguins_2sp <- filter(penguins_ech, species != "Gentoo")
+anova2 <- aov(flipper_length_mm ~ species, data = penguins_2sp)
 summary(anova2)
 coef(anova2)
 
-t.test(Sepal.Width ~ Species, data = iris_2sp, var.equal = TRUE)
+t.test(flipper_length_mm ~ species, data = penguins_2sp, var.equal = TRUE)
 ```
 
 La valeur $p$ et l'estimation des moyennes par espèce sont les mêmes pour les deux tests.
 
 Prenons maintenant le tableau de données `InsectSprays` qui décrit le nombre d'insectes (`count`) sur des placettes traitées avec différents insecticides (`spray`).
-
 
 ```{r}
 ggplot(InsectSprays, aes(x = spray, y = count)) + 
@@ -343,8 +340,14 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 Avant de regarder les résultats de l'ANOVA, inspectons les deux premiers graphiques de diagnostic.
 
-```{r}
+```{r, eval = FALSE}
 anova3 <- aov(count ~ spray, InsectSprays)
+plot(anova3, which = 1:2)
+```
+
+```{r, echo = FALSE}
+anova3 <- aov(count ~ spray, InsectSprays)
+par(mfrow = c(1, 2))
 plot(anova3, which = 1:2)
 ```
 
@@ -354,10 +357,17 @@ Le graphique des résidus vs. valeurs estimées montre que la variance des rési
 
 L'augmentation de la variance des groupes en fonction de leur moyenne est une caractéristique assez commune des données de comptage (dans l'exemple précédent, il s'agissait du nombre d'insectes). Pour ce type de données, prendre la racine carrée (`sqrt`) de la variable originale peut rendre les variances plus homogènes. Notez qu'une transformation logarithmique n'est pas possible lorsque les données incluent des 0.
 
-```{r}
+```{r, eval = FALSE}
 anova3_racine <- aov(sqrt(count) ~ spray, InsectSprays)
 plot(anova3_racine, which = 1:2)
 ```
+
+```{r, echo = FALSE}
+anova3_racine <- aov(sqrt(count) ~ spray, InsectSprays)
+par(mfrow = c(1, 2))
+plot(anova3_racine, which = 1:2)
+```
+
 
 ```{r}
 summary(anova3_racine)
@@ -367,19 +377,19 @@ Au lieu de transformer la variable réponse (le nombre d'insectes), une autre op
 
 # Comparaisons multiples entre les groupes
 
-Tel que nous avons vu ci-dessus, le rejet de l'hypothèse nulle de l'ANOVA indique qu'il est improbable que tous les groupes aient la même moyenne, mais ne nous dit pas quels groupes ont des moyennes significativement différentes l'une de l'autre. 
+Tel que nous avons vu ci-dessus, le rejet de l'hypothèse nulle de l'ANOVA indique qu'il est improbable d'avoir obtenu les différences observées si tous les groupes avaient la même moyenne, mais ne nous dit pas quels groupes ont des moyennes significativement différentes l'une de l'autre. 
 
 Le test des étendues de Tukey est conçu pour être utilisé dans ce scénario. Ce test compare les groupes deux à deux avec une statistique basée sur la distribution $t$, mais qui tient compte des comparaisons multiples pour assurer une probabilité d'erreur de type I inférieure au seuil voulu (habituellement, 5%) sur l'ensemble des comparaisons.
 
-Ce test est implémenté dans R par la fonction `TukeyHSD` (pour Honest Significant Difference). Par exemple, appliquons le test de Tukey au résultat de notre premier exemple d'ANOVA, sur la variation de la largeur des sépales par espèce d'iris.
+Ce test est implémenté dans R par la fonction `TukeyHSD` (pour Honest Significant Difference). Par exemple, appliquons le test de Tukey au résultat de notre premier exemple d'ANOVA, sur la variation de la longueur des nageoires entre espèces de manchots.
 
 ```{r}
-anova1 <- aov(Sepal.Width ~ Species, data = iris_ech) 
+anova1 <- aov(flipper_length_mm ~ species, data = penguins_ech) 
 tukey1 <- TukeyHSD(anova1)
 tukey1
 ```
 
-Il semble donc y avoir une différence significative entre *setosa* et les deux autres espèces. 
+Il semble donc y avoir une différence significative entre *Gentoo* et les deux autres espèces. 
 
 La fonction `plot` présente un graphique des intervalles de confiance du test de Tukey.
 
@@ -406,5 +416,17 @@ Puisque cette méthode vise une probabilité d'erreur de type I de 5% pour l'ens
 - Elle suppose que les résidus dans chaque groupe sont indépendants et suivent une distribution normale avec la même variance.
 
 - Si l'hypothèse nulle de l'ANOVA est rejetée, on peut utiliser le test des étendues de Tukey pour identifier les différences significatives entre groupes.
+
+### Comparaison avec d'autres modèles
+
+De façon plus générale, nous pourrions dire que le test $t$ et l'ANOVA portent sur l'effet de prédicteurs catégoriels (ex.: différents traitements) sur une réponse numérique. Le test du $\chi^2$ quant à lui vise à détecter une association entre deux variables catégorielles; dépendamment de l'interprétation, l'une ou l'autre pourrait être considérée comme la réponse. 
+
+Plus tard dans la session, nous nous concentrerons sur les modèles de régression. Ceux-ci ont une portée plus large puisqu'ils permettent de relier une variable réponse à des prédicteurs catégoriels et numériques. En particulier, nous verrons que le test $t$ et l'ANOVA sont des exemples de modèles de régression linéaire.
+
+
+|                      | Réponse catégorielle    | Réponse numérique |
+|----------------------|-------------------------+-------------------|
+|Prédicteur catégoriel |  Test du $\chi^2$     | Test $t$ (2 catégories) ou ANOVA (plus de 2 catégories) |
+|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |
 
 

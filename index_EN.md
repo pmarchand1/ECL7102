@@ -9,6 +9,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 2. [Sampling and parameter estimation](notes_cours/2E-Sampling_estimation.html) ([PDF](notes_cours/2E-Sampling_estimation.pdf))
 3. [Statistical models and confidence intervals](notes_cours/3E-Statistical_models.html) ([PDF](notes_cours/3E-Statistical_models.pdf))
 4. [Hypothesis testing](notes_cours/4E-Hypothesis_testing.html) ([PDF](notes_cours/4E-Hypothesis_testing.pdf))
+5. [Chi-squared test and ANOVA](notes_cours/5E-Chi2_ANOVA.html) ([PDF](notes_cours/5E-Chi2_ANOVA.pdf))
 
 
 ## Labs

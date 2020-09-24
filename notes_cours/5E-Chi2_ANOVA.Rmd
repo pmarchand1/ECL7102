@@ -1,6 +1,6 @@
 ---
 title: "Chi-squared test and ANOVA"
-date: "<br/>September 23, 2019"
+date: "<br/>September 28, 2020"
 output:
     html_document:
         self_contained: false
@@ -12,23 +12,17 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
+set.seed(2017)
 ```
 
-# General plan
+<br/>
 
-At the last class, we used the $t$-test to determine if the mean value of a variable differed between two groups. The analysis of variance (ANOVA), which we will start discussing today, makes it possible to extend this comparison to several groups.
+At the last class, we used the $t$-test to determine if the mean value of a variable differed between two groups. The analysis of variance (ANOVA), which we will start discussing today, makes it possible to extend this comparison to several groups. 
 
-More generally, we could say that the $t$-test and ANOVA deal with the effect of categorical predictors (e.g. different treatments) on a numerical response. Another test that we will use in this class is the chi-squared test, which aims to detect an association between two categorical variables.
-
-Later this semester, we will focus on regression models. These are broader in scope because they link a response variable to categorical and numerical predictors. In particular, we will see that the $t$-test and ANOVA are examples of linear regression models.
-
-|                      | Categorical response    | Numerical response |
-|----------------------|-------------------------+-------------------|
-|Categorical predictor | Chi-squared test     | $t$-test (2 categories) or ANOVA (more than 2 categories) |
-|Categorical or numerical predictor |  Logistic regression | Linear regression |
-
+Before discussing ANOVA, we will present another test, the chi-squared test, which aims to detect an association between two categorical variables.
 
 # Objectives
 
@@ -74,7 +68,7 @@ $$ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} $$
 
 The chi-squared statistic thus measures the sum of the deviations between the observed and expected frequencies (normalized by the expected value). When the $\hat{f_i}$ for each category are large enough (typically, 5 or more), this statistic roughly follows a $\chi^2_{k-1}$ distribution, where $k - 1 $is the number degrees of freedom.
 
-**Reminder**: The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the $\chi^2$ is calculated from the deviations between observed and expected frequencies for $k$ categories. However, since the sum of the deviations must equal 0 (because the total of $f_i$ and $\hat{f_i}$ is the same) there are $k - 1$ independent deviations.
+> *Reminder*: The degrees of freedom correspond to the number of independent data used in the calculation of a statistic. Here, the $\chi^2$ is calculated from the deviations between observed and expected frequencies for $k$ categories. However, since the sum of the deviations must equal 0 (because the total of $f_i$ and $\hat{f_i}$ is the same) there are $k - 1$ independent deviations.
 
 $$ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} $$, thus $$\sum_{i=1}^k (f_i - \hat{f_i}) = 0$$
 
@@ -116,7 +110,7 @@ chisq.test(x, p = p)
 
 Often, we do not have a reference distribution for a categorical variable, but we want to check if its distribution depends on the value of another categorical variable, in other words, if the two variables are *associated*.
 
-For example, suppose the number of dead and live trees of three coniferous species (ABBA: balsam fir, PIGL: white spruce, PIMA: black spruce) were counted in a plot following a spruce budworm epidemic.
+For example, suppose the number of dead and live trees of three coniferous species (ABBA: balsam fir, PIGL: white spruce, PIMA: black spruce) were counted in a plot following a spruce budworm outbreak.
 
 ```{r}
 # rbind creates a matrix by binding vectors as rows
@@ -150,7 +144,7 @@ Let $N_i$ be the total of the row $i$, $N_j$ the total of the column $j$ and $N$
 
 The joint probability of two independent variables is the product of the probabilities of the variables taken separately, e.g.: (Prob. that the tree is a live fir) = (Prob. that the tree is a fir) x (Prob. that the tree is alive). Thus, the expected frequencies according to the null hypothesis are calculated as follows.
 
-$$ \hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}$$
+$$ \hat{f_{ij}} = N \hat{p_i} \hat{p_j} = \frac{N_i N_j}{N}$$
 
 If the null hypothesis is correct, then the $\chi^2$ statistic follows a distribution with $(r - 1) \times (c - 1)$ degrees of freedom. In our example, $df = 2$. Indeed, since the expected frequencies are based on the totals of each row and each column, the sum of the deviations in each row and each column must be zero.
 
@@ -180,7 +174,7 @@ However, the rejection of the null hypothesis (independence between mortality an
 
 ## Notes on using the chi-squared test
 
-- The chi-squared test must always be done on the frequencies (number of observations), not on the proportions. Without knowing the size of the sample, the proportions themselves do not tell us if a deviation is significant. For example, if two categories should be in equal proportions (50% / 50%), frequencies of 60 and 40 may be a significant deviation, but not frequencies of 6 and 4.
+- The chi-squared test must always be done on the frequencies (number of observations), not on the proportions. Without knowing the size of the sample, the proportions themselves do not tell us if a deviation is significant. For example, if two categories should be in equal proportions (50% / 50%), frequencies of 60 and 40 may represent a significant deviation, but not frequencies of 6 and 4.
 
 - Since the chi-squared test approximates discrete data by a continuous distribution, it becomes less accurate as the sample size decreases. The test is therefore not recommended if one of the expected frequencies ($\hat{f_ {ij}}$) is less than 5. In this case, we can use Fisher's exact test (`fisher.test` function in R), which calculates the exact probabilities of different contingency tables, assuming that the row and column totals are fixed.
 
@@ -198,15 +192,19 @@ Suppose we want to compare the mean of a variable between several (>2) groups. W
 
 For a sample divided into several groups, the analysis of variance (ANOVA) compares the variation between observations within each group to the variation between the groups. It thus makes it possible to globally test the null hypothesis according to which observations in each group come from populations with the same mean.
 
-As an example, let's take the first 10 observations of each species in the `iris` data set included with R. Here is the distribution of the sepal widths for this sample.
+For example, let's take the `penguins` dataset from the *palmerpenguins* package, which contains measurements taken on different penguin species in the Palmer Archipelago of Antarctica. We select a random sample of 12 individuals per species with the `group_by` and `sample_n` functions of *dplyr*. The graph below shows the variation in flipper length by species for that sample.
 
-```{r}
-iris_ech <- iris[c(1:10, 51:60, 101:110), ]
-ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
+```{r, warning = FALSE, message = FALSE}
+library(palmerpenguins)
+penguins_ech <- penguins %>%
+    filter(!is.na(flipper_length_mm)) %>%
+    group_by(species) %>%
+    sample_n(12)
+ggplot(penguins_ech, aes(x = species, y = flipper_length_mm)) +
     geom_boxplot()
 ```
 
-This graph shows the variation of a numeric variable based on a categorical variable (or factor) that has three categories. A *one-way* ANOVA compares groups along one categorical variable.
+Here, we have a numeric variable that varies based on a categorical variable (or factor) with three categories. A *one-way* ANOVA compares groups along one categorical variable.
 
 ## One-Way ANOVA Model
 
@@ -224,12 +222,11 @@ $$ y_{ik} = \mu + \alpha_i + \epsilon_{ik} $$
 
 ## Sum of squared deviations
 
-If $\bar{y}$ is the grand mean of the observed $y$ and $\bar{y_i}$ is the mean of observations in group $i$, then we can prove the following relatinship between sums of squared deviations.
+If $\bar{y}$ is the grand mean of the observed $y$ and $\bar{y_i}$ is the mean of observations in group $i$, then we can prove the following relationship between sums of squared deviations.
 
 $$ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l \sum_{k = i}^n (\bar{y_i} - \bar{y})^2 $$
 
 Since the last term doesn't depend on $k$, we can re-write the equation as:
-
 
 $$ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l n (\bar{y_i} - \bar{y})^2 $$
 
@@ -245,7 +242,7 @@ From the sums of squared deviations seen above, the mean squared deviations can 
 
 - For the residuals, there are $(n-1)l$ degrees of freedom, since there are $n - 1$ independent deviations per group.
 
-- For the differences between the group means and the grand mean, there is $l - 1$ degrees of freedom.
+- For the differences between the group means and the grand mean, there are $l - 1$ degrees of freedom.
 
 Notice that the sum of the degrees of freedom is the same on both sides of the equation: $nl - 1 = (n-1) l + (l - 1)$.
 
@@ -290,18 +287,23 @@ The calculations presented above apply only to a **balanced** sample, that is, w
 
 # Examples of one-way ANOVA
 
-With the `aov` function in R, we perform an ANOVA of the sepal width by species of iris, from the sample of the` iris` data frame chosen at the beginning of this section.
+With the `aov` function in R, we perform an ANOVA of the flipper length by penguin species, from the sample of the `penguins` data frame chosen at the beginning of this section.
 
 ```{r}
-anova1 <- aov(Sepal.Width ~ Species, data = iris_ech) 
+anova1 <- aov(flipper_length_mm ~ species, data = penguins_ech) 
 summary(anova1)
 ```
 
-The `aov` function requires a description of the model in the` response ~ predictor` form, as well as the name of the data frame containing these variables (`data` argument). By applying the `summary` function to the result of an ANOVA, we obtain the ANOVA table as presented above, in addition to the value of the $F$ statistic and its $p$-value (`Pr(>F)`). With a threshold of 0.05, the null hypothesis that species have the same mean sepal width would be rejected.
+The `aov` function requires a description of the model in the `response ~ predictor` format, as well as the name of the data frame containing these variables (`data` argument). By applying the `summary` function to the result of an ANOVA, we obtain the ANOVA table as presented above, along with the value of the $F$ statistic and its $p$-value (`Pr(>F)`). With a threshold of 0.05, the null hypothesis that species have the same mean flipper length would be rejected.
 
 To verify that our data conforms to the assumptions of the model, we must consult the diagnostic plots, obtained by applying the `plot` function to the result.
 
-```{r}
+```{r, eval = FALSE}
+plot(anova1)
+```
+
+```{r, echo = FALSE}
+par(mfrow = c(2,2))
 plot(anova1)
 ```
 
@@ -313,18 +315,18 @@ To display the group means, we must call the `coef` function (for coefficients).
 coef(anova1)
 ```
 
-By default, the `(Intercept)` is the mean of the first group (here, the species *setosa*), while the other coefficients indicate the difference between the other groups and that first mean. The mean for species *versicolor* is 3.31 - 0.44 = 2.87 while the mean for species *virginica* is 3.31 - 0.37 = 2.94. The result does not tell us which of these differences are significant.
+By default, the `(Intercept)` is the mean of the first group (here, the species *Adelie*), while the other coefficients indicate the difference between the other groups and that first mean. The mean for species *Chinstrap* is 190.4 + 3.4 = 193.8, while the mean for species *Gentoo* is 190.4 + 28.6 = 219.0. The result does not tell us which of these differences are significant.
 
 If there are only two groups, the ANOVA is equivalent to a $t$-test between two samples with equal variance.
 
 ```{r, warning = FALSE, message = FALSE}
 library(dplyr)
-iris_2sp <- filter(iris_ech, Species != "setosa")
-anova2 <- aov(Sepal.Width ~ Species, data = iris_2sp)
+penguins_2sp <- filter(penguins_ech, species != "Gentoo")
+anova2 <- aov(flipper_length_mm ~ species, data = penguins_2sp)
 summary(anova2)
 coef(anova2)
 
-t.test(Sepal.Width ~ Species, data = iris_2sp, var.equal = TRUE)
+t.test(flipper_length_mm ~ species, data = penguins_2sp, var.equal = TRUE)
 ```
 
 The $p$-value and the estimated mean by species are the same for both tests.
@@ -338,8 +340,14 @@ ggplot(InsectSprays, aes(x = spray, y = count)) +
 
 Before looking at the ANOVA results, we inspect the first two diagnostic plots.
 
-```{r}
+```{r, eval = FALSE}
 anova3 <- aov(count ~ spray, InsectSprays)
+plot(anova3, which = 1:2)
+```
+
+```{r, echo = FALSE}
+anova3 <- aov(count ~ spray, InsectSprays)
+par(mfrow = c(1, 2))
 plot(anova3, which = 1:2)
 ```
 
@@ -349,8 +357,14 @@ The graph of residuals vs. fitted values shows that the variance of the residual
 
 An increase of the variance for groups with a higher mean occurs frequently when dealing with count data. For this type of data, taking the square root (`sqrt`) of the original variable can make the variances more homogeneous. Note that a logarithmic transformation is not possible when the data includes 0s.
 
-```{r}
+```{r, eval = FALSE}
 anova3_racine <- aov(sqrt(count) ~ spray, InsectSprays)
+plot(anova3_racine, which = 1:2)
+```
+
+```{r, echo = FALSE}
+anova3_racine <- aov(sqrt(count) ~ spray, InsectSprays)
+par(mfrow = c(1, 2))
 plot(anova3_racine, which = 1:2)
 ```
 
@@ -362,19 +376,19 @@ Instead of transforming the response variable (the number of insects), another o
 
 # Multiple comparisons between groups
 
-As we saw above, the rejection of the null hypothesis in ANOVA indicates that it is unlikely that all groups would have the same mean, but does not tell us which groups have significantly different means.
+As we saw above, the rejection of the null hypothesis in ANOVA indicates that the observed differences would be unlikely if all groups had the same mean, but does not tell us which groups have significantly different means.
 
 Tukey's range test is designed for this scenario. The test compares the groups in pairs with a statistic based on the $t$ distribution, but which takes into account the multiple comparisons to ensure that the overall probability of Type I error remains below the desired threshold (usually 5%).
 
-This test is implemented in R by the `TukeyHSD` function (for Honest Significant Difference). For example, we apply the Tukey test to the result of our first ANOVA, on the variation of the sepal width by species of iris.
+This test is implemented in R by the `TukeyHSD` function (for Honest Significant Difference). For example, we apply the Tukey test to the result of our first ANOVA, on the variation of the flipper length between penguin species.
 
 ```{r}
-anova1 <- aov(Sepal.Width ~ Species, data = iris_ech) 
+anova1 <- aov(flipper_length_mm ~ species, data = penguins_ech) 
 tukey1 <- TukeyHSD(anova1)
 tukey1
 ```
 
-There seems to be a significant difference between *setosa* and the two other species.
+There seems to be a significant difference between *Gentoo* and the two other species.
 
 The `plot` function produces a graph of the confidence intervals for Tukey's range test.
 
@@ -392,7 +406,7 @@ Since this method targets a 5% probability of Type I error across all comparison
 
 - The chi-squared test is used to compare the frequencies of a categorical variable to a reference distribution, or to check the independence of two categorical variables in a contingency table.
 
-- When the expected frequencies are very low (<5), the approximation the of chi-squared test must be replaced by a test counting the exact probabilities of the contingency tables, like Fisher's exact test.
+- When the expected frequencies are very low (<5), the approximation the of chi-squared test must be replaced by a test that computes the exact probabilities of the contingency tables, like Fisher's exact test.
 
 ### ANOVA
 
@@ -401,4 +415,15 @@ Since this method targets a 5% probability of Type I error across all comparison
 - It assumes that the residuals in each group are independent and follow a normal distribution with the same variance.
 
 - If the ANOVA null hypothesis is rejected, Tukey's range test can be used to identify significant differences between groups.
+
+### Comparison with other models
+
+More generally, we could say that the $t$-test and ANOVA deal with the effect of categorical predictors (e.g. different treatments) on a numerical response. In contrast, the chi-squared test aims to detect an association between two categorical variables; depending on the interpretation, one or the other can be considered the response.
+
+Later this semester, we will focus on regression models. These are broader in scope because they link a response variable to categorical and numerical predictors. In particular, we will see that the $t$-test and ANOVA are examples of linear regression models.
+
+|                      | Categorical response    | Numerical response |
+|----------------------|-------------------------+-------------------|
+|Categorical predictor | Chi-squared test     | $t$-test (2 categories) or ANOVA (more than 2 categories) |
+|Categorical or numerical predictor |  Logistic regression | Linear regression |
 

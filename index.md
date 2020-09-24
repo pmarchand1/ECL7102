@@ -9,6 +9,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 2. [Échantillonnage et estimation de paramètres](notes_cours/2-Echantillonnage_estimation.html) ([PDF](notes_cours/2-Echantillonnage_estimation.pdf))
 3. [Modèles statistiques et intervalles de confiance](notes_cours/3-Modeles_statistiques.html) ([PDF](notes_cours/3-Modeles_statistiques.pdf))
 4. [Tests d'hypothèses](notes_cours/4-Tests_hypothese.html) ([PDF](notes_cours/4-Tests_hypothese.pdf))
+5. [Tableaux de contingence et ANOVA](notes_cours/5-Chi2_ANOVA.html) ([PDF](notes_cours/5-Chi2_ANOVA.pdf))
 
 
 ## Laboratoires

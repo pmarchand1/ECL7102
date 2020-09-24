@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,43 +253,14 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Tableaux de contingence et ANOVA</h1>
-<h4 class="date"><br/>23 septembre 2019</h4>
+<h4 class="date"><br/>28 septembre 2020</h4>
 
 </div>
 
 
-<div id="plan-general" class="section level1">
-<h1>Plan général</h1>
+<p><br/></p>
 <p>Au dernier cours, nous avons utilisé le test <span class="math inline">\(t\)</span> pour déterminer si la valeur moyenne d’une variable différait entre deux groupes. L’analyse de la variance (ANOVA) dont nous commencerons à discuter aujourd’hui permet d’étendre cette comparaison à plusieurs groupes.</p>
-<p>De façon plus générale, nous pourrions dire que le test <span class="math inline">\(t\)</span> et l’ANOVA portent sur l’effet de prédicteurs catégoriels (ex.: différents traitements) sur une réponse numérique. Un autre test que nous utiliserons ce cours-ci est le test du <span class="math inline">\(\chi^2\)</span>, qui vise à détecter une association entre deux variables catégorielles.</p>
-<p>Plus tard dans la session, nous nous concentrerons sur les modèles de régression. Ceux-ci ont une portée plus large puisqu’ils permettent de relier une variable réponse à des prédicteurs catégoriels et numériques. En particulier, nous verrons que le test <span class="math inline">\(t\)</span> et l’ANOVA sont des exemples de modèles de régression linéaire.</p>
-<table>
-<colgroup>
-<col width="33%" />
-<col width="37%" />
-<col width="28%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>Réponse catégorielle</th>
-<th>Réponse numérique</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Prédicteur catégoriel</td>
-<td>Test du <span class="math inline">\(\chi^2\)</span></td>
-<td>Test <span class="math inline">\(t\)</span> (2 catégories) ou ANOVA (plus de 2 catégories)</td>
-</tr>
-<tr class="even">
-<td>Prédicteur catégoriel ou numérique</td>
-<td>Régression logistique</td>
-<td>Régression linéaire</td>
-</tr>
-</tbody>
-</table>
-</div>
+<p>Avant de présenter l’ANOVA, nous discuterons d’un autre test, le test du <span class="math inline">\(\chi^2\)</span>, qui vise à détecter une association entre deux variables catégorielles.</p>
 <div id="objectifs" class="section level1">
 <h1>Objectifs</h1>
 <ul>
@@ -333,7 +269,7 @@ div.tocify {
 <li><p>Déterminer les différences significatives entre traitements à partir du test des étendues de Tukey.</p></li>
 </ul>
 </div>
-<div id="comparer-les-frequences-dune-variable-a-une-distribution-de-reference" class="section level1">
+<div id="comparer-les-fréquences-dune-variable-à-une-distribution-de-référence" class="section level1">
 <h1>Comparer les fréquences d’une variable à une distribution de référence</h1>
 <p><strong>Exemple</strong>: Pour vérifier si un dé est équilibré, nous compilons le résultat de 100 lancers. Le tableau suivant montre le nombre de fois où chaque nombre a été obtenu (sa <em>fréquence</em> <span class="math inline">\(f\)</span>).</p>
 <table>
@@ -434,7 +370,9 @@ div.tocify {
 <p>Pour une variable avec <span class="math inline">\(k\)</span> catégories, la valeur du <span class="math inline">\(\chi^2\)</span> (khi-carré) est calculée ainsi:</p>
 <p><span class="math display">\[ \chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}} \]</span></p>
 <p>La statistique <span class="math inline">\(\chi^2\)</span> mesure donc la somme des déviations entre les fréquences observées et attendues (normalisées par la valeur attendue). Lorsque les <span class="math inline">\(\hat{f_i}\)</span> pour chaque catégorie sont assez grandes (typiquement, 5 ou plus), cette statistique suit approximativement une distribution <span class="math inline">\(\chi^2_{k-1}\)</span>, où <span class="math inline">\(k - 1\)</span> est le nombre de degrés de liberté.</p>
-<p><strong>Rappel</strong>: Le nombre de degrés de liberté correspond au nombre de valeurs indépendantes utilisées pour le calcul d’une statistique. Ici, le <span class="math inline">\(\chi^2\)</span> est calculé à partir des déviations entre fréquence observée et fréquence attendue pour <span class="math inline">\(k\)</span> catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des <span class="math inline">\(f_i\)</span> et des <span class="math inline">\(\hat{f_i}\)</span> est le même) il y a <span class="math inline">\(k - 1\)</span> déviations indépendantes.</p>
+<blockquote>
+<p><em>Rappel</em>: Le nombre de degrés de liberté correspond au nombre de valeurs indépendantes utilisées pour le calcul d’une statistique. Ici, le <span class="math inline">\(\chi^2\)</span> est calculé à partir des déviations entre fréquence observée et fréquence attendue pour <span class="math inline">\(k\)</span> catégories. Toutefois, puisque la somme des déviations doit être égale à 0 (car le total des <span class="math inline">\(f_i\)</span> et des <span class="math inline">\(\hat{f_i}\)</span> est le même) il y a <span class="math inline">\(k - 1\)</span> déviations indépendantes.</p>
+</blockquote>
 <p><span class="math display">\[ \sum_{i=1}^k f_i = \sum_{i=1}^k \hat{f_i} \]</span>, donc <span class="math display">\[\sum_{i=1}^k (f_i - \hat{f_i}) = 0\]</span></p>
 <p>Voici la distribution <span class="math inline">\(\chi^2_{k}\)</span> pour différentes valeurs de <span class="math inline">\(k\)</span>:</p>
 <p><img src="../images/khi_carre.png" /></p>
@@ -463,7 +401,7 @@ khi2</code></pre>
 ## X-squared = 8.6, df = 5, p-value = 0.1261</code></pre>
 </div>
 </div>
-<div id="test-dassociation-entre-deux-variables-categorielles" class="section level1">
+<div id="test-dassociation-entre-deux-variables-catégorielles" class="section level1">
 <h1>Test d’association entre deux variables catégorielles</h1>
 <div id="tableau-de-contingence" class="section level2">
 <h2>Tableau de contingence</h2>
@@ -522,7 +460,7 @@ survie</code></pre>
 </table>
 <p>Notons le total de la rangée <span class="math inline">\(i\)</span> par <span class="math inline">\(N_i\)</span>, le total de la colonne <span class="math inline">\(j\)</span> par <span class="math inline">\(N_j\)</span> et le grand total par <span class="math inline">\(N\)</span>. Nous estimons la probabilité de chaque catégorie par la proportion du grand total compris dans cette catégorie: <span class="math inline">\(\hat{p_i} = N_i / N\)</span> et <span class="math inline">\(\hat{p_j} = N_j / N\)</span>.</p>
 <p>La probabilité conjointe de deux variables indépendantes est le produit des probabilités des variables prises séparément, ex.: (prob. que l’arbre est un sapin vivant) = (prob. que l’arbre est un sapin) x (prob. que l’arbre est vivant). Ainsi, les fréquences attendues d’après l’hypothèse nulle sont calculées comme suit.</p>
-<p><span class="math display">\[ \hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}\]</span></p>
+<p><span class="math display">\[ \hat{f_{ij}} = N \hat{p_i} \hat{p_j} = \frac{N_i N_j}{N}\]</span></p>
 <p>Si l’hypothèse nulle est exacte, la statistique <span class="math inline">\(\chi^2\)</span> suit alors une distribution avec <span class="math inline">\((r - 1) \times (c - 1)\)</span> degrés de libertés. Dans notre exemple, <span class="math inline">\(df = 2\)</span>. En effet, puisque les fréquences attendues sont basées sur les totaux de chaque rangée et de chaque colonne, la somme des déviations dans chaque rangée et chaque colonne doit être zéro.</p>
 <p>Si nous choisissons un seuil <span class="math inline">\(\alpha = 0.05\)</span> puis que nous appliquons la fonction <code>chisq.test</code> à cette matrice, nous obtenons une valeur <span class="math inline">\(p\)</span> de 0.01, signifiant la présence d’une association significative entre les deux variables.</p>
 <pre class="r"><code>chisq.test(survie)</code></pre>
@@ -583,13 +521,17 @@ tab</code></pre>
 <h1>Analyse de la variance (ANOVA)</h1>
 <p>Supposons que nous souhaitons comparer la moyenne d’une variable entre plusieurs (&gt;2) groupes. Nous pourrions comparer les groupes deux à deux avec un test <span class="math inline">\(t\)</span> (par exemple, A-B, B-C et A-C pour trois groupes), mais comme nous avons vu lors du dernier cours, effectuer plusieurs tests augmente la probabilité de commettre une erreur de type I.</p>
 <p>Pour un échantillon divisé en plusieurs groupes, l’analyse de la variance (ANOVA) compare la variation entre observations à l’intérieur de chaque groupe à la variation entre les groupes. Elle permet donc de tester globalement l’hypothèse nulle selon laquelle les observations de chaque groupe proviennent de populations avec la même moyenne.</p>
-<p>Comme exemple, prenons les 10 premières observations de chaque espèce dans le jeu de données <code>iris</code> inclus avec R. Voici la distribution de la largeur des sépales pour cet échantillon.</p>
-<pre class="r"><code>iris_ech &lt;- iris[c(1:10, 51:60, 101:110), ]
-ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
+<p>Comme exemple, prenons le jeu de données <code>penguins</code> du package <em>palmerpenguins</em>, qui contient des mesures prises sur différentes espèces de manchots de l’archipel de Palmer en Antarctique. Nous choisissons un échantillon aléatoire de 12 individus de chaque espèce avec les fonctions <code>group_by</code> et <code>sample_n</code> de <em>dplyr</em>. Le graphique suivant montre la variation de la longueur des nageoires (<code>flipper_length_mm</code>) selon l’espèce pour cet échantillon.</p>
+<pre class="r"><code>library(palmerpenguins)
+penguins_ech &lt;- penguins %&gt;%
+    filter(!is.na(flipper_length_mm)) %&gt;%
+    group_by(species) %&gt;%
+    sample_n(12)
+ggplot(penguins_ech, aes(x = species, y = flipper_length_mm)) +
     geom_boxplot()</code></pre>
 <p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>Ce graphique montre la variation d’une variable numérique en fonction d’une variable catégorielle (ou facteur) qui comporte trois catégories.</p>
-<div id="modele-danova-a-un-facteur" class="section level2">
+<p>Ici, nous avons donc une variable numérique qui varie en fonction d’une variable catégorielle (ou facteur) comportant trois catégories.</p>
+<div id="modèle-danova-à-un-facteur" class="section level2">
 <h2>Modèle d’ANOVA à un facteur</h2>
 <p>Supposons que nous mesurons la variable <span class="math inline">\(y\)</span> pour <span class="math inline">\(l\)</span> groupes comprenant chacun <span class="math inline">\(n\)</span> observations. La différence entre une observation <span class="math inline">\(k\)</span> du groupe <span class="math inline">\(i\)</span> (<span class="math inline">\(y_{ik}\)</span>) et la moyenne (théorique) de ce groupe (<span class="math inline">\(\mu_i\)</span>) est le résidu <span class="math inline">\(\epsilon_{ik}\)</span>.</p>
 <p><span class="math display">\[ y_{ik} = \mu_i + \epsilon_{ik} \]</span></p>
@@ -598,7 +540,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p>L’hypothèse nulle est que <span class="math inline">\(\mu_i\)</span> est la même pour tous les groupes. Nous pouvons aussi représenter le même modèle en fonction de la moyenne globale <span class="math inline">\(\mu\)</span> et de la déviation <span class="math inline">\(\alpha_i\)</span> de la moyenne du groupe <span class="math inline">\(i\)</span> par rapport à <span class="math inline">\(\mu\)</span>.</p>
 <p><span class="math display">\[ y_{ik} = \mu + \alpha_i + \epsilon_{ik} \]</span></p>
 </div>
-<div id="somme-des-ecarts-au-carre" class="section level2">
+<div id="somme-des-écarts-au-carré" class="section level2">
 <h2>Somme des écarts au carré</h2>
 <p>Si <span class="math inline">\(\bar{y}\)</span> est la moyenne globale des observations de <span class="math inline">\(y\)</span> et <span class="math inline">\(\bar{y_i}\)</span> est la moyenne des observations du groupe <span class="math inline">\(i\)</span>, alors il est possible de démontrer la relation suivante impliquant la somme des écarts au carré (<em>sum of squares</em>).</p>
 <p><span class="math display">\[ \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2 = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y_i})^2 + \sum_{i = 1}^l \sum_{k = i}^n (\bar{y_i} - \bar{y})^2 \]</span></p>
@@ -654,7 +596,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 </tbody>
 </table>
 </div>
-<div id="test-de-lhypothese-nulle" class="section level2">
+<div id="test-de-lhypothèse-nulle" class="section level2">
 <h2>Test de l’hypothèse nulle</h2>
 <p>Rappelons la forme du modèle d’ANOVA à un facteur:</p>
 <p><span class="math display">\[ y_{ik} = \mu + \alpha_i + \epsilon_{ik} \]</span></p>
@@ -665,7 +607,7 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p><img src="../images/distr_f.png" /></p>
 <p>En contrepartie, si l’hypothèse nulle est fausse, on s’attend à ce que la valeur de <em>MSA</em> soit plus élevée par rapport à <em>MSE</em>, puisque les différences systématiques entre groupes s’ajouteront aux variations aléatoires de l’échantillonnage. Il s’agit donc d’un test unilatéral: la valeur <span class="math inline">\(p\)</span> est la probabilité d’un ratio <span class="math inline">\(F\)</span> égal ou supérieur à celui observé dans nos données.</p>
 </div>
-<div id="suppositions-du-modele-danova" class="section level2">
+<div id="suppositions-du-modèle-danova" class="section level2">
 <h2>Suppositions du modèle d’ANOVA</h2>
 <p>Pour que le modèle sur lequel est basé l’ANOVA soit valide, les résidus doivent être (1) indépendants entre les observations et suivre (2) une distribution normale avec (3) la même variance <span class="math inline">\(\sigma^2\)</span> dans chaque groupe.</p>
 <ul>
@@ -676,65 +618,65 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 <p>Les calculs présentés plus haut s’appliquent seulement à un échantillon <strong>équilibré</strong>, c’est-à-dire que le nombre d’observations est le même dans chaque groupe. Pour le cours d’aujourd’hui, nous nous limiterons aux échantillons équilibrés. Afin de réaliser une ANOVA non-équilibrée dans R, il faut faire appel aux méthodes de régression linéaire que nous verrons lors des prochains cours.</p>
 </div>
 </div>
-<div id="exemples-danova-a-un-facteur" class="section level1">
+<div id="exemples-danova-à-un-facteur" class="section level1">
 <h1>Exemples d’ANOVA à un facteur</h1>
-<p>Avec la fonction <code>aov</code> dans R, réalisons une ANOVA de la largeur des sépales en fonction de l’espèce d’iris, à partir de l’échantillon du jeu de données <code>iris</code> choisi au début de cette section.</p>
-<pre class="r"><code>anova1 &lt;- aov(Sepal.Width ~ Species, data = iris_ech) 
+<p>Avec la fonction <code>aov</code> dans R, réalisons une ANOVA de la longueur des nageoires en fonction de l’espèce de manchot, à partir de l’échantillon du jeu de données <code>penguins</code> choisi au début de cette section.</p>
+<pre class="r"><code>anova1 &lt;- aov(flipper_length_mm ~ species, data = penguins_ech) 
 summary(anova1)</code></pre>
-<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
-## Species      2  1.118  0.5590   5.179 0.0125 *
-## Residuals   27  2.914  0.1079                 
+<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## species      2   5848  2924.1   42.24 7.97e-10 ***
+## Residuals   33   2285    69.2                     
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>La fonction <code>aov</code> requiert une description du modèle avec la formule <code>reponse ~ predicteur</code>, ainsi que le nom du tableau de données contenant ces variables (argument <code>data</code>). En appliquant la fonction <code>summary</code> au résultat d’une ANOVA, on obtient le tableau d’ANOVA tel que présenté plus haut, en plus de valeur de la statistique <span class="math inline">\(F\)</span> et sa valeur <span class="math inline">\(p\)</span> (<code>Pr(&gt;F)</code>). Avec un seuil de 0.05, l’hypothèse nulle que les espèces ont la même largeur moyenne des sépales serait rejetée.</p>
+<p>La fonction <code>aov</code> requiert une description du modèle avec la formule <code>reponse ~ predicteur</code>, ainsi que le nom du tableau de données contenant ces variables (argument <code>data</code>). En appliquant la fonction <code>summary</code> au résultat d’une ANOVA, on obtient le tableau d’ANOVA tel que présenté plus haut, en plus de valeur de la statistique <span class="math inline">\(F\)</span> et sa valeur <span class="math inline">\(p\)</span> (<code>Pr(&gt;F)</code>). Avec un seuil de 0.05, l’hypothèse nulle que la longueur moyenne des nageoires est la même pour toutes les espèces serait rejetée.</p>
 <p>Pour vérifier que nos données sont conformes aux suppositions du modèle, nous devons consulter les graphiques de diagnostic, obtenus en appliquant la fonction <code>plot</code> au résultat.</p>
 <pre class="r"><code>plot(anova1)</code></pre>
-<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-9-2.png" width="672" /><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-9-3.png" width="672" /><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-9-4.png" width="672" /></p>
+<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Les deux premiers graphiques sont les plus importants ici. Le graphique <code>Residuals vs. Fitted</code> montre la valeur des résidus en fonction de la moyenne estimée pour chaque groupe; si le modèle est valide, il ne devrait pas y avoir de tendance visible et les résidus des différents groupes devraient avoir une variance similaire autour de zéro, ce qui est le cas ici. Le deuxième graphique est un diagramme quantile-quantile pour vérifier si les résidus suivent approximativement une distribution normale.</p>
 <p>Pour afficher les moyennes par groupe, il faut faire appel à la fonction <code>coef</code> (pour coefficients).</p>
 <pre class="r"><code>coef(anova1)</code></pre>
-<pre><code>##       (Intercept) Speciesversicolor  Speciesvirginica 
-##              3.31             -0.44             -0.37</code></pre>
-<p>Par défaut, le terme <code>(Intercept)</code> est la moyenne du premier groupe (ici, l’espèce <em>setosa</em>), tandis que les autres coefficients indiquent la différence entre les autres groupes et cette première moyenne. La moyenne de l’espèce <em>versicolor</em> est 3.31 - 0.44 = 2.87 tandis que la moyenne de l’espèce <em>virginica</em> est 3.31 - 0.37 = 2.94. Le résultat ne nous dit pas lesquelles de ces différences sont significatives.</p>
+<pre><code>##      (Intercept) speciesChinstrap    speciesGentoo 
+##       190.416667         3.416667        28.583333</code></pre>
+<p>Par défaut, le terme <code>(Intercept)</code> est la moyenne du premier groupe (ici, l’espèce <em>Adelie</em>), tandis que les autres coefficients indiquent la différence entre les autres groupes et cette première moyenne. La moyenne de l’espèce <em>Chinstrap</em> est 190.4 + 3.4 = 193.8 tandis que la moyenne de l’espèce <em>Gentoo</em> est 190.4 + 28.6 = 219.0. Le résultat ne nous dit pas lesquelles de ces différences sont significatives.</p>
 <p>S’il n’y a que deux groupes, l’ANOVA est équivalente à un test <span class="math inline">\(t\)</span> entre deux échantillons à variance égale.</p>
 <pre class="r"><code>library(dplyr)
-iris_2sp &lt;- filter(iris_ech, Species != &quot;setosa&quot;)
-anova2 &lt;- aov(Sepal.Width ~ Species, data = iris_2sp)
+penguins_2sp &lt;- filter(penguins_ech, species != &quot;Gentoo&quot;)
+anova2 &lt;- aov(flipper_length_mm ~ species, data = penguins_2sp)
 summary(anova2)</code></pre>
 <pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)
-## Species      1 0.0245  0.0245   0.214   0.65
-## Residuals   18 2.0650  0.1147</code></pre>
+## species      1     70   70.04   0.881  0.358
+## Residuals   22   1749   79.48</code></pre>
 <pre class="r"><code>coef(anova2)</code></pre>
-<pre><code>##      (Intercept) Speciesvirginica 
-##             2.87             0.07</code></pre>
-<pre class="r"><code>t.test(Sepal.Width ~ Species, data = iris_2sp, var.equal = TRUE)</code></pre>
+<pre><code>##      (Intercept) speciesChinstrap 
+##       190.416667         3.416667</code></pre>
+<pre class="r"><code>t.test(flipper_length_mm ~ species, data = penguins_2sp, var.equal = TRUE)</code></pre>
 <pre><code>## 
 ##  Two Sample t-test
 ## 
-## data:  Sepal.Width by Species
-## t = -0.46212, df = 18, p-value = 0.6495
+## data:  flipper_length_mm by species
+## t = -0.93874, df = 22, p-value = 0.3581
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -0.3882356  0.2482356
+##  -10.964779   4.131446
 ## sample estimates:
-## mean in group versicolor  mean in group virginica 
-##                     2.87                     2.94</code></pre>
+##    mean in group Adelie mean in group Chinstrap 
+##                190.4167                193.8333</code></pre>
 <p>La valeur <span class="math inline">\(p\)</span> et l’estimation des moyennes par espèce sont les mêmes pour les deux tests.</p>
 <p>Prenons maintenant le tableau de données <code>InsectSprays</code> qui décrit le nombre d’insectes (<code>count</code>) sur des placettes traitées avec différents insecticides (<code>spray</code>).</p>
 <pre class="r"><code>ggplot(InsectSprays, aes(x = spray, y = count)) + 
     geom_boxplot()</code></pre>
-<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Avant de regarder les résultats de l’ANOVA, inspectons les deux premiers graphiques de diagnostic.</p>
 <pre class="r"><code>anova3 &lt;- aov(count ~ spray, InsectSprays)
 plot(anova3, which = 1:2)</code></pre>
-<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>Le graphique des résidus vs. valeurs estimées montre que la variance des résidus est plus élevée pour les groupes où la moyenne est plus élevée, ce qui contredit la supposition de variance égale. Lorsque cela se produit, la distribution des résidus diffère aussi de la normale, comme on voit sur le diagramme quantile-quantile.</p>
-<div id="transformation-racine-carree" class="section level2">
+<div id="transformation-racine-carrée" class="section level2">
 <h2>Transformation racine carrée</h2>
 <p>L’augmentation de la variance des groupes en fonction de leur moyenne est une caractéristique assez commune des données de comptage (dans l’exemple précédent, il s’agissait du nombre d’insectes). Pour ce type de données, prendre la racine carrée (<code>sqrt</code>) de la variable originale peut rendre les variances plus homogènes. Notez qu’une transformation logarithmique n’est pas possible lorsque les données incluent des 0.</p>
 <pre class="r"><code>anova3_racine &lt;- aov(sqrt(count) ~ spray, InsectSprays)
 plot(anova3_racine, which = 1:2)</code></pre>
-<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-14-1.png" width="672" /><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <pre class="r"><code>summary(anova3_racine)</code></pre>
 <pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)    
 ## spray        5  88.44  17.688    44.8 &lt;2e-16 ***
@@ -746,29 +688,29 @@ plot(anova3_racine, which = 1:2)</code></pre>
 </div>
 <div id="comparaisons-multiples-entre-les-groupes" class="section level1">
 <h1>Comparaisons multiples entre les groupes</h1>
-<p>Tel que nous avons vu ci-dessus, le rejet de l’hypothèse nulle de l’ANOVA indique qu’il est improbable que tous les groupes aient la même moyenne, mais ne nous dit pas quels groupes ont des moyennes significativement différentes l’une de l’autre.</p>
+<p>Tel que nous avons vu ci-dessus, le rejet de l’hypothèse nulle de l’ANOVA indique qu’il est improbable d’avoir obtenu les différences observées si tous les groupes avaient la même moyenne, mais ne nous dit pas quels groupes ont des moyennes significativement différentes l’une de l’autre.</p>
 <p>Le test des étendues de Tukey est conçu pour être utilisé dans ce scénario. Ce test compare les groupes deux à deux avec une statistique basée sur la distribution <span class="math inline">\(t\)</span>, mais qui tient compte des comparaisons multiples pour assurer une probabilité d’erreur de type I inférieure au seuil voulu (habituellement, 5%) sur l’ensemble des comparaisons.</p>
-<p>Ce test est implémenté dans R par la fonction <code>TukeyHSD</code> (pour Honest Significant Difference). Par exemple, appliquons le test de Tukey au résultat de notre premier exemple d’ANOVA, sur la variation de la largeur des sépales par espèce d’iris.</p>
-<pre class="r"><code>anova1 &lt;- aov(Sepal.Width ~ Species, data = iris_ech) 
+<p>Ce test est implémenté dans R par la fonction <code>TukeyHSD</code> (pour Honest Significant Difference). Par exemple, appliquons le test de Tukey au résultat de notre premier exemple d’ANOVA, sur la variation de la longueur des nageoires entre espèces de manchots.</p>
+<pre class="r"><code>anova1 &lt;- aov(flipper_length_mm ~ species, data = penguins_ech) 
 tukey1 &lt;- TukeyHSD(anova1)
 tukey1</code></pre>
 <pre><code>##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
 ## 
-## Fit: aov(formula = Sepal.Width ~ Species, data = iris_ech)
+## Fit: aov(formula = flipper_length_mm ~ species, data = penguins_ech)
 ## 
-## $Species
-##                       diff        lwr          upr     p adj
-## versicolor-setosa    -0.44 -0.8042735 -0.075726495 0.0155401
-## virginica-setosa     -0.37 -0.7342735 -0.005726495 0.0459626
-## virginica-versicolor  0.07 -0.2942735  0.434273505 0.8829240</code></pre>
-<p>Il semble donc y avoir une différence significative entre <em>setosa</em> et les deux autres espèces.</p>
+## $species
+##                       diff      lwr      upr     p adj
+## Chinstrap-Adelie  3.416667 -4.91840 11.75173 0.5784484
+## Gentoo-Adelie    28.583333 20.24827 36.91840 0.0000000
+## Gentoo-Chinstrap 25.166667 16.83160 33.50173 0.0000000</code></pre>
+<p>Il semble donc y avoir une différence significative entre <em>Gentoo</em> et les deux autres espèces.</p>
 <p>La fonction <code>plot</code> présente un graphique des intervalles de confiance du test de Tukey.</p>
 <pre class="r"><code>plot(tukey1)</code></pre>
-<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="5-Chi2_ANOVA_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <p>Puisque cette méthode vise une probabilité d’erreur de type I de 5% pour l’ensemble des comparaisons, chacune des comparaisons individuelles doit avoir un <span class="math inline">\(\alpha\)</span> &lt; 0.05. Dans ce cas, la probabilité d’erreur de type II (ne pas détecter une différence significative) augmente. On peut donc contrôler le taux d’erreur de type I dans un problème de comparaisons multiples, mais au prix de diminuer la puissance du test lorsque le nombre de comparaisons à faire augmente. Puisque l’ANOVA a une plus grande puissance que des comparaisons multiples, il est même possible qu’aucune des différences entre deux groupes ne soit significative même si l’hypothèse nulle de l’ANOVA a été rejetée.</p>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <div id="test-du-chi2" class="section level3">
 <h3>Test du <span class="math inline">\(\chi^2\)</span></h3>
@@ -785,6 +727,37 @@ tukey1</code></pre>
 <li><p>Elle suppose que les résidus dans chaque groupe sont indépendants et suivent une distribution normale avec la même variance.</p></li>
 <li><p>Si l’hypothèse nulle de l’ANOVA est rejetée, on peut utiliser le test des étendues de Tukey pour identifier les différences significatives entre groupes.</p></li>
 </ul>
+</div>
+<div id="comparaison-avec-dautres-modèles" class="section level3">
+<h3>Comparaison avec d’autres modèles</h3>
+<p>De façon plus générale, nous pourrions dire que le test <span class="math inline">\(t\)</span> et l’ANOVA portent sur l’effet de prédicteurs catégoriels (ex.: différents traitements) sur une réponse numérique. Le test du <span class="math inline">\(\chi^2\)</span> quant à lui vise à détecter une association entre deux variables catégorielles; dépendamment de l’interprétation, l’une ou l’autre pourrait être considérée comme la réponse.</p>
+<p>Plus tard dans la session, nous nous concentrerons sur les modèles de régression. Ceux-ci ont une portée plus large puisqu’ils permettent de relier une variable réponse à des prédicteurs catégoriels et numériques. En particulier, nous verrons que le test <span class="math inline">\(t\)</span> et l’ANOVA sont des exemples de modèles de régression linéaire.</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="37%" />
+<col width="28%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Réponse catégorielle</th>
+<th>Réponse numérique</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Prédicteur catégoriel</td>
+<td>Test du <span class="math inline">\(\chi^2\)</span></td>
+<td>Test <span class="math inline">\(t\)</span> (2 catégories) ou ANOVA (plus de 2 catégories)</td>
+</tr>
+<tr class="even">
+<td>Prédicteur catégoriel ou numérique</td>
+<td>Régression logistique</td>
+<td>Régression linéaire</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -806,6 +779,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
