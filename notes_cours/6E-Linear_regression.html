@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-10-05" />
+
+<title>Simple linear regression</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Simple linear regression</h1>
+<h4 class="date"><br/>October 5, 2020</h4>
+
+</div>
+
+
+<div id="objectives" class="section level1">
+<h1>Objectives</h1>
+<ul>
+<li><p>Estimate and interpret the parameters of a simple linear regression.</p></li>
+<li><p>Check the assumptions of a regression model from the diagnostic graphs.</p></li>
+<li><p>Differentiate the confidence interval of a regression line and the prediction interval for new observations.</p></li>
+<li><p>Use contrasts to represent a categorical predictor within a regression model.</p></li>
+</ul>
+</div>
+<div id="regression-overview" class="section level1">
+<h1>Regression: Overview</h1>
+<p>The next six courses will focus on regression models. These models represent the mathematical relationship between a <em>response</em> variable and one or more variables named <em>predictors</em>.</p>
+<p>Regression analysis is particularly useful in the following cases:</p>
+<ul>
+<li><p>Analyzing the results of an experiment when one or more treatment variables are numeric (e.g. temperature, dose).</p></li>
+<li><p>Separating the effect of discrete treatments (categorical variables) from that of other experimental conditions represented by numerical variables. In this context, it is often called <strong>analysis of covariance</strong>.</p></li>
+<li><p>Determining the importance of associations between variables measured in nature (without assuming a causal link).</p></li>
+<li><p>Using the associations between predictors and response to predict the value of the latter for new observations.</p></li>
+</ul>
+<p>The mathematical model remains the same for all these situations, so they differ in the interpretation and use of the results.</p>
+</div>
+<div id="simple-linear-regression" class="section level1">
+<h1>Simple linear regression</h1>
+<p>The following equation describes a linear model for the relationship between a numerical predictor <span class="math inline">\(x\)</span> and a numerical response <span class="math inline">\(y\)</span>. Since there is only one numerical predictor, it is a simple linear regression.</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1 x + \epsilon\]</span></p>
+<p><span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> are the <em>coefficients</em> of the regression that will be estimated from the data, while <span class="math inline">\(\epsilon\)</span> is the random <em>residual</em> that follows a normal distribution centered on zero: <span class="math inline">\(N(0,\sigma)\)</span>.</p>
+<p>Equivalently, the model tells us that for a given value of <span class="math inline">\(x\)</span>, the response <span class="math inline">\(y\)</span> follows a normal distribution with mean <span class="math inline">\(\mu = \beta_0 + \beta_1 x\)</span> and standard deviation <span class="math inline">\(\sigma\)</span>:</p>
+<p><span class="math display">\[y \sim N(\beta_0 + \beta_1 x, \sigma)\]</span></p>
+<p>The <em>intercept</em> <span class="math inline">\(\beta_0\)</span> is the mean value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span>, while the <em>slope</em> <span class="math inline">\(\beta_1\)</span> is the mean difference of <span class="math inline">\(y\)</span> between two observations that differ by 1 unit of <span class="math inline">\(x\)</span>.</p>
+<div id="method-of-least-squares" class="section level2">
+<h2>Method of least squares</h2>
+<p>The method of least squares serves to estimate the coefficients of a linear regression.</p>
+<div id="example" class="section level3">
+<h3>Example</h3>
+<p>The <a href="../donnees/plant_growth_rate.csv">plant_growth_rate.csv</a> dataset (from the textbook of Beckerman, Childs and Petchey, <em>Getting Started with R, An Introduction for Biologists</em>) contains data on the growth of a plant as a function of soil moisture content.</p>
+<pre class="r"><code>pgr &lt;- read.csv(&quot;../donnees/plant_growth_rate.csv&quot;)
+str(pgr)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    50 obs. of  2 variables:
+##  $ soil.moisture.content: num  0.47 0.541 1.698 0.826 0.857 ...
+##  $ plant.growth.rate    : num  21.3 27 39 30.2 37.1 ...</code></pre>
+<p>Estimating the coefficients of the linear regression is equivalent to finding the line that is “closest” to the points in the graph of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>.</p>
+<pre class="r"><code>ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
+    geom_point() +
+    geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="6E-Linear_regression_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>More precisely, it is possible to show that the best unbiased estimators of linear regression parameters are those that minimize the sum of the squared residuals.</p>
+<p>For a series of <span class="math inline">\(n\)</span> observations of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, this sum of squared residuals corresponds to:</p>
+<p><span class="math display">\[ \sum_{k = 1}^n \epsilon_k^2 = \sum_{k = 1}^n (y_k - (\beta_0 + \beta_1 x_k))^2 \]</span></p>
+<p>The estimates <span class="math inline">\(\hat{\beta_0}\)</span> and <span class="math inline">\(\hat{\beta_1}\)</span> that minimize this sum are obtained by differential calculus. (They are the values for which the partial derivatives of the sum as a function of each coefficient are equal to zero.)</p>
+<p>The estimator for the slope <span class="math inline">\(\beta_1\)</span> is equal to the covariance of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> divided by the variance of <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[\hat{\beta_1} = \frac{\sum_{k = 1}^n (x_k - \bar{x})(y_k - \bar{y})}{\sum_{k = 1}^n (x_k - \bar{x})^2}\]</span></p>
+<p>Here, <span class="math inline">\(\bar{x}\)</span> and <span class="math inline">\(\bar{y}\)</span> represent the means of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, respectively, over all observations.</p>
+<p>The estimator for the intercept <span class="math inline">\(\beta_0\)</span> is equal to:</p>
+<p><span class="math display">\[\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}\]</span></p>
+<p>By rearranging this last equation:</p>
+<p><span class="math display">\[\bar{y} = \hat{\beta_0} + \hat{\beta_1} \bar{x}\]</span></p>
+<p>we see that the estimated regression line goes through the point <span class="math inline">\((\bar{x}, \bar{y})\)</span>, the “center of mass” for the scatterplot of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p>
+</div>
+</div>
+<div id="interpreting-the-results" class="section level2">
+<h2>Interpreting the results</h2>
+<p>The <code>lm</code> function serves to estimate the parameters of a linear regression in R. As for <code>aov</code>, this function accepts a formula of the type <code>response ~ predictor</code>, as well as a <code>data</code> argument that specifies the data frame. By fitting a regression model to the data above, we obtain the following result:</p>
+<pre class="r"><code>mod &lt;- lm(plant.growth.rate ~ soil.moisture.content, data = pgr)
+summary(mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = plant.growth.rate ~ soil.moisture.content, data = pgr)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.9089 -3.0747  0.2261  2.6567  8.9406 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)             19.348      1.283   15.08   &lt;2e-16 ***
+## soil.moisture.content   12.750      1.021   12.49   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.019 on 48 degrees of freedom
+## Multiple R-squared:  0.7648, Adjusted R-squared:  0.7599 
+## F-statistic: 156.1 on 1 and 48 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The coefficient table includes the intercept and the effect of each predictor. If the assumptions of the model are respected (see section below), each estimated <span class="math inline">\(\hat{\beta}\)</span> follows a normal distribution with a mean equal to the value of the parameter <span class="math inline">\(\beta\)</span>, and a standard error as shown in the table. This allows us to run a <span class="math inline">\(t\)</span>-test for the null hypothesis <span class="math inline">\(\beta = 0\)</span>, with a value <span class="math inline">\(p\)</span> indicated in the last column.</p>
+<p>Under that table, <code>Residual standard error</code> is the standard deviation of model residuals calculated with 48 degrees of freedom (50 observations - 2 estimated parameters).</p>
+<pre class="r"><code>sqrt(sum(mod$residuals^2) / 48)</code></pre>
+<pre><code>## [1] 4.019094</code></pre>
+<p>The second to last line presents the coefficient of determination <span class="math inline">\(R^2\)</span>, which is discussed in detail below.</p>
+<p>The last line of the summary is an <span class="math inline">\(F\)</span>-test similar to ANOVA. When we have only one predictor, this test gives the same information as the <span class="math inline">\(t\)</span>-test for that predictor: the probability of obtaining an estimated effect that far from 0 if the actual effect of the predictor is 0.</p>
+<p>The confidence intervals for each coefficient are not shown in the summary, but we can calculate them with the <code>confint</code> function.</p>
+<pre class="r"><code>confint(mod)</code></pre>
+<pre><code>##                          2.5 %   97.5 %
+## (Intercept)           16.76833 21.92859
+## soil.moisture.content 10.69764 14.80144</code></pre>
+</div>
+<div id="coefficient-of-determination" class="section level2">
+<h2>Coefficient of determination</h2>
+<p>The coefficient of determination represents the fraction of the total variance in <span class="math inline">\(y\)</span> that is explained by the model.</p>
+<p><span class="math display">\[R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}\]</span></p>
+<p>In the second term, <span class="math inline">\(\hat{y_k} = \hat{\beta_0} + \hat{\beta_1} x_k\)</span> is the expected (mean) value of <span class="math inline">\(y_k\)</span> according to the model. Therefore, the numerator is the sum of squared residuals, while the denominator represents the sum of squared differences between each observation of <span class="math inline">\(y\)</span> and the mean of <span class="math inline">\(y\)</span>. The second term thus represents the fraction of the total variance of <span class="math inline">\(y\)</span> that is not explained by the model; by subtracting it from 1, we obtain the fraction of the variance explained.</p>
+<p>The values of <span class="math inline">\(\hat{y_k}\)</span> for each point are recorded in the <code>fitted.values</code> component of the result of <code>lm</code> (e.g. <code>mod$fitted.values</code>), whereas the residuals are recorded in the <code>residuals</code> component.</p>
+<p>We can verify that the <span class="math inline">\(R^2\)</span> calculated manually matches the result reported above.</p>
+<pre class="r"><code>r2 &lt;- 1 - sum(mod$residuals^2) / sum((pgr$plant.growth.rate - mean(pgr$plant.growth.rate))^2)
+r2</code></pre>
+<pre><code>## [1] 0.764796</code></pre>
+<p>For a simple linear regression, the square root of <span class="math inline">\(R^2\)</span> is equal to the correlation between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p>
+<pre class="r"><code>cor(pgr$soil.moisture.content, pgr$plant.growth.rate) </code></pre>
+<pre><code>## [1] 0.8745262</code></pre>
+<pre class="r"><code>sqrt(r2)</code></pre>
+<pre><code>## [1] 0.8745262</code></pre>
+<p>Note that there are two values of <span class="math inline">\(R^2\)</span> in the summary of the linear model. The <code>Multiple R-squared</code> is the coefficient of determination <span class="math inline">\(R^2\)</span> defined above. The <code>Adjusted R-squared</code> has a slightly different definition; it is based on the ratio between the residual variance and total variance, instead of the ratio of the sum of squares.</p>
+<pre class="r"><code>r2_adj &lt;- 1 - (sum(mod$residuals^2)/48) / var(pgr$plant.growth.rate)
+r2_adj</code></pre>
+<pre><code>## [1] 0.759896</code></pre>
+<p>Since the residual variance is calculated with <span class="math inline">\(n - k\)</span> degrees of freedom, where <span class="math inline">\(k\)</span> is the number of estimated parameters, the adjusted <span class="math inline">\(R^2\)</span> is smaller than the non-adjusted <span class="math inline">\(R^2\)</span> and this difference becomes more important as the number of parameters in the model increases (see the multiple linear regression examples in the next class).</p>
+<p>During the class on the hypothesis testing, it was recommended to present three types of results following a test:</p>
+<ul>
+<li>the probability that the measured effect is due to chance (<span class="math inline">\(p\)</span>-value);</li>
+<li>the estimate and the confidence interval of the measured effect; and</li>
+<li>the magnitude of the effect compared to the variance of the individual data points.</li>
+</ul>
+<p>The coefficient of determination <span class="math inline">\(R^2\)</span> answers the third question: Which part of the observed variation is due to the effect of the treatments or predictors measured?</p>
+<p>Finally, a reminder: when we speak of the <em>effect</em> of a predictor or the fraction of the variance <em>explained</em>, this does not always mean that there is a cause-and-effect relationship between the predictor and the response. Our ability to interpret a statistical association (or correlation) as a cause-and-effect relationship does not depend on the magnitude of the effect, but rather on the controls established in the experimental design: independent variation of factors, use of control group, random assignment of treatments, etc.</p>
+</div>
+</div>
+<div id="confidence-interval-and-prediction-interval" class="section level1">
+<h1>Confidence interval and prediction interval</h1>
+<p>To display the regression line on a scatter plot of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, along with its confidence interval, we use the <code>geom_smooth</code> function of the <em>ggplot2</em> package, with the <code>lm</code> (linear model) method.</p>
+<pre class="r"><code>ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
+    geom_point() + 
+    geom_smooth(method = &quot;lm&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="6E-Linear_regression_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>For each value of <span class="math inline">\(x\)</span>, the gray area gives a confidence interval for the average value of <span class="math inline">\(y\)</span> according to the linear model. By default, this is a 95% interval, which can be changed with the <code>level</code> argument of <code>geom_smooth</code>.</p>
+<p>Note that the confidence interval becomes wider at the ends of the graph. Remember that the regression line must pass through the point <span class="math inline">\((\bar{x}, \bar{y})\)</span>, so the uncertainty on the slope “rotates” the line slightly around this point, which generates greater uncertainty at the ends.</p>
+<p>Suppose that in addition to estimating the average trend between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, we want to predict the value of <span class="math inline">\(y\)</span> for new observations, knowing only the value of <span class="math inline">\(x\)</span>. In the code below, we create a new <code>pgr_nouv</code> data array with 101 soil moisture values, and then we call the <code>predict</code> function to get growth predictions from the model, with a prediction interval. We then attach these columns to <code>pgr_nouv</code> with <code>cbind</code>.</p>
+<pre class="r"><code>pgr_nouv &lt;- data.frame(soil.moisture.content = seq(0, 2, 0.02))
+pgr_pred &lt;- predict(mod, pgr_nouv, interval = &quot;prediction&quot;)
+pgr_nouv &lt;- cbind(pgr_nouv, pgr_pred)
+str(pgr_nouv)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    101 obs. of  4 variables:
+##  $ soil.moisture.content: num  0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 ...
+##  $ fit                  : num  19.3 19.6 19.9 20.1 20.4 ...
+##  $ lwr                  : num  10.9 11.1 11.4 11.7 11.9 ...
+##  $ upr                  : num  27.8 28.1 28.3 28.6 28.8 ...</code></pre>
+<p>The <code>fit</code> column contains the predicted values (which correspond to the points on the regression line) while <code>lwr</code> and <code>upr</code> are the lower and upper limits of the 95% prediction interval.</p>
+<p>Now let’s superimpose the regression line, the prediction interval (with <code>geom_ribbon</code>) and the scatter plot:</p>
+<pre class="r"><code>ggplot(pgr_nouv, aes(x = soil.moisture.content)) +
+    labs(x = &quot;Soil moisture&quot;, y = &quot;Growth&quot;) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3) +
+    geom_line(aes(y = fit), color = &quot;blue&quot;) +
+    geom_point(data = pgr, aes(y = plant.growth.rate))</code></pre>
+<p><img src="6E-Linear_regression_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>In contrast to the confidence interval, which represents the uncertainty in the mean value of the response for a certain predictor value, the prediction interval represents the uncertainty in the value of the response for an individual observation. Thus, it is expected that about 95% of the points are within the prediction interval, which is the case here (48/50).</p>
+<p><strong>Note</strong>: In general, it is not prudent to use the result of a regression to predict the response for predictor values outside the range of values with which the model was estimated (in this example, for soil moisture values &gt; 2). These extrapolations are less reliable than predictions within the range of observed values (interpolation). In particular, an approximately linear relation on a restricted scale of values of <span class="math inline">\(x\)</span> can become strongly non-linear at a different scale.</p>
+</div>
+<div id="assumptions-of-the-linear-regression-model" class="section level1">
+<h1>Assumptions of the linear regression model</h1>
+<p>As for ANOVA, the residuals are:</p>
+<ul>
+<li>independent and</li>
+<li>normally distributed</li>
+<li>with the same variance.</li>
+</ul>
+<p>Moreover:</p>
+<ul>
+<li>the relationship between the average response and the predictors is linear, and</li>
+<li>the predictors are measured without error (or this error is negligible compared to the other errors of the model).</li>
+</ul>
+<div id="linearity" class="section level2">
+<h2>Linearity</h2>
+<p>The linearity requirement is less restrictive than it seems. Variable transformations make it possible to convert a non-linear relationship into a linear relationship. For example, if <span class="math inline">\(y\)</span> is a function of a certain power of <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[ y = a x^b \]</span></p>
+<p>then by applying a logarithm to each side, we obtain a linear model:</p>
+<p><span class="math display">\[ \log(y) = \log(a) + b \log(x) \]</span></p>
+<p>In general, the equation linking <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> can contain nonlinear functions of <span class="math inline">\(x\)</span>, as long as it is a linear function of the <em>coefficients</em>. For example, the quadratric equation:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x + \beta_2 x^2 \]</span> is an example of a linear model; it is a multiple linear regression, since there are two predictors, <span class="math inline">\(x\)</span> and <span class="math inline">\(x^2\)</span>.</p>
+</div>
+<div id="independence-of-residuals" class="section level2">
+<h2>Independence of residuals</h2>
+<p>The independence of residuals means that the portion of the response <span class="math inline">\(y\)</span> not explained by the predictors <span class="math inline">\(x\)</span> is independent from one observation to another.</p>
+<p>In ecology, the non-independence of residuals is often due to a proximity of certain observations in space and time. For example, if the observations are spread over several days, observations that are closer in time may be more similar. Factors that can cause this temporal dependence (e.g., weather) can be included in the model to obtain the most independent residuals possible.</p>
+<p>The non-independence of residuals does not bias the estimates of the model coefficients, so these remain valid, but their uncertainty will be underestimated. (We could say that a sample of non-independent observations is equivalent to a smaller independent sample.) Thus, the confidence intervals and hypothesis tests on the significance of the coefficients will not be valid.</p>
+</div>
+<div id="normality" class="section level2">
+<h2>Normality</h2>
+<p>Just like the results from a <span class="math inline">\(t\)</span> test or an ANOVA, the estimated values and confidence intervals for the linear regression coefficients are not too affected by a lack of normality of the residuals; due to the central limit theorem, the distribution of these estimates is closer to a normal distribution than the distribution of individual residuals.</p>
+<p>Deparature from the normal distribution has a greater effect on the model’s <em>predictions</em>. Specifically, if the distribution of residuals has more extreme values than expected by a normal distribution, the width of the prediction intervals will underestimate the true uncertainty.</p>
+</div>
+<div id="diagnostic-graphs" class="section level2">
+<h2>Diagnostic graphs</h2>
+<p>Here are the four diagnostic graphs obtained with the <code>plot</code> function applied to the result of <code>lm</code>.</p>
+<p><img src="6E-Linear_regression_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>The first two graphs correspond to those already seen in ANOVA. For the graph of residuals vs. fitted values, here are important points to check:</p>
+<ul>
+<li><p>The residuals must be randomly dispersed around zero. The presence of a trend (linear or not) indicates systematic effects ignored by the model. In this case, we may have a slight non-linear (quadratic) trend in the residuals.</p></li>
+<li><p>The variance of the residuals must be approximately constant (homoscedasticity). A common type of heteroscedasticity occurs when the variance increases with the mean. In this case, the graph of the residuals vs. fitted values produces a funnel shape (dispersion of points increases along the <span class="math inline">\(x\)</span> axis).</p></li>
+</ul>
+<p>The quantile-quantile plot makes it possible to detect systematic deviations from the normality of the residuals.</p>
+<p>The third graph shows the scale of the residuals (in absolute value) according to the fitted values of <span class="math inline">\(y\)</span>. This graph will also show a trend if the variance is not constant.</p>
+</div>
+<div id="leverage" class="section level2">
+<h2>Leverage</h2>
+<p>The last chart shows the <strong>leverage</strong> of observations relative to the value of the residuals. An observation with high leverage has a greater influence on the regression coefficient estimates; this occurs most often in the case of isolated observations and far from the mean values of the predictors. An observation far from the mean (significant positive or negative residual) that also has a strong leverage effect may move the regression line away from the general trend indicated by the other data.</p>
+<p>Cook’s distance <span class="math inline">\(D\)</span> is a metric that combines leverage with the magnitude of the residual. The dashed lines on the fourth graph identify problematic points that exceed a certain value of <span class="math inline">\(D\)</span>, usually <span class="math inline">\(D &gt; 1\)</span>. In our previous example, no point has a large influence, so these dotted lines are outside the visible part of the graph.</p>
+</div>
+</div>
+<div id="categorical-predictor-and-contrasts" class="section level1">
+<h1>Categorical predictor and contrasts</h1>
+<div id="relationship-between-linear-regression-and-anova" class="section level2">
+<h2>Relationship between linear regression and ANOVA</h2>
+<p>In this section, we will see how the one-way ANOVA model can be presented as a linear regression. We will use the <code>InsectSprays</code> dataset, which contains counts of insects in plots after applying different insecticide spray treatments. As we saw in the previous class, it is useful to apply a square root transformation to count data so that the variance of the response will be more similar between treatments.</p>
+<pre class="r"><code>ggplot(InsectSprays, aes(x = spray, y = sqrt(count))) +
+    geom_boxplot()</code></pre>
+<p><img src="6E-Linear_regression_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Here are the results of the ANOVA from the <code>aov</code> function, as seen in the previous class.</p>
+<pre class="r"><code>spray_aov &lt;- aov(sqrt(count) ~ spray, InsectSprays)
+summary(spray_aov)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## spray        5  88.44  17.688    44.8 &lt;2e-16 ***
+## Residuals   66  26.06   0.395                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Let’s now fit the same model with <code>lm</code>:</p>
+<pre class="r"><code>spray_lm &lt;- lm(sqrt(count) ~ spray, InsectSprays)
+summary(spray_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(count) ~ spray, data = InsectSprays)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.24486 -0.39970 -0.01902  0.42661  1.40089 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   3.7607     0.1814  20.733  &lt; 2e-16 ***
+## sprayB        0.1160     0.2565   0.452    0.653    
+## sprayC       -2.5158     0.2565  -9.807 1.64e-14 ***
+## sprayD       -1.5963     0.2565  -6.223 3.80e-08 ***
+## sprayE       -1.9512     0.2565  -7.606 1.34e-10 ***
+## sprayF        0.2579     0.2565   1.006    0.318    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6283 on 66 degrees of freedom
+## Multiple R-squared:  0.7724, Adjusted R-squared:  0.7552 
+## F-statistic:  44.8 on 5 and 66 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Note that some elements are present in both summaries. The <span class="math inline">\(F\)</span> statistic is the same, and if we take the square of the residual standard error, we retrieve the mean of the squared residuals (MSE) from the ANOVA.</p>
+<pre class="r"><code>0.6283^2</code></pre>
+<pre><code>## [1] 0.3947609</code></pre>
+<p>The results for <code>lm</code> put more emphasis on estimating the effects of each treatment (<em>Coefficients</em> section). As we briefly discussed in the previous class, the intercept shows the mean response for the first treatment (A), whereas the coefficients <code>sprayB</code> to <code>sprayF</code> show the differences between the mean of treatment A and each of the other treatments. In the following section, we will explain why the results are presented in this way.</p>
+<p>The table also shows a <span class="math inline">\(t\)</span> test to determine if each difference is significant. Note that unlike Tukey’s range test seen in the previous class, the <span class="math inline">\(p\)</span> values reported here are not adjusted for multiple comparisons. Also, rather than presenting all possible comparisons (all pairs of treatments), only comparisons of treatment A with each other treatment are shown.</p>
+<p>We can retrieve the ANOVA table for a linear model output with the <code>anova</code> function.</p>
+<pre class="r"><code>anova(spray_lm)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: sqrt(count)
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## spray      5 88.438 17.6876  44.799 &lt; 2.2e-16 ***
+## Residuals 66 26.058  0.3948                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="encoding-a-categorical-variable" class="section level2">
+<h2>Encoding a categorical variable</h2>
+<p>Consider an experiment with a control group and two treatments (<span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_2\)</span>). To represent these data in a regression model, we create two variables:</p>
+<ul>
+<li><span class="math inline">\(T_1\)</span> = 1 for the observations that received treatment 1, 0 for the others.</li>
+<li><span class="math inline">\(T_2\)</span> = 1 for the observations that received treatment 2, 0 for the others.</li>
+</ul>
+<p>We obtain the model: <span class="math inline">\(y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon\)</span></p>
+<p>By substituting the values of <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_2\)</span>, we can determine the mean of <span class="math inline">\(y\)</span> for each group as a function of the <span class="math inline">\(\beta\)</span> coefficients:</p>
+<ul>
+<li>Control group (<span class="math inline">\(T_1 = 0, T_2 = 0\)</span>): <span class="math inline">\(\mu_{ctrl} = \beta_0\)</span></li>
+<li>Treatment 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_{tr1} = \beta_0 + \beta_1\)</span></li>
+<li>Treatment 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_{tr2} = \beta_0 + \beta_2\)</span></li>
+</ul>
+<p>The intercept is the mean of the control group while the other two coefficients are the differences between the mean of each treatment and that of the control group. This type of coding of a categorical variable makes it easy to compare each treatment with a reference. This is the type of encoding used by default in R, as we have seen in the results above.</p>
+</div>
+<div id="contrastes" class="section level2">
+<h2>Contrastes</h2>
+<p>In statistics, a <em>contrast</em> is a numeric variable defined from a categorical variable (or factor) that represents a comparison between categories.</p>
+<p>For a factor with <span class="math inline">\(k\)</span> categories, we can define <span class="math inline">\(k - 1\)</span> independent contrasts. In the previous example, the contrasts <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_2\)</span> were used to compare treatment 1 to the control group and treatment 2 to the control group. Knowing these two differences, we also know the difference between treatments 1 and 2, so it would be redundant to add a third contrast.</p>
+<p>In R, the <code>contrasts</code> function shows the matrix of contrasts associated with a factor.</p>
+<pre class="r"><code>contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##   B C D E F
+## A 0 0 0 0 0
+## B 1 0 0 0 0
+## C 0 1 0 0 0
+## D 0 0 1 0 0
+## E 0 0 0 1 0
+## F 0 0 0 0 1</code></pre>
+<p>The columns of this matrix correspond to contrasts (B to F), which take a value of 1 for one treatment and 0 for the others. The treatment A is associated with a value of 0 for each contrast.</p>
+<p>In the <code>InsectSprays</code> data frame, <code>spray</code> is not of type <code>character</code>, but instead it is a <code>factor</code>. This is a data type used by R to represent a categorical variable with a limited number of possible values (called levels).</p>
+<pre class="r"><code>class(InsectSprays$spray)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code>levels(InsectSprays$spray)</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot;</code></pre>
+<p>Any character vector in R can be converted into a factor with the <code>as.factor</code> function. By default, R places the levels in alphabetical order:</p>
+<pre class="r"><code>levels(as.factor(c(&quot;banana&quot;, &quot;apple&quot;, &quot;orange&quot;)))</code></pre>
+<pre><code>## [1] &quot;apple&quot;  &quot;banana&quot; &quot;orange&quot;</code></pre>
+<p>For an existing factor, we can change the reference level (first level) with the <code>relevel</code> function, which also modifies the contrasts created from this factor.</p>
+<pre class="r"><code>InsectSprays$spray &lt;- relevel(InsectSprays$spray, ref = &quot;F&quot;)
+levels(InsectSprays$spray)</code></pre>
+<pre><code>## [1] &quot;F&quot; &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;</code></pre>
+<pre class="r"><code>contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##   A B C D E
+## F 0 0 0 0 0
+## A 1 0 0 0 0
+## B 0 1 0 0 0
+## C 0 0 1 0 0
+## D 0 0 0 1 0
+## E 0 0 0 0 1</code></pre>
+<p>By refitting the linear model with these new contrasts, we obtain coefficients that show the differences between treatment F and all others.</p>
+<pre class="r"><code>spray_lm &lt;- lm(sqrt(count) ~ spray, InsectSprays)
+summary(spray_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(count) ~ spray, data = InsectSprays)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.24486 -0.39970 -0.01902  0.42661  1.40089 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   4.0186     0.1814  22.155  &lt; 2e-16 ***
+## sprayA       -0.2579     0.2565  -1.006    0.318    
+## sprayB       -0.1420     0.2565  -0.554    0.582    
+## sprayC       -2.7738     0.2565 -10.813 2.98e-16 ***
+## sprayD       -1.8543     0.2565  -7.229 6.35e-10 ***
+## sprayE       -2.2092     0.2565  -8.612 2.13e-12 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6283 on 66 degrees of freedom
+## Multiple R-squared:  0.7724, Adjusted R-squared:  0.7552 
+## F-statistic:  44.8 on 5 and 66 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Note that the change in contrasts affects only the coefficient estimates. The <span class="math inline">\(R^2\)</span> and the <span class="math inline">\(F\)</span>-test are the same.</p>
+</div>
+<div id="changing-the-type-of-contrasts" class="section level2">
+<h2>Changing the type of contrasts</h2>
+<p>The type of contrast used by default in R compares each category to a reference category. It is often called a treatment coding (<code>contr.treatment</code> in R) because it is useful for comparing treatments to a control group. Since we do not have a reference group for the <code>spray</code> factor, we could use another type of contrast. Here are effect coding (<code>contr.sum</code>) contrasts for the same variable.</p>
+<pre class="r"><code>data(InsectSprays) # reload InsectSprays
+contrasts(InsectSprays$spray) &lt;- &quot;contr.sum&quot;
+contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##   [,1] [,2] [,3] [,4] [,5]
+## A    1    0    0    0    0
+## B    0    1    0    0    0
+## C    0    0    1    0    0
+## D    0    0    0    1    0
+## E    0    0    0    0    1
+## F   -1   -1   -1   -1   -1</code></pre>
+<p>We first reloaded the data frame with <code>data</code> to discard the edits we did previously.</p>
+<p>To facilitate the interpretation of the results, we assign a name to the contrast variables.</p>
+<pre class="r"><code>colnames(contrasts(InsectSprays$spray)) &lt;- c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;)
+contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##    A  B  C  D  E
+## A  1  0  0  0  0
+## B  0  1  0  0  0
+## C  0  0  1  0  0
+## D  0  0  0  1  0
+## E  0  0  0  0  1
+## F -1 -1 -1 -1 -1</code></pre>
+<p>In this type of encoding, each contrast takes the value of 1 for one of the categories, except for the last category which takes a value of -1 for all the contrasts. An important property of these contrasts is that the sum of each column is zero, which means that the mean of each contrast across all categories is zero.</p>
+<blockquote>
+<p>In the strict statistical sense, a contrast variable must have a sum of zero over all categories. The treatment coding used by default in R therefore does not form true contrasts.</p>
+</blockquote>
+<p>Let’s consider the regression model: <span class="math inline">\(y = \beta_0 + \beta_1 T_1 + \beta_2 T_2\)</span> with the effect coding defined above.</p>
+<ul>
+<li>Category 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_1 = \beta_0 + \beta_1\)</span></li>
+<li>Category 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_2 = \beta_0 + \beta_2\)</span></li>
+<li>Category 3 (<span class="math inline">\(T_1 = -1, T_2 = -1\)</span>): <span class="math inline">\(\mu_3 = \beta_0 - \beta_1 - \beta_2\)</span></li>
+<li>Grand mean: <span class="math inline">\(\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0\)</span></li>
+</ul>
+<p>The intercept thus corresponds to the grand mean while the coefficients are the difference between the mean of each category and the grand mean. The effect of the last category can be determined by taking the opposite of the sum of the other effects, so <span class="math inline">\(-(\beta_1 + \beta_2)\)</span> here.</p>
+<p>Here is the result of the linear regression with these new contrasts.</p>
+<pre class="r"><code>spray_lm &lt;- lm(sqrt(count) ~ spray, InsectSprays)
+summary(spray_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(count) ~ spray, data = InsectSprays)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.24486 -0.39970 -0.01902  0.42661  1.40089 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.81243    0.07405  37.980  &lt; 2e-16 ***
+## sprayA       0.94825    0.16558   5.727 2.73e-07 ***
+## sprayB       1.06420    0.16558   6.427 1.67e-08 ***
+## sprayC      -1.56758    0.16558  -9.467 6.49e-14 ***
+## sprayD      -0.64808    0.16558  -3.914 0.000218 ***
+## sprayE      -1.00297    0.16558  -6.057 7.37e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6283 on 66 degrees of freedom
+## Multiple R-squared:  0.7724, Adjusted R-squared:  0.7552 
+## F-statistic:  44.8 on 5 and 66 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><strong>Question</strong>: What is the meaning of the coefficients in this table? What is the difference between the mean response for treatment F and the overall mean?</p>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<ul>
+<li><p>The <code>lm</code> function fits a linear regression model in R.</p></li>
+<li><p>In a simple linear regression, <span class="math inline">\(y = \beta_0 + \beta_1 x + \epsilon\)</span>, <span class="math inline">\(\beta_0\)</span> (the intercept) is the mean of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span> and <span class="math inline">\(\beta_1\)</span> is the mean difference in <span class="math inline">\(y\)</span> associated with a unit difference in <span class="math inline">\(x\)</span>.</p></li>
+<li><p>The confidence interval of a regression line represents the uncertainty on the average value of <span class="math inline">\(y\)</span> for given values of the predictors. The prediction interval represents the uncertainty about the value of a future observation of <span class="math inline">\(y\)</span>, knowing the value of the predictors.</p></li>
+<li><p>The ANOVA model is an example of linear regression. Categorical variables are represented in a regression model using contrasts.</p></li>
+<li><p>We have seen two possible types of contrasts in R: the treatment coding (default option) compares the effect of each category to a reference category, while the effect coding compares the effect of each category to the mean of all categories.</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

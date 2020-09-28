@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Régression linéaire simple</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Régression linéaire simple</h1>
+<h4 class="date"><br/>5 octobre 2020</h4>
+
+</div>
+
+
+<div id="objectifs" class="section level1">
+<h1>Objectifs</h1>
+<ul>
+<li><p>Estimer et interpréter les paramètres d’une régression linéaire simple.</p></li>
+<li><p>Vérifier les suppositions d’un modèle de régression à partir des graphiques de diagnostic.</p></li>
+<li><p>Différencier l’intervalle de confiance d’une droite de régression et l’intervalle de prédiction de nouvelles observations.</p></li>
+<li><p>Utiliser des contrastes pour représenter un prédicteur catégoriel dans un modèle de régression.</p></li>
+</ul>
+</div>
+<div id="régression-vue-densemble" class="section level1">
+<h1>Régression: Vue d’ensemble</h1>
+<p>Les sept prochains cours porteront sur les modèles de régression. Ces modèles représentent la relation mathématique entre une variable <em>réponse</em> et une ou plusieurs variables nommées <em>prédicteurs</em>.</p>
+<p>L’analyse de régression est notamment utile dans les cas suivants:</p>
+<ul>
+<li><p>Analyser les résultats d’une expérience lorsqu’une ou plusieurs variables de traitement sont numériques (ex.: température, dose).</p></li>
+<li><p>Séparer l’effet de traitements discrets (variables catégorielles) de celui d’autres conditions expérimentales représentées par des variables numériques. Dans ce contexte, on parle souvent d’<strong>analyse de la covariance</strong>.</p></li>
+<li><p>Déterminer l’importance des associations entre des variables mesurées dans la nature (sans supposer de lien de causalité).</p></li>
+<li><p>Utiliser les associations entre prédicteurs et réponse afin de prédire la valeur de cette dernière pour de nouvelles observations.</p></li>
+</ul>
+<p>Le modèle mathématique demeure le même pour toutes ces situations, elles diffèrent donc dans l’interprétation et l’utilisation des résultats.</p>
+</div>
+<div id="régression-linéaire-simple" class="section level1">
+<h1>Régression linéaire simple</h1>
+<p>L’équation suivante décrit un modèle linéaire pour la relation entre un prédicteur numérique <span class="math inline">\(x\)</span> et une réponse numérique <span class="math inline">\(y\)</span>. Puisqu’il n’y a qu’un seul prédicteur, il s’agit d’une régression linéaire simple.</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1 x + \epsilon\]</span></p>
+<p><span class="math inline">\(\beta_0\)</span> et <span class="math inline">\(\beta_1\)</span> sont les <em>coefficients</em> de la régression qui seront estimés à partir des données, tandis que <span class="math inline">\(\epsilon\)</span> est le <em>résidu</em> aléatoire qui suit une distribution normale autour de zéro: <span class="math inline">\(N(0, \sigma)\)</span>.</p>
+<p>De façon équivalente, le modèle indique que pour une valeur de <span class="math inline">\(x\)</span> donnée, la réponse <span class="math inline">\(y\)</span> suit une distribution normale de moyenne <span class="math inline">\(\mu = \beta_0 + \beta_1 x\)</span> et d’écart-type <span class="math inline">\(\sigma\)</span>:</p>
+<p><span class="math display">\[y \sim N(\beta_0 + \beta_1 x, \sigma)\]</span></p>
+<p>L’<em>ordonnée à l’origine</em> <span class="math inline">\(\beta_0\)</span> est la valeur moyenne de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x = 0\)</span>, tandis que la <em>pente</em> <span class="math inline">\(\beta_1\)</span> est la différence moyenne de <span class="math inline">\(y\)</span> entre deux observations qui diffèrent d’une unité de <span class="math inline">\(x\)</span>.</p>
+<div id="méthode-des-moindres-carrés" class="section level2">
+<h2>Méthode des moindres carrés</h2>
+<p>La méthode des moindres carrés permet d’obtenir les estimés des coefficients d’une régression linéaire.</p>
+<div id="exemple" class="section level3">
+<h3>Exemple</h3>
+<p>Le tableau de données <a href="../donnees/plant_growth_rate.csv">plant_growth_rate.csv</a> (tiré du livre de Beckerman, Childs et Petchey, <em>Getting Started with R, An Introduction for Biologists</em>) contient des mesures de croissance d’une plante en fonction de l’humidité du sol.</p>
+<pre class="r"><code>pgr &lt;- read.csv(&quot;../donnees/plant_growth_rate.csv&quot;)
+str(pgr)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    50 obs. of  2 variables:
+##  $ soil.moisture.content: num  0.47 0.541 1.698 0.826 0.857 ...
+##  $ plant.growth.rate    : num  21.3 27 39 30.2 37.1 ...</code></pre>
+<p>Graphiquement, l’estimation des coefficients de la régression linéaire consiste à trouver la droite qui passe le plus “près” des points du graphique de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span>.</p>
+<pre class="r"><code>ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
+    geom_point() +
+    geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="6-Regression_lineaire_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Plus précisément, il est possible de démontrer que les meilleurs estimateurs sans biais des paramètres de la régression linéaire sont ceux qui minimisent la somme du carré des résidus.</p>
+<p>Pour une série de <span class="math inline">\(n\)</span> observations de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>, cette somme du carré des résidus correspond à:</p>
+<p><span class="math display">\[ \sum_{k = 1}^n \epsilon_k^2 = \sum_{k = 1}^n (y_k - (\beta_0 + \beta_1 x_k))^2 \]</span></p>
+<p>Les estimés <span class="math inline">\(\hat{\beta_0}\)</span> et <span class="math inline">\(\hat{\beta_1}\)</span> qui minimisent cette somme sont obtenus à partir du calcul différentiel. (Il s’agit des valeurs pour lesquelles les dérivées partielles de la somme en fonction de chaque coefficient sont égales à zéro.)</p>
+<p>L’estimateur de la pente <span class="math inline">\(\beta_1\)</span> est égal à la covariance de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> divisée par la variance de <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[\hat{\beta_1} = \frac{\sum_{k = 1}^n (x_k - \bar{x})(y_k - \bar{y})}{\sum_{k = 1}^n (x_k - \bar{x})^2}\]</span></p>
+<p>Ici, <span class="math inline">\(\bar{x}\)</span> et <span class="math inline">\(\bar{y}\)</span> représentent les moyennes de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>, respectivement, pour l’ensemble des observations.</p>
+<p>L’estimateur de l’ordonnée à l’origine <span class="math inline">\(\beta_0\)</span> est égal à:</p>
+<p><span class="math display">\[\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}\]</span></p>
+<p>Notez qu’en réarrangeant les termes de cette dernière équation:</p>
+<p><span class="math display">\[\bar{y} = \hat{\beta_0} + \hat{\beta_1} \bar{x}\]</span></p>
+<p>on constate que la droite de régression estimée passe par le point <span class="math inline">\((\bar{x}, \bar{y})\)</span>, le “centre de gravité” du nuage de points de <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>.</p>
+</div>
+</div>
+<div id="interprétations-des-résultats" class="section level2">
+<h2>Interprétations des résultats</h2>
+<p>La fonction <code>lm</code> permet d’estimer les paramètres d’une régression linéaire dans R. Comme pour <code>aov</code>, cette fonction accepte une formule du type <code>réponse ~ prédicteur</code>, ainsi qu’un argument <code>data</code> spécifiant le tableau de données. En effectuant la régression pour l’exemple ci-dessus, nous obtenons:</p>
+<pre class="r"><code>mod &lt;- lm(plant.growth.rate ~ soil.moisture.content, data = pgr)
+summary(mod)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = plant.growth.rate ~ soil.moisture.content, data = pgr)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.9089 -3.0747  0.2261  2.6567  8.9406 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)             19.348      1.283   15.08   &lt;2e-16 ***
+## soil.moisture.content   12.750      1.021   12.49   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.019 on 48 degrees of freedom
+## Multiple R-squared:  0.7648, Adjusted R-squared:  0.7599 
+## F-statistic: 156.1 on 1 and 48 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Le tableau des coefficients inclut l’ordonnée à l’origine <code>(Intercept)</code> et l’effet de chaque prédicteur. Si les suppositions du modèle sont respectées (voir section plus bas), chaque estimé <span class="math inline">\(\hat{\beta}\)</span> suit une distribution normale qui a pour moyenne la valeur du paramètre <span class="math inline">\(\beta\)</span>, avec l’erreur-type indiquée dans le tableau. Ceci permet d’effectuer un test <span class="math inline">\(t\)</span> pour l’hypothèse nulle <span class="math inline">\(\beta = 0\)</span>, avec une valeur <span class="math inline">\(p\)</span> indiquée dans la dernière colonne.</p>
+<p>Ici, l’ordonnée à l’origine indique que pour une valeur d’humidité de 0, la croissance moyenne est de 19.35 unités et qu’elle augmente de 12.75 unités pour chaque augmentation d’une unité de l’humidité.</p>
+<p>Sous le tableau, <code>Residual standard error</code> correspond à l’écart-type des résidus du modèle, calculé avec 48 degrés de liberté (50 observations - 2 paramètres estimés).</p>
+<pre class="r"><code>sqrt(sum(mod$residuals^2) / 48)</code></pre>
+<pre><code>## [1] 4.019094</code></pre>
+<p>L’avant-dernière ligne présente le coefficient de détermination <span class="math inline">\(R^2\)</span> donc nous discuterons plus en détail ci-dessous.</p>
+<p>La dernière ligne du sommaire est un test <span class="math inline">\(F\)</span> semblable à l’ANOVA. Lorsque nous n’avons qu’un seul prédicteur, ce test donne la même information que le test <span class="math inline">\(t\)</span> pour ce prédicteur: la probabilité d’obtenir un effet estimé aussi loin de 0 si l’effet réel du prédicteur est 0.</p>
+<p>Les intervalles de confiance des coefficients ne sont pas affichés dans le sommaire, mais nous pouvons les calculer avec la fonction <code>confint</code>.</p>
+<pre class="r"><code>confint(mod)</code></pre>
+<pre><code>##                          2.5 %   97.5 %
+## (Intercept)           16.76833 21.92859
+## soil.moisture.content 10.69764 14.80144</code></pre>
+</div>
+<div id="coefficient-de-détermination" class="section level2">
+<h2>Coefficient de détermination</h2>
+<p>Le coefficient de détermination <span class="math inline">\(R^2\)</span> représente la fraction de la variance expliquée par le modèle.</p>
+<p><span class="math display">\[R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}\]</span></p>
+<p>Dans le deuxième terme, <span class="math inline">\(\hat{y_k} = \hat{\beta_0} + \hat{\beta_1} x_k\)</span> est la valeur attendue (moyenne) pour <span class="math inline">\(y_k\)</span> selon le modèle. Ainsi, le numérateur est la somme des carrés des résidus, tandis que le dénominateur représente la somme des écarts carrés entre chaque observation de <span class="math inline">\(y\)</span> et la moyenne de <span class="math inline">\(y\)</span>. Le deuxième terme représente donc la fraction de la variance totale de <span class="math inline">\(y\)</span> qui n’est pas expliquée par le modèle; en le soustrayant de 1, on obtient la fraction de la variance expliquée.</p>
+<p>Les valeurs attendues <span class="math inline">\(\hat{y_k}\)</span> sont enregistrées dans l’élément <code>fitted.values</code> du résultat de <code>lm</code> (ex.: <code>mod$fitted.values</code>), tandis que les résidus sont enregistrés dans l’élément <code>residuals</code>.</p>
+<p>Nous pouvons vérifier que le <span class="math inline">\(R^2\)</span> calculé manuellement correspond au résultat rapporté ci-dessus.</p>
+<pre class="r"><code>r2 &lt;- 1 - sum(mod$residuals^2) / sum((pgr$plant.growth.rate - mean(pgr$plant.growth.rate))^2)
+r2</code></pre>
+<pre><code>## [1] 0.764796</code></pre>
+<p>Pour une régression linéaire simple, la racine carrée de <span class="math inline">\(R^2\)</span> est égale à la corrélation entre <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>.</p>
+<pre class="r"><code>cor(pgr$soil.moisture.content, pgr$plant.growth.rate) </code></pre>
+<pre><code>## [1] 0.8745262</code></pre>
+<pre class="r"><code>sqrt(r2)</code></pre>
+<pre><code>## [1] 0.8745262</code></pre>
+<p>Notez qu’il y a deux valeurs du <span class="math inline">\(R^2\)</span> dans le sommaire d’un modèle linéaire. La valeur <code>Multiple R-squared</code> correspond au coefficient de détermination <span class="math inline">\(R^2\)</span> défini plus tôt. La valeur <code>Adjusted R-squared</code> a une définition légèrement différente; elle est basée sur la ratio entre la variance des résidus et la variance totale, plutôt que le ratio des sommes des écarts carrés.</p>
+<pre class="r"><code>r2_adj &lt;- 1 - (sum(mod$residuals^2)/48) / var(pgr$plant.growth.rate)
+r2_adj</code></pre>
+<pre><code>## [1] 0.759896</code></pre>
+<p>Puisque la variance des résidus est calculée avec <span class="math inline">\(n - k\)</span> degrés de liberté, où <span class="math inline">\(k\)</span> est le nombre de paramètres estimés, le <span class="math inline">\(R^2\)</span> ajusté est inférieur au <span class="math inline">\(R^2\)</span> non-ajusté et cette différence est plus importante lorsque le modèle comprend plus de paramètres (voir la régression linéaire multiple au prochain cours).</p>
+<p>Dans le cours sur les tests d’hypothèse, il était recommandé de présenter trois types de résultats suite à un test:</p>
+<ul>
+<li>la probabilité que l’effet mesuré soit dû au hasard (valeur <span class="math inline">\(p\)</span>);</li>
+<li>l’estimé et l’intervalle de confiance de l’effet mesuré; et</li>
+<li>la magnitude de l’effet comparée à la variance des données individuelles.</li>
+</ul>
+<p>Le coefficient de détermination <span class="math inline">\(R^2\)</span> répond à la troisième question: Quelle partie de la variation observée est due à l’effet des traitements ou prédicteurs mesurés?</p>
+<p>Finalement, un rappel: quand on parle de l’<em>effet</em> d’un prédicteur ou de la fraction de la variance <em>expliquée</em>, cela ne signifie pas toujours qu’il existe une relation de cause à effet entre le prédicteur et la réponse. Notre capacité à interpréter une association statistique (ou une corrélation) comme représentant un lien de cause à effet ne dépend pas de la magnitude de l’effet, mais plutôt des contrôles établis lors du plan expérimental: variation indépendante des facteurs, utilisation d’un groupe témoin, assignation aléatoire des traitements, etc.</p>
+</div>
+</div>
+<div id="intervalle-de-confiance-et-intervalle-de-prédiction" class="section level1">
+<h1>Intervalle de confiance et intervalle de prédiction</h1>
+<p>Pour afficher la droite de régression entre <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> avec son intervalle de confiance, nous pouvons utiliser la fonction <code>geom_smooth</code> du package <em>ggplot2</em>, avec la méthode <code>lm</code> (modèle linéaire).</p>
+<pre class="r"><code>ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
+    geom_point() + 
+    geom_smooth(method = &quot;lm&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="6-Regression_lineaire_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>À chaque valeur de <span class="math inline">\(x\)</span>, la surface grise donne un intervalle de confiance pour la valeur moyenne de <span class="math inline">\(y\)</span> selon le modèle linéaire. Par défaut, il s’agit d’un intervalle à 95%, mais ce seuil peut être modifié avec l’argument <code>level</code> de <code>geom_smooth</code>.</p>
+<p>Notez que l’intervalle de confiance devient plus large aux extrémités du graphique. Rappelez-vous que la droite de régression doit passer par le point <span class="math inline">\((\bar{x}, \bar{y})\)</span>, donc l’incertitude sur la pente fait “pivoter” la droite légèrement autour de ce point, ce qui génère une incertitude plus grande aux extrémités.</p>
+<p>Supposons qu’en plus d’estimer la tendance moyenne entre <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span>, nous voulons prédire la valeur de <span class="math inline">\(y\)</span> pour de nouvelles observations, en ne connaissant que la valeur de <span class="math inline">\(x\)</span>. Dans le code ci-dessous, nous créons un nouveau tableau de données <code>pgr_nouv</code> avec 101 valeurs de l’humidité du sol, puis nous appelons la fonction <code>predict</code> pour obtenir les prédiction de croissance selon le modèle <code>mod</code>, avec un intervalle de prédiction. Nous rattachons ensuite ces colonnes à <code>pgr_nouv</code> avec <code>cbind</code>.</p>
+<pre class="r"><code>pgr_nouv &lt;- data.frame(soil.moisture.content = seq(0, 2, 0.02))
+pgr_pred &lt;- predict(mod, pgr_nouv, interval = &quot;prediction&quot;)
+pgr_nouv &lt;- cbind(pgr_nouv, pgr_pred)
+str(pgr_nouv)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    101 obs. of  4 variables:
+##  $ soil.moisture.content: num  0 0.02 0.04 0.06 0.08 0.1 0.12 0.14 0.16 0.18 ...
+##  $ fit                  : num  19.3 19.6 19.9 20.1 20.4 ...
+##  $ lwr                  : num  10.9 11.1 11.4 11.7 11.9 ...
+##  $ upr                  : num  27.8 28.1 28.3 28.6 28.8 ...</code></pre>
+<p>La colonne <code>fit</code> contient les valeurs prédites (qui correspondent aux points sur la droite de régression) tandis que <code>lwr</code> et <code>upr</code> sont les limites inférieure et supérieure de l’intervalle de prédiction à 95%.</p>
+<p>Superposons maintenant la droite de régression, l’intervalle de prédiction (avec <code>geom_ribbon</code>) et le nuage de points:</p>
+<pre class="r"><code>ggplot(pgr_nouv, aes(x = soil.moisture.content)) +
+    labs(x = &quot;Humidité du sol&quot;, y = &quot;Croissance&quot;) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3) +
+    geom_line(aes(y = fit), color = &quot;blue&quot;) +
+    geom_point(data = pgr, aes(y = plant.growth.rate))</code></pre>
+<p><img src="6-Regression_lineaire_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Contrairement à l’intervalle de confiance qui représente l’incertitude sur la valeur moyenne de la réponse pour une certaine valeur du prédicteur, l’intervalle de prédiction représente l’incertitude sur la valeur de la réponse pour une observation individuelle. Ainsi, on s’attend à ce qu’environ 95% des points se retrouvent dans l’intervalle de prédiction, ce qui est le cas ici (48/50).</p>
+<p><strong>Note</strong>: Il n’est pas prudent d’utiliser le résultat d’une régression pour prédire la réponse pour des valeurs des prédicteurs hors de la plage des valeurs avec lesquelles le modèle a été estimé (dans l’exemple, pour des valeurs d’humidité &gt; 2). Ces extrapolations sont moins fiables que les prédictions à l’intérieur de la plage des valeurs observées (interpolation). En particulier, une relation approximativement linéaire sur une échelle restreinte de valeurs de <span class="math inline">\(x\)</span> peut devenir fortement non-linéaire lorsqu’on change d’échelle. Pour cette même raison, si les valeurs observées de <span class="math inline">\(x\)</span> sont loin de 0, il est préférable de ne pas essayer d’interpréter l’ordonnée à l’origine.</p>
+</div>
+<div id="suppositions-du-modèle-de-régression-linéaire" class="section level1">
+<h1>Suppositions du modèle de régression linéaire</h1>
+<p>Comme pour l’ANOVA, le modèle de régression linéaire suppose que les résidus sont:</p>
+<ul>
+<li>indépendants et</li>
+<li>normalement distribués</li>
+<li>avec la même variance.</li>
+</ul>
+<p>En plus:</p>
+<ul>
+<li>la relation entre la réponse moyenne et les prédicteurs est linéaire, et</li>
+<li>les prédicteurs sont mesurés sans erreur (ou cette erreur est négligeable par rapport aux autres erreurs du modèles).</li>
+</ul>
+<div id="linéarité" class="section level2">
+<h2>Linéarité</h2>
+<p>Le critère de linéarité est moins contraignant qu’il n’y parait à prime abord. Les transformations de variables permettent de convertir une relation non-linéaire en relation linéaire. Par exemple, si <span class="math inline">\(y\)</span> est la fonction d’une puissance à déterminer de <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[ y = a x^b \]</span></p>
+<p>alors en prenant le logarithme de chaque côté de l’équation, on obtient une relation linéaire:</p>
+<p><span class="math display">\[ \log(y) = \log(a) + b \log(x) \]</span></p>
+<p>En général, l’équation reliant <span class="math inline">\(x\)</span> et <span class="math inline">\(y\)</span> peut contenir des fonctions non-linéaires de <span class="math inline">\(x\)</span>, en autant qu’elle soit une fonction linéaire des <em>coefficients</em>. Par exemple, l’équation quadratrique:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x + \beta_2 x^2 \]</span></p>
+<p>constitue un exemple de modèle linéaire; il s’agit d’une régression linéaire multiple, puisqu’on a deux prédicteurs, <span class="math inline">\(x\)</span> et <span class="math inline">\(x^2\)</span>.</p>
+</div>
+<div id="indépendance-des-résidus" class="section level2">
+<h2>Indépendance des résidus</h2>
+<p>L’indépendance des résidus signifie que la portion des observations <span class="math inline">\(y\)</span> non-expliquée par les prédicteurs <span class="math inline">\(x\)</span> est indépendante d’une observation à l’autre.</p>
+<p>En écologie, la non-indépendance des résidus est souvent due à une proximité de certaines observations dans l’espace et dans le temps. Par exemple, si les observations s’étalent sur plusieurs journées, les observations plus rapprochées dans le temps pourraient être plus semblables. On peut inclure dans le modèle les facteurs pouvant causer cette dépendance temporelle (ex.: météo) pour obtenir les résidus les plus indépendants possibles.</p>
+<p>La non-indépendance des résidus ne biaise pas les estimés des coefficients du modèle, donc ceux-ci demeurent valides, mais leur incertitude sera sous-estimée. (On pourrait dire qu’un échantillon de mesures non-indépendantes est équivalent à un échantillon indépendant de plus petite taille.) Ainsi, les intervalles de confiance et les tests d’hypothèse sur la significativité des coefficients ne seront pas valides.</p>
+</div>
+<div id="normalité" class="section level2">
+<h2>Normalité</h2>
+<p>Comme pour le test <span class="math inline">\(t\)</span> et l’ANOVA, les coefficients estimés par la régression linéaire et leurs intervalles de confiance ne sont pas trop affectés par la non-normalité des résidus individuels; en raison du théorème de la limite centrale, la distribution de ces estimés s’approche plus de la normale que celle des résidus individuels.</p>
+<p>La non-normalité des résidus affecte davantage la précision des <em>prédictions</em> du modèle. En particulier, si les résidus comportent plus de valeurs extrêmes qu’une distribution normale, la largeur des intervalles de prédiction sera sous-estimée.</p>
+</div>
+<div id="graphiques-de-diagnostic" class="section level2">
+<h2>Graphiques de diagnostic</h2>
+<p>Voici les quatre graphiques de diagnostic obtenus avec la fonction <code>plot</code> appliquée au résultat de <code>lm</code>.</p>
+<p><img src="6-Regression_lineaire_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Les deux premiers graphiques correspondent à ceux déjà vus avec l’ANOVA. Pour le graphique des résidus vs. valeurs attendues (<em>residuals vs. fitted</em>), il faut faire particulièrement attention aux points suivants:</p>
+<ul>
+<li><p>Les résidus doivent être dispersés aléatoirement autour de zéro. La présence d’une tendance (linéaire ou non) indique des effets systématiques ignorés par le modèle. Dans ce cas-ci, il est possible que nous ayons une légère tendance non-linéaire (quadratique) dans les résidus.</p></li>
+<li><p>La variance des résidus doit être approximativement constante (homoscédasticité). Un type courant d’hétéroscédasticité survient lorsque la variance augmente avec la moyenne. Dans ce cas, le graphique des résidus vs. valeurs attendues a une forme d’entonnoir (la dispersion des points augmente le long de l’axe des <span class="math inline">\(x\)</span>).</p></li>
+</ul>
+<p>Le diagramme quantile-quantile permet de détecter des déviations systématiques de la normalité des résidus.</p>
+<p>Le troisième graphique montre l’échelle des résidus (en valeur absolue) en fonction des valeurs attendues de <span class="math inline">\(y\)</span>. Ce graphique devrait aussi montrer une tendance si la variance n’est pas constante.</p>
+</div>
+<div id="effet-de-levier" class="section level2">
+<h2>Effet de levier</h2>
+<p>Le dernier graphique montre l’<strong>effet de levier</strong> (<em>leverage</em>) des observations relativement à la valeur des résidus. Une observation avec un fort effet de levier a une plus grande influence sur les coefficients de la régression; cela se produit le plus souvent dans le cas d’observations isolées et loin de la moyenne des prédicteurs. Une observation éloignée de la moyenne (résidu positif ou négatif important) qui a aussi un fort effet de levier risque d’éloigner la droite de régression de la tendance générale indiquée par les autres données.</p>
+<p>La distance de Cook (<em>Cook’s distance</em>) <span class="math inline">\(D\)</span> est une mesure combinant l’effet de levier et la magnitude du résidu. Les droites pointillées sur le quatrième graphique permettent d’identifier les points problématiques qui dépassent une certaine valeur de <span class="math inline">\(D\)</span>, généralement <span class="math inline">\(D &gt; 1\)</span>. Dans notre exemple précédent, aucun point n’a une grande influence, donc ces lignes pointillées se retrouvent en dehors de la partie visible du graphique.</p>
+</div>
+</div>
+<div id="prédicteur-catégoriel-et-contrastes" class="section level1">
+<h1>Prédicteur catégoriel et contrastes</h1>
+<div id="lien-entre-anova-et-régression-linéaire" class="section level2">
+<h2>Lien entre ANOVA et régression linéaire</h2>
+<p>Dans cette section, nous verrons comment le modèle d’ANOVA à un facteur peut être présenté comme une régression linéaire. Nous utiliserons le jeu de données <code>InsectSprays</code> qui contient des mesures de comptages d’insectes (<code>count</code>) à la suite de l’application de différents insecticides (<code>spray</code>). Comme nous avons vu au dernier cours, il est utile d’appliquer une transformation racine carrée (<code>sqrt</code>) aux données de comptages pour que la variance de la réponse soit plus semblable entre les traitements.</p>
+<pre class="r"><code>ggplot(InsectSprays, aes(x = spray, y = sqrt(count))) +
+    geom_boxplot()</code></pre>
+<p><img src="6-Regression_lineaire_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Voici les résultats de l’ANOVA réalisée avec la fonction <code>aov</code>, tel que vu au dernier cours.</p>
+<pre class="r"><code>spray_aov &lt;- aov(sqrt(count) ~ spray, InsectSprays)
+summary(spray_aov)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## spray        5  88.44  17.688    44.8 &lt;2e-16 ***
+## Residuals   66  26.06   0.395                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Ajustons maintenant le même modèle avec la fonction <code>lm</code>.</p>
+<pre class="r"><code>spray_lm &lt;- lm(sqrt(count) ~ spray, InsectSprays)
+summary(spray_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(count) ~ spray, data = InsectSprays)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.24486 -0.39970 -0.01902  0.42661  1.40089 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   3.7607     0.1814  20.733  &lt; 2e-16 ***
+## sprayB        0.1160     0.2565   0.452    0.653    
+## sprayC       -2.5158     0.2565  -9.807 1.64e-14 ***
+## sprayD       -1.5963     0.2565  -6.223 3.80e-08 ***
+## sprayE       -1.9512     0.2565  -7.606 1.34e-10 ***
+## sprayF        0.2579     0.2565   1.006    0.318    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6283 on 66 degrees of freedom
+## Multiple R-squared:  0.7724, Adjusted R-squared:  0.7552 
+## F-statistic:  44.8 on 5 and 66 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Remarquez d’abord que certains éléments se retrouvent dans les deux sommaires. La statistique <span class="math inline">\(F\)</span> rapportée est la même et en prenant le carré de l’écart-type des résidus (<em>Residual standard error</em>), nous retrouvons la moyenne des carrés des résidus (MSE) de l’ANOVA.</p>
+<pre class="r"><code>0.6283^2</code></pre>
+<pre><code>## [1] 0.3947609</code></pre>
+<p>Le tableau de résultats pour <code>lm</code> met davantage l’accent sur l’estimation des effets de chaque traitement (dans la section <em>Coefficients</em>). Comme nous avons discuté brièvement au cours précédent, <code>(Intercept)</code> désigne ici la réponse moyenne pour le premier traitement (A), tandis que les coefficients suivants <code>sprayB</code> à <code>sprayF</code> indiquent les différences entre la réponse moyenne de chaque autre traitement et celle du traitement A. Dans la section suivante, nous expliquerons davantage pourquoi les résultats sont présentés ainsi.</p>
+<p>Le tableau présente aussi un test <span class="math inline">\(t\)</span> pour évaluer la significativité de chaque différence. Notez que contrairement au test des étendues de Tukey vu au dernier cours, les valeurs <span class="math inline">\(p\)</span> rapportées ne sont pas corrigées pour tenir compte des comparaisons multiples. Aussi, il ne s’agit pas de toutes les comparaisons possibles (toutes les paires de traitement), mais seulement les comparaisons entre le traitement A et chacun des autres traitement.</p>
+<p>Nous pouvons retrouver le tableau d’ANOVA correspondant à un modèle linéaire avec la fonction <code>anova</code>.</p>
+<pre class="r"><code>anova(spray_lm)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: sqrt(count)
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## spray      5 88.438 17.6876  44.799 &lt; 2.2e-16 ***
+## Residuals 66 26.058  0.3948                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="codage-dune-variable-catégorielle" class="section level2">
+<h2>Codage d’une variable catégorielle</h2>
+<p>Imaginons une expérience avec un groupe témoin et deux traitements (<span class="math inline">\(T_1\)</span> et <span class="math inline">\(T_2\)</span>). Pour représenter ces données dans un modèle de régression, nous créons deux variables:</p>
+<ul>
+<li><span class="math inline">\(T_1\)</span> = 1 pour les observations qui ont reçu le traitement 1, 0 pour les autres.</li>
+<li><span class="math inline">\(T_2\)</span> = 1 pour les observations qui ont reçu le traitement 2, 0 pour les autres.</li>
+</ul>
+<p>Nous obtenons donc le modèle: <span class="math inline">\(y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon\)</span></p>
+<p>En remplaçant les valeurs de <span class="math inline">\(T_1\)</span> et <span class="math inline">\(T_2\)</span>, nous pouvons déterminer la moyenne de <span class="math inline">\(y\)</span> pour chacun des groupes selon les coefficients <span class="math inline">\(\beta\)</span>:</p>
+<ul>
+<li>Groupe témoin (<span class="math inline">\(T_1 = 0, T_2 = 0\)</span>): <span class="math inline">\(\mu_{tem} = \beta_0\)</span></li>
+<li>Traitement 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_{tr1} = \beta_0 + \beta_1\)</span></li>
+<li>Traitement 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_{tr2} = \beta_0 + \beta_2\)</span></li>
+</ul>
+<p>L’ordonnée à l’origine correspond à la moyenne du groupe témoin tandis que les deux autres coefficients représentent la différence entre la moyenne de chaque traitement et celle du groupe témoin. Ce type de codage d’une variable catégorielle permet de comparer facilement chaque traitement à un traitement de référence. C’est le type de codage utilisé par défaut dans R, comme nous avons vu dans les résultats de la section précédente.</p>
+</div>
+<div id="contrastes" class="section level2">
+<h2>Contrastes</h2>
+<p>En statistiques, un <em>contraste</em> est une variable numérique définie à partir d’un variable catégorielle (ou facteur) qui représente une comparaison entre catégories.</p>
+<p>Pour un facteur avec <span class="math inline">\(k\)</span> catégories, on peut définir <span class="math inline">\(k - 1\)</span> contrastes indépendants. Dans l’exemple précédent, les contrastes <span class="math inline">\(T_1\)</span> et <span class="math inline">\(T_2\)</span> servaient à comparer le traitement 1 au groupe témoin et le traitement 2 au groupe témoin. En connaissant ces deux différences, on connait aussi la différence entre les traitements 1 et 2, donc il serait redondant d’ajouter un troisième contraste.</p>
+<p>Dans R, la fonction <code>contrasts</code> affiche la matrice des contrastes associés à un facteur.</p>
+<pre class="r"><code>contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##   B C D E F
+## A 0 0 0 0 0
+## B 1 0 0 0 0
+## C 0 1 0 0 0
+## D 0 0 1 0 0
+## E 0 0 0 1 0
+## F 0 0 0 0 1</code></pre>
+<p>Les colonnes de cette matrice correspondent aux contrastes (B à F) qui prennent une valeur de 1 pour un des traitements et 0 pour les autres. Le traitement A est associé à un valeur 0 pour chacun des contrastes.</p>
+<p>Dans le tableau de données <code>InsectSprays</code>, la variable <code>spray</code> n’est pas de type <code>character</code>, mais plutôt <code>factor</code>. Ce type de données permet en R de représenter une variable catégorielle avec un nombre restreint de valeurs (niveaux) possibles, obtenus avec <code>levels</code>.</p>
+<pre class="r"><code>class(InsectSprays$spray)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code>levels(InsectSprays$spray)</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot;</code></pre>
+<p>Tout vecteur de texte en R peut être converti en facteur avec la fonction <code>as.factor</code>. Par défaut, R place les niveaux en ordre alphabétique:</p>
+<pre class="r"><code>levels(as.factor(c(&quot;pomme&quot;, &quot;orange&quot;, &quot;banane&quot;)))</code></pre>
+<pre><code>## [1] &quot;banane&quot; &quot;orange&quot; &quot;pomme&quot;</code></pre>
+<p>Pour un facteur existant, nous pouvons changer le niveau de référence (premier niveau) avec la fonction <code>relevel</code>, ce qui modifie aussi les contrastes créés à partir de ce facteur.</p>
+<pre class="r"><code>InsectSprays$spray &lt;- relevel(InsectSprays$spray, ref = &quot;F&quot;)
+levels(InsectSprays$spray)</code></pre>
+<pre><code>## [1] &quot;F&quot; &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;</code></pre>
+<pre class="r"><code>contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##   A B C D E
+## F 0 0 0 0 0
+## A 1 0 0 0 0
+## B 0 1 0 0 0
+## C 0 0 1 0 0
+## D 0 0 0 1 0
+## E 0 0 0 0 1</code></pre>
+<p>En ré-estimant le modèle linéaire avec ces nouveaux contrastes, on obtient des coefficients indiquant la différence entre le traitement F et chacun des autres.</p>
+<pre class="r"><code>spray_lm &lt;- lm(sqrt(count) ~ spray, InsectSprays)
+summary(spray_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(count) ~ spray, data = InsectSprays)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.24486 -0.39970 -0.01902  0.42661  1.40089 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   4.0186     0.1814  22.155  &lt; 2e-16 ***
+## sprayA       -0.2579     0.2565  -1.006    0.318    
+## sprayB       -0.1420     0.2565  -0.554    0.582    
+## sprayC       -2.7738     0.2565 -10.813 2.98e-16 ***
+## sprayD       -1.8543     0.2565  -7.229 6.35e-10 ***
+## sprayE       -2.2092     0.2565  -8.612 2.13e-12 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6283 on 66 degrees of freedom
+## Multiple R-squared:  0.7724, Adjusted R-squared:  0.7552 
+## F-statistic:  44.8 on 5 and 66 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Notez que le changement de contrastes n’affecte que l’estimation des coefficients. La valeur du <span class="math inline">\(R^2\)</span> et du test <span class="math inline">\(F\)</span> sont les mêmes.</p>
+</div>
+<div id="modifier-le-type-de-contrastes" class="section level2">
+<h2>Modifier le type de contrastes</h2>
+<p>Le type de contrastes utilisé par défaut dans R compare chaque catégorie à une catégorie de référence. On dit qu’il s’agit d’un codage de traitement (<code>contr.treatment</code> dans R) car il est utile pour comparer des traitements à un groupe témoin. Puisque nous n’avons pas de groupe de référence pour le facteur <code>spray</code>, nous pourrions utiliser un autre type de contraste. Voici des contrastes de type <code>contr.sum</code> (codage d’effet) pour la même variable.</p>
+<pre class="r"><code>data(InsectSprays) # recharger le jeu de données InsectSprays
+contrasts(InsectSprays$spray) &lt;- &quot;contr.sum&quot;
+contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##   [,1] [,2] [,3] [,4] [,5]
+## A    1    0    0    0    0
+## B    0    1    0    0    0
+## C    0    0    1    0    0
+## D    0    0    0    1    0
+## E    0    0    0    0    1
+## F   -1   -1   -1   -1   -1</code></pre>
+<p>Nous avons au préalable rechargé le jeu de données avec <code>data</code> afin d’annuler les modifications faites précédemment.</p>
+<p>Pour plus facilement interpréter les résultats, nous pouvons assigner un nom aux variables de contraste.</p>
+<pre class="r"><code>colnames(contrasts(InsectSprays$spray)) &lt;- c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;)
+contrasts(InsectSprays$spray)</code></pre>
+<pre><code>##    A  B  C  D  E
+## A  1  0  0  0  0
+## B  0  1  0  0  0
+## C  0  0  1  0  0
+## D  0  0  0  1  0
+## E  0  0  0  0  1
+## F -1 -1 -1 -1 -1</code></pre>
+<p>Dans ce type de codage, chaque contraste prend la valeur de 1 pour une des catégories, sauf la dernière catégorie qui prend une valeur de -1 pour tous les contrastes. Une propriété importante de ces contrastes est que la somme de chaque colonne est zéro, ce qui signifie que la moyenne de chaque contraste sur l’ensemble des catégories est zéro.</p>
+<blockquote>
+<p>Au sens strict utilisé en statistiques, une variable de contraste doit avoir une somme de zéro sur l’ensemble des catégories. Le codage de traitement utilisé par défaut dans R ne forme donc pas des vrais contrastes.</p>
+</blockquote>
+<p>Reprenons le modèle de régression: <span class="math inline">\(y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon\)</span> avec le codage d’effet défini ci-dessus.</p>
+<ul>
+<li>Catégorie 1 (<span class="math inline">\(T_1 = 1, T_2 = 0\)</span>): <span class="math inline">\(\mu_1 = \beta_0 + \beta_1\)</span></li>
+<li>Catégorie 2 (<span class="math inline">\(T_1 = 0, T_2 = 1\)</span>): <span class="math inline">\(\mu_2 = \beta_0 + \beta_2\)</span></li>
+<li>Catégorie 3 (<span class="math inline">\(T_1 = -1, T_2 = -1\)</span>): <span class="math inline">\(\mu_3 = \beta_0 - \beta_1 - \beta_2\)</span></li>
+<li>Moyenne générale: <span class="math inline">\(\mu = (\mu_1 + \mu_2 + \mu_3)/3 = \beta_0\)</span></li>
+</ul>
+<p>L’ordonnée à l’origine correspond donc à la moyenne générale tandis que les coefficients correspondent à la différence entre la moyenne de chaque catégorie et la moyenne générale. L’effet de la dernière catégorie peut être déterminé en prenant l’opposé de la somme des autres effets, donc <span class="math inline">\(-(\beta_1 + \beta_2)\)</span> ici.</p>
+<p>Voici le résultat de la régression linéaire avec ces nouveaux contrastes.</p>
+<pre class="r"><code>spray_lm &lt;- lm(sqrt(count) ~ spray, InsectSprays)
+summary(spray_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sqrt(count) ~ spray, data = InsectSprays)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.24486 -0.39970 -0.01902  0.42661  1.40089 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.81243    0.07405  37.980  &lt; 2e-16 ***
+## sprayA       0.94825    0.16558   5.727 2.73e-07 ***
+## sprayB       1.06420    0.16558   6.427 1.67e-08 ***
+## sprayC      -1.56758    0.16558  -9.467 6.49e-14 ***
+## sprayD      -0.64808    0.16558  -3.914 0.000218 ***
+## sprayE      -1.00297    0.16558  -6.057 7.37e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6283 on 66 degrees of freedom
+## Multiple R-squared:  0.7724, Adjusted R-squared:  0.7552 
+## F-statistic:  44.8 on 5 and 66 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><strong>Question</strong>: Que signifient les coefficients dans ce tableau? Quel est la différence entre la réponse moyenne du traitement F et la moyenne générale?</p>
+</div>
+</div>
+<div id="résumé" class="section level1">
+<h1>Résumé</h1>
+<ul>
+<li><p>La fonction <code>lm</code> effectue l’ajustement d’un modèle de régression linéaire dans R.</p></li>
+<li><p>Dans une régression linéaire simple, <span class="math inline">\(y = \beta_0 + \beta_1 x + \epsilon\)</span>, <span class="math inline">\(\beta_0\)</span> est la moyenne de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x = 0\)</span> (ordonnée à l’origine) et <span class="math inline">\(\beta_1\)</span> est la différence moyenne en <span class="math inline">\(y\)</span> associée à une différence unitaire de <span class="math inline">\(x\)</span>.</p></li>
+<li><p>L’intervalle de confiance d’une droite de régression représente l’incertitude sur la valeur moyenne de <span class="math inline">\(y\)</span> pour un <span class="math inline">\(x\)</span> donné. L’intervalle de prédiction représente l’incertitude sur la valeur d’une observation future de <span class="math inline">\(y\)</span> pour un <span class="math inline">\(x\)</span> donné.</p></li>
+<li><p>Le modèle d’ANOVA est un exemple de régression linéaire. Les variables catégorielles sont représentées dans un modèle de régression au moyen de contrastes.</p></li>
+<li><p>Nous avons vu deux des types de contrastes possibles dans R: le codage de traitement (option par défaut) compare l’effet de chaque catégorie à une catégorie de référence, tandis que le codage d’effet compare l’effet de chaque catégorie à la moyenne de toutes les catégories.</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

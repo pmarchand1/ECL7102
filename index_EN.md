@@ -10,6 +10,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 3. [Statistical models and confidence intervals](notes_cours/3E-Statistical_models.html) ([PDF](notes_cours/3E-Statistical_models.pdf))
 4. [Hypothesis testing](notes_cours/4E-Hypothesis_testing.html) ([PDF](notes_cours/4E-Hypothesis_testing.pdf))
 5. [Chi-squared test and ANOVA](notes_cours/5E-Chi2_ANOVA.html) ([PDF](notes_cours/5E-Chi2_ANOVA.pdf))
+6. [Simple linear regression](notes_cours/6E-Linear_regression.html) ([PDF](notes_cours/6E-Linear_regression.pdf)) - [Data](donnees/plant_growth_rate.csv)
 
 
 ## Labs
