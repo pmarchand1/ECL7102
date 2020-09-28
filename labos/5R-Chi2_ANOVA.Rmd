@@ -1,0 +1,160 @@
+---
+title: "Tableaux de contingence et ANOVA"
+date: "30 septembre 2020"
+output:
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+
+## 1. Sélection florale d'une espèce de bourdon
+
+En suivant l'activité de butinage de bourdons fébriles (*Bombus impatiens*) sur un site, vous notez le nombre de visites des bourdons sur quatre genres de plantes, ainsi que la proportion des fleurs de chaque genre sur le site.
+
+| Genre | Nombre de visites | Proportions des fleurs du site |
+|---------+---+------|
+| *Rubus* | 8 | 0.12 |
+| *Solidago* | 8 | 0.24 |
+| *Trifolium* | 18 | 0.33 |
+| *Vaccinium* | 11 | 0.31 |
+
+L'hypothèse nulle pour cette étude est que *B. impatiens* visite chaque genre proportionnellement à sa prévalence sur le site.
+
+a) Selon l'hypothèse nulle, quelles sont les fréquences attendues pour les visites à chaque genre de plante?
+
+**Solution**
+
+```{r}
+# Les fréquences attendues sont les proportions multipliées par le nombre total de visites
+f_obs <- c(8, 8, 18, 11)
+prop <- c(0.12, 0.24, 0.33, 0.31)
+f_att <- prop * sum(f_obs)
+f_att
+```
+
+b) Testez l'hypothèse nulle avec la fonction `chisq.test` dans R, avec un seuil de signification de 5%. Si l'hypothèse nulle est rejetée, quel(s) genre(s) sont plus ou moins visités que prévus? 
+
+**Solution**
+
+```{r}
+chisq.test(f_obs, p = prop)
+```
+
+L'hypothèse nulle n'est pas rejetée.
+
+
+## 2. Butinage de trois espèces de bourdon
+
+Sur le même site que l'exercice précédent, vous observez l'activité de butinage de deux autres espèces de bourdons (*B. affinis* et *B. ternarius*). Voici le tableau de contingence montrant le nombre de visites par espèce de bourdon et par genre de plante.
+
+| | *Rubus* | *Solidago* | *Trifolium* | *Vaccinium* |
+|-+---------+------------+-------------+-------------|
+| *B. affinis* | 10 | 9 | 15 | 8 |
+| *B. impatiens* | 8 | 8 | 18 | 11 |
+| *B. ternarius* | 20 | 4 | 6 | 5 |
+
+a) Quelle hypothèse nulle pouvez-vous tester à partir de ce tableau? Quelle est l'hypothèse alternative?
+
+**Solution**
+
+L'hypothèse nulle est que la distribution des visites entre genres de plantes ne varie pas selon l'espèce de bourdon. L'hypothèse alternative est que certains bourdons sont plus associés à certaines plantes.
+
+b) Créez une matrice représentant ce tableau dans R, puis testez l'hypothèse nulle mentionnée en (a) avec la fonction `chisq.test`, avec un seuil de signification de 5%.
+
+**Solution**
+
+```{r}
+# Tableau de contingence
+tab <- rbind(
+    c(10, 9, 15, 8),
+    c(8, 8, 18, 11),
+    c(20, 4, 6, 5)
+)
+rownames(tab) <- c("affinis", "impatiens", "ternarius")
+colnames(tab) <- c("Rubus", "Solidago", "Trifolium", "Vaccinium")
+tab
+```
+
+```{r}
+khi2 <- chisq.test(tab)
+khi2
+```
+
+L'hypothèse nulle est rejetée.
+
+c) D'après les résultats du test en (b), quel est le nombre de degrés de liberté du $\chi^2$? Comment cette valeur est-elle calculée?
+
+**Solution**
+
+6 degrés de liberté: (# de rangées - 1) x (# de colonnes - 1)
+
+d) Comment pouvez-vous consulter les fréquences attendues selon l'hypothèse nulle, ainsi que les résidus?
+
+**Solution**
+
+```{r}
+khi2$expected
+khi2$residuals
+```
+
+e) Si l'hypothèse nulle est rejetée, quelle paire bourdon-plante a le résidu le plus positif, et laquelle a le résidu le plus négatif? Comment interprétez-vous ces résidus?
+
+**Solution**
+
+Le résidu le plus positif est pour la paire *ternarius*-*Rubus*, le résidu le plus négatif est pour la paire *impatiens*-*Rubus*. Donc, il semble que *B. ternarius* a une préférence pour *Rubus* tandis que *B. impatiens* évite cette plante.
+
+
+## 3. Caractéristiques de choux plantés à différentes dates
+
+Le jeu de données `cabbages` inclus dans le package `MASS` présente le poids en kg (*HeadWt*) et le nombre d'unités de vitamine C (*VitC*) de choux selon la variété (cultivar *Cult*) et la date de plantage. Il y a 10 réplicats pour chacune des six combinaisons de variété et de date.
+
+```{r}
+library(MASS)
+str(cabbages)
+```
+
+a) Choisissez le sous-ensemble des données correspondant à la variété c52. Pour chacune des deux variables numériques (*HeadWt* et *VitC*), produisez un graphique de boîtes à moustaches montrant la distribution de cette variable selon la date de plantage. Avant même de réaliser l'ANOVA, croyez-vous que les suppositions du modèle (en particulier l'égalité des variances) seront respectées dans chaque cas?
+
+**Solution**
+
+```{r fig.dim = c(6, 4), warning = FALSE, message= FALSE}
+library(dplyr)
+library(ggplot2)
+c52 <- filter(cabbages, Cult == "c52")
+ggplot(c52, aes(x = Date, y = HeadWt)) +
+    geom_boxplot()
+ggplot(c52, aes(x = Date, y = VitC)) +
+    geom_boxplot()
+```
+
+En comparant l'étendue des boîtes à moustache, la variance de *HeadWt* est très différente selon la date; pour *VitC*, la variance est plus uniforme d'un cas à l'autre.
+
+b) Choisissez l'une des deux variables (*HeadWt* ou *VitC*) qui correspond le mieux au modèle d'ANOVA d'après votre résultat en (a). Réalisez une ANOVA à un facteur et déterminez si la moyenne de cette variable varie significativement ($\alpha = 0.05$) selon la date de plantage.
+
+**Solution**
+
+```{r}
+an_vitc <- aov(VitC ~ Date, data = c52)
+summary(an_vitc)
+```
+
+L'effet de la date est significatif.
+
+c) Selon un test des étendues de Tukey, entre quelles dates retrouve-t-on une différence significative ($\alpha = 0.05$)? Quel est l'estimé de chacune des différences significatives?
+
+**Solution**
+
+```{r}
+TukeyHSD(an_vitc)
+```
+
+Il y a une différence significative entre d21 et d16 (9.3 unités de plus pour d21) et entre d21 et d20 (12.9 unités de plus pour d21).

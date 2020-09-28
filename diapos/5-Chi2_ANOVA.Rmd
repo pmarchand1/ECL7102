@@ -1,35 +1,33 @@
 ---
 title: "Tableaux de contingence et ANOVA"
-date: "<br/>23 septembre 2019"
+date: "28 septembre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(7, 5))
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
 
 ```{css echo  = FALSE}
-.small .remark-code { font-size: 50% }
-
 th, td { padding: 5px; }
 ```
-
-# Plan général
-
-|                      | Réponse catégorielle    | Réponse numérique |
-|----------------------|:-------------------------:|:-------------------:|
-|Prédicteur catégoriel |  Test du $\chi^2$     | Test $t$ (2 catégories) ou ANOVA (plus de 2 catégories) |
-|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |
-
----
 
 # Objectifs
 
@@ -41,10 +39,9 @@ th, td { padding: 5px; }
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Test du $\chi^2$ de Pearson
-
 
 ---
 
@@ -52,7 +49,13 @@ class: inverse, middle
 
 ## Exemple
 
+.pull-left[
+
 Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaque nombre a été obtenu est sa *fréquence* $f$.
+
+]
+
+.pull-right[
 
 | $i$ | $f_i$ |
 |:-----|:-------|
@@ -64,13 +67,19 @@ Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaq
 | 6 | 26 |
 |**Total** | **100** |
 
+]
+
 ---
 
 # Fréquences comparées à une référence
 
-- Hypothèse nulle: Dé est équilibré, donc $p_i$ = 1/6 pour $i$ de 1 à 6. 
+- Hypothèse nulle: dé est équilibré, donc $p_i$ = 1/6 pour $i$ de 1 à 6.
 
-- Fréquence attendue ( $\hat{f_i}$ ): probabilité x total de lancers.
+--
+
+- Fréquence attendue $\hat{f_i}$: probabilité $\times$ total de lancers.
+
+--
 
 
 | $i$ | $f_i$ | $p_i$ | $\hat{f_i}$ |
@@ -91,6 +100,8 @@ Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaq
 
 $$\chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}}$$
 
+--
+
 - Si $\hat{f_i}$ au moins 5 par catégorie, $\chi^2$ suit approx. une distribution $\chi^2$ avec $k-1$ degrés de liberté.
 
 ---
@@ -98,53 +109,6 @@ $$\chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}}$$
 # Distribution $\chi^2$
 
 <img src="../images/khi_carre.png">
-
----
-
-# Test du $\chi^2$
-
-Calculons la valeur du $\chi^2$ pour ces données et déterminons avec `pchisq` la probabilité d'une valeur inférieure ou égale à celle obtenue.
-
---
-
-```{r}
-# Données
-x <- c(12, 17, 16, 18, 11, 26)
-n <- sum(x) # total
-
-# Probabilités théoriques
-p <- rep(1/6, 6)
-
-# Calcul du khi2
-khi2 <- sum((x - n*p)^2 / (n*p))
-khi2
-```
-
----
-
-# Test du $\chi^2$
-
-```{r}
-pchisq(khi2, df = 5)
-```
-
---
-
-**Question**: Est-ce que notre test est unilatéral ou bilatéral? Quelle est sa valeur $p$?
-
---
-
-- Il s'agit d'un test unilatéral; si le modèle est inexact, la somme des déviations sera plus grande que prévue. La valeur $p$ est `1 - pchisq(khi2, df = 5)` soit environ 0.126.
-
----
-
-# Test du $\chi^2$
-
-Plutôt que de calculer manuellement la statistique, nous pouvons utiliser la fonction `chisq.test`.
-
-```{r}
-chisq.test(x, p = p)
-```
 
 ---
 
@@ -163,7 +127,7 @@ $$\sum_{i=1}^n (f_i - \hat{f_i}) = 0$$
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Test d'association entre deux variables catégorielles
 
@@ -174,14 +138,6 @@ class: inverse, middle
 ## Exemple
 
 On compte le nombre d'arbres morts et vivants de trois espèces de conifères dans une placette suite à une épidémie de tordeuse des bourgeons de l'épinette. 
-
-```{r include = FALSE}
-# rbind crée une matrice en rattachant des vecteurs par rangée
-survie <- rbind(c(29, 11, 12), c(31, 29, 38)) 
-rownames(survie) <- c("mort", "vivant")
-colnames(survie) <- c("ABBA", "PIGL", "PIMA")
-survie
-```
 
 | | ABBA | PIGL | PIMA |
 |-|------:|------:|------:|
@@ -238,61 +194,17 @@ $$\chi^2 = \sum_{i = 1}^r \sum_{j = 1}^c \frac{(f_{ij} - \hat{f_{ij}})^2}{\hat{f
 
 - Donc, sous l'hypothèse nulle, les fréquences attendues sont calculées ainsi:
 
-$$\hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}$$
+$$\hat{f_{ij}} = N \hat{p_i} \hat{p_j} = \frac{N_i N_j}{N}$$
 
 ---
 
 # Test d'association entre deux variables
 
-- Sous l'hypothèse nulle (variables indépendantes), la statistique $\chi^2$ suit une distribution $\chi^2$ avec $(r - 1) \times (c - 1)$ degrés de libertés. 
+Sous l'hypothèse nulle (variables indépendantes), la statistique $\chi^2$:
 
-- Si nous choisissons un seuil de signification $\alpha = 0.05$, y a-t-il une association significative entre ces variables?
+$$\chi^2 = \sum_{i = 1}^r \sum_{j = 1}^c \frac{(f_{ij} - \hat{f_{ij}})^2}{\hat{f_{ij}}}$$
 
---
-
-```{r}
-chisq.test(survie)
-```
-
----
-
-# Résultat du test d'association dans R
-
-- Fréquences attendues (`khi2$expected`) et résidus (`khi2$residuals`).
-
-```{r}
-khi2 <- chisq.test(survie)
-khi2$expected
-
-```
-
----
-
-# Résultat du test d'association dans R
-
-```{r}
-khi2$residuals
-```
-
-- Les résidus correspondent aux déviations normalisées:
-
-$$\frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}}$$
-
----
-
-# Résultat du test d'association dans R
-
-```{r}
-khi2$residuals
-```
-
-- Excès de sapins morts (résidu positif), donc le taux de mortalité des sapins est plus élevé que prévu par l'hypothèse nulle.
-
-- Pour les épinettes, le taux de mortalité est plus faible.
-
---
-
-- Le rejet de l'hypothèse nulle (indépendance entre la mortalité et l'espèce) ne nous dit pas entre quelles espèces le taux de mortalité varie significativement.
+suit une distribution $\chi^2$ avec $(r - 1) \times (c - 1)$ degrés de liberté.
 
 ---
 
@@ -307,29 +219,6 @@ khi2$residuals
 --
 
 - Si une des $\hat{f_{ij}}$ < 5, il est préférable d'utiliser un test qui calcule les probabilités exactes des tableaux de contingence, comme le test de Fisher (`fisher.test` dans R).
-
----
-
-# Test de Fisher pour petits échantillons
-
-```{r}
-tab <- matrix(c(4, 6, 8, 2), nrow = 2)
-tab
-chisq.test(tab)
-```
-
----
-
-# Test de Fisher pour petits échantillons
-
-.small[
-
-```{r}
-tab <- matrix(c(4, 6, 8, 2), nrow = 2)
-tab
-fisher.test(tab)
-```
-]
 
 ---
 
@@ -349,18 +238,6 @@ class: inverse, middle
 
 ---
 
-# Exemple
-
-Prenons les 10 premières observations de chaque espèce dans le jeu de données `iris`. 
-
-```{r echo = FALSE}
-iris_ech <- iris[c(1:10, 51:60, 101:110), ]
-ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
-    geom_boxplot()
-```
-
----
-
 # Modèle d'ANOVA à un facteur
 
 - On mesure la variable $y$ pour $l$ groupes de $n$ observations. 
@@ -368,6 +245,8 @@ ggplot(iris_ech, aes(x = Species, y = Sepal.Width)) +
 --
 
 $$y_{ik} = \mu_i + \epsilon_{ik}$$
+
+--
 
 - Résidu $\epsilon_{ik}$:  Différence entre une observation $k$ du groupe $i$ ( $y_{ik}$ ) et la moyenne du groupe ( $\mu_i$ ).
 
@@ -392,6 +271,8 @@ $$\epsilon_{ik} \sim N(0, \sigma)$$
 - Expression équivalente en fonction de la moyenne globale $\mu$ et d'effets de groupe $\alpha_i$.
 
 $$y_{ik} = \mu + \alpha_i + \epsilon_{ik}$$
+
+--
 
 - Hypothèse nulle: Tous les $\alpha_i$ = 0.
 
@@ -451,7 +332,6 @@ On divise chaque somme des carrés par le nombre de degrés de liberté $df$ app
 
 ---
 
-
 # Tableau d'analyse de la variance
 
 | Composante | Somme des carrés (SS) | Deg. lib. (df) |
@@ -461,7 +341,6 @@ On divise chaque somme des carrés par le nombre de degrés de liberté $df$ app
 | Total | $SST = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2$ | $nl - 1$ |
 
 ---
-
 
 # Tableau d'analyse de la variance
 
@@ -535,7 +414,7 @@ $MSA = \frac{n}{l-1} \sum_{i = 1}^l (\bar{y_i} - \bar{y})^2$
 
 Les résidus sont indépendants.
 
-- L'indépendance des résidus implique que les autres variables qui influençent la réponse sont distribuées de façon semblable dans chaque groupe.
+- L'indépendance des résidus implique que les autres variables qui influencent la réponse sont distribuées de façon semblable dans chaque groupe.
 
 --
 
@@ -561,165 +440,7 @@ La variance de cette distribution est la même pour chaque groupe.
 
 ---
 
-class: inverse, middle
-
-# Exemples d'ANOVA à un facteur
-
----
-
-# Largeur des sépales d'iris par espèce
-
-```{r}
-anova1 <- aov(Sepal.Width ~ Species, data = iris_ech) 
-summary(anova1)
-```
-
---
-
-- La fonction `aov` dans R requiert une formule `response ~ predicteur` et le nom du tableau de données.
-
-- La fonction `summary` affiche le tableau d'ANOVA.
-
----
-
-# Graphiques de diagnostic
-
-```{r eval = FALSE}
-plot(anova1)
-```
-
-```{r echo = FALSE}
-par(mfrow = c(2, 2))
-plot(anova1)
-par(mfrow = c(1, 1))
-```
-
----
-
-# Graphiques de diagnostic
-
-Résidus vs. moyennes estimées: vérifier l'absence de tendance et l'égalité des variances.
-
-```{r echo = FALSE}
-plot(anova1, which = 1)
-```
-
----
-
-# Graphiques de diagnostic
-
-Diagramme quantile-quantile: vérifier la normalité.
-
-```{r echo = FALSE}
-plot(anova1, which = 2)
-```
-
----
-
-# Coefficients de l'ANOVA
-
-```{r}
-coef(anova1)
-```
-
-- `(Intercept)` est la moyenne du premier groupe (ici, l'espèce *setosa*).
-
---
-
-- Les autres coefficients indiquent la différence chaque autre groupe et le premier. 
-
-    * Ex.: La moyenne de l'espèce *versicolor* est 3.31 - 0.44 = 2.87 
-    
---
-
-- Le résultat ne nous dit pas lesquelles de ces différences sont significatives.
-
----
-
-# ANOVA avec 2 groupes
-
-Avec deux groupes, l'ANOVA est équivalente à un test $t$.
-
-```{r, warning = FALSE, message = FALSE}
-iris_2sp <- iris_ech[iris_ech$Species != "setosa", ]
-anova2 <- aov(Sepal.Width ~ Species, data = iris_2sp)
-summary(anova2)
-coef(anova2)
-```
-
----
-
-# ANOVA avec 2 groupes
-
-```{r}
-t.test(Sepal.Width ~ Species, data = iris_2sp, var.equal = TRUE)
-```
-
-- La valeur $p$ et l'estimation des moyennes par espèce sont les mêmes pour les deux tests.
-
----
-
-# Nombre d'insectes selon l'insecticide
-
-Tableau de données `InsectSprays` dans R
-
-```{r}
-ggplot(InsectSprays, aes(x = spray, y = count)) + 
-    geom_boxplot()
-```
-
----
-
-# Graphiques de diagnostic
-
-```{r}
-anova3 <- aov(count ~ spray, InsectSprays)
-par(mfrow = c(1, 2))
-plot(anova3, which = 1:2)
-```
-
----
-
-# Nombre d'insectes selon l'insecticide
-
-- Variance plus élevée pour les groupes avec une moyenne plus élevées
-
-- Caractéristique fréquente des données de comptage
-
----
-
-# Transformation racine carrée
-
-- Prendre la racine carrée (`sqrt`) de la réponse peut rendre les variances plus homogènes.
-
-```{r}
-anova3_racine <- aov(sqrt(count) ~ spray, InsectSprays)
-```
-
-```{r, echo = FALSE}
-par(mfrow = c(1, 2))
-plot(anova3_racine, which = 1:2)
-par(mfrow = c(1, 1))
-```
-
----
-
-# Transformation racine carrée
-
-```{r}
-summary(anova3_racine)
-```
-
---
-
-- Note: transformation logarithmique n'est pas possible lorsque les données incluent des 0.
-
-- Autre option: choisir un modèle non basé sur une distribution normale des résidus (modèle linéaire généralisé).
-
----
-
-
-class: inverse, middle
+class: center, inverse, middle
 
 # Comparaisons multiples entre les groupes
 
@@ -736,37 +457,6 @@ class: inverse, middle
 --
 
 - Test des étendues de Tukey: comme un test $t$ entre chaque paire de groupes, mais tient compte des comparaisons multiples.
-
----
-
-# Test des étendues de Tukey
-
-Fonction `TukeyHSD` (pour Honest Significant Difference) dans R
-
-```{r}
-anova1 <- aov(Sepal.Width ~ Species, data = iris_ech) 
-tukey1 <- TukeyHSD(anova1)
-tukey1
-```
-
---
-
-- Il y a une différence significative entre *setosa* et les deux autres espèces.
-
----
-
-# Test des étendues de Tukey
-
-- La fonction `plot` présente un graphique des intervalles de confiance du test de Tukey.
-
-```{r eval = FALSE}
-plot(tukey1)
-```
-
-```{r echo = FALSE}
-par(las = 1, mai = c(1, 2, 1, 1))
-plot(tukey1)
-```
 
 ---
 
@@ -818,3 +508,15 @@ plot(tukey1)
 
 - Si l'hypothèse nulle est rejetée, le test des étendues de Tukey sert à identifier les différences significatives entre groupes.
 
+---
+
+# Résumé
+
+## Comparaison avec d'autres modèles
+
+<br/>
+
+|                      | Réponse catégorielle    | Réponse numérique |
+|----------------------|:-------------------------:|:-------------------:|
+|Prédicteur catégoriel |  Test du $\chi^2$     | Test $t$ (2 catégories) ou ANOVA (plus de 2 catégories) |
+|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |

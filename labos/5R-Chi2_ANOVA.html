@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Tableaux de contingence et ANOVA</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Tableaux de contingence et ANOVA</h1>
+<h4 class="date">30 septembre 2020</h4>
+
+</div>
+
+
+<div id="sélection-florale-dune-espèce-de-bourdon" class="section level2">
+<h2>1. Sélection florale d’une espèce de bourdon</h2>
+<p>En suivant l’activité de butinage de bourdons fébriles (<em>Bombus impatiens</em>) sur un site, vous notez le nombre de visites des bourdons sur quatre genres de plantes, ainsi que la proportion des fleurs de chaque genre sur le site.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Genre</th>
+<th>Nombre de visites</th>
+<th>Proportions des fleurs du site</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>Rubus</em></td>
+<td>8</td>
+<td>0.12</td>
+</tr>
+<tr class="even">
+<td><em>Solidago</em></td>
+<td>8</td>
+<td>0.24</td>
+</tr>
+<tr class="odd">
+<td><em>Trifolium</em></td>
+<td>18</td>
+<td>0.33</td>
+</tr>
+<tr class="even">
+<td><em>Vaccinium</em></td>
+<td>11</td>
+<td>0.31</td>
+</tr>
+</tbody>
+</table>
+<p>L’hypothèse nulle pour cette étude est que <em>B. impatiens</em> visite chaque genre proportionnellement à sa prévalence sur le site.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Selon l’hypothèse nulle, quelles sont les fréquences attendues pour les visites à chaque genre de plante?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code># Les fréquences attendues sont les proportions multipliées par le nombre total de visites
+f_obs &lt;- c(8, 8, 18, 11)
+prop &lt;- c(0.12, 0.24, 0.33, 0.31)
+f_att &lt;- prop * sum(f_obs)
+f_att</code></pre>
+<pre><code>## [1]  5.40 10.80 14.85 13.95</code></pre>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Testez l’hypothèse nulle avec la fonction <code>chisq.test</code> dans R, avec un seuil de signification de 5%. Si l’hypothèse nulle est rejetée, quel(s) genre(s) sont plus ou moins visités que prévus?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>chisq.test(f_obs, p = prop)</code></pre>
+<pre><code>## 
+##  Chi-squared test for given probabilities
+## 
+## data:  f_obs
+## X-squared = 3.2698, df = 3, p-value = 0.3519</code></pre>
+<p>L’hypothèse nulle n’est pas rejetée.</p>
+</div>
+<div id="butinage-de-trois-espèces-de-bourdon" class="section level2">
+<h2>2. Butinage de trois espèces de bourdon</h2>
+<p>Sur le même site que l’exercice précédent, vous observez l’activité de butinage de deux autres espèces de bourdons (<em>B. affinis</em> et <em>B. ternarius</em>). Voici le tableau de contingence montrant le nombre de visites par espèce de bourdon et par genre de plante.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><em>Rubus</em></th>
+<th><em>Solidago</em></th>
+<th><em>Trifolium</em></th>
+<th><em>Vaccinium</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>B. affinis</em></td>
+<td>10</td>
+<td>9</td>
+<td>15</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td><em>B. impatiens</em></td>
+<td>8</td>
+<td>8</td>
+<td>18</td>
+<td>11</td>
+</tr>
+<tr class="odd">
+<td><em>B. ternarius</em></td>
+<td>20</td>
+<td>4</td>
+<td>6</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<ol style="list-style-type: lower-alpha">
+<li>Quelle hypothèse nulle pouvez-vous tester à partir de ce tableau? Quelle est l’hypothèse alternative?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<p>L’hypothèse nulle est que la distribution des visites entre genres de plantes ne varie pas selon l’espèce de bourdon. L’hypothèse alternative est que certains bourdons sont plus associés à certaines plantes.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Créez une matrice représentant ce tableau dans R, puis testez l’hypothèse nulle mentionnée en (a) avec la fonction <code>chisq.test</code>, avec un seuil de signification de 5%.</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code># Tableau de contingence
+tab &lt;- rbind(
+    c(10, 9, 15, 8),
+    c(8, 8, 18, 11),
+    c(20, 4, 6, 5)
+)
+rownames(tab) &lt;- c(&quot;affinis&quot;, &quot;impatiens&quot;, &quot;ternarius&quot;)
+colnames(tab) &lt;- c(&quot;Rubus&quot;, &quot;Solidago&quot;, &quot;Trifolium&quot;, &quot;Vaccinium&quot;)
+tab</code></pre>
+<pre><code>##           Rubus Solidago Trifolium Vaccinium
+## affinis      10        9        15         8
+## impatiens     8        8        18        11
+## ternarius    20        4         6         5</code></pre>
+<pre class="r"><code>khi2 &lt;- chisq.test(tab)
+khi2</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  tab
+## X-squared = 16.569, df = 6, p-value = 0.01101</code></pre>
+<p>L’hypothèse nulle est rejetée.</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>D’après les résultats du test en (b), quel est le nombre de degrés de liberté du <span class="math inline">\(\chi^2\)</span>? Comment cette valeur est-elle calculée?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<p>6 degrés de liberté: (# de rangées - 1) x (# de colonnes - 1)</p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Comment pouvez-vous consulter les fréquences attendues selon l’hypothèse nulle, ainsi que les résidus?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>khi2$expected</code></pre>
+<pre><code>##              Rubus Solidago Trifolium Vaccinium
+## affinis   13.08197 7.229508  13.42623  8.262295
+## impatiens 14.01639 7.745902  14.38525  8.852459
+## ternarius 10.90164 6.024590  11.18852  6.885246</code></pre>
+<pre class="r"><code>khi2$residuals</code></pre>
+<pre><code>##                Rubus    Solidago  Trifolium   Vaccinium
+## affinis   -0.8521018  0.65847538  0.4295012 -0.09125145
+## impatiens -1.6070082  0.09129897  0.9530597  0.72178774
+## ternarius  2.7556068 -0.82484694 -1.5511631 -0.71846940</code></pre>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Si l’hypothèse nulle est rejetée, quelle paire bourdon-plante a le résidu le plus positif, et laquelle a le résidu le plus négatif? Comment interprétez-vous ces résidus?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<p>Le résidu le plus positif est pour la paire <em>ternarius</em>-<em>Rubus</em>, le résidu le plus négatif est pour la paire <em>impatiens</em>-<em>Rubus</em>. Donc, il semble que <em>B. ternarius</em> a une préférence pour <em>Rubus</em> tandis que <em>B. impatiens</em> évite cette plante.</p>
+</div>
+<div id="caractéristiques-de-choux-plantés-à-différentes-dates" class="section level2">
+<h2>3. Caractéristiques de choux plantés à différentes dates</h2>
+<p>Le jeu de données <code>cabbages</code> inclus dans le package <code>MASS</code> présente le poids en kg (<em>HeadWt</em>) et le nombre d’unités de vitamine C (<em>VitC</em>) de choux selon la variété (cultivar <em>Cult</em>) et la date de plantage. Il y a 10 réplicats pour chacune des six combinaisons de variété et de date.</p>
+<pre class="r"><code>library(MASS)
+str(cabbages)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    60 obs. of  4 variables:
+##  $ Cult  : Factor w/ 2 levels &quot;c39&quot;,&quot;c52&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Date  : Factor w/ 3 levels &quot;d16&quot;,&quot;d20&quot;,&quot;d21&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ HeadWt: num  2.5 2.2 3.1 4.3 2.5 4.3 3.8 4.3 1.7 3.1 ...
+##  $ VitC  : int  51 55 45 42 53 50 50 52 56 49 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Choisissez le sous-ensemble des données correspondant à la variété c52. Pour chacune des deux variables numériques (<em>HeadWt</em> et <em>VitC</em>), produisez un graphique de boîtes à moustaches montrant la distribution de cette variable selon la date de plantage. Avant même de réaliser l’ANOVA, croyez-vous que les suppositions du modèle (en particulier l’égalité des variances) seront respectées dans chaque cas?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+c52 &lt;- filter(cabbages, Cult == &quot;c52&quot;)
+ggplot(c52, aes(x = Date, y = HeadWt)) +
+    geom_boxplot()</code></pre>
+<p><img src="5R-Chi2_ANOVA_files/figure-html/unnamed-chunk-7-1.png" width="576" /></p>
+<pre class="r"><code>ggplot(c52, aes(x = Date, y = VitC)) +
+    geom_boxplot()</code></pre>
+<p><img src="5R-Chi2_ANOVA_files/figure-html/unnamed-chunk-7-2.png" width="576" /></p>
+<p>En comparant l’étendue des boîtes à moustache, la variance de <em>HeadWt</em> est très différente selon la date; pour <em>VitC</em>, la variance est plus uniforme d’un cas à l’autre.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Choisissez l’une des deux variables (<em>HeadWt</em> ou <em>VitC</em>) qui correspond le mieux au modèle d’ANOVA d’après votre résultat en (a). Réalisez une ANOVA à un facteur et déterminez si la moyenne de cette variable varie significativement (<span class="math inline">\(\alpha = 0.05\)</span>) selon la date de plantage.</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>an_vitc &lt;- aov(VitC ~ Date, data = c52)
+summary(an_vitc)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Date         2  886.2   443.1   10.08 0.000538 ***
+## Residuals   27 1187.0    44.0                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>L’effet de la date est significatif.</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Selon un test des étendues de Tukey, entre quelles dates retrouve-t-on une différence significative (<span class="math inline">\(\alpha = 0.05\)</span>)? Quel est l’estimé de chacune des différences significatives?</li>
+</ol>
+<p><strong>Solution</strong></p>
+<pre class="r"><code>TukeyHSD(an_vitc)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = VitC ~ Date, data = c52)
+## 
+## $Date
+##         diff        lwr       upr     p adj
+## d20-d16 -3.6 -10.952045  3.752045 0.4553220
+## d21-d16  9.3   1.947955 16.652045 0.0110721
+## d21-d20 12.9   5.547955 20.252045 0.0004962</code></pre>
+<p>Il y a une différence significative entre d21 et d16 (9.3 unités de plus pour d21) et entre d21 et d20 (12.9 unités de plus pour d21).</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

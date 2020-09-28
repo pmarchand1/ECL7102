@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Tableaux de contingence et ANOVA</title>
     <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles-xar.css" type="text/css" />
@@ -12,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 # Tableaux de contingence et ANOVA
-### <br/>23 septembre 2019
+### 28 septembre 2020
 
 ---
 
@@ -20,19 +21,8 @@ class: center, middle, inverse, title-slide
 
 
 &lt;style type="text/css"&gt;
-.small .remark-code { font-size: 50% }
-
 th, td { padding: 5px; }
 &lt;/style&gt;
-
-# Plan général
-
-|                      | Réponse catégorielle    | Réponse numérique |
-|----------------------|:-------------------------:|:-------------------:|
-|Prédicteur catégoriel |  Test du `\(\chi^2\)`     | Test `\(t\)` (2 catégories) ou ANOVA (plus de 2 catégories) |
-|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |
-
----
 
 # Objectifs
 
@@ -44,10 +34,9 @@ th, td { padding: 5px; }
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Test du `\(\chi^2\)` de Pearson
-
 
 ---
 
@@ -55,7 +44,13 @@ class: inverse, middle
 
 ## Exemple
 
+.pull-left[
+
 Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaque nombre a été obtenu est sa *fréquence* `\(f\)`.
+
+]
+
+.pull-right[
 
 | `\(i\)` | `\(f_i\)` |
 |:-----|:-------|
@@ -67,13 +62,19 @@ Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaq
 | 6 | 26 |
 |**Total** | **100** |
 
+]
+
 ---
 
 # Fréquences comparées à une référence
 
-- Hypothèse nulle: Dé est équilibré, donc `\(p_i\)` = 1/6 pour `\(i\)` de 1 à 6. 
+- Hypothèse nulle: dé est équilibré, donc `\(p_i\)` = 1/6 pour `\(i\)` de 1 à 6.
 
-- Fréquence attendue ( `\(\hat{f_i}\)` ): probabilité x total de lancers.
+--
+
+- Fréquence attendue `\(\hat{f_i}\)`: probabilité `\(\times\)` total de lancers.
+
+--
 
 
 | `\(i\)` | `\(f_i\)` | `\(p_i\)` | `\(\hat{f_i}\)` |
@@ -94,6 +95,8 @@ Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaq
 
 `$$\chi^2 = \sum_{i = 1}^k \frac{(f_i - \hat{f_i})^2}{\hat{f_i}}$$`
 
+--
+
 - Si `\(\hat{f_i}\)` au moins 5 par catégorie, `\(\chi^2\)` suit approx. une distribution `\(\chi^2\)` avec `\(k-1\)` degrés de liberté.
 
 ---
@@ -101,72 +104,6 @@ Vérifier si un dé est équilibré avec 100 lancers. Le nombre de fois où chaq
 # Distribution `\(\chi^2\)`
 
 &lt;img src="../images/khi_carre.png"&gt;
-
----
-
-# Test du `\(\chi^2\)`
-
-Calculons la valeur du `\(\chi^2\)` pour ces données et déterminons avec `pchisq` la probabilité d'une valeur inférieure ou égale à celle obtenue.
-
---
-
-
-```r
-# Données
-x &lt;- c(12, 17, 16, 18, 11, 26)
-n &lt;- sum(x) # total
-
-# Probabilités théoriques
-p &lt;- rep(1/6, 6)
-
-# Calcul du khi2
-khi2 &lt;- sum((x - n*p)^2 / (n*p))
-khi2
-```
-
-```
-## [1] 8.6
-```
-
----
-
-# Test du `\(\chi^2\)`
-
-
-```r
-pchisq(khi2, df = 5)
-```
-
-```
-## [1] 0.8738776
-```
-
---
-
-**Question**: Est-ce que notre test est unilatéral ou bilatéral? Quelle est sa valeur `\(p\)`?
-
---
-
-- Il s'agit d'un test unilatéral; si le modèle est inexact, la somme des déviations sera plus grande que prévue. La valeur `\(p\)` est `1 - pchisq(khi2, df = 5)` soit environ 0.126.
-
----
-
-# Test du `\(\chi^2\)`
-
-Plutôt que de calculer manuellement la statistique, nous pouvons utiliser la fonction `chisq.test`.
-
-
-```r
-chisq.test(x, p = p)
-```
-
-```
-## 
-## 	Chi-squared test for given probabilities
-## 
-## data:  x
-## X-squared = 8.6, df = 5, p-value = 0.1261
-```
 
 ---
 
@@ -185,7 +122,7 @@ donc
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Test d'association entre deux variables catégorielles
 
@@ -196,8 +133,6 @@ class: inverse, middle
 ## Exemple
 
 On compte le nombre d'arbres morts et vivants de trois espèces de conifères dans une placette suite à une épidémie de tordeuse des bourgeons de l'épinette. 
-
-
 
 | | ABBA | PIGL | PIMA |
 |-|------:|------:|------:|
@@ -254,90 +189,17 @@ On compte le nombre d'arbres morts et vivants de trois espèces de conifères da
 
 - Donc, sous l'hypothèse nulle, les fréquences attendues sont calculées ainsi:
 
-`$$\hat{f_{ij}} = N p_i p_j = \frac{N_i N_j}{N}$$`
+`$$\hat{f_{ij}} = N \hat{p_i} \hat{p_j} = \frac{N_i N_j}{N}$$`
 
 ---
 
 # Test d'association entre deux variables
 
-- Sous l'hypothèse nulle (variables indépendantes), la statistique `\(\chi^2\)` suit une distribution `\(\chi^2\)` avec `\((r - 1) \times (c - 1)\)` degrés de libertés. 
+Sous l'hypothèse nulle (variables indépendantes), la statistique `\(\chi^2\)`:
 
-- Si nous choisissons un seuil de signification `\(\alpha = 0.05\)`, y a-t-il une association significative entre ces variables?
+`$$\chi^2 = \sum_{i = 1}^r \sum_{j = 1}^c \frac{(f_{ij} - \hat{f_{ij}})^2}{\hat{f_{ij}}}$$`
 
---
-
-
-```r
-chisq.test(survie)
-```
-
-```
-## 
-## 	Pearson's Chi-squared test
-## 
-## data:  survie
-## X-squared = 8.3669, df = 2, p-value = 0.01525
-```
-
----
-
-# Résultat du test d'association dans R
-
-- Fréquences attendues (`khi2$expected`) et résidus (`khi2$residuals`).
-
-
-```r
-khi2 &lt;- chisq.test(survie)
-khi2$expected
-```
-
-```
-##        ABBA     PIGL     PIMA
-## mort   20.8 13.86667 17.33333
-## vivant 39.2 26.13333 32.66667
-```
-
----
-
-# Résultat du test d'association dans R
-
-
-```r
-khi2$residuals
-```
-
-```
-##             ABBA       PIGL       PIMA
-## mort    1.797969 -0.7698235 -1.2810252
-## vivant -1.309697  0.5607636  0.9331389
-```
-
-- Les résidus correspondent aux déviations normalisées:
-
-`$$\frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}}$$`
-
----
-
-# Résultat du test d'association dans R
-
-
-```r
-khi2$residuals
-```
-
-```
-##             ABBA       PIGL       PIMA
-## mort    1.797969 -0.7698235 -1.2810252
-## vivant -1.309697  0.5607636  0.9331389
-```
-
-- Excès de sapins morts (résidu positif), donc le taux de mortalité des sapins est plus élevé que prévu par l'hypothèse nulle.
-
-- Pour les épinettes, le taux de mortalité est plus faible.
-
---
-
-- Le rejet de l'hypothèse nulle (indépendance entre la mortalité et l'espèce) ne nous dit pas entre quelles espèces le taux de mortalité varie significativement.
+suit une distribution `\(\chi^2\)` avec `\((r - 1) \times (c - 1)\)` degrés de liberté.
 
 ---
 
@@ -352,75 +214,6 @@ khi2$residuals
 --
 
 - Si une des `\(\hat{f_{ij}}\)` &lt; 5, il est préférable d'utiliser un test qui calcule les probabilités exactes des tableaux de contingence, comme le test de Fisher (`fisher.test` dans R).
-
----
-
-# Test de Fisher pour petits échantillons
-
-
-```r
-tab &lt;- matrix(c(4, 6, 8, 2), nrow = 2)
-tab
-```
-
-```
-##      [,1] [,2]
-## [1,]    4    8
-## [2,]    6    2
-```
-
-```r
-chisq.test(tab)
-```
-
-```
-## Warning in chisq.test(tab): Chi-squared approximation may be incorrect
-```
-
-```
-## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
-## 
-## data:  tab
-## X-squared = 1.875, df = 1, p-value = 0.1709
-```
-
----
-
-# Test de Fisher pour petits échantillons
-
-.small[
-
-
-```r
-tab &lt;- matrix(c(4, 6, 8, 2), nrow = 2)
-tab
-```
-
-```
-##      [,1] [,2]
-## [1,]    4    8
-## [2,]    6    2
-```
-
-```r
-fisher.test(tab)
-```
-
-```
-## 
-## 	Fisher's Exact Test for Count Data
-## 
-## data:  tab
-## p-value = 0.1698
-## alternative hypothesis: true odds ratio is not equal to 1
-## 95 percent confidence interval:
-##  0.01252647 1.65925396
-## sample estimates:
-## odds ratio 
-##  0.1841181
-```
-]
 
 ---
 
@@ -440,14 +233,6 @@ class: inverse, middle
 
 ---
 
-# Exemple
-
-Prenons les 10 premières observations de chaque espèce dans le jeu de données `iris`. 
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
-
----
-
 # Modèle d'ANOVA à un facteur
 
 - On mesure la variable `\(y\)` pour `\(l\)` groupes de `\(n\)` observations. 
@@ -455,6 +240,8 @@ Prenons les 10 premières observations de chaque espèce dans le jeu de données
 --
 
 `$$y_{ik} = \mu_i + \epsilon_{ik}$$`
+
+--
 
 - Résidu `\(\epsilon_{ik}\)`:  Différence entre une observation `\(k\)` du groupe `\(i\)` ( `\(y_{ik}\)` ) et la moyenne du groupe ( `\(\mu_i\)` ).
 
@@ -479,6 +266,8 @@ Prenons les 10 premières observations de chaque espèce dans le jeu de données
 - Expression équivalente en fonction de la moyenne globale `\(\mu\)` et d'effets de groupe `\(\alpha_i\)`.
 
 `$$y_{ik} = \mu + \alpha_i + \epsilon_{ik}$$`
+
+--
 
 - Hypothèse nulle: Tous les `\(\alpha_i\)` = 0.
 
@@ -538,7 +327,6 @@ On divise chaque somme des carrés par le nombre de degrés de liberté `\(df\)`
 
 ---
 
-
 # Tableau d'analyse de la variance
 
 | Composante | Somme des carrés (SS) | Deg. lib. (df) |
@@ -548,7 +336,6 @@ On divise chaque somme des carrés par le nombre de degrés de liberté `\(df\)`
 | Total | `\(SST = \sum_{i = 1}^l \sum_{k = i}^n (y_{ik} - \bar{y})^2\)` | `\(nl - 1\)` |
 
 ---
-
 
 # Tableau d'analyse de la variance
 
@@ -622,7 +409,7 @@ Modèle d'ANOVA à un facteur
 
 Les résidus sont indépendants.
 
-- L'indépendance des résidus implique que les autres variables qui influençent la réponse sont distribuées de façon semblable dans chaque groupe.
+- L'indépendance des résidus implique que les autres variables qui influencent la réponse sont distribuées de façon semblable dans chaque groupe.
 
 --
 
@@ -648,215 +435,7 @@ La variance de cette distribution est la même pour chaque groupe.
 
 ---
 
-class: inverse, middle
-
-# Exemples d'ANOVA à un facteur
-
----
-
-# Largeur des sépales d'iris par espèce
-
-
-```r
-anova1 &lt;- aov(Sepal.Width ~ Species, data = iris_ech) 
-summary(anova1)
-```
-
-```
-##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
-## Species      2  1.118  0.5590   5.179 0.0125 *
-## Residuals   27  2.914  0.1079                 
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
---
-
-- La fonction `aov` dans R requiert une formule `response ~ predicteur` et le nom du tableau de données.
-
-- La fonction `summary` affiche le tableau d'ANOVA.
-
----
-
-# Graphiques de diagnostic
-
-
-```r
-plot(anova1)
-```
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
-
----
-
-# Graphiques de diagnostic
-
-Résidus vs. moyennes estimées: vérifier l'absence de tendance et l'égalité des variances.
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
-
----
-
-# Graphiques de diagnostic
-
-Diagramme quantile-quantile: vérifier la normalité.
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
-
----
-
-# Coefficients de l'ANOVA
-
-
-```r
-coef(anova1)
-```
-
-```
-##       (Intercept) Speciesversicolor  Speciesvirginica 
-##              3.31             -0.44             -0.37
-```
-
-- `(Intercept)` est la moyenne du premier groupe (ici, l'espèce *setosa*).
-
---
-
-- Les autres coefficients indiquent la différence chaque autre groupe et le premier. 
-
-    * Ex.: La moyenne de l'espèce *versicolor* est 3.31 - 0.44 = 2.87 
-    
---
-
-- Le résultat ne nous dit pas lesquelles de ces différences sont significatives.
-
----
-
-# ANOVA avec 2 groupes
-
-Avec deux groupes, l'ANOVA est équivalente à un test `\(t\)`.
-
-
-```r
-iris_2sp &lt;- iris_ech[iris_ech$Species != "setosa", ]
-anova2 &lt;- aov(Sepal.Width ~ Species, data = iris_2sp)
-summary(anova2)
-```
-
-```
-##             Df Sum Sq Mean Sq F value Pr(&gt;F)
-## Species      1 0.0245  0.0245   0.214   0.65
-## Residuals   18 2.0650  0.1147
-```
-
-```r
-coef(anova2)
-```
-
-```
-##      (Intercept) Speciesvirginica 
-##             2.87             0.07
-```
-
----
-
-# ANOVA avec 2 groupes
-
-
-```r
-t.test(Sepal.Width ~ Species, data = iris_2sp, var.equal = TRUE)
-```
-
-```
-## 
-## 	Two Sample t-test
-## 
-## data:  Sepal.Width by Species
-## t = -0.46212, df = 18, p-value = 0.6495
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.3882356  0.2482356
-## sample estimates:
-## mean in group versicolor  mean in group virginica 
-##                     2.87                     2.94
-```
-
-- La valeur `\(p\)` et l'estimation des moyennes par espèce sont les mêmes pour les deux tests.
-
----
-
-# Nombre d'insectes selon l'insecticide
-
-Tableau de données `InsectSprays` dans R
-
-
-```r
-ggplot(InsectSprays, aes(x = spray, y = count)) + 
-    geom_boxplot()
-```
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
-
----
-
-# Graphiques de diagnostic
-
-
-```r
-anova3 &lt;- aov(count ~ spray, InsectSprays)
-par(mfrow = c(1, 2))
-plot(anova3, which = 1:2)
-```
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
-
----
-
-# Nombre d'insectes selon l'insecticide
-
-- Variance plus élevée pour les groupes avec une moyenne plus élevées
-
-- Caractéristique fréquente des données de comptage
-
----
-
-# Transformation racine carrée
-
-- Prendre la racine carrée (`sqrt`) de la réponse peut rendre les variances plus homogènes.
-
-
-```r
-anova3_racine &lt;- aov(sqrt(count) ~ spray, InsectSprays)
-```
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
-
----
-
-# Transformation racine carrée
-
-
-```r
-summary(anova3_racine)
-```
-
-```
-##             Df Sum Sq Mean Sq F value Pr(&gt;F)    
-## spray        5  88.44  17.688    44.8 &lt;2e-16 ***
-## Residuals   66  26.06   0.395                   
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
---
-
-- Note: transformation logarithmique n'est pas possible lorsque les données incluent des 0.
-
-- Autre option: choisir un modèle non basé sur une distribution normale des résidus (modèle linéaire généralisé).
-
----
-
-
-class: inverse, middle
+class: center, inverse, middle
 
 # Comparaisons multiples entre les groupes
 
@@ -873,49 +452,6 @@ class: inverse, middle
 --
 
 - Test des étendues de Tukey: comme un test `\(t\)` entre chaque paire de groupes, mais tient compte des comparaisons multiples.
-
----
-
-# Test des étendues de Tukey
-
-Fonction `TukeyHSD` (pour Honest Significant Difference) dans R
-
-
-```r
-anova1 &lt;- aov(Sepal.Width ~ Species, data = iris_ech) 
-tukey1 &lt;- TukeyHSD(anova1)
-tukey1
-```
-
-```
-##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = Sepal.Width ~ Species, data = iris_ech)
-## 
-## $Species
-##                       diff        lwr          upr     p adj
-## versicolor-setosa    -0.44 -0.8042735 -0.075726495 0.0155401
-## virginica-setosa     -0.37 -0.7342735 -0.005726495 0.0459626
-## virginica-versicolor  0.07 -0.2942735  0.434273505 0.8829240
-```
-
---
-
-- Il y a une différence significative entre *setosa* et les deux autres espèces.
-
----
-
-# Test des étendues de Tukey
-
-- La fonction `plot` présente un graphique des intervalles de confiance du test de Tukey.
-
-
-```r
-plot(tukey1)
-```
-
-![](5-Chi2_ANOVA_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -966,11 +502,26 @@ plot(tukey1)
 --
 
 - Si l'hypothèse nulle est rejetée, le test des étendues de Tukey sert à identifier les différences significatives entre groupes.
+
+---
+
+# Résumé
+
+## Comparaison avec d'autres modèles
+
+&lt;br/&gt;
+
+|                      | Réponse catégorielle    | Réponse numérique |
+|----------------------|:-------------------------:|:-------------------:|
+|Prédicteur catégoriel |  Test du `\(\chi^2\)`     | Test `\(t\)` (2 catégories) ou ANOVA (plus de 2 catégories) |
+|Prédicteur catégoriel ou numérique |  Régression logistique  | Régression linéaire |
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
+"highlightLines": true,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -1011,9 +562,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -1022,7 +589,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

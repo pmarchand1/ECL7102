@@ -146,7 +146,7 @@ La probabilité conjointe de deux variables indépendantes est le produit des pr
 
 $$ \hat{f_{ij}} = N \hat{p_i} \hat{p_j} = \frac{N_i N_j}{N}$$
 
-Si l'hypothèse nulle est exacte, la statistique $\chi^2$ suit alors une distribution avec $(r - 1) \times (c - 1)$ degrés de libertés. Dans notre exemple, $df = 2$. En effet, puisque les fréquences attendues sont basées sur les totaux de chaque rangée et de chaque colonne, la somme des déviations dans chaque rangée et chaque colonne doit être zéro. 
+Si l'hypothèse nulle est exacte, la statistique $\chi^2$ suit alors une distribution avec $(r - 1) \times (c - 1)$ degrés de liberté. Dans notre exemple, $df = 2$. En effet, puisque les fréquences attendues sont basées sur les totaux de chaque rangée et de chaque colonne, la somme des déviations dans chaque rangée et chaque colonne doit être zéro. 
 
 Si nous choisissons un seuil $\alpha = 0.05$ puis que nous appliquons la fonction `chisq.test` à cette matrice, nous obtenons une valeur $p$ de 0.01, signifiant la présence d'une association significative entre les deux variables.
 

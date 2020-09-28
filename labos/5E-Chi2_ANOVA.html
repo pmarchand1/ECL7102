@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-09-30" />
+
+<title>Chi-squared test and ANOVA</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Chi-squared test and ANOVA</h1>
+<h4 class="date">September 30, 2020</h4>
+
+</div>
+
+
+<div id="floral-selection-of-a-bumblebee-species" class="section level2">
+<h2>1. Floral selection of a bumblebee species</h2>
+<p>By following the foraging activity of bumblebees <em>Bombus impatiens</em> on a site, you note the number of bumblebee visits on four genera of plants, as well as the proportion of flowers of each genus on the site.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Genus</th>
+<th>Number of visits</th>
+<th>Proportions of the flowers of the site</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>Rubus</em></td>
+<td>8</td>
+<td>0.12</td>
+</tr>
+<tr class="even">
+<td><em>Solidago</em></td>
+<td>8</td>
+<td>0.24</td>
+</tr>
+<tr class="odd">
+<td><em>Trifolium</em></td>
+<td>18</td>
+<td>0.33</td>
+</tr>
+<tr class="even">
+<td><em>Vaccinium</em></td>
+<td>11</td>
+<td>0.31</td>
+</tr>
+</tbody>
+</table>
+<p>The null hypothesis for this study is that <em>B. impatiens</em> visits each genus in proportion to its prevalence on the site.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>According to the null hypothesis, what are the expected frequencies for visits to each genus of plant?</p></li>
+<li><p>Test the null hypothesis with the <code>chisq.test</code> function in R, with a significance level of 5%. If the null hypothesis is rejected, which genus or genera are more or less visited than expected?</p></li>
+</ol>
+</div>
+<div id="foraging-activity-of-three-bumblebee-species" class="section level2">
+<h2>2. Foraging activity of three bumblebee species</h2>
+<p>On the same site as the previous exercise, you observe the foraging activity of two other bumble bee species (<em>B. affinis</em> and <em>B. ternarius</em>). Here is the contingency table showing the number of visits by bumblebee species and plant genus.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><em>Rubus</em></th>
+<th><em>Solidago</em></th>
+<th><em>Trifolium</em></th>
+<th><em>Vaccinium</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>B. affinis</em></td>
+<td>10</td>
+<td>9</td>
+<td>15</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td><em>B. impatiens</em></td>
+<td>8</td>
+<td>8</td>
+<td>18</td>
+<td>11</td>
+</tr>
+<tr class="odd">
+<td><em>B. ternarius</em></td>
+<td>20</td>
+<td>4</td>
+<td>6</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<ol style="list-style-type: lower-alpha">
+<li><p>What null hypothesis can you test from this table? What is the alternative hypothesis?</p></li>
+<li><p>Create a matrix representing this table in R, then test the null hypothesis mentioned in (a) with the <code>chisq.test</code> function, with a significance level of 5%.</p></li>
+<li><p>Based on the test results in (b), what is the number of degrees of freedom of the <span class="math inline">\(\chi^2\)</span> distribution? How is this value calculated?</p></li>
+<li><p>How can you check the expected frequencies according to the null hypothesis, as well as the residuals?</p></li>
+<li><p>If the null hypothesis is rejected, which bumblebee-plant pair has the most positive residual, and which has the most negative residual? How do you interpret these residuals?</p></li>
+</ol>
+</div>
+<div id="characteristics-of-cabbage-varieties" class="section level2">
+<h2>3. Characteristics of cabbage varieties</h2>
+<p>The <code>cabbages</code> dataset included in the<code>MASS</code> package shows the weight in kg (<em>HeadWt</em>) and the vitamin C content (<em>VitC</em>) of cabbages according to the cultivar (<em>Cult</em>) and the planting date. There are 10 replicates for each of the six combinations of cultivar and date.</p>
+<pre class="r"><code>library(MASS)
+str(cabbages)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    60 obs. of  4 variables:
+##  $ Cult  : Factor w/ 2 levels &quot;c39&quot;,&quot;c52&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Date  : Factor w/ 3 levels &quot;d16&quot;,&quot;d20&quot;,&quot;d21&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ HeadWt: num  2.5 2.2 3.1 4.3 2.5 4.3 3.8 4.3 1.7 3.1 ...
+##  $ VitC  : int  51 55 45 42 53 50 50 52 56 49 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Select the subset of data corresponding to cultivar c52. For each of the two numeric variables (<em>HeadWt</em> and <em>VitC</em>), produce a boxplots graph showing the distribution of that variable for each planting date. Before even performing the ANOVA, do you think that the assumptions of the model (especially the equality of variances) will be respected in each case?</p></li>
+<li><p>Choose one of the two variables (<em>HeadWt</em> or <em>VitC</em>) that best fits the ANOVA model based on your result in (a). Perform a one-way ANOVA and determine if the planting date has a significant effect (<span class="math inline">\(\alpha = 0.05\)</span>).</p></li>
+<li><p>According to Tukey’s range test, between which planting dates are there significant differences (<span class="math inline">\(\alpha = 0.05\)</span>)? What is the estimate of those significant differences?</p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

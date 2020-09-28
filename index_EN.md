@@ -18,4 +18,5 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 2. [Introduction to R - Part 2](labos/2E-IntroR_part2.html) ([PDF](labos/2E-IntroR_part2.pdf) - [Worksheet](labos/2E-worksheet.R) ([complete code](labos/2E-worksheet_complete.R))) - Data [1](labos/cours1_kejimkujik.csv) [2](labos/codes_especes.csv))
 3. [Sampling and parameter estimation (solutions)](labos/3RE-Sampling_estimation.html) ([PDF](labos/3RE-Sampling_estimation.pdf))
 4. [Hypothesis testing](labos/4E-Tests_mean.html) ([PDF](labos/4E-Tests_mean.pdf)) - Data [1](labos/gardens.csv) [2](labos/nconc.csv)
+5. [Chi-squared test and ANOVA](labos/5E-Chi2_ANOVA.html) ([PDF](labos/5E-Chi2_ANOVA.pdf))
 
