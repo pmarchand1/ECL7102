@@ -443,6 +443,10 @@ str(pgr_nouv)</code></pre>
 <p>In ecology, the non-independence of residuals is often due to a proximity of certain observations in space and time. For example, if the observations are spread over several days, observations that are closer in time may be more similar. Factors that can cause this temporal dependence (e.g., weather) can be included in the model to obtain the most independent residuals possible.</p>
 <p>The non-independence of residuals does not bias the estimates of the model coefficients, so these remain valid, but their uncertainty will be underestimated. (We could say that a sample of non-independent observations is equivalent to a smaller independent sample.) Thus, the confidence intervals and hypothesis tests on the significance of the coefficients will not be valid.</p>
 </div>
+<div id="equality-of-variances" class="section level2">
+<h2>Equality of variances</h2>
+<p>The assumptions of equal variances (homoscedasticity) is also required for the confidence intervals and <span class="math inline">\(p\)</span>-values reported by the model to be valid.</p>
+</div>
 <div id="normality" class="section level2">
 <h2>Normality</h2>
 <p>Just like the results from a <span class="math inline">\(t\)</span> test or an ANOVA, the estimated values and confidence intervals for the linear regression coefficients are not too affected by a lack of normality of the residuals; due to the central limit theorem, the distribution of these estimates is closer to a normal distribution than the distribution of individual residuals.</p>

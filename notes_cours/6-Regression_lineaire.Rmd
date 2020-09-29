@@ -256,6 +256,10 @@ En écologie, la non-indépendance des résidus est souvent due à une proximit�
 
 La non-indépendance des résidus ne biaise pas les estimés des coefficients du modèle, donc ceux-ci demeurent valides, mais leur incertitude sera sous-estimée. (On pourrait dire qu'un échantillon de mesures non-indépendantes est équivalent à un échantillon indépendant de plus petite taille.) Ainsi, les intervalles de confiance et les tests d'hypothèse sur la significativité des coefficients ne seront pas valides.
 
+## Égalité des variances
+
+L'égalité des variances (homoscédasticité) est aussi nécessaire pour que les intervalles de confiance et les valeurs $p$ rapportées pour les coefficients soient exacts.
+
 ## Normalité 
 
 Comme pour le test $t$ et l'ANOVA, les coefficients estimés par la régression linéaire et leurs intervalles de confiance ne sont pas trop affectés par la non-normalité des résidus individuels; en raison du théorème de la limite centrale, la distribution de ces estimés s'approche plus de la normale que celle des résidus individuels.

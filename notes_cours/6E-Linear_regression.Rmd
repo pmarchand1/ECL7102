@@ -253,6 +253,10 @@ In ecology, the non-independence of residuals is often due to a proximity of cer
 
 The non-independence of residuals does not bias the estimates of the model coefficients, so these remain valid, but their uncertainty will be underestimated. (We could say that a sample of non-independent observations is equivalent to a smaller independent sample.) Thus, the confidence intervals and hypothesis tests on the significance of the coefficients will not be valid.
 
+## Equality of variances
+
+The assumptions of equal variances (homoscedasticity) is also required for the confidence intervals and $p$-values reported by the model to be valid.
+
 ## Normality
 
 Just like the results from a $t$ test or an ANOVA, the estimated values and confidence intervals for the linear regression coefficients are not too affected by a lack of normality of the residuals; due to the central limit theorem, the distribution of these estimates is closer to a normal distribution than the distribution of individual residuals.
