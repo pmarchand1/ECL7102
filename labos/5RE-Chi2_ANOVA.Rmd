@@ -50,6 +50,8 @@ b) Test the null hypothesis with the `chisq.test` function in R, with a signific
 chisq.test(f_obs, p = prop)
 ```
 
+The $p$-value (0.35) is greater than 0.05, so we cannot reject the null hypothesis that each genus is visited proportionally to its prevalence.
+
 
 ## 2. Foraging activity of three bumblebee species
 
@@ -88,7 +90,7 @@ khi2 <- chisq.test(tab)
 khi2
 ```
 
-The null hypothesis is rejected.
+The null hypothesis is rejected as the $p$-value is smaller than 0.05.
 
 c) Based on the test results in (b), what is the number of degrees of freedom of the $\chi^2$ distribution? How is this value calculated?
 
@@ -156,4 +158,6 @@ c) According to Tukey's range test, between which planting dates are there signi
 TukeyHSD(an_vitc)
 ```
 
-There is a significant difference between d21 and d16 (9.3 units greater for d21) and between d21 and d20 (12.9 units greater for d21).
+The estimated pairwise differences (`d20-d16`, `d21-d16` and `d21-d20`) are found in column `diff`, their 95% confidence interval in columns `(lwr, upr)` and the adjusted $p$-value in column `p adj`. Differences are significant if the confidence interval doesn't include 0 and the `p adj` is smaller than 0.05.
+
+Therefore, there is a significant difference between d21 and d16 (9.3 units greater for d21) and between d21 and d20 (12.9 units greater for d21).

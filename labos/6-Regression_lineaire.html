@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Régression linéaire simple</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Régression linéaire simple</h1>
+<h4 class="date">7 octobre 2020</h4>
+
+</div>
+
+
+<p>Ce laboratoire doit être remis le <strong>14 octobre à 17h sur Moodle</strong>. Dans votre réponse pour chaque question, veuillez inclure le code R utilisé (s’il y a lieu) et les résultats obtenus.</p>
+<div id="croissance-dune-espèce-de-pin" class="section level2">
+<h2>1. Croissance d’une espèce de pin</h2>
+<p>Le tableau de données <code>Loblolly</code> inclus avec R indique la hauteur en pieds (<em>height</em>) mesurée à six valeurs de l’âge (3 à 25 ans) pour 14 individus de l’espèce <em>Pinus taeda</em>. Chaque individu est indiqué par une valeur différente dans la colonne <em>Seed</em>.</p>
+<pre class="r"><code>head(Loblolly)</code></pre>
+<pre><code>##    height age Seed
+## 1    4.51   3  301
+## 15  10.89   5  301
+## 29  28.72  10  301
+## 43  41.74  15  301
+## 57  52.70  20  301
+## 71  60.92  25  301</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimez et interprétez les paramètres d’un modèle linéaire de la hauteur en fonction de l’âge pour ces pins. Est-ce que l’ordonnée à l’origine a un sens biologique pour ce modèle?</p></li>
+<li><p>Faites un nuage de points des résidus du modèle en (a), obtenus avec la fonction <code>residuals</code>, en fonction de l’arbre (<em>Seed</em>)? D’après ce résultat, quelle supposition de la régression linéaire pourrait être invalide ici?</p></li>
+<li><p>À partir des graphiques de diagnostic du modèle en (a), indiquez si les suppositions de linéarité, d’égalité des variances et de normalité semblent être respectées.</p></li>
+<li><p>Expliquez comment chacune des suppositions non-respectées identifiées en (b) et (c) affecte la validité des conclusions du modèle? Autrement dit, de quelle façon les estimés et prédictions du modèle pourraient différer de la réalité?</p></li>
+</ol>
+</div>
+<div id="diversité-des-plantes-sur-des-îles-britanniques" class="section level2">
+<h2>2. Diversité des plantes sur des îles britanniques</h2>
+<p>Le tableau de données <a href="britain_species.csv">britain_species.csv</a> provient de l’étude de Johnson et Simberloff (1974), “Environmental determinants of island species numbers in the British Isles”. Ces données indiquent le nombre d’espèces de plantes vasculaires (<em>species</em>) pour 42 îles britanniques en fonction de différents prédicteurs, incluant la surface de l’île en km<span class="math inline">\(^2\)</span> (<em>area</em>).</p>
+<pre class="r"><code>iles &lt;- read.csv(&quot;britain_species.csv&quot;)
+str(iles)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    42 obs. of  7 variables:
+##  $ island      : chr  &quot;Ailsa&quot; &quot;Anglesey&quot; &quot;Arran&quot; &quot;Barra&quot; ...
+##  $ area        : num  0.8 712.5 429.4 18.4 31.1 ...
+##  $ elevation   : int  340 127 874 384 226 1343 210 103 143 393 ...
+##  $ soil_types  : int  1 3 4 2 1 16 1 3 1 1 ...
+##  $ latitude    : num  55.3 53.3 55.6 57 60.1 54.3 57.1 56.6 56.1 56.9 ...
+##  $ dist_britain: num  14 0.2 5.2 77.4 201.6 ...
+##  $ species     : int  75 855 577 409 177 1666 300 443 482 453 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Supposons qu’une théorie prédit que le nombre d’espèces (<span class="math inline">\(S\)</span>) dépend de la surface d’une île (<span class="math inline">\(A\)</span>) en fonction de l’équation suivante, où <span class="math inline">\(c\)</span> et <span class="math inline">\(z\)</span> sont des paramètres à déterminer:</li>
+</ol>
+<p><span class="math display">\[S = c A^z\]</span></p>
+<p>Comment pouvez-vous transformer cette équation en un modèle linéaire?</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Ajustez le modèle en (a) aux données et vérifiez les graphiques de diagnostic. Quel est l’estimé de <span class="math inline">\(z\)</span>?</p></li>
+<li><p>Supposons que la théorie prédit que <span class="math inline">\(z = 0.25\)</span>. Calculez un intervalle de confiance pour <span class="math inline">\(z\)</span> et déterminez si cette hypothèse peut être rejetée ou non à un seuil de signification <span class="math inline">\(\alpha = 0.05\)</span>.</p></li>
+<li><p>À partir du modèle en (b), donnez un intervalle de prédiction à 90% du nombre d’espèces pour (i) une île de 0.5 km<span class="math inline">\(^2\)</span> et (ii) une île de 20 km<span class="math inline">\(^2\)</span>.</p></li>
+</ol>
+<p><em>Notes</em>:</p>
+<ul>
+<li><p>Modifiez le % de l’intervalle de prédiction avec l’argument <code>level</code> de <code>predict</code>.</p></li>
+<li><p>Si la réponse du modèle est une transformation de la variable <code>species</code>, vous pouvez appliquer la transformation inverse aux bornes inférieure et supérieure des intervalles obtenus avec <code>predict</code> pour retrouver le nombre d’espèces correspondant.</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

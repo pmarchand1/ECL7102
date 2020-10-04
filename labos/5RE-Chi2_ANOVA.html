@@ -314,6 +314,7 @@ f_exp</code></pre>
 ## 
 ## data:  f_obs
 ## X-squared = 3.2698, df = 3, p-value = 0.3519</code></pre>
+<p>The <span class="math inline">\(p\)</span>-value (0.35) is greater than 0.05, so we cannot reject the null hypothesis that each genus is visited proportionally to its prevalence.</p>
 </div>
 <div id="foraging-activity-of-three-bumblebee-species" class="section level2">
 <h2>2. Foraging activity of three bumblebee species</h2>
@@ -381,7 +382,7 @@ khi2</code></pre>
 ## 
 ## data:  tab
 ## X-squared = 16.569, df = 6, p-value = 0.01101</code></pre>
-<p>The null hypothesis is rejected.</p>
+<p>The null hypothesis is rejected as the <span class="math inline">\(p\)</span>-value is smaller than 0.05.</p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Based on the test results in (b), what is the number of degrees of freedom of the <span class="math inline">\(\chi^2\)</span> distribution? How is this value calculated?</li>
 </ol>
@@ -458,7 +459,8 @@ summary(an_vitc)</code></pre>
 ## d20-d16 -3.6 -10.952045  3.752045 0.4553220
 ## d21-d16  9.3   1.947955 16.652045 0.0110721
 ## d21-d20 12.9   5.547955 20.252045 0.0004962</code></pre>
-<p>There is a significant difference between d21 and d16 (9.3 units greater for d21) and between d21 and d20 (12.9 units greater for d21).</p>
+<p>The estimated pairwise differences (<code>d20-d16</code>, <code>d21-d16</code> and <code>d21-d20</code>) are found in column <code>diff</code>, their 95% confidence interval in columns <code>(lwr, upr)</code> and the adjusted <span class="math inline">\(p\)</span>-value in column <code>p adj</code>. Differences are significant if the confidence interval doesn’t include 0 and the <code>p adj</code> is smaller than 0.05.</p>
+<p>Therefore, there is a significant difference between d21 and d16 (9.3 units greater for d21) and between d21 and d20 (12.9 units greater for d21).</p>
 </div>
 
 

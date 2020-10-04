@@ -313,7 +313,7 @@ f_att</code></pre>
 ## 
 ## data:  f_obs
 ## X-squared = 3.2698, df = 3, p-value = 0.3519</code></pre>
-<p>L’hypothèse nulle n’est pas rejetée.</p>
+<p>La valeur <span class="math inline">\(p\)</span> (0.35) est supérieure à 0.05, donc nous ne pouvons pas rejeter l’hypothèse nulle selon laquelle chaque genre est visité proportionnellement à sa prévalence.</p>
 </div>
 <div id="butinage-de-trois-espèces-de-bourdon" class="section level2">
 <h2>2. Butinage de trois espèces de bourdon</h2>
@@ -381,7 +381,7 @@ khi2</code></pre>
 ## 
 ## data:  tab
 ## X-squared = 16.569, df = 6, p-value = 0.01101</code></pre>
-<p>L’hypothèse nulle est rejetée.</p>
+<p>L’hypothèse nulle est rejetée car la valeur <span class="math inline">\(p\)</span> est inférieure à 0.05.</p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>D’après les résultats du test en (b), quel est le nombre de degrés de liberté du <span class="math inline">\(\chi^2\)</span>? Comment cette valeur est-elle calculée?</li>
 </ol>
@@ -458,7 +458,8 @@ summary(an_vitc)</code></pre>
 ## d20-d16 -3.6 -10.952045  3.752045 0.4553220
 ## d21-d16  9.3   1.947955 16.652045 0.0110721
 ## d21-d20 12.9   5.547955 20.252045 0.0004962</code></pre>
-<p>Il y a une différence significative entre d21 et d16 (9.3 unités de plus pour d21) et entre d21 et d20 (12.9 unités de plus pour d21).</p>
+<p>Les différences estimées par paires (<code>d20-d16</code>, <code>d21-d16</code> et <code>d21-20</code>) sont indiquées dans la colonne <code>diff</code>, leur intervalle de confiance à 95% par les colonnes <code>lwr</code> et <code>upr</code> et la valeur <span class="math inline">\(p\)</span> ajustée dans <code>p adj</code>. La différence est significative si l’intervalle <code>(lwr, upr)</code> n’inclut pas zéro et la valeur <code>p adj</code> est inférieure à 0.05.</p>
+<p>Il y a donc une différence significative entre d21 et d16 (9.3 unités de plus pour d21) et entre d21 et d20 (12.9 unités de plus pour d21).</p>
 </div>
 
 

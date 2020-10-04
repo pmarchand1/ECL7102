@@ -49,7 +49,7 @@ b) Testez l'hypothèse nulle avec la fonction `chisq.test` dans R, avec un seuil
 chisq.test(f_obs, p = prop)
 ```
 
-L'hypothèse nulle n'est pas rejetée.
+La valeur $p$ (0.35) est supérieure à 0.05, donc nous ne pouvons pas rejeter l'hypothèse nulle selon laquelle chaque genre est visité proportionnellement à sa prévalence.
 
 
 ## 2. Butinage de trois espèces de bourdon
@@ -89,7 +89,7 @@ khi2 <- chisq.test(tab)
 khi2
 ```
 
-L'hypothèse nulle est rejetée.
+L'hypothèse nulle est rejetée car la valeur $p$ est inférieure à 0.05.
 
 c) D'après les résultats du test en (b), quel est le nombre de degrés de liberté du $\chi^2$? Comment cette valeur est-elle calculée?
 
@@ -157,4 +157,6 @@ c) Selon un test des étendues de Tukey, entre quelles dates retrouve-t-on une d
 TukeyHSD(an_vitc)
 ```
 
-Il y a une différence significative entre d21 et d16 (9.3 unités de plus pour d21) et entre d21 et d20 (12.9 unités de plus pour d21).
+Les différences estimées par paires (`d20-d16`, `d21-d16` et `d21-20`) sont indiquées dans la colonne `diff`, leur intervalle de confiance à 95% par les colonnes `lwr` et `upr` et la valeur $p$ ajustée dans `p adj`. La différence est significative si l'intervalle `(lwr, upr)` n'inclut pas zéro et la valeur `p adj` est inférieure à 0.05.
+
+Il y a donc une différence significative entre d21 et d16 (9.3 unités de plus pour d21) et entre d21 et d20 (12.9 unités de plus pour d21).

@@ -1,0 +1,61 @@
+---
+title: "Simple linear regression"
+date: "October 7, 2020"
+output: 
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+Answers for this lab must be submitted before **October 14th at 5pm on Moodle**. In your answer for each question, please include the R code used (if applicable) and the results obtained.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 1. Growth of a pine species
+
+The `Loblolly` data frame included with R indicates the height in feet (*height*) measured at six values of age (3 to 25 years) for 14 individuals of the species *Pinus taeda*. Each individual is indicated by a different value in the *Seed* column.
+
+```{r}
+head(Loblolly)
+```
+
+a) Estimate and interpret the parameters of a linear model of height versus age for these pines. Does the intercept make biological sense for this model? 
+
+b) Make a scatterplot of the residuals of the model in (a), obtained with the `residuals' function, as a function of the tree (*Seed*). Based on this result, which assumption of linear regression could be invalid here?
+
+c) From the diagnostic graphs of the model in (a), indicate whether the assumptions of linearity, equality of variances and normality appear to be met.
+
+d) Explain how each of the unmet assumptions identified in (b) and (c) affects the validity of the model's conclusions. In other words, how might the model's estimates and predictions differ from reality?
+
+
+## 2. Plant diversity in the British Isles
+
+The data table [britain_species.csv](britain_species.csv) comes from the study by Johnson and Simberloff (1974), "Environmental determinants of island species numbers in the British Isles". These data indicate the number of vascular plant species for 42 British Isles according to different predictors, including the area of the island in km$^2$.
+
+```{r}
+iles <- read.csv("britain_species.csv")
+str(iles)
+```
+
+a) Suppose that a theory predicts that the number of species ($S$) depends on island area ($A$) according to the following equation, where $c$ and $z$ are parameters to be esimated:
+
+$$S = c A^z$$
+
+How can you transform this equation into a linear model?
+
+b) Fit the model in (a) to the data and check the diagnostic graphs. What is the estimate of $z$?
+
+c) Suppose the theory predicts that $z = 0.25$. Calculate a confidence interval for $z$ and determine whether or not this assumption can be rejected at a significance level of $\alpha = 0.05$.
+
+d) From the model in (b), give a 90% prediction interval of the number of species for (i) an island of 0.5 km$^2$ and (ii) an island of 20 km$^2$.
+
+*Notes*: 
+
+- Change the % of the prediction interval with the `level` argument of `predict`.
+
+- If the model response is a transformation of the `species` variable, you can apply the inverse transformation to the lower and upper bounds of the intervals obtained with `predict` to find the corresponding number of species.
