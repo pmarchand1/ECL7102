@@ -441,6 +441,7 @@ str(pgr_nouv)</code></pre>
 <h2>Independence of residuals</h2>
 <p>The independence of residuals means that the portion of the response <span class="math inline">\(y\)</span> not explained by the predictors <span class="math inline">\(x\)</span> is independent from one observation to another.</p>
 <p>In ecology, the non-independence of residuals is often due to a proximity of certain observations in space and time. For example, if the observations are spread over several days, observations that are closer in time may be more similar. Factors that can cause this temporal dependence (e.g., weather) can be included in the model to obtain the most independent residuals possible.</p>
+<p>Also, if we perform repeated measurements on the same observational units across time and the model doesn’t take into account this aspect of the design, the residuals will be more similar for observations taken on the same unit, and thus non-independent.</p>
 <p>The non-independence of residuals does not bias the estimates of the model coefficients, so these remain valid, but their uncertainty will be underestimated. (We could say that a sample of non-independent observations is equivalent to a smaller independent sample.) Thus, the confidence intervals and hypothesis tests on the significance of the coefficients will not be valid.</p>
 </div>
 <div id="equality-of-variances" class="section level2">
