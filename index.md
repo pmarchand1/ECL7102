@@ -11,6 +11,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 4. [Tests d'hypothèses](notes_cours/4-Tests_hypothese.html) ([PDF](notes_cours/4-Tests_hypothese.pdf))
 5. [Tableaux de contingence et ANOVA](notes_cours/5-Chi2_ANOVA.html) ([PDF](notes_cours/5-Chi2_ANOVA.pdf))
 6. [Régression linéaire simple](notes_cours/6-Regression_lineaire.html) ([PDF](notes_cours/6-Regression_lineaire.pdf)) - [Données](donnees/plant_growth_rate.csv)
+7. [Régression linéaire multiple](notes_cours/7-Regression_multiple.html) ([PDF](notes_cours/7-Regression_multiple.pdf)) - Données [1](donnees/compensation.csv) [2](donnees/growth.csv) [3](donnees/antibiot.csv)
 
 
 ## Laboratoires

@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Régression linéaire multiple</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Régression linéaire multiple</h1>
+<h4 class="date"><br/>14 octobre 2020</h4>
+
+</div>
+
+
+<div id="objectifs" class="section level1">
+<h1>Objectifs</h1>
+<ul>
+<li><p>Estimer et interpréter les paramètres d’une régression linéaire incluant plusieurs variables catégorielles et/ou numériques.</p></li>
+<li><p>Expliquer la signification d’une interaction entre deux variables et interpréter son coefficient.</p></li>
+<li><p>Utiliser le package <em>emmeans</em> pour comparer la réponse moyenne entre les différents niveaux d’une variable catégorielle.</p></li>
+<li><p>Savoir comment et pourquoi normaliser les prédicteurs dans une régression linéaire multiple.</p></li>
+</ul>
+</div>
+<div id="régression-linéaire-multiple" class="section level1">
+<h1>Régression linéaire multiple</h1>
+<p>Le modèle de régression linéaire multiple représente la relation entre une variable réponse et <span class="math inline">\(m\)</span> prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, …, <span class="math inline">\(x_m\)</span>.</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_m x_m + \epsilon = \beta_0 + \sum_{i = 1}^m \beta_i x_i + \epsilon \]</span></p>
+<p>Comme dans le cas de la régression linéaire simple, les coefficients <span class="math inline">\(\beta\)</span> peuvent être calculés à partir de la méthode des moindres carrés. Dans ce modèle, chaque coefficient <span class="math inline">\(\beta_i\)</span> (sauf <span class="math inline">\(\beta_0\)</span>) est la dérivée partielle de <span class="math inline">\(y\)</span> par rapport à un prédicteur <span class="math inline">\(x_i\)</span>. En d’autres mots, ce coefficient représente la différence moyenne de <span class="math inline">\(y\)</span> associée à une différence d’une unité de <span class="math inline">\(x_i\)</span> <em>et aucune différence au niveau des autres prédicteurs</em>.</p>
+<p>Un modèle de régression peut inclure plusieurs prédicteurs catégoriels ou numériques. Pour ce cours-ci, nous présenterons des exemples incluant:</p>
+<ul>
+<li><p>un prédicteur catégoriel et un prédicteur numérique (dans un contexte expérimental, ce modèle est dénommé analyse de la covariance ou ANCOVA);</p></li>
+<li><p>deux prédicteurs catégoriels (ANOVA à deux facteurs);</p></li>
+<li><p>deux prédicteurs numériques.</p></li>
+</ul>
+</div>
+<div id="analyse-de-la-covariance" class="section level1">
+<h1>Analyse de la covariance</h1>
+<p>Le tableau de données <a href="../donnees/compensation.csv">compensation.csv</a> est tiré du livre de Crawley, <em>Statistics: An introduction using R</em>. Il contient des données sur la masse des graines produites par une espèce de plante (<em>Fruit</em>) en fonction de la taille des racines (<em>Root</em>) et selon que la plante subisse ou non un pâturage (<em>Grazing</em>).</p>
+<pre class="r"><code>comp &lt;- read.csv(&quot;../donnees/compensation.csv&quot;)
+str(comp)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    40 obs. of  3 variables:
+##  $ Root   : num  6.22 6.49 4.92 5.13 5.42 ...
+##  $ Fruit  : num  59.8 61 14.7 19.3 34.2 ...
+##  $ Grazing: chr  &quot;Ungrazed&quot; &quot;Ungrazed&quot; &quot;Ungrazed&quot; &quot;Ungrazed&quot; ...</code></pre>
+<p>Inspectons d’abord les données.</p>
+<pre class="r"><code>ggplot(comp, aes(x = Root, y = Fruit, color = Grazing)) +
+    geom_point() +
+    scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Le graphique montre bien l’existence d’une relation linéaire entre la taille des racines et la production de graines, ainsi que l’effet du traitement: pour la même taille des racines, le pâturage réduit la production de graines. Notez que si on n’avait pas mesuré les racines, on pourrait croire que l’effet du pâturage est positif.</p>
+<pre class="r"><code>ggplot(comp, aes(x = Grazing, y = Fruit)) +
+    geom_boxplot()</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Cela est dû au fait que les plantes subissant le pâturage avaient (en moyenne) de plus grandes racines au départ. La taille des racines est donc une variable <em>confondante</em>, c’est-à-dire qu’elle est corrélée à la fois avec la variable réponse et avec le traitement dont on cherche à estimer l’effet sur cette réponse. Il faut donc l’inclure dans le modèle pour bien estimer l’effet du pâturage.</p>
+<p>Voici un modèle linéaire où l’effet des deux prédicteurs est <em>additif</em>, tel qu’indiqué par le signe <strong>+</strong> dans la formule du modèle en R:</p>
+<pre class="r"><code>mod_comp &lt;- lm(Fruit ~ Grazing + Root, data = comp)
+summary(mod_comp)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Fruit ~ Grazing + Root, data = comp)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -17.1920  -2.8224   0.3223   3.9144  17.3290 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     -127.829      9.664  -13.23 1.35e-15 ***
+## GrazingUngrazed   36.103      3.357   10.75 6.11e-13 ***
+## Root              23.560      1.149   20.51  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.747 on 37 degrees of freedom
+## Multiple R-squared:  0.9291, Adjusted R-squared:  0.9252 
+## F-statistic: 242.3 on 2 and 37 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div id="interprétation-des-résultats" class="section level2">
+<h2>Interprétation des résultats</h2>
+<p>Si <span class="math inline">\(x_1\)</span> est la variable de pâturage (0 = Grazed, 1 = Ungrazed selon le codage par défaut dans R) et que <span class="math inline">\(x_2\)</span> est la taille des racines, l’expression mathématique de ce modèle est:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon \]</span></p>
+<p>Pour simplifier l’interprétation des coefficients, on peut séparer le cas avec pâturage (<span class="math inline">\(x_1 = 0\)</span>):</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_2 x_2 + \epsilon \]</span></p>
+<p>du cas sans pâturage (<span class="math inline">\(x_1 = 1\)</span>):</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 + \beta_2 x_2 + \epsilon \]</span></p>
+<p>On peut maintenant intepréter les coefficients comme suit:</p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span> (<code>Intercept</code> dans le tableau sommaire) est l’ordonnée à l’origine de la droite <em>Fruit vs. Root</em> avec pâturage.</li>
+<li><span class="math inline">\(\beta_1\)</span> (<code>GrazingUngrazed</code>) est l’effet de l’absence de pâturage sur l’ordonnée à l’origine de <em>Fruit vs. Root</em>.</li>
+<li><span class="math inline">\(\beta_2\)</span> (<code>Root</code>) est la pente de la droite <em>Fruit vs. Root</em> avec ou sans pâturage.</li>
+</ul>
+<p>Puisque la pente est la même avec ou sans pâturage, le coefficient <span class="math inline">\(\beta_1\)</span> correspond à une translation sur l’axe des <span class="math inline">\(y\)</span> de la droite de régression. Ce modèle des effets additifs d’un traitement et d’une variable numérique est donc représenté par deux droites parallèles, ce qui correspond assez bien à notre visualisation des données. En outre, la valeur du <span class="math inline">\(R^2\)</span> (0.93) indique que le modèle explique une grande partie de la variation observée dans les données.</p>
+<p>Même une grande valeur de <span class="math inline">\(R^2\)</span> ne signifie pas nécessairement que le modèle est approprié. Il faut toujours observer les graphiques de diagnostic. Excepté la présence de quelques valeurs extrêmes dans le diagramme quantile-quantile, les suppositions semblent bien respectées.</p>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Notez que le numéro de la rangée du tableau de données est indiqué à côté de certains points extrêmes, pour faciliter l’identification de points problématiques.</p>
+<p>Le test <span class="math inline">\(F\)</span> rapporté au bas du sommaire des résultats de <code>lm</code> correspond à l’hypothèse nulle d’absence d’effet pour tous les prédicteurs.</p>
+<p>On peut aussi obtenir un tableau d’ANOVA conventionnel en appliquant la fonction <code>anova</code> au résultat de <code>lm</code>.</p>
+<pre class="r"><code>anova(mod_comp)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Fruit
+##           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Grazing    1  2910.4  2910.4  63.929 1.397e-09 ***
+## Root       1 19148.9 19148.9 420.616 &lt; 2.2e-16 ***
+## Residuals 37  1684.5    45.5                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Ce tableau indique quelle portion de la somme des écarts au carré est expliquée par chacun des prédicteurs, ainsi que la portion résiduelle.</p>
+</div>
+<div id="ordre-des-prédicteurs" class="section level2">
+<h2>Ordre des prédicteurs</h2>
+<p>Les fonctions <code>aov</code> et <code>anova</code> dans R traitent les prédicteurs de façon séquentielle, c’est-à-dire que l’effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents. Dans notre exemple, la somme des écarts carrés pour le prédicteur <code>Root</code> est basée sur les résidus du modèle incluant seulement <code>Grazing</code>.</p>
+<p>C’est ce qu’on appelle une “somme des écarts carrés de Type I” en statistiques. En particulier, cela signifie que le tableau d’ANOVA ne serait pas nécessairement le même en changeant l’ordre des prédicteurs, ex.: <code>Fruit ~ Root + Grazing</code>. D’autres packages en R permettent de réaliser une ANOVA avec des sommes des écarts carrés de Type II et III, mais nous ne verrons pas ces concepts dans ce cours.</p>
+<p>Comme nous avons mentionné plus tôt, les coefficients de la régression linéaire multiple estiment l’effet partiel de chaque prédicteur, c’est-à-dire l’effet d’une différence au niveau de ce prédicteur entre deux cas qui ne diffèrent pour aucun autre prédicteur. Pour cette raison, l’ordre des prédicteurs n’influence pas les estimés obtenus avec <code>lm</code>.</p>
+</div>
+<div id="modèle-avec-interaction" class="section level2">
+<h2>Modèle avec interaction</h2>
+<p>Le modèle précédent suppose que les effets de la taille des racines et du pâturage sur la masse des graines sont additifs: autrement dit, la différence entre les deux traitements de pâturage est la même pour chaque valeur de <em>Root</em> et la pente de <em>Fruit vs. Root</em> est la même pour les cas avec et sans pâturage.</p>
+<p>Pour considérer la possibilité que l’effet d’un prédicteur sur la réponse dépende de la valeur d’un autre prédicteur, nous devons spécifier une <strong>interaction</strong> entre ces deux prédicteurs. Dans la formule d’un modèle en R, l’interaction est indiquée par un symbole de multiplication <code>*</code> entre les variables au lieu du symbole d’addition <code>+</code>.</p>
+<pre class="r"><code>mod_comp_inter &lt;- lm(Fruit ~ Grazing * Root, data = comp)
+summary(mod_comp_inter)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Fruit ~ Grazing * Root, data = comp)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -17.3177  -2.8320   0.1247   3.8511  17.1313 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          -125.173     12.811  -9.771 1.15e-11 ***
+## GrazingUngrazed        30.806     16.842   1.829   0.0757 .  
+## Root                   23.240      1.531  15.182  &lt; 2e-16 ***
+## GrazingUngrazed:Root    0.756      2.354   0.321   0.7500    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.831 on 36 degrees of freedom
+## Multiple R-squared:  0.9293, Adjusted R-squared:  0.9234 
+## F-statistic: 157.6 on 3 and 36 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Si <span class="math inline">\(x_1\)</span> est la variable de pâturage (0 = Grazed, 1 = Ungrazed selon le codage par défaut dans R) et que <span class="math inline">\(x_2\)</span> est la taille des racines, l’expression mathématique de ce modèle est:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon \]</span></p>
+<p>L’interaction est donc équivalente à l’ajout d’un nouveau prédicteur au modèle, égal au produit des deux variables qui interagissent. Séparons de nouveau en deux équations selon le traitement:</p>
+<p>Avec pâturage (<span class="math inline">\(x_1 = 0\)</span>):</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_2 x_2 \]</span></p>
+<p>Sans pâturage (<span class="math inline">\(x_1 = 1\)</span>):</p>
+<p><span class="math display">\[ y = (\beta_0 + \beta_1) + (\beta_2 + \beta_{12}) x_2 \]</span></p>
+<p>Pour ce modèle avec interaction, l’interprétation des coefficients change un peu:</p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span> (<code>Intercept</code> dans le tableau sommaire) est l’ordonnée à l’origine de la droite <em>Fruit vs. Root</em> avec pâturage.</li>
+<li><span class="math inline">\(\beta_1\)</span> (<code>GrazingUngrazed</code>) est l’effet de l’absence de pâturage sur l’ordonnée à l’origine de <em>Fruit vs. Root</em>.</li>
+<li><span class="math inline">\(\beta_2\)</span> (<code>Root</code>) est la pente de la droite <em>Fruit vs. Root</em> avec pâturage.</li>
+<li><span class="math inline">\(\beta_{12}\)</span> (<code>GrazingUngrazed:Root</code>) est l’effet de l’absence de pâturage sur la pente de la droite <em>Fruit vs. Root</em>.</li>
+</ul>
+<p>Le modèle avec interaction est donc équivalent à estimer séparément la droite de régression (ordonnée à l’origine et pente) pour chacun des deux traitements.</p>
+<p>Comparé au modèle additif, notez que l’effet de l’absence de pâturage (<code>GrazingUngrazed</code>) a maintenant une erreur-type beaucoup plus élevée et une valeur <span class="math inline">\(p\)</span> plus grande.</p>
+<pre class="r"><code>summary(mod_comp)$coefficients</code></pre>
+<pre><code>##                   Estimate Std. Error   t value     Pr(&gt;|t|)
+## (Intercept)     -127.82936   9.664095 -13.22725 1.349804e-15
+## GrazingUngrazed   36.10325   3.357396  10.75335 6.107286e-13
+## Root              23.56005   1.148771  20.50892 8.408231e-22</code></pre>
+<pre class="r"><code>summary(mod_comp_inter)$coefficients</code></pre>
+<pre><code>##                          Estimate Std. Error    t value     Pr(&gt;|t|)
+## (Intercept)          -125.1730569  12.811165 -9.7706222 1.150540e-11
+## GrazingUngrazed        30.8057049  16.841823  1.8291194 7.567489e-02
+## Root                   23.2403732   1.530771 15.1821314 3.173208e-17
+## GrazingUngrazed:Root    0.7560338   2.354111  0.3211547 7.499503e-01</code></pre>
+<p>Ceci est dû au fait que l’ordonnée à l’origine, correspondant à <em>Root</em> = 0, se situe loin de l’étendue des données (les valeurs de <em>Root</em> sont toutes entre 4 et 11). Donc, un petit changement de pente au milieu du graphique peut mener à un changement important d’ordonnée à l’origine et l’incertitude du coefficient d’interaction (la différence de pente) se répercute aussi sur l’estimation de la différence d’ordonnée à l’origine.</p>
+<p>Le tableau d’ANOVA pour un modèle avec interaction inclut la portion de la somme des écarts carrés due à la variation de chaque prédicteur, ainsi que leur interaction. La portion expliquée par l’interaction est basée sur la différence entre les écarts carrés résiduels du modèle sans interaction et ceux du modèle avec interaction. Dans ce cas-ci, l’effet de l’interaction n’est pas significatif, le modèle additif est donc préférable.</p>
+<pre class="r"><code>anova(mod_comp_inter)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Fruit
+##              Df  Sum Sq Mean Sq  F value    Pr(&gt;F)    
+## Grazing       1  2910.4  2910.4  62.3795 2.262e-09 ***
+## Root          1 19148.9 19148.9 410.4201 &lt; 2.2e-16 ***
+## Grazing:Root  1     4.8     4.8   0.1031      0.75    
+## Residuals    36  1679.6    46.7                       
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Pourquoi l’effet du pâturage (<em>Grazing</em>) est-il significatif dans le tableau d’ANOVA alors que le coefficient <em>GrazingUngrazed</em> du modèle linéaire ne l’est pas? Dans le tableau d’ANOVA, on teste s’il y a une différence significative de la moyenne de <em>Fruit</em> entre les plantes subissant ou non un pâturage, tandis que le coefficient du modèle linéaire réfère à la différence entre les deux traitements lorsque <em>Root</em> est 0 (ordonnée à l’origine). Dans le cas où les variables interagissent, ces deux tests ne sont pas équivalents, car la différence entre les deux droites (avec ou sans pâturage) dépend de la valeur de <em>Root</em>.</p>
+</div>
+</div>
+<div id="anova-à-deux-facteurs" class="section level1">
+<h1>ANOVA à deux facteurs</h1>
+<div id="exemple" class="section level2">
+<h2>Exemple</h2>
+<p>Pour illustrer l’ANOVA à deux facteurs, nous utiliserons d’abord le jeu de données <a href="../donnees/growth.csv">growth.csv</a> provenant du manuel <em>Statistics: An Introduction Using R</em>. L’expérience compare le gain de poids (<em>gain</em>) de 48 animaux suivant trois types de régime alimentaire (<em>diet</em>) avec quatre types de suppléments (<em>supplement</em>). Il y a donc 12 groupes (toutes les combinaisons des 3 régimes et 4 suppléments) de 4 individus chacun.</p>
+<pre class="r"><code>growth &lt;- read.csv(&quot;../donnees/growth.csv&quot;)
+str(growth)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    48 obs. of  3 variables:
+##  $ supplement: chr  &quot;supergain&quot; &quot;supergain&quot; &quot;supergain&quot; &quot;supergain&quot; ...
+##  $ diet      : chr  &quot;wheat&quot; &quot;wheat&quot; &quot;wheat&quot; &quot;wheat&quot; ...
+##  $ gain      : num  17.4 16.8 18.1 15.8 17.7 ...</code></pre>
+<pre class="r"><code>ggplot(growth, aes(x = supplement, y = gain, color = diet)) +
+    # position_dodge décale les points de différentes couleurs
+    geom_point(position = position_dodge(width = 0.3)) + 
+    scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>À première vue, il semble plausible que les effets du régime et du supplément soient additifs, car la différence entre les régimes est semblable d’un supplément à l’autre et la différence entre les suppléments est semblable d’un régime à l’autre. D’ailleurs, le tableau d’ANOVA du modèle avec interaction ne montre pas d’effet significatif de cette interaction:</p>
+<pre class="r"><code>aov_growth_inter &lt;- aov(gain ~ diet * supplement, data = growth)
+summary(aov_growth_inter)</code></pre>
+<pre><code>##                 Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## diet             2 287.17  143.59   83.52 3.00e-14 ***
+## supplement       3  91.88   30.63   17.82 2.95e-07 ***
+## diet:supplement  6   3.41    0.57    0.33    0.917    
+## Residuals       36  61.89    1.72                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Notez qu’il est possible d’utiliser la fonction <code>aov</code> ici car nous n’avons que des variables catégorielles et l’échantillon est équilibré (4 réplicats par combinaison de régime et de supplément).</p>
+<p>Voici les résultats du modèle additif. Les deux facteurs ont un effet significatif et le régime explique une plus grande portion de la variance du gain de poids (d’après la somme des écarts carrés) que le supplément.</p>
+<pre class="r"><code>aov_growth_add &lt;- aov(gain ~ diet + supplement, data = growth)
+summary(aov_growth_add)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## diet         2 287.17  143.59   92.36 4.20e-16 ***
+## supplement   3  91.88   30.63   19.70 3.98e-08 ***
+## Residuals   42  65.30    1.55                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Les graphiques de diagnostic n’indiquent pas de problème:</p>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>D’après le test des étendues de Tukey, les trois régimes ont un effet différent (blé &lt; avoine &lt; orge). Pour les suppléments, <em>agrimore</em> et <em>supersupp</em> ont un effet plus grand que <em>supergain</em> et <em>control</em>.</p>
+<pre class="r"><code>TukeyHSD(aov_growth_add)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = gain ~ diet + supplement, data = growth)
+## 
+## $diet
+##                   diff       lwr       upr p adj
+## oats-barley  -3.092817 -4.163817 -2.021817 0e+00
+## wheat-barley -5.990298 -7.061298 -4.919297 0e+00
+## wheat-oats   -2.897481 -3.968481 -1.826481 2e-07
+## 
+## $supplement
+##                           diff        lwr        upr     p adj
+## control-agrimore    -2.6967005 -4.0583332 -1.3350677 0.0000234
+## supergain-agrimore  -3.3814586 -4.7430914 -2.0198259 0.0000003
+## supersupp-agrimore  -0.7273521 -2.0889849  0.6342806 0.4888738
+## supergain-control   -0.6847581 -2.0463909  0.6768746 0.5400389
+## supersupp-control    1.9693484  0.6077156  3.3309811 0.0020484
+## supersupp-supergain  2.6541065  1.2924737  4.0157392 0.0000307</code></pre>
+</div>
+<div id="représentation-avec-les-contrastes" class="section level2">
+<h2>Représentation avec les contrastes</h2>
+<p>Voici les résultats obtenus pour le même modèle avec <code>lm</code>:</p>
+<pre class="r"><code>lm_growth_add &lt;- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth_add)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gain ~ diet + supplement, data = growth)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.30792 -0.85929 -0.07713  0.92052  2.90615 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          26.1230     0.4408  59.258  &lt; 2e-16 ***
+## dietoats             -3.0928     0.4408  -7.016 1.38e-08 ***
+## dietwheat            -5.9903     0.4408 -13.589  &lt; 2e-16 ***
+## supplementcontrol    -2.6967     0.5090  -5.298 4.03e-06 ***
+## supplementsupergain  -3.3815     0.5090  -6.643 4.72e-08 ***
+## supplementsupersupp  -0.7274     0.5090  -1.429     0.16    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.247 on 42 degrees of freedom
+## Multiple R-squared:  0.8531, Adjusted R-squared:  0.8356 
+## F-statistic: 48.76 on 5 and 42 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Souvenons-nous que par défaut, R utilise un codage de traitement pour représenter les variables catégorielles dans une régression linéaire, où le premier niveau du facteur (en ordre alphabétique) sert de référence. Ici, <em>barley</em> et <em>agrimore</em> sont les niveaux de référence pour le régime et le supplément, respectivement. Nous pouvons donc interpréter chaque coefficient ainsi:</p>
+<ul>
+<li><p>l’ordonnée à l’origine est le gain de poids moyen pour les niveaux de référence (orge et agrimore);</p></li>
+<li><p>les coefficients <code>dietoats</code> et <code>dietwheat</code> donnent la différence moyenne de gain entre le régime correspondant (avoine ou blé) et le régime d’orge;</p></li>
+<li><p>les trois derniers coefficients donnent la différence moyenne de gain entre le supplément correspondant et le supplément <em>agrimore</em>.</p></li>
+</ul>
+<p>Le gain de poids moyen pour toute combinaison d’un régime et d’un supplément peut être obtenue en additionnant les coefficients correspondants. Par exemple, le gain moyen pour un régime d’avoine avec le supplément <em>supergain</em> est de: 26.12 (ordonnée à l’origine) - 3.09 (avoine) - 3.38 (supergain) = 19.65.</p>
+<p>Tel que vu au dernier cours, nous pouvons modifier les contrastes pour mieux représenter les questions qui nous intéressent. Le code ci-dessous convertit les deux prédicteurs en facteurs, choisit le groupe témoin <em>control</em> comme référence pour <em>supplement</em> et applique un codage d’effet pour <em>diet</em>.</p>
+<pre class="r"><code>growth &lt;- mutate(growth, diet = as.factor(diet),
+                 supplement = relevel(as.factor(supplement), ref = &quot;control&quot;)) 
+contrasts(growth$diet) &lt;- &quot;contr.sum&quot;
+colnames(contrasts(growth$diet)) &lt;- c(&quot;barley&quot; , &quot;oats&quot;)
+
+lm_growth_add &lt;- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth_add)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gain ~ diet + supplement, data = growth)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.30792 -0.85929 -0.07713  0.92052  2.90615 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         20.39861    0.35994  56.673  &lt; 2e-16 ***
+## dietbarley           3.02770    0.25451  11.896 4.93e-15 ***
+## dietoats            -0.06511    0.25451  -0.256 0.799333    
+## supplementagrimore   2.69670    0.50903   5.298 4.03e-06 ***
+## supplementsupergain -0.68476    0.50903  -1.345 0.185772    
+## supplementsupersupp  1.96935    0.50903   3.869 0.000375 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.247 on 42 degrees of freedom
+## Multiple R-squared:  0.8531, Adjusted R-squared:  0.8356 
+## F-statistic: 48.76 on 5 and 42 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Dans ce cas, nous pouvons interpréter les coeffiicents ainsi:</p>
+<ul>
+<li><p>l’ordonnée à l’origine est le gain moyen pour le groupe témoin (<em>control</em>), en faisant la moyenne des trois régimes;</p></li>
+<li><p>les coefficients <code>dietbarley</code> et <code>dietoats</code> donnent la différence moyenne de gain des régimes d’orge et d’avoine comparés à la moyenne des trois régimes. La différence moyenne pour le troisième régime (blé) peut être obtenue en prenant l’opposé de la somme des autres effets: -(3.02 - 0.07) = -2.95.</p></li>
+<li><p>les trois derniers coefficients donnent la différence moyenne de gain entre chaque supplément et le groupe témoin.</p></li>
+</ul>
+</div>
+<div id="modèle-avec-interaction-1" class="section level2">
+<h2>Modèle avec interaction</h2>
+<p>Le jeu de données <a href="../donnees/antibiot.csv">antibiot.csv</a> contient des mesures de prolifération bactérienne (surface couverte en mm<span class="math inline">\(^2\)</span>) en fonction de l’humidité (sec, humide) et de la concentration d’antibiotique (faible, modérée, élevée).</p>
+<pre class="r"><code># fileEncoding = &quot;UTF-8&quot; permet de lire les accents correctement
+antibiot &lt;- read.csv(&quot;../donnees/antibiot.csv&quot;, fileEncoding = &quot;UTF-8&quot;)
+str(antibiot)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    30 obs. of  3 variables:
+##  $ Surface      : num  2.1 2.73 1.86 2.36 2.2 ...
+##  $ Humidité     : chr  &quot;sec&quot; &quot;sec&quot; &quot;sec&quot; &quot;sec&quot; ...
+##  $ Concentration: chr  &quot;faible&quot; &quot;faible&quot; &quot;faible&quot; &quot;faible&quot; ...</code></pre>
+<p>Nous devons manuellement spécifier les niveaux du facteur <em>Concentration</em> pour éviter qu’ils ne soient placés en ordre alphabétique.</p>
+<pre class="r"><code>antibiot$Concentration &lt;- factor(antibiot$Concentration, 
+                                 levels = c(&quot;faible&quot;, &quot;modérée&quot;, &quot;élevée&quot;))
+levels(antibiot$Concentration)</code></pre>
+<pre><code>## [1] &quot;faible&quot;  &quot;modérée&quot; &quot;élevée&quot;</code></pre>
+<p>Voici le graphique de ces données. Est-ce qu’un modèle avec des effets additifs de la concentration d’antibiotique et de l’humidité serait approprié ici?</p>
+<pre class="r"><code>ggplot(antibiot, aes(x = Concentration, y = Surface, color = Humidité)) +
+    geom_point(position = position_dodge(width = 0.3)) + 
+    scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>Ici, il y a une interaction claire entre les deux facteurs. Notamment, les conditions humides sont associées à une plus grande surface bactérienne pour les concentrations faible et modérée d’antibiotiques, mais les conditions sèches ont une plus grande surface bactérienne lorsque la concentration est élevée.</p>
+<p>Voici le sommaire et les graphiques de diagnostic pour le modèle de la surface bactérienne en fonction de l’interaction entre les deux facteurs.</p>
+<pre class="r"><code>aov_antibio &lt;- aov(Surface ~ Concentration * Humidité, antibiot)
+summary(aov_antibio)</code></pre>
+<pre><code>##                        Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Concentration           2  15.93   7.965    71.5 7.76e-11 ***
+## Humidité                1  20.23  20.228   181.6 1.09e-12 ***
+## Concentration:Humidité  2  36.40  18.199   163.4 1.05e-14 ***
+## Residuals              24   2.67   0.111                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>L’interaction entre les 3 catégories de concentration et les 2 catégories d’humidité définit 6 groupes, donc il y a 15 comparaisons possibles pour l’interaction, comme le montre le résultat de <code>TukeyHSD</code>.</p>
+<pre class="r"><code>TukeyHSD(aov_antibio)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = Surface ~ Concentration * Humidité, data = antibiot)
+## 
+## $Concentration
+##                      diff        lwr         upr     p adj
+## modérée-faible -0.3939894 -0.7667378 -0.02124113 0.0368807
+## élevée-faible  -1.7046765 -2.0774249 -1.33192823 0.0000000
+## élevée-modérée -1.3106871 -1.6834354 -0.93793878 0.0000000
+## 
+## $Humidité
+##                 diff       lwr       upr p adj
+## sec-humide -1.642264 -1.893794 -1.390734     0
+## 
+## $`Concentration:Humidité`
+##                                     diff          lwr        upr     p adj
+## modérée:humide-faible:humide -0.82921989 -1.481887432 -0.1765523 0.0073592
+## élevée:humide-faible:humide  -4.22827694 -4.880944489 -3.5756094 0.0000000
+## faible:sec-faible:humide     -3.61481768 -4.267485222 -2.9621501 0.0000000
+## modérée:sec-faible:humide    -3.57357668 -4.226244229 -2.9209091 0.0000000
+## élevée:sec-faible:humide     -2.79589383 -3.448561371 -2.1432263 0.0000000
+## élevée:humide-modérée:humide -3.39905706 -4.051724600 -2.7463895 0.0000000
+## faible:sec-modérée:humide    -2.78559779 -3.438265333 -2.1329302 0.0000000
+## modérée:sec-modérée:humide   -2.74435680 -3.397024340 -2.0916893 0.0000000
+## élevée:sec-modérée:humide    -1.96667394 -2.619341482 -1.3140064 0.0000000
+## faible:sec-élevée:humide      0.61345927 -0.039208277  1.2661268 0.0740073
+## modérée:sec-élevée:humide     0.65470026  0.002032716  1.3073678 0.0489732
+## élevée:sec-élevée:humide      1.43238312  0.779715574  2.0850507 0.0000070
+## modérée:sec-faible:sec        0.04124099 -0.611426550  0.6939085 0.9999549
+## élevée:sec-faible:sec         0.81892385  0.166256308  1.4715914 0.0082690
+## élevée:sec-modérée:sec        0.77768286  0.125015314  1.4303504 0.0131278</code></pre>
+<p>Nous verrons dans la section suivante une méthode facilitant la visualisation de ces comparaisons.</p>
+<p>Le modèle linéaire correspondant à cette ANOVA comporte 6 coefficients:</p>
+<pre class="r"><code>lm_antibio &lt;- lm(Surface ~ Concentration * Humidité, antibiot)
+summary(lm_antibio)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Surface ~ Concentration * Humidité, data = antibiot)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.56688 -0.29550  0.04501  0.16490  0.54423 
+## 
+## Coefficients:
+##                                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                        5.8657     0.1493  39.298  &lt; 2e-16 ***
+## Concentrationmodérée              -0.8292     0.2111  -3.928 0.000631 ***
+## Concentrationélevée               -4.2283     0.2111 -20.031  &lt; 2e-16 ***
+## Humiditésec                       -3.6148     0.2111 -17.125 5.87e-15 ***
+## Concentrationmodérée:Humiditésec   0.8705     0.2985   2.916 0.007572 ** 
+## Concentrationélevée:Humiditésec    5.0472     0.2985  16.907 7.80e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3338 on 24 degrees of freedom
+## Multiple R-squared:  0.9645, Adjusted R-squared:  0.9571 
+## F-statistic: 130.3 on 5 and 24 DF,  p-value: &lt; 2.2e-16</code></pre>
+<ul>
+<li><p>L’ordonnée à l’origine est la surface moyenne pour les niveaux de référence (faible et humide).</p></li>
+<li><p>Les coefficients <code>Concentrationmodérée</code> et <code>Concentrationélevée</code> donnent la différence de surface moyenne due à l’augmentation de concentration de faible à modérée et de faible à élevée, pour le cas humide.</p></li>
+<li><p>Le coefficient <code>Humiditésec</code> donne la différence de surface moyenne entre les cas sec et humide, pour une concentration faible.</p></li>
+<li><p>Finalement, les coefficients liés à l’interaction montrent la différence entre les surfaces moyennes pour les combinaisons “modérée et sec” et “élevée et sec”, comparées aux moyennes prédites par les effets additifs seulement. Autrement dit, la moyenne de la surface bactérienne pour la combinaison “modérée et sec” est égale à: 5.87 (ordonnée à l’origine) - 0.83 (concentration modérée) - 3.61 (sec) + 0.87 (interaction modérée-sec) = 2.30.</p></li>
+</ul>
+</div>
+<div id="visualisation-des-effets-avec-le-package-emmeans" class="section level2">
+<h2>Visualisation des effets avec le package <em>emmeans</em></h2>
+<p>L’exemple précédent démontre qu’en présence d’une interaction, il est difficile de calculer la moyenne de la réponse pour une combinaison de traitements donnés. Le package <em>emmeans</em> (<em>estimated marginal means</em>) effectue automatiquement le calcul des moyennes pour chaque combinaison de traitements, ainsi que leur intervalle de confiance.</p>
+<p>Ci-dessous, nous appliquons la fonction <code>emmeans</code> au résultat du modèle <code>lm_antibio</code>. Le deuxième argument de la fonction spécifie les prédicteurs à considérer: ceux-ci sont indiqués sous forme de formule comme dans la fonction <code>lm</code>, mais sans variable réponse à gauche du <code>~</code>.</p>
+<pre class="r"><code>library(emmeans)
+em_antibio &lt;- emmeans(lm_antibio, ~ Concentration * Humidité)
+em_antibio</code></pre>
+<pre><code>##  Concentration Humidité emmean    SE df lower.CL upper.CL
+##  faible        humide     5.87 0.149 24     5.56     6.17
+##  modérée       humide     5.04 0.149 24     4.73     5.34
+##  élevée        humide     1.64 0.149 24     1.33     1.95
+##  faible        sec        2.25 0.149 24     1.94     2.56
+##  modérée       sec        2.29 0.149 24     1.98     2.60
+##  élevée        sec        3.07 0.149 24     2.76     3.38
+## 
+## Confidence level used: 0.95</code></pre>
+<p>La fonction <code>plot</code> appliquée aux résultats d’<code>emmeans</code> illustre les moyennes et leurs intervalles de confiance.</p>
+<pre class="r"><code>plot(em_antibio)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>Il s’agit d’un graphique <code>ggplot2</code>, donc vous pouvez le personnaliser avec les commandes habituelles.</p>
+<pre class="r"><code>plot(em_antibio) +
+    labs(x = &quot;Surface bactérienne moyenne (millimètres carrés)&quot;)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p>Les intervalles de confiance pour chaque moyenne ne nous permettent pas directement de déterminer si deux moyennes diffèrent de façon significative. Pour ce faire, nous spécifions <code>comparisons = TRUE</code>, ce qui ajoute au graphique des flèches de comparaison, basées sur un test de Tukey. Des flèches qui se recoupent sur l’axe de la variable réponse indiquent que les moyennes ne sont pas significativement différentes (à un seuil <span class="math inline">\(\alpha = 0.05\)</span>, par défaut).</p>
+<pre class="r"><code>plot(em_antibio, comparisons = TRUE)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p>Les comparaisons illustrées ici sont les mêmes que celles obtenues précédemment avec le test des étendues de Tukey, mais la visualisation des effets est simplifée. De plus, la fonction <code>TukeyHSD</code> ne s’applique qu’au résultat de la fonction <code>aov</code>, tandis qu’<code>emmeans</code> s’appliquent à tous les modèles de régression que nous verrons dans ce cours.</p>
+<p>Lorsqu’un modèle est additif, nous pouvons estimer les moyennes pour un seul facteur. Dans ce cas, l’estimé indiqué correspond à la réponse moyenne pour chaque niveau du facteur, en prenant la moyenne de tous les autres prédicteurs. Dans l’exemple ci-dessous, nous calculons donc la moyenne du gain de poids pour chaque supplément, en faisant la moyenne des trois régimes.</p>
+<pre class="r"><code>em_growth_supp &lt;- emmeans(lm_growth_add, ~ supplement)
+em_growth_supp</code></pre>
+<pre><code>##  supplement emmean   SE df lower.CL upper.CL
+##  control      20.4 0.36 42     19.7     21.1
+##  agrimore     23.1 0.36 42     22.4     23.8
+##  supergain    19.7 0.36 42     19.0     20.4
+##  supersupp    22.4 0.36 42     21.6     23.1
+## 
+## Results are averaged over the levels of: diet 
+## Confidence level used: 0.95</code></pre>
+<pre class="r"><code>plot(em_growth_supp)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+</div>
+</div>
+<div id="régression-avec-plusieurs-prédicteurs-numériques" class="section level1">
+<h1>Régression avec plusieurs prédicteurs numériques</h1>
+<div id="exemple-1" class="section level2">
+<h2>Exemple</h2>
+<p>Le tableau de données <code>hills</code> du package <em>MASS</em> (inclus par défaut avec R) contient les records de temps (<em>time</em>, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (<em>dist</em>, en milles) et le dénivelé total du parcours (<em>climb</em>, en pieds).</p>
+<pre class="r"><code>library(MASS)
+str(hills)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    35 obs. of  3 variables:
+##  $ dist : num  2.5 6 6 7.5 8 8 16 6 5 6 ...
+##  $ climb: int  650 2500 900 800 3070 2866 7500 800 800 650 ...
+##  $ time : num  16.1 48.4 33.6 45.6 62.3 ...</code></pre>
+<p>Pour un tableau de données avec plusieurs variables numériques, la fonction <code>plot</code> affiche une matrice de nuages de points pour chaque paire de variables.</p>
+<pre class="r"><code>plot(hills)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p>Les temps records semblent dépendre linéairement de la distance et du dénivelé. (La distance et le dénivelé semblent aussi corrélés, nous y reviendrons au prochain cours.) Nous appliquons donc un modèle linéaire à ces données.</p>
+<pre class="r"><code>mod_hills &lt;- lm(time ~ dist + climb, hills)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p>Puisque les rangées de ce tableau de données sont identifiées par des noms (<code>rownames</code> dans R), ces noms apparaissent vis-à-vis les valeurs extrêmes dans les graphiques de diagnostic.</p>
+<p>D’après ces graphiques, deux parcours (Knock Hill et Bens of Jura) ont un temps record beaucoup plus long qu’attendu (résidu positif important). Ces mêmes points ont aussi une grande influence sur les coefficients de la régression (d’après le quatrième graphique). Dans ce cas, il faudrait vérifier si ces parcours ont des particularités qui expliquent cette forte différence par rapport au modèle.</p>
+</div>
+<div id="graphiques-de-diagnostic-avec-lindia" class="section level2">
+<h2>Graphiques de diagnostic avec <em>lindia</em></h2>
+<p>En plus des graphiques de diagnostic obtenu avec <code>plot</code>, il est utile dans le cas d’une régression multiple de visualiser les résidus en fonction de chacun des prédicteurs. La fonction <code>gg_resX</code> du package <em>lindia</em> (pour <em>linear diagnostics</em>) réalise automatiquement ces graphiques à partir de la sortie du modèle.</p>
+<pre class="r"><code>library(lindia)
+gg_resX(mod_hills, ncol = 2) # ncol: nombre de colonnes</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p>La présence d’une tendance dans les résidus par rapport à un prédicteur indiquerait un effet non-linéaire possible pour ce prédicteur.</p>
+<p>Le package <em>lindia</em> produit aussi d’autres graphiques d diagnostic semblables à ceux obtenus avec <code>plot</code>. Vous pouvez produire tous les graphiques de diagnostic d’un modèle avec la fonction <code>gg_diagnose</code>. Il s’agit de graphiques de type <em>ggplot2</em>, donc vous pouvez les personnaliser avec les fonctions habituelles.</p>
+</div>
+<div id="normalisation-des-variables" class="section level2">
+<h2>Normalisation des variables</h2>
+<p>Regardons le sommaire des résultats du modèle:</p>
+<pre class="r"><code>summary(mod_hills)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = time ~ dist + climb, data = hills)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -16.215  -7.129  -1.186   2.371  65.121 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -8.992039   4.302734  -2.090   0.0447 *  
+## dist         6.217956   0.601148  10.343 9.86e-12 ***
+## climb        0.011048   0.002051   5.387 6.45e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 14.68 on 32 degrees of freedom
+## Multiple R-squared:  0.9191, Adjusted R-squared:  0.914 
+## F-statistic: 181.7 on 2 and 32 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>La valeur des coefficients signifie qu’en moyenne, chaque mille de distance ajoute 6.22 minutes au temps record tandis que chaque pied de dénivelé ajoute 0.01 minute. Puisque les prédicteurs n’ont pas les mêmes unités, la valeur des coefficients n’est pas indicatrice de l’importance de chaque variable. Dans ce cas-ci, <em>dist</em> varie entre 2 et 28 milles tandis que <em>climb</em> varie entre 300 et 7500 pieds.</p>
+<p>Aussi, l’ordonnée à l’origine n’a pas vraiment de sens concret, puisqu’un parcours de longueur 0 n’est pas possible.</p>
+<p>Afin de comparer l’influence de différents prédicteurs, il peut être utile de les normaliser ceux-ci, c’est-à-dire de transformer chaque valeur en soustrayant la moyenne et en divisant par l’écart-type. Dans R, la fonction <code>scale</code> effectue automatiquement cette transformation.</p>
+<pre class="r"><code>hills_scl &lt;- hills
+hills_scl[, -3] &lt;- scale(hills_scl[, -3]) # on ne normalise pas la réponse
+mod_hills_scl &lt;- lm(time ~ dist + climb, data = hills_scl)
+summary(mod_hills_scl)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = time ~ dist + climb, data = hills_scl)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -16.215  -7.129  -1.186   2.371  65.121 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   57.876      2.481  23.331  &lt; 2e-16 ***
+## dist          34.348      3.321  10.343 9.86e-12 ***
+## climb         17.888      3.321   5.387 6.45e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 14.68 on 32 degrees of freedom
+## Multiple R-squared:  0.9191, Adjusted R-squared:  0.914 
+## F-statistic: 181.7 on 2 and 32 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Pour chaque point, la variable normalisée indique l’écart à la moyenne de la variable originale, exprimé en multiple de l’écart-type de la variable originale. Par exemple, dans cette version du modèle, le coefficient <em>dist</em> indique la différence de temps associée à une augmentation d’un écart-type de la distance horizontale. Les coefficients normalisés représentent ainsi l’effet d’une variable relativement aux écarts typiques observés pour cette variable.</p>
+<p>Autre avantage de cette représentation, puisque les prédicteurs normalisés prennent une valeur de 0 à leur moyenne, la valeur de l’ordonnée à l’origine de la régression est la moyenne générale de la réponse (ici, le temps record moyen est d’environ 58 minutes).</p>
+<p>La normalisation des prédicteurs ne fait que changer l’échelle des effets estimés. La significativité de l’effet de chaque prédicteur et les prédictions du modèle restent les mêmes.</p>
+</div>
+<div id="interaction-entre-variables-continues" class="section level2">
+<h2>Interaction entre variables continues</h2>
+<p>Comment interpréter l’interaction entre deux variables continues? Par exemple:</p>
+<pre class="r"><code>mod_hills_inter &lt;- lm(time ~ dist * climb, hills_scl)
+summary(mod_hills_inter)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = time ~ dist * climb, data = hills_scl)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -25.994  -4.968  -2.220   2.381  56.115 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   52.304      2.793  18.728  &lt; 2e-16 ***
+## dist          32.776      2.965  11.053 2.78e-12 ***
+## climb         10.411      3.742   2.782  0.00911 ** 
+## dist:climb     8.793      2.745   3.203  0.00314 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 12.92 on 31 degrees of freedom
+## Multiple R-squared:  0.9392, Adjusted R-squared:  0.9333 
+## F-statistic: 159.6 on 3 and 31 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Comme nous avons vu plus tôt, l’équation d’un modèle à deux variables avec interaction est:</p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon \]</span></p>
+<p>On peut ré-écrire cette équation de deux façons:</p>
+<p><span class="math display">\[ y = \beta_0 + (\beta_1 + \beta_{12} x_2) x_1 + \beta_2 x_2 \]</span></p>
+<p><span class="math display">\[ y = \beta_0 + \beta_1 x_1 + (\beta_2 + \beta_{12} x_1) x_2 \]</span></p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span> est la valeur de <span class="math inline">\(y\)</span> lorsque <span class="math inline">\(x_1 = 0\)</span> et <span class="math inline">\(x_2 = 0\)</span>;</li>
+<li><span class="math inline">\(\beta_1\)</span> est l’effet sur <span class="math inline">\(y\)</span> d’une augmentation d’une unité de <span class="math inline">\(x_1\)</span> si <span class="math inline">\(x_2 = 0\)</span>;</li>
+<li><span class="math inline">\(\beta_2\)</span> est l’effet sur <span class="math inline">\(y\)</span> d’une augmentation d’une unité de <span class="math inline">\(x_2\)</span> si <span class="math inline">\(x_1 = 0\)</span>;</li>
+<li><span class="math inline">\(\beta_{12}\)</span> représente à la fois l’augmentation de la pente de la relation <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x_1\)</span> lorsque <span class="math inline">\(x_2\)</span> augmente d’une unité, et l’augmentation de la pente de la relation <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x_2\)</span> lorsque <span class="math inline">\(x_1\)</span> augmente d’une unité.</li>
+</ul>
+<p>La normalisation des variables facilite aussi l’interprétation de ces coefficients en présence d’une interaction: par exemple, si chaque prédicteur a une moyenne de zéro, alors <span class="math inline">\(\beta_1\)</span> est l’effet de <span class="math inline">\(x_1\)</span> sur <span class="math inline">\(y\)</span> pour un <span class="math inline">\(x_2\)</span> moyen.</p>
+<p>Il peut être utile de visualiser les prédictions du modèle avec interaction. Ci-dessous, nous créons un tableau de données de prédiction avec <code>expand.grid</code>, qui produit toutes les combinaisons de valeurs à partir des vecteurs <code>dist</code> et <code>climb</code> spécifiés. Pour l’illustration des prédictions avec <code>ggplot</code>, nous convertissons <code>climb</code> en variable catégorielle (facteur) pour obtenir des couleurs distinctes sur le graphique.</p>
+<pre class="r"><code>hills_nouv &lt;- expand.grid(dist = seq(-2, 2, 0.2), climb = c(-1, 0, 1))
+hills_pred &lt;- predict(mod_hills_inter, newdata = hills_nouv, interval = &quot;confidence&quot;)
+hills_pred &lt;- cbind(hills_nouv, hills_pred)
+
+ggplot(hills_pred, aes(x = dist, y = fit, color = as.factor(climb), 
+                       fill = as.factor(climb))) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3) +
+    geom_line() + 
+    scale_color_brewer(palette = &quot;Dark2&quot;) +
+    scale_fill_brewer(palette = &quot;Dark2&quot;)</code></pre>
+<p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<p>Ce graphique illustre bien l’effet d’une interaction positive (coefficient positif de <code>dist:climb</code>): plus l’une des deux variables augmente, plus l’effet de l’autre variable sur la réponse (la pente de la droite) augmente aussi.</p>
+<p>Ici, nous avons utilisé le modèle basé sur les prédicteurs normalisés pour réaliser les prédictions; nous aurions pu prendre un modèle basé sur les prédicteurs originaux afin d’obtenir des échelles plus facilement interprétables pour <em>dist</em> et <em>climb</em>.</p>
+</div>
+</div>
+<div id="résumé" class="section level1">
+<h1>Résumé</h1>
+<ul>
+<li><p>Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l’effet d’une variation unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.</p></li>
+<li><p>Une interaction entre deux prédicteurs signifie que l’effet d’un prédicteur sur la réponse (i.e. la pente de la droite de régression) dépend de la valeur d’un autre prédicteur.</p></li>
+<li><p>Le package <em>emmeans</em> permet d’effectuer des comparaisons multiples pour l’effet d’une variable catégorielle sur une réponse, comme le test des étendues de Tukey, mais applicable à tout modèle de régression.</p></li>
+<li><p>La normalisation des prédicteurs d’une régression (soustraire la moyenne et diviser par l’écart-type) facilite la comparaison des coefficients et l’interprétation de l’ordonnée à l’origine (qui représente la moyenne générale de la variable réponse).</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

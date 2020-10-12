@@ -1,0 +1,503 @@
+---
+title: "Régression linéaire multiple"
+date: "<br/>14 octobre 2020"
+output:
+    pdf_document:
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(cowplot)
+theme_set(theme_cowplot())
+```
+
+# Objectifs
+
+- Estimer et interpréter les paramètres d'une régression linéaire incluant plusieurs variables catégorielles et/ou numériques.
+
+- Expliquer la signification d'une interaction entre deux variables et interpréter son coefficient.
+
+- Utiliser le package *emmeans* pour comparer la réponse moyenne entre les différents niveaux d'une variable catégorielle.
+
+- Savoir comment et pourquoi normaliser les prédicteurs dans une régression linéaire multiple.
+
+
+# Régression linéaire multiple
+
+Le modèle de régression linéaire multiple représente la relation entre une variable réponse et $m$ prédicteurs $x_1$, $x_2$, ..., $x_m$.
+
+$$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_m x_m + \epsilon = \beta_0 + \sum_{i = 1}^m \beta_i x_i + \epsilon $$ 
+
+Comme dans le cas de la régression linéaire simple, les coefficients $\beta$ peuvent être calculés à partir de la méthode des moindres carrés. Dans ce modèle, chaque coefficient $\beta_i$ (sauf $\beta_0$) est la dérivée partielle de $y$ par rapport à un prédicteur $x_i$. En d'autres mots, ce coefficient représente la différence moyenne de $y$ associée à une différence d'une unité de $x_i$ *et aucune différence au niveau des autres prédicteurs*.
+
+Un modèle de régression peut inclure plusieurs prédicteurs catégoriels ou numériques. Pour ce cours-ci, nous présenterons des exemples incluant:
+
+- un prédicteur catégoriel et un prédicteur numérique (dans un contexte expérimental, ce modèle est dénommé analyse de la covariance ou ANCOVA);
+
+- deux prédicteurs catégoriels (ANOVA à deux facteurs);
+
+- deux prédicteurs numériques.
+
+
+# Analyse de la covariance
+
+Le tableau de données [compensation.csv](../donnees/compensation.csv) est tiré du livre de Crawley, *Statistics: An introduction using R*. Il contient des données sur la masse des graines produites par une espèce de plante (*Fruit*) en fonction de la taille des racines (*Root*) et selon que la plante subisse ou non un pâturage (*Grazing*). 
+
+```{r}
+comp <- read.csv("../donnees/compensation.csv")
+str(comp)
+```
+
+Inspectons d'abord les données.
+
+```{r}
+ggplot(comp, aes(x = Root, y = Fruit, color = Grazing)) +
+    geom_point() +
+    scale_color_brewer(palette = "Dark2")
+```
+
+Le graphique montre bien l'existence d'une relation linéaire entre la taille des racines et la production de graines, ainsi que l'effet du traitement: pour la même taille des racines, le pâturage réduit la production de graines. Notez que si on n'avait pas mesuré les racines, on pourrait croire que l'effet du pâturage est positif.
+
+```{r}
+ggplot(comp, aes(x = Grazing, y = Fruit)) +
+    geom_boxplot()
+```
+
+Cela est dû au fait que les plantes subissant le pâturage avaient (en moyenne) de plus grandes racines au départ. La taille des racines est donc une variable *confondante*, c'est-à-dire qu'elle est corrélée à la fois avec la variable réponse et avec le traitement dont on cherche à estimer l'effet sur cette réponse. Il faut donc l'inclure dans le modèle pour bien estimer l'effet du pâturage.
+
+Voici un modèle linéaire où l'effet des deux prédicteurs est *additif*, tel qu'indiqué par le signe **+** dans la formule du modèle en R:
+
+```{r}
+mod_comp <- lm(Fruit ~ Grazing + Root, data = comp)
+summary(mod_comp)
+```
+
+## Interprétation des résultats
+
+Si $x_1$ est la variable de pâturage (0 = Grazed, 1 = Ungrazed selon le codage par défaut dans R) et que $x_2$ est la taille des racines, l'expression mathématique de ce modèle est:
+
+$$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon $$
+
+Pour simplifier l'interprétation des coefficients, on peut séparer le cas avec pâturage ($x_1 = 0$):
+
+$$ y = \beta_0 + \beta_2 x_2 + \epsilon $$
+
+du cas sans pâturage ($x_1 = 1$):
+
+$$ y = \beta_0 + \beta_1 + \beta_2 x_2 + \epsilon $$
+
+On peut maintenant intepréter les coefficients comme suit:
+
+- $\beta_0$ (`Intercept` dans le tableau sommaire) est l'ordonnée à l'origine de la droite *Fruit vs. Root* avec pâturage.
+- $\beta_1$ (`GrazingUngrazed`) est l'effet de l'absence de pâturage sur l'ordonnée à l'origine de *Fruit vs. Root*.
+- $\beta_2$ (`Root`) est la pente de la droite *Fruit vs. Root* avec ou sans pâturage.
+
+Puisque la pente est la même avec ou sans pâturage, le coefficient $\beta_1$ correspond à une translation sur l'axe des $y$ de la droite de régression. Ce modèle des effets additifs d'un traitement et d'une variable numérique est donc représenté par deux droites parallèles, ce qui correspond assez bien à notre visualisation des données. En outre, la valeur du $R^2$ (0.93) indique que le modèle explique une grande partie de la variation observée dans les données. 
+
+Même une grande valeur de $R^2$ ne signifie pas nécessairement que le modèle est approprié. Il faut toujours observer les graphiques de diagnostic. Excepté la présence de quelques valeurs extrêmes dans le diagramme quantile-quantile, les suppositions semblent bien respectées.
+
+```{r, echo = FALSE}
+par(mfrow = c(2,2))
+plot(mod_comp)
+par(mfrow = c(1,1))
+```
+
+Notez que le numéro de la rangée du tableau de données est indiqué à côté de certains points extrêmes, pour faciliter l'identification de points problématiques.
+
+Le test $F$ rapporté au bas du sommaire des résultats de `lm` correspond à l'hypothèse nulle d'absence d'effet pour tous les prédicteurs. 
+
+On peut aussi obtenir un tableau d'ANOVA conventionnel en appliquant la fonction `anova` au résultat de `lm`.
+
+```{r}
+anova(mod_comp)
+```
+
+Ce tableau indique quelle portion de la somme des écarts au carré est expliquée par chacun des prédicteurs, ainsi que la portion résiduelle.
+
+## Ordre des prédicteurs
+
+Les fonctions `aov` et `anova` dans R traitent les prédicteurs de façon séquentielle, c'est-à-dire que l'effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents. Dans notre exemple, la somme des écarts carrés pour le prédicteur `Root` est basée sur les résidus du modèle incluant seulement `Grazing`.
+
+C'est ce qu'on appelle une "somme des écarts carrés de Type I" en statistiques. En particulier, cela signifie que le tableau d'ANOVA ne serait pas nécessairement le même en changeant l'ordre des prédicteurs, ex.: `Fruit ~ Root + Grazing`. D'autres packages en R permettent de réaliser une ANOVA avec des sommes des écarts carrés de Type II et III, mais nous ne verrons pas ces concepts dans ce cours.
+
+Comme nous avons mentionné plus tôt, les coefficients de la régression linéaire multiple estiment l'effet partiel de chaque prédicteur, c'est-à-dire l'effet d'une différence au niveau de ce prédicteur entre deux cas qui ne diffèrent pour aucun autre prédicteur. Pour cette raison, l'ordre des prédicteurs n'influence pas les estimés obtenus avec `lm`.
+
+## Modèle avec interaction
+
+Le modèle précédent suppose que les effets de la taille des racines et du pâturage sur la masse des graines sont additifs: autrement dit, la différence entre les deux traitements de pâturage est la même pour chaque valeur de *Root* et la pente de *Fruit vs. Root* est la même pour les cas avec et sans pâturage.
+
+Pour considérer la possibilité que l'effet d'un prédicteur sur la réponse dépende de la valeur d'un autre prédicteur, nous devons spécifier une **interaction** entre ces deux prédicteurs. Dans la formule d'un modèle en R, l'interaction est indiquée par un symbole de multiplication `*` entre les variables au lieu du symbole d'addition `+`.
+
+```{r}
+mod_comp_inter <- lm(Fruit ~ Grazing * Root, data = comp)
+summary(mod_comp_inter)
+```
+
+Si $x_1$ est la variable de pâturage (0 = Grazed, 1 = Ungrazed selon le codage par défaut dans R) et que $x_2$ est la taille des racines, l'expression mathématique de ce modèle est:
+
+$$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon $$
+
+L'interaction est donc équivalente à l'ajout d'un nouveau prédicteur au modèle, égal au produit des deux variables qui interagissent. Séparons de nouveau en deux équations selon le traitement:
+
+Avec pâturage ($x_1 = 0$):
+
+$$ y = \beta_0 + \beta_2 x_2 $$
+
+Sans pâturage ($x_1 = 1$):
+
+$$ y = (\beta_0 + \beta_1) + (\beta_2 + \beta_{12}) x_2 $$
+
+Pour ce modèle avec interaction, l'interprétation des coefficients change un peu:
+
+- $\beta_0$ (`Intercept` dans le tableau sommaire) est l'ordonnée à l'origine de la droite *Fruit vs. Root* avec pâturage.
+- $\beta_1$ (`GrazingUngrazed`) est l'effet de l'absence de pâturage sur l'ordonnée à l'origine de *Fruit vs. Root*.
+- $\beta_2$ (`Root`) est la pente de la droite *Fruit vs. Root* avec pâturage.
+- $\beta_{12}$ (`GrazingUngrazed:Root`) est l'effet de l'absence de pâturage sur la pente de la droite *Fruit vs. Root*.
+
+Le modèle avec interaction est donc équivalent à estimer séparément la droite de régression (ordonnée à l'origine et pente) pour chacun des deux traitements. 
+
+Comparé au modèle additif, notez que l'effet de l'absence de pâturage (`GrazingUngrazed`) a maintenant une erreur-type beaucoup plus élevée et une valeur $p$ plus grande.
+
+```{r}
+summary(mod_comp)$coefficients
+summary(mod_comp_inter)$coefficients
+```
+
+Ceci est dû au fait que l'ordonnée à l'origine, correspondant à *Root* = 0, se situe loin de l'étendue des données (les valeurs de *Root* sont toutes entre 4 et 11). Donc, un petit changement de pente au milieu du graphique peut mener à un changement important d'ordonnée à l'origine et l'incertitude du coefficient d'interaction (la différence de pente) se répercute aussi sur l'estimation de la différence d'ordonnée à l'origine.
+
+Le tableau d'ANOVA pour un modèle avec interaction inclut la portion de la somme des écarts carrés due à la variation de chaque prédicteur, ainsi que leur interaction. La portion expliquée par l'interaction est basée sur la différence entre les écarts carrés résiduels du modèle sans interaction et ceux du modèle avec interaction. Dans ce cas-ci, l'effet de l'interaction n'est pas significatif, le modèle additif est donc préférable.
+
+```{r}
+anova(mod_comp_inter)
+```
+
+Pourquoi l'effet du pâturage (*Grazing*) est-il significatif dans le tableau d'ANOVA alors que le coefficient *GrazingUngrazed* du modèle linéaire ne l'est pas? Dans le tableau d'ANOVA, on teste s'il y a une différence significative de la moyenne de *Fruit* entre les plantes subissant ou non un pâturage, tandis que le coefficient du modèle linéaire réfère à la différence entre les deux traitements lorsque *Root* est 0 (ordonnée à l'origine). Dans le cas où les variables interagissent, ces deux tests ne sont pas équivalents, car la différence entre les deux droites (avec ou sans pâturage) dépend de la valeur de *Root*.
+
+
+# ANOVA à deux facteurs
+
+## Exemple
+
+Pour illustrer l'ANOVA à deux facteurs, nous utiliserons d'abord le jeu de données [growth.csv](../donnees/growth.csv) provenant du manuel *Statistics: An Introduction Using R*. L'expérience compare le gain de poids (*gain*) de 48 animaux suivant trois types de régime alimentaire (*diet*) avec quatre types de suppléments (*supplement*). Il y a donc 12 groupes (toutes les combinaisons des 3 régimes et 4 suppléments) de 4 individus chacun.
+
+```{r}
+growth <- read.csv("../donnees/growth.csv")
+str(growth)
+```
+
+```{r}
+ggplot(growth, aes(x = supplement, y = gain, color = diet)) +
+    # position_dodge décale les points de différentes couleurs
+    geom_point(position = position_dodge(width = 0.3)) + 
+    scale_color_brewer(palette = "Dark2")
+```
+
+À première vue, il semble plausible que les effets du régime et du supplément soient additifs, car la différence entre les régimes est semblable d'un supplément à l'autre et la différence entre les suppléments est semblable d'un régime à l'autre. D'ailleurs, le tableau d'ANOVA du modèle avec interaction ne montre pas d'effet significatif de cette interaction:
+
+```{r}
+aov_growth_inter <- aov(gain ~ diet * supplement, data = growth)
+summary(aov_growth_inter)
+```
+
+Notez qu'il est possible d'utiliser la fonction `aov` ici car nous n'avons que des variables catégorielles et l'échantillon est équilibré (4 réplicats par combinaison de régime et de supplément).
+
+Voici les résultats du modèle additif. Les deux facteurs ont un effet significatif et le régime explique une plus grande portion de la variance du gain de poids (d'après la somme des écarts carrés) que le supplément.
+
+```{r}
+aov_growth_add <- aov(gain ~ diet + supplement, data = growth)
+summary(aov_growth_add)
+```
+
+Les graphiques de diagnostic n'indiquent pas de problème:
+
+```{r, echo = FALSE}
+par(mfrow = c(1,2))
+plot(aov_growth_add, which = 1:2)
+par(mfrow = c(1,1))
+```
+
+D'après le test des étendues de Tukey, les trois régimes ont un effet différent (blé < avoine < orge). Pour les suppléments, *agrimore* et *supersupp* ont un effet plus grand que *supergain* et *control*.
+
+```{r}
+TukeyHSD(aov_growth_add)
+```
+
+## Représentation avec les contrastes
+
+Voici les résultats obtenus pour le même modèle avec `lm`:
+
+```{r}
+lm_growth_add <- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth_add)
+```
+
+Souvenons-nous que par défaut, R utilise un codage de traitement pour représenter les variables catégorielles dans une régression linéaire, où le premier niveau du facteur (en ordre alphabétique) sert de référence. Ici, *barley* et *agrimore* sont les niveaux de référence pour le régime et le supplément, respectivement. Nous pouvons donc interpréter chaque coefficient ainsi:
+
+- l'ordonnée à l'origine est le gain de poids moyen pour les niveaux de référence (orge et agrimore);
+
+- les coefficients `dietoats` et `dietwheat` donnent la différence moyenne de gain entre le régime correspondant (avoine ou blé) et le régime d'orge;
+
+- les trois derniers coefficients donnent la différence moyenne de gain entre le supplément correspondant et le supplément *agrimore*.
+
+Le gain de poids moyen pour toute combinaison d'un régime et d'un supplément peut être obtenue en additionnant les coefficients correspondants. Par exemple, le gain moyen pour un régime d'avoine avec le supplément *supergain* est de: 26.12 (ordonnée à l'origine) - 3.09 (avoine) - 3.38 (supergain) = 19.65.
+
+Tel que vu au dernier cours, nous pouvons modifier les contrastes pour mieux représenter les questions qui nous intéressent. Le code ci-dessous convertit les deux prédicteurs en facteurs, choisit le groupe témoin *control* comme référence pour *supplement* et applique un codage d'effet pour *diet*.
+
+```{r}
+growth <- mutate(growth, diet = as.factor(diet),
+                 supplement = relevel(as.factor(supplement), ref = "control")) 
+contrasts(growth$diet) <- "contr.sum"
+colnames(contrasts(growth$diet)) <- c("barley" , "oats")
+
+lm_growth_add <- lm(gain ~ diet + supplement, data = growth)
+summary(lm_growth_add)
+```
+
+Dans ce cas, nous pouvons interpréter les coeffiicents ainsi:
+
+- l'ordonnée à l'origine est le gain moyen pour le groupe témoin (*control*), en faisant la moyenne des trois régimes;
+
+- les coefficients `dietbarley` et `dietoats` donnent la différence moyenne de gain des régimes d'orge et d'avoine comparés à la moyenne des trois régimes. La différence moyenne pour le troisième régime (blé) peut être obtenue en prenant l'opposé de la somme des autres effets: -(3.02 - 0.07) = -2.95.
+
+- les trois derniers coefficients donnent la différence moyenne de gain entre chaque supplément et le groupe témoin.
+
+## Modèle avec interaction
+
+Le jeu de données [antibiot.csv](../donnees/antibiot.csv) contient des mesures de prolifération bactérienne (surface couverte en mm$^2$) en fonction de l'humidité (sec, humide) et de la concentration d'antibiotique (faible, modérée, élevée).
+
+```{r}
+# fileEncoding = "UTF-8" permet de lire les accents correctement
+antibiot <- read.csv("../donnees/antibiot.csv", fileEncoding = "UTF-8")
+str(antibiot)
+```
+
+Nous devons manuellement spécifier les niveaux du facteur *Concentration* pour éviter qu'ils ne soient placés en ordre alphabétique.
+
+```{r}
+antibiot$Concentration <- factor(antibiot$Concentration, 
+                                 levels = c("faible", "modérée", "élevée"))
+levels(antibiot$Concentration)
+```
+
+Voici le graphique de ces données. Est-ce qu'un modèle avec des effets additifs de la concentration d'antibiotique et de l'humidité serait approprié ici?
+
+```{r}
+ggplot(antibiot, aes(x = Concentration, y = Surface, color = Humidité)) +
+    geom_point(position = position_dodge(width = 0.3)) + 
+    scale_color_brewer(palette = "Dark2")
+```
+
+Ici, il y a une interaction claire entre les deux facteurs. Notamment, les conditions humides sont associées à une plus grande surface bactérienne pour les concentrations faible et modérée d'antibiotiques, mais les conditions sèches ont une plus grande surface bactérienne lorsque la concentration est élevée. 
+
+Voici le sommaire et les graphiques de diagnostic pour le modèle de la surface bactérienne en fonction de l'interaction entre les deux facteurs.
+
+```{r}
+aov_antibio <- aov(Surface ~ Concentration * Humidité, antibiot)
+summary(aov_antibio)
+```
+
+```{r, echo = FALSE}
+par(mfrow = c(1, 2))
+plot(aov_antibio, which = 1:2)
+```
+
+L'interaction entre les 3 catégories de concentration et les 2 catégories d'humidité définit 6 groupes, donc il y a 15 comparaisons possibles pour l'interaction, comme le montre le résultat de `TukeyHSD`. 
+
+```{r}
+TukeyHSD(aov_antibio)
+```
+
+Nous verrons dans la section suivante une méthode facilitant la visualisation de ces comparaisons.
+
+Le modèle linéaire correspondant à cette ANOVA comporte 6 coefficients:
+
+```{r}
+lm_antibio <- lm(Surface ~ Concentration * Humidité, antibiot)
+summary(lm_antibio)
+```
+
+- L'ordonnée à l'origine est la surface moyenne pour les niveaux de référence (faible et humide).
+
+- Les coefficients `Concentrationmodérée` et `Concentrationélevée` donnent la différence de surface moyenne due à l'augmentation de concentration de faible à modérée et de faible à élevée, pour le cas humide.
+
+- Le coefficient `Humiditésec` donne la différence de surface moyenne entre les cas sec et humide, pour une concentration faible.
+
+- Finalement, les coefficients liés à l'interaction montrent la différence entre les surfaces moyennes pour les combinaisons "modérée et sec" et "élevée et sec", comparées aux moyennes prédites par les effets additifs seulement. Autrement dit, la moyenne de la surface bactérienne pour la combinaison "modérée et sec" est égale à: 5.87 (ordonnée à l'origine) - 0.83 (concentration modérée) - 3.61 (sec) + 0.87 (interaction modérée-sec) = 2.30.
+
+## Visualisation des effets avec le package *emmeans*
+
+L'exemple précédent démontre qu'en présence d'une interaction, il est difficile de calculer la moyenne de la réponse pour une combinaison de traitements donnés. Le package *emmeans* (*estimated marginal means*) effectue automatiquement le calcul des moyennes pour chaque combinaison de traitements, ainsi que leur intervalle de confiance. 
+
+Ci-dessous, nous appliquons la fonction `emmeans` au résultat du modèle `lm_antibio`. Le deuxième argument de la fonction spécifie les prédicteurs à considérer: ceux-ci sont indiqués sous forme de formule comme dans la fonction `lm`, mais sans variable réponse à gauche du `~`.
+
+```{r}
+library(emmeans)
+em_antibio <- emmeans(lm_antibio, ~ Concentration * Humidité)
+em_antibio
+```
+
+La fonction `plot` appliquée aux résultats d'`emmeans` illustre les moyennes et leurs intervalles de confiance.
+
+```{r}
+plot(em_antibio)
+```
+
+Il s'agit d'un graphique `ggplot2`, donc vous pouvez le personnaliser avec les commandes habituelles.
+
+```{r}
+plot(em_antibio) +
+    labs(x = "Surface bactérienne moyenne (millimètres carrés)")
+```
+
+Les intervalles de confiance pour chaque moyenne ne nous permettent pas directement de déterminer si deux moyennes diffèrent de façon significative. Pour ce faire, nous spécifions `comparisons = TRUE`, ce qui ajoute au graphique des flèches de comparaison, basées sur un test de Tukey. Des flèches qui se recoupent sur l'axe de la variable réponse indiquent que les moyennes ne sont pas significativement différentes (à un seuil $\alpha = 0.05$, par défaut).
+
+```{r}
+plot(em_antibio, comparisons = TRUE)
+```
+
+Les comparaisons illustrées ici sont les mêmes que celles obtenues précédemment avec le test des étendues de Tukey, mais la visualisation des effets est simplifée. De plus, la fonction `TukeyHSD` ne s'applique qu'au résultat de la fonction `aov`, tandis qu'`emmeans` s'appliquent à tous les modèles de régression que nous verrons dans ce cours. 
+
+Lorsqu'un modèle est additif, nous pouvons estimer les moyennes pour un seul facteur. Dans ce cas, l'estimé indiqué correspond à la réponse moyenne pour chaque niveau du facteur, en prenant la moyenne de tous les autres prédicteurs. Dans l'exemple ci-dessous, nous calculons donc la moyenne du gain de poids pour chaque supplément, en faisant la moyenne des trois régimes.
+
+```{r}
+em_growth_supp <- emmeans(lm_growth_add, ~ supplement)
+em_growth_supp
+plot(em_growth_supp)
+```
+
+
+# Régression avec plusieurs prédicteurs numériques
+
+## Exemple
+
+Le tableau de données `hills` du package *MASS* (inclus par défaut avec R) contient les records de temps (*time*, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (*dist*, en milles) et le dénivelé total du parcours (*climb*, en pieds).
+
+```{r, warning = FALSE, message = FALSE}
+library(MASS)
+str(hills)
+```
+
+Pour un tableau de données avec plusieurs variables numériques, la fonction `plot` affiche une matrice de nuages de points pour chaque paire de variables.
+
+```{r}
+plot(hills)
+```
+
+Les temps records semblent dépendre linéairement de la distance et du dénivelé. (La distance et le dénivelé semblent aussi corrélés, nous y reviendrons au prochain cours.) Nous appliquons donc un modèle linéaire à ces données.
+
+```{r}
+mod_hills <- lm(time ~ dist + climb, hills)
+```
+
+```{r, echo = FALSE}
+par(mfrow = c(2,2))
+plot(mod_hills)
+par(mfrow = c(1,1))
+```
+
+Puisque les rangées de ce tableau de données sont identifiées par des noms (`rownames` dans R), ces noms apparaissent vis-à-vis les valeurs extrêmes dans les graphiques de diagnostic.
+
+D'après ces graphiques, deux parcours (Knock Hill et Bens of Jura) ont un temps record beaucoup plus long qu'attendu (résidu positif important). Ces mêmes points ont aussi une grande influence sur les coefficients de la régression (d'après le quatrième graphique). Dans ce cas, il faudrait vérifier si ces parcours ont des particularités qui expliquent cette forte différence par rapport au modèle.
+
+## Graphiques de diagnostic avec *lindia*
+
+En plus des graphiques de diagnostic obtenu avec `plot`, il est utile dans le cas d'une régression multiple de visualiser les résidus en fonction de chacun des prédicteurs. La fonction `gg_resX` du package *lindia* (pour *linear diagnostics*) réalise automatiquement ces graphiques à partir de la sortie du modèle. 
+
+```{r, message = FALSE, warning = FALSE}
+library(lindia)
+gg_resX(mod_hills, ncol = 2) # ncol: nombre de colonnes
+```
+
+La présence d'une tendance dans les résidus par rapport à un prédicteur indiquerait un effet non-linéaire possible pour ce prédicteur.
+
+Le package *lindia* produit aussi d'autres graphiques d diagnostic semblables à ceux obtenus avec `plot`. Vous pouvez produire tous les graphiques de diagnostic d'un modèle avec la fonction `gg_diagnose`. Il s'agit de graphiques de type *ggplot2*, donc vous pouvez les personnaliser avec les fonctions habituelles.
+
+## Normalisation des variables
+
+Regardons le sommaire des résultats du modèle:
+
+```{r}
+summary(mod_hills)
+```
+
+La valeur des coefficients signifie qu'en moyenne, chaque mille de distance ajoute 6.22 minutes au temps record tandis que chaque pied de dénivelé ajoute 0.01 minute. Puisque les prédicteurs n'ont pas les mêmes unités, la valeur des coefficients n'est pas indicatrice de l'importance de chaque variable. Dans ce cas-ci, *dist* varie entre 2 et 28 milles tandis que *climb* varie entre 300 et 7500 pieds. 
+
+Aussi, l'ordonnée à l'origine n'a pas vraiment de sens concret, puisqu'un parcours de longueur 0 n'est pas possible.
+
+Afin de comparer l'influence de différents prédicteurs, il peut être utile de les normaliser ceux-ci, c'est-à-dire de transformer chaque valeur en soustrayant la moyenne et en divisant par l'écart-type. Dans R, la fonction `scale` effectue automatiquement cette transformation.
+
+```{r}
+hills_scl <- hills
+hills_scl[, -3] <- scale(hills_scl[, -3]) # on ne normalise pas la réponse
+mod_hills_scl <- lm(time ~ dist + climb, data = hills_scl)
+summary(mod_hills_scl)
+```
+
+Pour chaque point, la variable normalisée indique l'écart à la moyenne de la variable originale, exprimé en multiple de l'écart-type de la variable originale. Par exemple, dans cette version du modèle, le coefficient *dist* indique la différence de temps associée à une augmentation d'un écart-type de la distance horizontale. Les coefficients normalisés représentent ainsi l'effet d'une variable relativement aux écarts typiques observés pour cette variable. 
+
+Autre avantage de cette représentation, puisque les prédicteurs normalisés prennent une valeur de 0 à leur moyenne, la valeur de l'ordonnée à l'origine de la régression est la moyenne générale de la réponse (ici, le temps record moyen est d'environ 58 minutes).
+
+La normalisation des prédicteurs ne fait que changer l'échelle des effets estimés. La significativité de l'effet de chaque prédicteur et les prédictions du modèle restent les mêmes.
+
+## Interaction entre variables continues
+
+Comment interpréter l'interaction entre deux variables continues? Par exemple:
+
+```{r}
+mod_hills_inter <- lm(time ~ dist * climb, hills_scl)
+summary(mod_hills_inter)
+```
+
+Comme nous avons vu plus tôt, l'équation d'un modèle à deux variables avec interaction est:
+
+$$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon $$
+
+On peut ré-écrire cette équation de deux façons:
+
+$$ y = \beta_0 + (\beta_1 + \beta_{12} x_2) x_1 + \beta_2 x_2 $$
+
+$$ y = \beta_0 + \beta_1 x_1 + (\beta_2 + \beta_{12} x_1) x_2 $$
+
+- $\beta_0$ est la valeur de $y$ lorsque $x_1 = 0$ et $x_2 = 0$;
+- $\beta_1$ est l'effet sur $y$ d'une augmentation d'une unité de $x_1$ si $x_2 = 0$;
+- $\beta_2$ est l'effet sur $y$ d'une augmentation d'une unité de $x_2$ si $x_1 = 0$;
+- $\beta_{12}$ représente à la fois l'augmentation de la pente de la relation $y$ vs. $x_1$ lorsque $x_2$ augmente d'une unité, et l'augmentation de la pente de la relation $y$ vs. $x_2$ lorsque $x_1$ augmente d'une unité.
+
+La normalisation des variables facilite aussi l'interprétation de ces coefficients en présence d'une interaction: par exemple, si chaque prédicteur a une moyenne de zéro, alors $\beta_1$ est l'effet de $x_1$ sur $y$ pour un $x_2$ moyen.
+
+Il peut être utile de visualiser les prédictions du modèle avec interaction. Ci-dessous, nous créons un tableau de données de prédiction avec `expand.grid`, qui produit toutes les combinaisons de valeurs à partir des vecteurs `dist` et `climb` spécifiés. Pour l'illustration des prédictions avec `ggplot`, nous convertissons `climb` en variable catégorielle (facteur) pour obtenir des couleurs distinctes sur le graphique. 
+
+```{r}
+hills_nouv <- expand.grid(dist = seq(-2, 2, 0.2), climb = c(-1, 0, 1))
+hills_pred <- predict(mod_hills_inter, newdata = hills_nouv, interval = "confidence")
+hills_pred <- cbind(hills_nouv, hills_pred)
+
+ggplot(hills_pred, aes(x = dist, y = fit, color = as.factor(climb), 
+                       fill = as.factor(climb))) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3) +
+    geom_line() + 
+    scale_color_brewer(palette = "Dark2") +
+    scale_fill_brewer(palette = "Dark2")
+```
+
+Ce graphique illustre bien l'effet d'une interaction positive (coefficient positif de `dist:climb`): plus l'une des deux variables augmente, plus l'effet de l'autre variable sur la réponse (la pente de la droite) augmente aussi.
+
+Ici, nous avons utilisé le modèle basé sur les prédicteurs normalisés pour réaliser les prédictions; nous aurions pu prendre un modèle basé sur les prédicteurs originaux afin d'obtenir des échelles plus facilement interprétables pour *dist* et *climb*.
+
+
+# Résumé
+
+- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une variation unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
+
+- Une interaction entre deux prédicteurs signifie que l'effet d'un prédicteur sur la réponse (i.e. la pente de la droite de régression) dépend de la valeur d'un autre prédicteur.
+
+- Le package *emmeans* permet d'effectuer des comparaisons multiples pour l'effet d'une variable catégorielle sur une réponse, comme le test des étendues de Tukey, mais applicable à tout modèle de régression.
+
+- La normalisation des prédicteurs d'une régression (soustraire la moyenne et diviser par l'écart-type) facilite la comparaison des coefficients et l'interprétation de l'ordonnée à l'origine (qui représente la moyenne générale de la variable réponse).
