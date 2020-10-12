@@ -2,7 +2,6 @@
 title: "Régression linéaire multiple"
 date: "<br/>14 octobre 2020"
 output:
-    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs
@@ -123,7 +122,7 @@ Ce tableau indique quelle portion de la somme des écarts au carré est expliqu�
 
 ## Ordre des prédicteurs
 
-Les fonctions `aov` et `anova` dans R traitent les prédicteurs de façon séquentielle, c'est-à-dire que l'effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents. Dans notre exemple, la somme des écarts carrés pour le prédicteur `Root` est basée sur les résidus du modèle incluant seulement `Grazing`.
+Les fonctions `aov` et `anova` dans R traitent les prédicteurs de façon séquentielle, c'est-à-dire que l'effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents. Dans notre exemple, la somme des écarts carrés pour le prédicteur *Root* est basée sur les résidus du modèle incluant seulement *Grazing*.
 
 C'est ce qu'on appelle une "somme des écarts carrés de Type I" en statistiques. En particulier, cela signifie que le tableau d'ANOVA ne serait pas nécessairement le même en changeant l'ordre des prédicteurs, ex.: `Fruit ~ Root + Grazing`. D'autres packages en R permettent de réaliser une ANOVA avec des sommes des écarts carrés de Type II et III, mais nous ne verrons pas ces concepts dans ce cours.
 
@@ -408,7 +407,7 @@ D'après ces graphiques, deux parcours (Knock Hill et Bens of Jura) ont un temps
 
 ## Graphiques de diagnostic avec *lindia*
 
-En plus des graphiques de diagnostic obtenu avec `plot`, il est utile dans le cas d'une régression multiple de visualiser les résidus en fonction de chacun des prédicteurs. La fonction `gg_resX` du package *lindia* (pour *linear diagnostics*) réalise automatiquement ces graphiques à partir de la sortie du modèle. 
+En plus des graphiques de diagnostic obtenus avec `plot`, il est utile dans le cas d'une régression multiple de visualiser les résidus en fonction de chacun des prédicteurs. La fonction `gg_resX` du package *lindia* (pour *linear diagnostics*) réalise automatiquement ces graphiques à partir de la sortie du modèle. 
 
 ```{r, message = FALSE, warning = FALSE}
 library(lindia)
@@ -494,7 +493,7 @@ Ici, nous avons utilisé le modèle basé sur les prédicteurs normalisés pour 
 
 # Résumé
 
-- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une variation unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
+- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une différence unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
 
 - Une interaction entre deux prédicteurs signifie que l'effet d'un prédicteur sur la réponse (i.e. la pente de la droite de régression) dépend de la valeur d'un autre prédicteur.
 

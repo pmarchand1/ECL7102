@@ -354,7 +354,7 @@ summary(mod_comp)</code></pre>
 </div>
 <div id="ordre-des-prédicteurs" class="section level2">
 <h2>Ordre des prédicteurs</h2>
-<p>Les fonctions <code>aov</code> et <code>anova</code> dans R traitent les prédicteurs de façon séquentielle, c’est-à-dire que l’effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents. Dans notre exemple, la somme des écarts carrés pour le prédicteur <code>Root</code> est basée sur les résidus du modèle incluant seulement <code>Grazing</code>.</p>
+<p>Les fonctions <code>aov</code> et <code>anova</code> dans R traitent les prédicteurs de façon séquentielle, c’est-à-dire que l’effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents. Dans notre exemple, la somme des écarts carrés pour le prédicteur <em>Root</em> est basée sur les résidus du modèle incluant seulement <em>Grazing</em>.</p>
 <p>C’est ce qu’on appelle une “somme des écarts carrés de Type I” en statistiques. En particulier, cela signifie que le tableau d’ANOVA ne serait pas nécessairement le même en changeant l’ordre des prédicteurs, ex.: <code>Fruit ~ Root + Grazing</code>. D’autres packages en R permettent de réaliser une ANOVA avec des sommes des écarts carrés de Type II et III, mais nous ne verrons pas ces concepts dans ce cours.</p>
 <p>Comme nous avons mentionné plus tôt, les coefficients de la régression linéaire multiple estiment l’effet partiel de chaque prédicteur, c’est-à-dire l’effet d’une différence au niveau de ce prédicteur entre deux cas qui ne diffèrent pour aucun autre prédicteur. Pour cette raison, l’ordre des prédicteurs n’influence pas les estimés obtenus avec <code>lm</code>.</p>
 </div>
@@ -721,7 +721,7 @@ str(hills)</code></pre>
 </div>
 <div id="graphiques-de-diagnostic-avec-lindia" class="section level2">
 <h2>Graphiques de diagnostic avec <em>lindia</em></h2>
-<p>En plus des graphiques de diagnostic obtenu avec <code>plot</code>, il est utile dans le cas d’une régression multiple de visualiser les résidus en fonction de chacun des prédicteurs. La fonction <code>gg_resX</code> du package <em>lindia</em> (pour <em>linear diagnostics</em>) réalise automatiquement ces graphiques à partir de la sortie du modèle.</p>
+<p>En plus des graphiques de diagnostic obtenus avec <code>plot</code>, il est utile dans le cas d’une régression multiple de visualiser les résidus en fonction de chacun des prédicteurs. La fonction <code>gg_resX</code> du package <em>lindia</em> (pour <em>linear diagnostics</em>) réalise automatiquement ces graphiques à partir de la sortie du modèle.</p>
 <pre class="r"><code>library(lindia)
 gg_resX(mod_hills, ncol = 2) # ncol: nombre de colonnes</code></pre>
 <p><img src="7-Regression_multiple_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
@@ -837,7 +837,7 @@ ggplot(hills_pred, aes(x = dist, y = fit, color = as.factor(climb),
 <div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
-<li><p>Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l’effet d’une variation unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.</p></li>
+<li><p>Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l’effet d’une différence unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.</p></li>
 <li><p>Une interaction entre deux prédicteurs signifie que l’effet d’un prédicteur sur la réponse (i.e. la pente de la droite de régression) dépend de la valeur d’un autre prédicteur.</p></li>
 <li><p>Le package <em>emmeans</em> permet d’effectuer des comparaisons multiples pour l’effet d’une variable catégorielle sur une réponse, comme le test des étendues de Tukey, mais applicable à tout modèle de régression.</p></li>
 <li><p>La normalisation des prédicteurs d’une régression (soustraire la moyenne et diviser par l’écart-type) facilite la comparaison des coefficients et l’interprétation de l’ordonnée à l’origine (qui représente la moyenne générale de la variable réponse).</p></li>

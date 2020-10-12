@@ -544,8 +544,8 @@ summary(spray_lm)</code></pre>
 </ul>
 <p>The intercept is the mean of the control group while the other two coefficients are the differences between the mean of each treatment and that of the control group. This type of coding of a categorical variable makes it easy to compare each treatment with a reference. This is the type of encoding used by default in R, as we have seen in the results above.</p>
 </div>
-<div id="contrastes" class="section level2">
-<h2>Contrastes</h2>
+<div id="contrasts" class="section level2">
+<h2>Contrasts</h2>
 <p>In statistics, a <em>contrast</em> is a numeric variable defined from a categorical variable (or factor) that represents a comparison between categories.</p>
 <p>For a factor with <span class="math inline">\(k\)</span> categories, we can define <span class="math inline">\(k - 1\)</span> independent contrasts. In the previous example, the contrasts <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_2\)</span> were used to compare treatment 1 to the control group and treatment 2 to the control group. Knowing these two differences, we also know the difference between treatments 1 and 2, so it would be redundant to add a third contrast.</p>
 <p>In R, the <code>contrasts</code> function shows the matrix of contrasts associated with a factor.</p>

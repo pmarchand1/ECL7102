@@ -350,7 +350,7 @@ By substituting the values of $T_1$ and $T_2$, we can determine the mean of $y$ 
 
 The intercept is the mean of the control group while the other two coefficients are the differences between the mean of each treatment and that of the control group. This type of coding of a categorical variable makes it easy to compare each treatment with a reference. This is the type of encoding used by default in R, as we have seen in the results above.
 
-## Contrastes
+## Contrasts
 
 In statistics, a *contrast* is a numeric variable defined from a categorical variable (or factor) that represents a comparison between categories.
 
