@@ -1,0 +1,438 @@
+---
+title: "Régression linéaire simple"
+date: "5 octobre 2020"
+output: 
+  xaringan::moon_reader:
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
+library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
+```
+
+
+# Rôle de l'analyse de régression
+
+Modèles qui représentent la relation mathématique entre une variable *réponse* et une ou plusieurs *prédicteurs*. 
+
+--
+
+- Analyser les résultats d'une expérience avec une ou plusieurs variables de traitement numériques (ex.: température, dose).
+
+--
+
+- Séparer l'effet de traitements discrets (variables catégorielles) de celui d'autres conditions expérimentales représentées par des variables numériques (analyse de la covariance).
+
+--
+
+- Déterminer l'importance des associations entre des variables mesurées dans la nature (sans supposer de lien de causalité).
+
+--
+
+- Utiliser les associations entre prédicteurs et réponse afin de prédire la valeur de cette dernière pour de nouvelles observations.
+
+---
+
+# Prochains cours
+
+| Date| Sujet |
+|------------|---------------------|
+| 5 octobre | Régression linéaire simple |
+| 14 octobre <sup>*</sup> | Régression linéaire multiple |
+| 19 octobre | *Congé* |
+| 26 octobre | Sélection de modèles |
+| 2 novembre | Régression logistique |
+| 9 novembre | Régression de Poisson |
+| 16 et 23 novembre | Modèles mixtes |
+
+<sup>*</sup> Remplace la période de laboratoire
+
+---
+
+# Objectifs du cours d'aujourd'hui
+
+- Estimer et interpréter les paramètres d'une régression linéaire simple.
+
+- Vérifier les suppositions d'un modèle de régression à partir des graphiques de diagnostic.
+
+- Différencier l'intervalle de confiance d'une droite de régression et l'intervalle de prédiction de nouvelles observations.
+
+- Utiliser des contrastes pour représenter un prédicteur catégoriel dans un modèle de régression.
+
+---
+
+class: center, inverse, middle
+
+# Régression linéaire simple
+
+---
+
+# Régression linéaire simple
+
+Désigne le cas où il y a un seul prédicteur numérique ( $x$ ).
+
+$$y = \beta_0 + \beta_1 x + \epsilon$$ 
+
+$$\epsilon \sim N(0, \sigma)$$
+
+--
+
+Équivalent à:
+
+$$y \sim N(\beta_0 + \beta_1 x, \sigma)$$
+
+---
+
+# Régression linéaire simple
+
+$$y = \beta_0 + \beta_1 x + \epsilon$$ 
+
+.pull-left[
+
+-  Ordonnée à l'origine $\beta_0$: moyenne de $y$ lorsque $x$ est 0.
+
+- Pente $\beta_1$: différence moyenne de $y$ entre deux observations qui diffèrent d'une unité de $x$.
+
+]
+
+.pull-right[
+
+![](../images/reg_lin.png)
+
+]
+
+---
+
+# Exemple
+
+Tableau de données `plant_growth_rate` tiré du livre *Getting Started with R, An Introduction for Biologists*: croissance de plantes en fonction de l'humidité du sol.
+
+```{r}
+pgr <- read.csv("../donnees/plant_growth_rate.csv")
+str(pgr)
+```
+
+---
+
+# Exemple
+
+But: Trouver la droite qui passe le plus "près" des points du graphique de $y$ vs. $x$.
+
+```{r, echo = FALSE}
+ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE)
+```
+
+---
+
+# Méthode des moindres carrés
+
+- Les meilleurs estimateurs non-biaisés de $\beta_0$ et $\beta_1$ sont ceux qui minimisent la somme du carré des résidus.
+
+$$\sum_{k = 1}^n \epsilon_k^2 = \sum_{k = 1}^n (y_k - (\beta_0 + \beta_1 x_k))^2$$
+
+---
+
+# Méthode des moindres carrés
+
+- L'estimateur de la pente $\beta_1$ est égal à la covariance de $x$ et $y$ divisée par la variance de $x$:
+
+$$\hat{\beta_1} = \frac{\sum_{k = 1}^n (x_k - \bar{x})(y_k - \bar{y})}{\sum_{k = 1}^n (x_k - \bar{x})^2}$$
+
+--
+
+- L'estimateur de l'ordonnée à l'origine $\beta_0$ est égal à:
+
+$$\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}$$  
+
+--
+
+- Puisque $\bar{y} = \hat{\beta_0} + \hat{\beta_1} \bar{x}$, la droite estimée passe par le point $(\bar{x}, \bar{y})$.
+
+---
+
+# Coefficient de détermination
+
+Le coefficient de détermination $R^2$ représente la fraction de la variance expliquée par le modèle.
+
+$$R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}$$
+
+--
+
+- $\hat{y_k} = \hat{\beta_0} + \hat{\beta_1} x_k$ est la valeur attendue (moyenne) pour $y_k$ selon le modèle.
+
+--
+
+- Pour une régression linéaire simple, la racine carrée de $R^2$ est égale à la corrélation entre $x$ et $y$.
+
+---
+
+# Coefficient de détermination
+
+$$R^2 = 1 - \frac{\sum_{k=1}^n (y_k - \hat{y_k})^2}{\sum_{k=1}^n (y_k - \bar{y})^2}$$
+
+--
+
+Le calcul du $R^2$ ajusté divise chaque somme par un nombre de degrés de liberté:
+
+$$R_{adj}^2 = 1 - \frac{\frac{1}{n-m-1} \sum_{k=1}^n (y_k - \hat{y_k})^2}{\frac{1}{n-1}\sum_{k=1}^n (y_k - \bar{y})^2}$$
+
+$m$ est le nombre de prédicteurs du modèle, donc $m = 1$ pour une régression linéaire simple
+
+---
+
+# Intervalle de confiance vs. prédiction
+
+- Intervalle de confiance de la droite de régression: représente l'incertitude sur la valeur **moyenne** de la réponse pour une certaine valeur du prédicteur.
+
+--
+
+- Intervalle de prédiction: représente l'incertitude sur la valeur de la réponse pour une **nouvelle observation**, en connaissant la valeur des prédicteurs.
+
+--
+
+- Il n'est pas prudent d'utiliser le résultat d'une régression pour prédire la réponse hors de l'étendue des valeurs des prédicteurs présentes dans les données.
+
+---
+
+class: center, inverse, middle
+
+# Suppositions du modèle de régression linéaire
+
+---
+
+# Suppositions du modèle linéaire
+
+Comme pour l'ANOVA, les résidus sont:
+
+- indépendants et
+- normalement distribués 
+- avec la même variance.
+
+--
+
+En plus:
+
+- la relation entre la réponse moyenne et les prédicteurs est linéaire 
+- les prédicteurs sont mesurés sans erreur (ou erreur négligeable).
+
+---
+
+# Linéarité
+
+Une transformation peut convertir un modèle non-linéaire en modèle linéaire.
+
+Exemple: Transformation logarithmique
+
+$$y = a x^b$$
+
+--
+
+$$\log(y) = \log(a) + b \log(x)$$
+
+---
+
+# Linéarité
+
+L'équation reliant $x$ et $y$ peut contenir des fonctions non-linéaires de $x$, en autant qu'elle soit une fonction linéaire des *coefficients*.
+
+--
+
+Exemple: Modèle quadratique
+
+$$y = \beta_0 + \beta_1 x + \beta_2 x^2$$
+
+---
+
+# Indépendance des résidus
+
+- La portion des observations $y$ non-expliquée par les prédicteurs $x$ est indépendante d'une observation à l'autre. 
+
+--
+
+- La non-indépendance des résidus est souvent due à une proximité de certaines observations dans l'espace et dans le temps.
+--
+
+- Les résidus de mesures prises sur la même unité d'observation à travers le temps peuvent être plus similaires et donc non-indépendants.
+
+--
+
+- La non-indépendance des résidus ne biaise pas les estimés des coefficients du modèle, mais leur incertitude sera sous-estimée.
+
+---
+
+# Égalité des variances et normalité
+
+- L'égalité des variances (homoscédasticité) est aussi nécessaire pour que les intervalles de confiance et les valeurs $p$ soient valides.
+
+--
+
+- Comme pour le test $t$ et l'ANOVA, l'estimation des coefficients de la régression linéaire n'est pas trop affectée par la non-normalité des résidus individuels.
+
+--
+
+- La non-normalité des résidus affecte davantage la précision des *prédictions* du modèle. 
+
+---
+
+# Graphiques de diagnostic
+
+Pour le graphique des résidus vs. valeurs attendues (*residuals vs. fitted*):
+
+- Les résidus sont-ils disperés aléatoirement autour de zéro?
+
+- La variance des résidus est-elle approximativement constante le long de l'axe des $x$?
+
+---
+
+# Effet de levier
+
+- Une observation avec un fort effet de levier (*leverage*) a une plus grande influence sur les coefficients de la régression.
+
+- Le plus souvent, l'observation est isolée et loin de la moyenne des prédicteurs. 
+
+--
+
+- La distance de Cook (*Cook's distance*) $D$ mesure à la fois l'effet de levier et la magnitude du résidu. Un point avec un grand $D$ ( $D > 1$ ) peut faire dévier la régression par rapport à la tendance des autres points.
+
+---
+
+class: center, inverse, middle
+
+# Prédicteur catégoriel et contrastes
+
+---
+
+# Codage d'une variable catégorielle
+
+Imaginons une expérience avec un groupe témoin et deux traitements. Créons deux variables numériques: 
+
+--
+
+- $T_1$ = 1 si l'individu a reçu le traitement 1, 0 sinon.
+- $T_2$ = 1 si l'individu a reçu le traitement 2, 0 sinon.
+
+--
+
+Nous obtenons donc le modèle: 
+
+$$y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon$$
+
+---
+
+# Codage d'une variable catégorielle
+
+$$y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon$$
+
+En remplaçant les valeurs de $T_1$ et $T_2$, calculons la moyenne de $y$ pour chaque groupe:
+
+--
+
+- Groupe témoin ( $T_1 = 0, T_2 = 0$ ): $\mu_{tém} = \beta_0$
+
+--
+
+- Traitement 1 ( $T_1 = 1, T_2 = 0$ ): $\mu_{tr1} = \beta_0 + \beta_1$
+
+--
+
+- Traitement 2 ( $T_1 = 0, T_2 = 1$ ): $\mu_{tr2} = \beta_0 + \beta_2$
+    
+---
+
+# Codage d'une variable catégorielle
+
+$$y = \beta_0 + \beta_1 T_1 + \beta_2 T_2 + \epsilon$$
+
+- L'ordonnée à l'origine est égale à la moyenne du groupe témoin.
+
+--
+
+- Les autres coefficients représentent la différence entre chaque traitement et le groupe témoin.
+
+--
+
+- C'est le codage utilisé par défaut dans R.
+
+---
+
+# Contrastes
+
+- En statistiques, un *contraste* est une variable numérique définie à partir d'un variable catégorielle (ou facteur) qui représente une comparaison entre catégories. 
+
+--
+
+- Pour un facteur avec $k$ catégories, on peut définir $k - 1$ contrastes indépendants. 
+
+---
+
+# Codage d'effet
+
+Dans le modèle de régression: $y = \beta_0 + \beta_1 T_1 + \beta_2 T_2$ avec codage d'effet:
+
+--
+
+- Catégorie 1 ( $T_1 = 1, T_2 = 0$ ): $\mu_1 = \beta_0 + \beta_1$
+
+--
+
+- Catégorie 2 ( $T_1 = 0, T_2 = 1$ ): $\mu_2 = \beta_0 + \beta_2$
+
+--
+
+- Catégorie 3 ( $T_1 = -1, T_2 = -1$ ): $\mu_3 = \beta_0 - \beta_1 - \beta_2$
+
+--
+
+- Moyenne générale: $\mu = \frac{\mu_1 + \mu_2 + \mu_3}{3} = \beta_0$
+
+---
+
+# Codage d'effet
+
+- L'ordonnée à l'origine donne à la moyenne générale.
+
+--
+
+- Les autres coefficients donnent la différence entre la moyenne de la catégorie et la moyenne générale. 
+
+--
+
+- L'effet de la dernière catégorie est l'opposé de la somme des autres effets, donc $-(\beta_1 + \beta_2)$ ici.
+
+---
+
+# Résumé
+
+- La fonction `lm` effectue l'ajustement d'un modèle de régression linéaire dans R.
+
+- Dans une régression linéaire simple, $y = \beta_0 + \beta_1 x + \epsilon$, $\beta_0$ est la moyenne de $y$ lorsque $x = 0$ (ordonnée à l'origine) et $\beta_1$ est la différence moyenne en $y$ associée à une différence unitaire de $x$.
+
+- L'intervalle de confiance d'une droite de régression représente l'incertitude sur la valeur moyenne de $y$ pour des valeurs données des prédicteurs. L'intervalle de prédiction représente l'incertitude sur la valeur d'une observation future de $y$, connaissant la valeur des prédicteurs.
+
+---
+
+# Résumé
+
+- Le modèle d'ANOVA est un exemple de régression linéaire. Les variables catégorielles sont représentées dans un modèle de régression au moyen de contrastes. 
+
+- Nous avons vu deux des types de contrastes possibles dans R: le codage de traitement (option par défaut) compare l'effet de chaque catégorie à une catégorie de référence, tandis que le codage d'effet compare l'effet de chaque catégorie à la moyenne de toutes les catégories.
+
+
+
