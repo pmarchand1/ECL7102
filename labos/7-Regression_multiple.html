@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Régression linéaire multiple</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Régression linéaire multiple</h1>
+<h4 class="date">16 octobre 2020</h4>
+
+</div>
+
+
+<p>Ce laboratoire doit être remis le <strong>28 octobre à 17h sur Moodle</strong>. Dans votre réponse pour chaque question, veuillez inclure le code R utilisé (s’il y a lieu) et les résultats obtenus.</p>
+<div id="prises-de-charbonnier-en-alaska" class="section level2">
+<h2>1. Prises de charbonnier en Alaska</h2>
+<p>Le fichier <a href="sablefish.csv">sablefish.csv</a> contient des données de Kimura (1988) sur le nombre de prises de charbonnier par unité d’effort (<em>catch</em>) dans quatre localités d’Alaska (<em>location</em>) pour chacune des six années entre 1978 et 1983.</p>
+<pre class="r"><code>sable &lt;- read.csv(&quot;sablefish.csv&quot;)
+str(sable)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    24 obs. of  3 variables:
+##  $ year    : int  1978 1978 1978 1978 1979 1979 1979 1979 1980 1980 ...
+##  $ location: chr  &quot;Shumagin&quot; &quot;Chirikof&quot; &quot;Kodiak&quot; &quot;Yakutat&quot; ...
+##  $ catch   : num  0.236 0.204 0.241 0.232 0.14 0.202 0.228 0.268 0.286 0.275 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Transformez l’année et la localité en facteurs dans R, puis effectuez une ANOVA à deux facteurs pour déterminer si l’abondance varie significativement entre les années et entre les localités (<span class="math inline">\(\alpha\)</span> = 0.05). À partir des graphiques de diagnostic, vérifiez que les suppositions du modèle d’ANOVA soient respectées.</li>
+</ol>
+<p><strong>Note</strong>: Nous supposons ici que les effets sont additifs. Aussi, puisqu’il y a une seule mesure pour chaque combinaison d’une année et d’une localité, il n’est pas possible d’estimer une interaction.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Ré-analysez le modèle en (a) avec la fonction de régression linéaire <code>lm</code>. Utilisez les contrastes appropriés pour déterminer la moyenne générale des prises (<em>catch</em>) et les déviations de cette moyenne pour chacune des six années.</p></li>
+<li><p>Selon les résultats du modèle en (b), dans quelle localité les prises moyennes sont-elles les plus élevées?</p></li>
+<li><p>À l’aide du package <em>emmeans</em>, illustrez les prises moyennes estimées pour chacune des années avec leur intervalle de confiance. En utilisant un test de comparaisons multiples, indiquez entre quelles années les prises varient de façon significative.</p></li>
+</ol>
+</div>
+<div id="métabolisme-dun-poisson-selon-la-salinité" class="section level2">
+<h2>2. Métabolisme d’un poisson selon la salinité</h2>
+<p>Le tableau de données <a href="sardinella.csv">sardinella.csv</a> provient d’une étude de Wohlschlag (1957), “Differences in metabolic rates of migratory and resident freshwater forms of an Arctic Whitefish”. Il contient des mesures du poids (<em>log_weight</em>) et de la consommation en oxygène (<em>log_O2</em>) pour des individus du corgéone <em>Coregonus sardinella</em> capturés dans un environnement d’eau douce (<em>freshwater</em>) ou d’eau salée (<em>marine</em>).</p>
+<pre class="r"><code>sardinella &lt;- read.csv(&quot;sardinella.csv&quot;)
+str(sardinella)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    22 obs. of  3 variables:
+##  $ environment: chr  &quot;marine&quot; &quot;marine&quot; &quot;marine&quot; &quot;marine&quot; ...
+##  $ log_O2     : num  1.59 1.4 1.47 1.66 1.55 ...
+##  $ log_weight : num  2.5 2.04 2.15 2.35 2.24 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimez les effets additifs de l’environnement et du poids sur la consommation en oxygène de ce poisson. Comment interprétez-vous chacun des paramètres du modèle?</p></li>
+<li><p>Reprenez le modèle en (a) avec une version normalisée du prédicteur <em>log_weight</em> (<em>norm_weight</em>). Quelle est maintenant l’interprétation des coefficients?</p></li>
+<li><p>Reprenez le modèle en (b) en ajoutant l’interaction entre le poids (normalisé) et l’environnement. Quelle est l’interprétation des coefficients? Est-ce que l’interaction est significative?</p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+---
+title: "Multiple linear regression"
+date: "October 16, 2020"
+output: 
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+Answers for this lab must be submitted before **October 28th at 5pm on Moodle**. In your answer for each question, please include the R code used (if applicable) and the results obtained.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+## 1. Sablefish catches in Alaska
+
+The file [sablefish.csv](sablefish.csv) contains data from Kimura (1988) on catches of sablefish per unit effort in four locations in Alaska for each of the six years between 1978 and 1983.
+
+```{r}
+sable <- read.csv("sablefish.csv")
+str(sable)
+```
+
+a) Convert the year and location to factors in R, then perform an ANOVA to determine if abundance varies significantly from year to year ($\alpha$ = 0.05). From the diagnostic graphs, verify that the assumptions of the ANOVA model are met.
+
+**Note**: We suppose here that the effects are additive. Also, since there is only one measurement for each combination of a year and a location, it is not possible to estimate an interaction.
+
+b) Re-analyze the model in (a) with the linear regression function `lm`. Use the appropriate contrasts to determine the mean catch and the deviation from this mean for each year.
+
+c) According to the results in (b), which location has the greatest mean catch?
+
+d) Using the *emmeans* package, illustrate the estimated mean catch for each year with confidence intervals. Then, using a multiple comparisons test, indicate between which years the catch varies significantly.
+
+
+## 2. Metabolism of a fish according to salinity
+
+The dataset [sardinella.csv](sardinella.csv) comes from a study by Wohlschlag (1957), "Differences in metabolic rates of migratory and resident freshwater forms of an Arctic Whitefish". It contains weight (*log_weight*) and oxygen consumption (*log_O2*) measurements for individuals of *Coregonus sardinella* caught in freshwater or marine environments.
+
+```{r}
+sardinella <- read.csv("sardinella.csv")
+str(sardinella)
+```
+
+a) Estimate the additive effects of environment and weight on the oxygen consumption of this fish. How do you interpret each of the parameters of the model?
+
+b) Repeat the model in (a) with a standardized version of the predictor *log_weight* (*norm_weight*). What is the interpretation of the coefficients now?
+
+c) Repeat the model in (b) by adding the interaction between the weight (standardized) and the environment. Is this interaction meaningful? What is the interpretation of the coefficients?

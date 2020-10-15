@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-10-16" />
+
+<title>Multiple linear regression</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Multiple linear regression</h1>
+<h4 class="date">October 16, 2020</h4>
+
+</div>
+
+
+<p>Answers for this lab must be submitted before <strong>October 28th at 5pm on Moodle</strong>. In your answer for each question, please include the R code used (if applicable) and the results obtained.</p>
+<div id="sablefish-catches-in-alaska" class="section level2">
+<h2>1. Sablefish catches in Alaska</h2>
+<p>The file <a href="sablefish.csv">sablefish.csv</a> contains data from Kimura (1988) on catches of sablefish per unit effort in four locations in Alaska for each of the six years between 1978 and 1983.</p>
+<pre class="r"><code>sable &lt;- read.csv(&quot;sablefish.csv&quot;)
+str(sable)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    24 obs. of  3 variables:
+##  $ year    : int  1978 1978 1978 1978 1979 1979 1979 1979 1980 1980 ...
+##  $ location: chr  &quot;Shumagin&quot; &quot;Chirikof&quot; &quot;Kodiak&quot; &quot;Yakutat&quot; ...
+##  $ catch   : num  0.236 0.204 0.241 0.232 0.14 0.202 0.228 0.268 0.286 0.275 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Convert the year and location to factors in R, then perform an ANOVA to determine if abundance varies significantly from year to year (<span class="math inline">\(\alpha\)</span> = 0.05). From the diagnostic graphs, verify that the assumptions of the ANOVA model are met.</li>
+</ol>
+<p><strong>Note</strong>: We suppose here that the effects are additive. Also, since there is only one measurement for each combination of a year and a location, it is not possible to estimate an interaction.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Re-analyze the model in (a) with the linear regression function <code>lm</code>. Use the appropriate contrasts to determine the mean catch and the deviation from this mean for each year.</p></li>
+<li><p>According to the results in (b), which location has the greatest mean catch?</p></li>
+<li><p>Using the <em>emmeans</em> package, illustrate the estimated mean catch for each year with confidence intervals. Then, using a multiple comparisons test, indicate between which years the catch varies significantly.</p></li>
+</ol>
+</div>
+<div id="metabolism-of-a-fish-according-to-salinity" class="section level2">
+<h2>2. Metabolism of a fish according to salinity</h2>
+<p>The dataset <a href="sardinella.csv">sardinella.csv</a> comes from a study by Wohlschlag (1957), “Differences in metabolic rates of migratory and resident freshwater forms of an Arctic Whitefish”. It contains weight (<em>log_weight</em>) and oxygen consumption (<em>log_O2</em>) measurements for individuals of <em>Coregonus sardinella</em> caught in freshwater or marine environments.</p>
+<pre class="r"><code>sardinella &lt;- read.csv(&quot;sardinella.csv&quot;)
+str(sardinella)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    22 obs. of  3 variables:
+##  $ environment: chr  &quot;marine&quot; &quot;marine&quot; &quot;marine&quot; &quot;marine&quot; ...
+##  $ log_O2     : num  1.59 1.4 1.47 1.66 1.55 ...
+##  $ log_weight : num  2.5 2.04 2.15 2.35 2.24 ...</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimate the additive effects of environment and weight on the oxygen consumption of this fish. How do you interpret each of the parameters of the model?</p></li>
+<li><p>Repeat the model in (a) with a standardized version of the predictor <em>log_weight</em> (<em>norm_weight</em>). What is the interpretation of the coefficients now?</p></li>
+<li><p>Repeat the model in (b) by adding the interaction between the weight (standardized) and the environment. Is this interaction meaningful? What is the interpretation of the coefficients?</p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

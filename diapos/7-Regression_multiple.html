@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Régression linéaire multiple</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles-xar.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Régression linéaire multiple
+### 14 octobre 2020
+
+---
+
+
+
+
+# Objectifs
+
+- Estimer et interpréter les paramètres d'une régression linéaire incluant plusieurs variables catégorielles et/ou numériques.
+
+- Expliquer la signification d'une interaction entre deux variables et interpréter son coefficient.
+
+- Utiliser le package *emmeans* pour comparer la réponse moyenne entre les différents niveaux d'une variable catégorielle.
+
+- Savoir comment et pourquoi normaliser les prédicteurs dans une régression linéaire multiple.
+
+---
+
+# Régression linéaire multiple
+
+`$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_m x_m + \epsilon$$`
+--
+
+`$$y = \beta_0 + \sum_{i = 1}^m \beta_i x_i + \epsilon$$` 
+
+---
+
+# Régression linéaire multiple
+
+`$$y = \beta_0 + \sum_{i = 1}^m \beta_i x_i + \epsilon$$` 
+
+--
+
+- `\(\beta_0\)`: Moyenne de `\(y\)` si tous les `\(x_i\)` sont 0.
+
+- `\(\beta_i\)`: Différence moyenne de `\(y\)` associée à une différence de 1 de `\(x_i\)` *et aucun changement des autres prédicteurs*.
+
+--
+
+- Les coefficients `\(\beta\)` sont estimés à partir de la méthode des moindres carrés.
+
+---
+
+# Exemples présentés aujourd'hui
+
+- Un prédicteur catégoriel et un prédicteur numérique (analyse de la covariance ou ANCOVA)
+
+- Deux prédicteurs catégoriels (ANOVA à deux facteurs)
+
+- Deux prédicteurs numériques
+
+---
+
+class: center, inverse, middle
+
+# Analyse de la covariance
+
+---
+
+# Exemple
+
+Masse des graines produites par une espèce de plante (*Fruit*) en fonction de la taille des racines (*Root*) et selon que la plante subisse ou non un pâturage (*Grazing*).
+
+
+```
+## 'data.frame':	40 obs. of  3 variables:
+##  $ Root   : num  6.22 6.49 4.92 5.13 5.42 ...
+##  $ Fruit  : num  59.8 61 14.7 19.3 34.2 ...
+##  $ Grazing: chr  "Ungrazed" "Ungrazed" "Ungrazed" "Ungrazed" ...
+```
+
+---
+
+# Interprétation des coefficients
+
+`$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$$`
+
+- `\(x_1\)` est le pâturage (0 = Grazed, 1 = Ungrazed) et `\(x_2\)` est la taille des racines.
+
+--
+
+Avec pâturage, `\(x_1 = 0\)`:
+
+`$$y = \beta_0 + \beta_2 x_2 + \epsilon$$`
+
+--
+
+Sans pâturage, `\(x_1 = 1\)`: 
+
+`$$y = \beta_0 + \beta_1 + \beta_2 x_2 + \epsilon$$`
+
+---
+
+# Interprétation des coefficients
+
+`$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$$`
+
+- `\(\beta_0\)` (`Intercept` dans le tableau sommaire) est l'ordonnée à l'origine de la droite *Fruit vs. Root* avec pâturage.
+
+- `\(\beta_1\)` (`GrazingUngrazed`) est l'effet de l'absence de pâturage sur l'ordonnée à l'origine de *Fruit vs. Root*.
+
+- `\(\beta_2\)` (`Root`) est la pente de la droite *Fruit vs. Root* avec ou sans pâturage.
+
+---
+
+# Ordre des prédicteurs
+
+- Les fonctions `aov` et `anova` traitent les prédicteurs de façon séquentielle (somme des écarts carrés de Type I): l'effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents.
+
+--
+
+- Le tableau d'ANOVA dépend donc de l'ordre des prédicteurs.
+
+--
+
+- Coefficients avec du modèle linéaire: effet partiel de chaque prédicteur, en "contrôlant" l'effet des autres prédicteurs; ne dépendent pas de l'ordre des prédicteurs.
+
+---
+
+# Modèle avec interaction
+
+Effets additifs: 
+
+- la différence entre les deux traitements de pâturage est la même pour chaque valeur de *Root*;
+
+- la pente de *Fruit vs. Root* est la même pour les cas avec et sans pâturage.
+
+Interaction: l'effet d'un prédicteur sur la réponse dépend de la valeur d'un autre prédicteur (et vice versa).
+
+---
+
+# Modèle avec interaction
+
+- L'interaction est représentée par un prédicteur supplémentaire égal au produit des deux variables qui interagissent.
+
+`$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon$$`
+
+---
+
+# Modèle avec interaction
+
+`$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon$$`
+
+--
+
+Avec pâturage, `\(x_1 = 0\)`:
+
+$$ y = \beta_0 + \beta_2 x_2 $$
+
+--
+
+Sans pâturage, `\(x_1 = 1\)`:
+
+`$$y = (\beta_0 + \beta_1) + (\beta_2 + \beta_{12}) x_2$$`
+
+--
+
+- Le modèle avec interaction est équivalent à estimer séparément la droite de régression (ordonnée à l'origine et pente) pour chacun des traitements. 
+
+---
+
+class: center, inverse, middle
+
+# ANOVA à deux facteurs
+
+---
+
+# Exemple
+
+Gain de poids (*gain*) de 48 animaux suivant trois types de régime alimentaire (*diet*) avec quatre types de suppléments (*supplement*).
+
+
+```
+## 'data.frame':	48 obs. of  3 variables:
+##  $ supplement: chr  "supergain" "supergain" "supergain" "supergain" ...
+##  $ diet      : chr  "wheat" "wheat" "wheat" "wheat" ...
+##  $ gain      : num  17.4 16.8 18.1 15.8 17.7 ...
+```
+
+---
+
+# Exemple d'interaction
+
+Prolifération bactérienne (surface couverte en mm&lt;sup&gt;2&lt;/sup&gt;) en fonction de l'humidité (sec, humide) et de la concentration d'antibiotique (faible, modérée, élevée).
+
+
+```
+## 'data.frame':	30 obs. of  3 variables:
+##  $ Surface      : num  2.1 2.73 1.86 2.36 2.2 ...
+##  $ Humidité     : chr  "sec" "sec" "sec" "sec" ...
+##  $ Concentration: chr  "faible" "faible" "faible" "faible" ...
+```
+
+---
+
+class: center, inverse, middle
+
+# Régression avec plusieurs prédicteurs numériques
+
+---
+
+# Exemple 
+
+Records de temps (*time*, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (*dist*, en milles) et le dénivelé total du parcours (*climb*, en pieds).
+
+
+```
+## 'data.frame':	35 obs. of  3 variables:
+##  $ dist : num  2.5 6 6 7.5 8 8 16 6 5 6 ...
+##  $ climb: int  650 2500 900 800 3070 2866 7500 800 800 650 ...
+##  $ time : num  16.1 48.4 33.6 45.6 62.3 ...
+```
+
+---
+
+# Normalisation des variables
+
+- Pour chaque point, la variable normalisée indique l'écart à la moyenne de la variable originale, exprimé en multiple de l'écart-type de la variable originale. 
+
+--
+
+- Puisque les prédicteurs normalisés prennent une valeur de 0 à leur moyenne, la valeur de l'ordonnée à l'origine de la régression est la moyenne générale de la réponse.
+
+--
+
+- La normalisation des prédicteurs ne fait que changer l'échelle des effets estimés. La significativité de l'effet de chaque prédicteur et les prédictions du modèle restent les mêmes.
+
+---
+
+# Interaction entre variables continues
+
+`$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon$$`
+
+- `\(\beta_0\)`: ordonnée à l'origine ( `\(x_1 = 0\)` et `\(x_2 = 0\)` );
+
+--
+
+- `\(\beta_1\)`: pente de `\(y\)` vs. `\(x_1\)` si `\(x_2 = 0\)`;
+- `\(\beta_2\)`: pente de `\(y\)` vs. `\(x_2\)` si `\(x_1 = 0\)`;
+
+--
+
+- `\(\beta_{12}\)`: changement de la pente de `\(y\)` vs. `\(x_1\)` lorsque `\(x_2\)` augmente de 1, *ou* changement de la pente de `\(y\)` vs. `\(x_2\)` lorsque `\(x_1\)` augmente de 1.
+
+---
+
+# Résumé
+
+- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une différence unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
+
+--
+
+- Une interaction entre deux prédicteurs signifie que l'effet d'un prédicteur sur la réponse (i.e. la pente de la droite de régression) dépend de la valeur d'un autre prédicteur.
+
+---
+
+# Résumé
+
+- Le package *emmeans* permet d'effectuer des comparaisons multiples pour l'effet d'une variable catégorielle sur une réponse, comme le test des étendues de Tukey, mais applicable à tout modèle de régression.
+
+--
+
+- La normalisation des prédicteurs d'une régression (soustraire la moyenne et diviser par l'écart-type) facilite la comparaison des coefficients et l'interprétation de l'ordonnée à l'origine (qui représente la moyenne générale de la variable réponse).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

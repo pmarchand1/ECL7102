@@ -1,0 +1,273 @@
+---
+title: "Régression linéaire multiple"
+date: "14 octobre 2020"
+output: 
+  xaringan::moon_reader:
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
+    lib_dir: libs
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
+library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
+```
+
+# Objectifs
+
+- Estimer et interpréter les paramètres d'une régression linéaire incluant plusieurs variables catégorielles et/ou numériques.
+
+- Expliquer la signification d'une interaction entre deux variables et interpréter son coefficient.
+
+- Utiliser le package *emmeans* pour comparer la réponse moyenne entre les différents niveaux d'une variable catégorielle.
+
+- Savoir comment et pourquoi normaliser les prédicteurs dans une régression linéaire multiple.
+
+---
+
+# Régression linéaire multiple
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_m x_m + \epsilon$$
+--
+
+$$y = \beta_0 + \sum_{i = 1}^m \beta_i x_i + \epsilon$$ 
+
+---
+
+# Régression linéaire multiple
+
+$$y = \beta_0 + \sum_{i = 1}^m \beta_i x_i + \epsilon$$ 
+
+--
+
+- $\beta_0$: Moyenne de $y$ si tous les $x_i$ sont 0.
+
+- $\beta_i$: Différence moyenne de $y$ associée à une différence de 1 de $x_i$ *et aucun changement des autres prédicteurs*.
+
+--
+
+- Les coefficients $\beta$ sont estimés à partir de la méthode des moindres carrés.
+
+---
+
+# Exemples présentés aujourd'hui
+
+- Un prédicteur catégoriel et un prédicteur numérique (analyse de la covariance ou ANCOVA)
+
+- Deux prédicteurs catégoriels (ANOVA à deux facteurs)
+
+- Deux prédicteurs numériques
+
+---
+
+class: center, inverse, middle
+
+# Analyse de la covariance
+
+---
+
+# Exemple
+
+Masse des graines produites par une espèce de plante (*Fruit*) en fonction de la taille des racines (*Root*) et selon que la plante subisse ou non un pâturage (*Grazing*).
+
+```{r}
+comp <- read.csv("../donnees/compensation.csv")
+str(comp)
+```
+
+---
+
+# Interprétation des coefficients
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$$
+
+- $x_1$ est le pâturage (0 = Grazed, 1 = Ungrazed) et $x_2$ est la taille des racines.
+
+--
+
+Avec pâturage, $x_1 = 0$:
+
+$$y = \beta_0 + \beta_2 x_2 + \epsilon$$
+
+--
+
+Sans pâturage, $x_1 = 1$: 
+
+$$y = \beta_0 + \beta_1 + \beta_2 x_2 + \epsilon$$
+
+---
+
+# Interprétation des coefficients
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$$
+
+- $\beta_0$ (`Intercept` dans le tableau sommaire) est l'ordonnée à l'origine de la droite *Fruit vs. Root* avec pâturage.
+
+- $\beta_1$ (`GrazingUngrazed`) est l'effet de l'absence de pâturage sur l'ordonnée à l'origine de *Fruit vs. Root*.
+
+- $\beta_2$ (`Root`) est la pente de la droite *Fruit vs. Root* avec ou sans pâturage.
+
+---
+
+# Ordre des prédicteurs
+
+- Les fonctions `aov` et `anova` traitent les prédicteurs de façon séquentielle (somme des écarts carrés de Type I): l'effet de chaque prédicteur est calculé par rapport aux résidus du modèle incluant les prédicteurs précédents.
+
+--
+
+- Le tableau d'ANOVA dépend donc de l'ordre des prédicteurs.
+
+--
+
+- Coefficients avec du modèle linéaire: effet partiel de chaque prédicteur, en "contrôlant" l'effet des autres prédicteurs; ne dépendent pas de l'ordre des prédicteurs.
+
+---
+
+# Modèle avec interaction
+
+Effets additifs: 
+
+- la différence entre les deux traitements de pâturage est la même pour chaque valeur de *Root*;
+
+- la pente de *Fruit vs. Root* est la même pour les cas avec et sans pâturage.
+
+Interaction: l'effet d'un prédicteur sur la réponse dépend de la valeur d'un autre prédicteur (et vice versa).
+
+---
+
+# Modèle avec interaction
+
+- L'interaction est représentée par un prédicteur supplémentaire égal au produit des deux variables qui interagissent.
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon$$
+
+---
+
+# Modèle avec interaction
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon$$
+
+--
+
+Avec pâturage, $x_1 = 0$:
+
+$$ y = \beta_0 + \beta_2 x_2 $$
+
+--
+
+Sans pâturage, $x_1 = 1$:
+
+$$y = (\beta_0 + \beta_1) + (\beta_2 + \beta_{12}) x_2$$
+
+--
+
+- Le modèle avec interaction est équivalent à estimer séparément la droite de régression (ordonnée à l'origine et pente) pour chacun des traitements. 
+
+---
+
+class: center, inverse, middle
+
+# ANOVA à deux facteurs
+
+---
+
+# Exemple
+
+Gain de poids (*gain*) de 48 animaux suivant trois types de régime alimentaire (*diet*) avec quatre types de suppléments (*supplement*).
+
+```{r}
+growth <- read.csv("../donnees/growth.csv")
+str(growth)
+```
+
+---
+
+# Exemple d'interaction
+
+Prolifération bactérienne (surface couverte en mm<sup>2</sup>) en fonction de l'humidité (sec, humide) et de la concentration d'antibiotique (faible, modérée, élevée).
+
+```{r}
+antibiot <- read.csv("../donnees/antibiot.csv", fileEncoding = "UTF-8")
+str(antibiot)
+```
+
+---
+
+class: center, inverse, middle
+
+# Régression avec plusieurs prédicteurs numériques
+
+---
+
+# Exemple 
+
+Records de temps (*time*, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (*dist*, en milles) et le dénivelé total du parcours (*climb*, en pieds).
+
+```{r, warning = FALSE, message = FALSE}
+library(MASS)
+str(hills)
+```
+
+---
+
+# Normalisation des variables
+
+- Pour chaque point, la variable normalisée indique l'écart à la moyenne de la variable originale, exprimé en multiple de l'écart-type de la variable originale. 
+
+--
+
+- Puisque les prédicteurs normalisés prennent une valeur de 0 à leur moyenne, la valeur de l'ordonnée à l'origine de la régression est la moyenne générale de la réponse.
+
+--
+
+- La normalisation des prédicteurs ne fait que changer l'échelle des effets estimés. La significativité de l'effet de chaque prédicteur et les prédictions du modèle restent les mêmes.
+
+---
+
+# Interaction entre variables continues
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \epsilon$$
+
+- $\beta_0$: ordonnée à l'origine ( $x_1 = 0$ et $x_2 = 0$ );
+
+--
+
+- $\beta_1$: pente de $y$ vs. $x_1$ si $x_2 = 0$;
+- $\beta_2$: pente de $y$ vs. $x_2$ si $x_1 = 0$;
+
+--
+
+- $\beta_{12}$: changement de la pente de $y$ vs. $x_1$ lorsque $x_2$ augmente de 1, *ou* changement de la pente de $y$ vs. $x_2$ lorsque $x_1$ augmente de 1.
+
+---
+
+# Résumé
+
+- Dans une régression linéaire multiple (sans interaction), le coefficient associé à un prédicteur mesure l'effet d'une différence unitaire du prédicteur sur la réponse, si les autres prédicteurs demeurent constants.
+
+--
+
+- Une interaction entre deux prédicteurs signifie que l'effet d'un prédicteur sur la réponse (i.e. la pente de la droite de régression) dépend de la valeur d'un autre prédicteur.
+
+---
+
+# Résumé
+
+- Le package *emmeans* permet d'effectuer des comparaisons multiples pour l'effet d'une variable catégorielle sur une réponse, comme le test des étendues de Tukey, mais applicable à tout modèle de régression.
+
+--
+
+- La normalisation des prédicteurs d'une régression (soustraire la moyenne et diviser par l'écart-type) facilite la comparaison des coefficients et l'interprétation de l'ordonnée à l'origine (qui représente la moyenne générale de la variable réponse).
+
