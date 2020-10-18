@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Évaluation et sélection de modèles</h1>
-<h4 class="date"><br/>21 octobre 2019</h4>
+<h4 class="date"><br/>26 octobre 2020</h4>
 
 </div>
 
@@ -296,15 +261,127 @@ div.tocify {
 <div id="objectifs" class="section level1">
 <h1>Objectifs</h1>
 <ul>
+<li><p>Identifier les problèmes dûs à la collinéarité de plusieurs prédicteurs.</p></li>
 <li><p>Identifier les problèmes liés au sous-ajustement et surajustement de modèles.</p></li>
 <li><p>Connaître les avantages et inconvénients de différentes méthodes visant à évaluer l’ajustement de modèles.</p></li>
 <li><p>Utiliser l’AIC pour comparer différents modèles.</p></li>
 <li><p>Combiner les prédictions de plusieurs modèles.</p></li>
 </ul>
 </div>
-<div id="types-derreurs-des-modeles" class="section level1">
-<h1>Types d’erreurs des modèles</h1>
+<div id="collinéarité" class="section level1">
+<h1>Collinéarité</h1>
+<p>Lors du dernier cours, nous avons utilisé le jeu de données <code>hills</code> présentant les records de temps (<em>time</em>, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (<em>dist</em>, en milles) et le dénivelé total du parcours (<em>climb</em>, en pieds).</p>
+<pre class="r"><code>library(MASS)
+str(hills)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    35 obs. of  3 variables:
+##  $ dist : num  2.5 6 6 7.5 8 8 16 6 5 6 ...
+##  $ climb: int  650 2500 900 800 3070 2866 7500 800 800 650 ...
+##  $ time : num  16.1 48.4 33.6 45.6 62.3 ...</code></pre>
+<p>Notons que les deux prédicteurs (<em>dist</em> et <em>climb</em>) sont eux-mêmes corrélés.</p>
+<pre class="r"><code>cor(hills$dist, hills$climb)</code></pre>
+<pre><code>## [1] 0.6523461</code></pre>
+<p>La corrélation entre deux prédicteurs complique l’estimation des effets de chaque prédicteur. Puisque chaque coefficient du modèle représente l’effet d’un prédicteur lorsque les autres prennent la même valeur, lorsque plusieurs d’entre eux varient ensemble, il devient difficile d’isoler l’effet de chacun. Ce problème se généralise aux modèles avec plus de deux prédicteurs, si l’un des prédicteurs est corrélé avec une combinaison linéaire des autres prédicteurs: on parle alors de <strong>collinéarité</strong>.</p>
+<p>La fonction <code>vif</code> du package <em>car</em> calcule le facteur d’inflation de la variance (VIF, pour <em>variance inflation factor</em>) de chaque prédicteur d’un modèle.</p>
+<pre class="r"><code>library(car)
+mod_hills &lt;- lm(time ~ dist + climb, hills)
+vif(mod_hills)</code></pre>
+<pre><code>##     dist    climb 
+## 1.740812 1.740812</code></pre>
+<p>Le VIF est égal à <span class="math inline">\(1 - 1/R^2\)</span>, où <span class="math inline">\(R^2\)</span> est le coefficient de détermination d’un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un <span class="math inline">\(R^2\)</span> de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d’éliminer un des prédicteurs redondants.</p>
 <div id="exemple" class="section level2">
+<h2>Exemple</h2>
+<p>Le tableau de données <code>msleep</code> inclus avec le package <em>ggplot</em>, contient des données sur le sommeil de différentes espèces de mammifères. Nous choisissons trois colonnes correspondant au temps de sommeil total (<em>sleep_total</em>), au poids de l’animal (<em>bodywt</em>) et au poids de son cerveau (<em>brainwt</em>).</p>
+<pre class="r"><code>msleep2 &lt;- dplyr::select(msleep, sleep_total, bodywt, brainwt)
+summary(msleep2)</code></pre>
+<pre><code>##   sleep_total        bodywt            brainwt       
+##  Min.   : 1.90   Min.   :   0.005   Min.   :0.00014  
+##  1st Qu.: 7.85   1st Qu.:   0.174   1st Qu.:0.00290  
+##  Median :10.10   Median :   1.670   Median :0.01240  
+##  Mean   :10.43   Mean   : 166.136   Mean   :0.28158  
+##  3rd Qu.:13.75   3rd Qu.:  41.750   3rd Qu.:0.12550  
+##  Max.   :19.90   Max.   :6654.000   Max.   :5.71200  
+##                                     NA&#39;s   :27</code></pre>
+<p>Les variables <em>bodywt</em> et <em>brainwt</em> sont très asymétriques et varient sur plusieurs ordres de grandeur, donc nous effectuons une transformation logarithmique des trois variables.</p>
+<pre class="r"><code>msleep2 &lt;- log(msleep2)</code></pre>
+<p>Sur une échelle logarithmique, les variables <em>bodywt</em> et <em>brainwt</em> sont fortement corrélées.</p>
+<pre class="r"><code>plot(msleep2)</code></pre>
+<p><img src="8-Selection_modeles_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Voici ce qu’il arrive lorsqu’on estime un modèle linéaire avec un ou deux prédicteurs.</p>
+<pre class="r"><code>summary(lm(sleep_total ~ bodywt, data = msleep2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sleep_total ~ bodywt, data = msleep2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.9757 -0.2712 -0.0096  0.2727  1.0004 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.31575    0.04647  49.830  &lt; 2e-16 ***
+## bodywt      -0.10265    0.01389  -7.388 1.19e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4097 on 81 degrees of freedom
+## Multiple R-squared:  0.4026, Adjusted R-squared:  0.3952 
+## F-statistic: 54.58 on 1 and 81 DF,  p-value: 1.193e-10</code></pre>
+<pre class="r"><code>summary(lm(sleep_total ~ brainwt, data = msleep2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sleep_total ~ brainwt, data = msleep2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.89025 -0.27043 -0.01841  0.30664  0.88271 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.69551    0.10037  16.892  &lt; 2e-16 ***
+## brainwt     -0.12640    0.02103  -6.011 1.64e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3943 on 54 degrees of freedom
+##   (27 observations deleted due to missingness)
+## Multiple R-squared:  0.4009, Adjusted R-squared:  0.3898 
+## F-statistic: 36.13 on 1 and 54 DF,  p-value: 1.637e-07</code></pre>
+<pre class="r"><code>summary(lm(sleep_total ~ bodywt + brainwt, data = msleep2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sleep_total ~ bodywt + brainwt, data = msleep2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.92817 -0.25572 -0.01949  0.28150  1.01779 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.317881   0.382108   6.066 1.42e-07 ***
+## bodywt      -0.105861   0.062787  -1.686   0.0977 .  
+## brainwt      0.002517   0.079212   0.032   0.9748    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3877 on 53 degrees of freedom
+##   (27 observations deleted due to missingness)
+## Multiple R-squared:  0.4314, Adjusted R-squared:  0.4099 
+## F-statistic:  20.1 on 2 and 53 DF,  p-value: 3.181e-07</code></pre>
+<p>Comparez les erreurs-types des coefficients du troisième modèle par rapport à ceux où chacun des prédicteurs est considéré séparément. Nous pouvons confirmer que ces variables sont fortement collinéaires avec <code>vif</code>.</p>
+<pre class="r"><code>vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))</code></pre>
+<pre><code>##   bodywt  brainwt 
+## 14.67386 14.67386</code></pre>
+<p>S’il faut ne conserver qu’une seule des deux variables du modèle, laquelle choisir?</p>
+<ul>
+<li><p>Nous pouvons utiliser nos connaissances préalables ou nos hypothèses sur le fonctionnement du système pour déterminer lequel des prédicteurs est le plus pertinent.</p></li>
+<li><p>Nous pouvons comparer l’ajustement des modèles utilisant un prédicteur ou l’autre.</p></li>
+</ul>
+<p>Les méthodes vues dans le reste du cours répondent au besoin de comparer différents modèles expliquant la même variable réponse. Ils s’appliquent à tout cas où nous avons plusieurs modèles “candidats” pour un même problème.</p>
+</div>
+</div>
+<div id="types-derreurs-des-modèles" class="section level1">
+<h1>Types d’erreurs des modèles</h1>
+<div id="exemple-1" class="section level2">
 <h2>Exemple</h2>
 <p><img src="../images/polatouche.jpg" /></p>
 <p>Supposons que nous souhaitons estimer la densité de population du grand polatouche (<em>Glaucomys sabrinus</em>) en fonction de différentes variables, incluant:</p>
@@ -317,12 +394,12 @@ div.tocify {
 </ul>
 <p>Pour ce faire, nous avons des données d’un nombre limité de sites (ex.: 40 peuplements). Quels sont les avantages et désavantages: (1) d’un modèle incluant le nombre maximal de prédicteurs et (2) d’un modèle incluant un nombre réduit (ex.: 1 ou 2) prédicteurs? Quelle est la différence entre le type d’erreurs commises dans chaque cas?</p>
 </div>
-<div id="modele-trop-simple-sous-ajustement-et-biais" class="section level2">
+<div id="modèle-trop-simple-sous-ajustement-et-biais" class="section level2">
 <h2>Modèle trop simple: sous-ajustement et biais</h2>
 <p>Avec un modèle trop simple, nous risquons d’omettre des prédicteurs qui ont un effet sur la variable étudiée. On parle de sous-ajustement aux données (<em>underfitting</em>). Par exemple, supposons que le type de peuplement n’est pas inclus dans le modèle estimé, mais que le polatouche est davantage associé aux conifères. Dans ce cas, les prédictions du modèle vont sous-estimer sa densité de population dans les peuplements résineux et surestimer sa densité de population dans les peuplements de feuillus.</p>
 <p>Puisque ce problème crée une erreur systématique et indépendante du nombre d’observations, il est souvent nommé <em>biais</em>.</p>
 </div>
-<div id="modele-trop-complexe-surajustement-et-variance" class="section level2">
+<div id="modèle-trop-complexe-surajustement-et-variance" class="section level2">
 <h2>Modèle trop complexe: surajustement et variance</h2>
 <p>En contrepartie, un modèle avec trop de paramètres risque de mesurer des associations entre variables qui ne sont pas des effets généralisables, mais plutôt des coïncidences du jeu de données utilisé. Dans ce cas, il y a surajustement du modèle aux données (<em>overfitting</em>). De façon générale, plus un modèle inclut de prédicteurs, plus l’échantillon doit être grand pour estimer les effets avec la même précision. D’un point de vue graphique, l’étendue combinée de <span class="math inline">\(m\)</span> prédicteurs crée une “surface” à <span class="math inline">\(m\)</span> dimensions; plus ce nombre de dimensions est élevé, plus il faut de points pour bien couvrir l’étendue des valeurs possibles (voir l’illustration ci-dessous).</p>
 <p><img src="../images/densite_pred.png" /></p>
@@ -331,10 +408,10 @@ div.tocify {
 <div id="autre-exemple-ajuster-une-fonction-polynomiale" class="section level2">
 <h2>Autre exemple: ajuster une fonction polynomiale</h2>
 <p>Au dernier cours sur la régression linéaire, nous avons donné l’exemple de la croissance d’une espèce de plante en fonction de l’humidité du sol. Les graphiques ci-dessous montrent l’ajustement de ces données par des régressions effectuées avec des polynôme de degré 1 (ligne droite), 2 et 4.</p>
-<p><img src="8-Sélection_modèles_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="8-Selection_modeles_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Si le modèle linéaire pourrait être sous-ajusté ici (il semble y avoir une courbure dans le nuage de points), le surajustement du modèle de degré 4 est évident dès qu’on dépasse un peu l’étendue des données.</p>
 </div>
-<div id="resume-sources-derreur-et-complexite-des-modeles" class="section level2">
+<div id="résumé-sources-derreur-et-complexité-des-modèles" class="section level2">
 <h2>Résumé: Sources d’erreur et complexité des modèles</h2>
 <ul>
 <li><p>On ne connait pas la fonction exacte reliant la réponse du modèle aux prédicteurs.</p></li>
@@ -343,16 +420,16 @@ div.tocify {
 </ul>
 <p><img src="../images/biais_variance.png" /></p>
 </div>
-<div id="prediction-et-explication" class="section level2">
+<div id="prédiction-et-explication" class="section level2">
 <h2>Prédiction et explication</h2>
 <p>Les critères présentés dans ce cours sont basés sur la capacité prédictive des modèles. Autrement dit, nous recherchons le modèle dont les prédictions s’approcheront le plus de la réalité pour de nouvelles observations, indépendantes des observations utilisées pour estimer les paramètres du modèle.</p>
 <p>Il arrive souvent, particulièrement dans un contexte expérimental, que le but d’un modèle ne soit pas nécessairement de prédire la réponse, mais plutôt d’en identifier les causes (explication). Dans ce cas, le désir de limiter la complexité des modèles réflète le principe de parcimonie, ou “rasoir d’Ockham”, selon lequel il est préférable d’utiliser le minimum de causes nécessaires pour expliquer un phénomène.</p>
 </div>
 </div>
-<div id="criteres-de-comparaison-des-modeles" class="section level1">
+<div id="critères-de-comparaison-des-modèles" class="section level1">
 <h1>Critères de comparaison des modèles</h1>
 <p>Dans cette section, nous verrons différents critères statistiques permettant de comparer l’ajustement de différents modèles visant à estimer une même variable réponse.</p>
-<div id="coefficient-de-determination-r2" class="section level2">
+<div id="coefficient-de-détermination-r2" class="section level2">
 <h2>Coefficient de détermination (<span class="math inline">\(R^2\)</span>)</h2>
 <p>Le coefficient de détermination indique quelle fraction de la variance totale de la réponse est expliquée par le modèle. Dans R, le résultat de <code>lm</code> rapportent deux versions du <span class="math inline">\(R^2\)</span>, <em>Multiple R-squared</em> et <em>Adjusted R-squared</em>. La première correspond au <span class="math inline">\(R^2\)</span> que nous avons déjà vu, basé sur la somme des écarts carrés résiduels et totaux:</p>
 <p><span class="math display">\[ R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})^2} \]</span></p>
@@ -360,7 +437,7 @@ div.tocify {
 <p>La version ajustée du <span class="math inline">\(R^2\)</span> divise chaque somme des écarts carrés par le nombre de degrés de liberté approprié. Puisqu’un modèle avec plus de paramètres a moins de degrés de liberté résiduels, le <span class="math inline">\(R^2\)</span> ajusté peut diminuer si on ajoute un paramètre qui ne contribue pas suffisamment à expliquer la réponse. Il s’agit donc d’un estimateur moins biaisé du <span class="math inline">\(R^2\)</span> de la population.</p>
 <p>L’une ou l’autre version du <span class="math inline">\(R^2\)</span> convient pour comparer deux modèles linéaires comprenant le même nombre de paramètres ajustables. Toutefois, le <span class="math inline">\(R^2\)</span> ajusté ne pénalise pas les modèles plus complexes autant que l’AIC qui sera présenté plus loin.</p>
 </div>
-<div id="tests-de-significativite" class="section level2">
+<div id="tests-de-significativité" class="section level2">
 <h2>Tests de significativité</h2>
 <p>Si deux modèles ne diffèrent que par un prédicteur, ex.: <code>y ~ x1 + x2</code> et <code>y ~ x1 + x2 + x3</code>, on peut choisir le modèle plus complexe si l’effet du nouveau prédicteur <code>x3</code> est significatif. Nous avons déjà utilisé cette technique pour déterminer s’il fallait inclure ou non l’interaction dans un modèle d’ANOVA à deux facteurs.</p>
 <p>Il existe des méthodes séquentielles (<em>stepwise</em>) pour choisir entre plus de deux modèles en ajoutant ou supprimant une variable à la fois. Ces méthodes seront présentées avec plus de détail plus loin. Pour l’instant, notons que la sélection de modèles basée sur les tests de significativité comporte plusieurs inconvénients.</p>
@@ -377,7 +454,7 @@ div.tocify {
 <p>Cette séparation des données en un ensemble pour la calibration des modèles (<em>training set</em>) et un ensemble pour leur validation (<em>validation set</em>) est utilisée assez fréquemment lorsqu’on dispose d’un très grand échantillon. Il est préférable de placer la plus grande partie des données dans l’ensemble de calibration, par exemple une répartition 70%/30% ou 80%/20%.</p>
 <p>Pour des jeux de données plus petits, ce type de validation n’est pas efficace. D’une part, on peut moins se permettre de laisser de côté une partie de nos données pour la validation, et d’autre part, un petit ensemble de validation (ex.: 10 cas) n’est pas très représentatif.</p>
 </div>
-<div id="validation-croisee" class="section level2">
+<div id="validation-croisée" class="section level2">
 <h2>Validation croisée</h2>
 <p>La validation croisée (<em>cross-validation</em>) consiste à diviser aléatoirement les observations en groupes et mesurer l’erreur de prédiction des observations d’un groupe selon un modèle ajusté au reste des observations.</p>
 <p>Par exemple, si chaque groupe ne comporte qu’une seule observation (<em>leave-one-out cross-validation</em>), la somme des erreurs carrées de prédiction est égale à <span class="math inline">\(\sum (y_i - \hat{y_i})^2\)</span>, où chaque valeur prédite <span class="math inline">\(\hat{y_i}\)</span> provient du modèle ajusté sans l’observation <span class="math inline">\(i\)</span>. Si on utilise cette méthode pour comparer l’erreur de prédiction de différents modèles à partir de <span class="math inline">\(n\)</span> observations, chacun des modèles doit donc être ajusté <span class="math inline">\(n\)</span> fois, en laissant chaque fois une observation de côté.</p>
@@ -385,7 +462,7 @@ div.tocify {
 <p>La validation croisée peut être codée à partir d’une boucle dans R, mais il existe aussi des packages où ces fonctions sont déjà codées et prêtes à être appliquées à divers modèles, comme le package <strong>cvTools</strong>.</p>
 </div>
 </div>
-<div id="comparaison-de-modeles-avec-laic" class="section level1">
+<div id="comparaison-de-modèles-avec-laic" class="section level1">
 <h1>Comparaison de modèles avec l’AIC</h1>
 <div id="origine" class="section level2">
 <h2>Origine</h2>
@@ -393,7 +470,7 @@ div.tocify {
 <p>L’AIC est basé sur la théorie de l’information. Imaginons une fonction <span class="math inline">\(f\)</span> qui associe à chaque individu de la population une valeur correspondant exactement à la variable réponse <span class="math inline">\(y\)</span>, tandis que <span class="math inline">\(g\)</span> est un modèle qui tente d’approximer <span class="math inline">\(f\)</span>. L’AIC approxime la perte d’information encourue en estimant la vraie distribution <span class="math inline">\(f\)</span> par le modèle <span class="math inline">\(g\)</span>.</p>
 <p>Comment peut-on estimer la “distance” entre notre modèle et un modèle idéal <span class="math inline">\(f\)</span> qu’on ne connaît pas? En fait, l’AIC mesure cette distance à une constante près, ce qui est suffisant pour comparer différents modèles en fonction de leur niveau d’ajustement relatif. La valeur absolue de l’AIC n’a aucune signification, tout ce qui compte c’est la différence d’AIC entre modèles.</p>
 </div>
-<div id="definition-de-laic" class="section level2">
+<div id="définition-de-laic" class="section level2">
 <h2>Définition de l’AIC</h2>
 <p>L’AIC est défini comme:</p>
 <p><span class="math display">\[ AIC = -2 \log(L) + 2 K \]</span></p>
@@ -409,17 +486,17 @@ div.tocify {
 <li>L’AIC aurait pu être défini comme <span class="math inline">\(-\log(L) + K\)</span>. Le facteur de 2 a été ajouté pour des raisons historiques (afin de relier l’AIC à d’autres mesures d’ajustement existantes).</li>
 </ol>
 </div>
-<div id="aic-et-validation-croisee" class="section level2">
+<div id="aic-et-validation-croisée" class="section level2">
 <h2>AIC et validation croisée</h2>
 <p>Il a été démontré que la comparaison des modèles avec l’AIC est équivalente à une validation croisée qui met de côté une observation à la fois (<em>leave-one-out cross-validation</em>). Ainsi, l’AIC nous permet d’estimer le pouvoir prédictif de nos modèles sur de nouvelles données, sans avoir à répéter plusieurs fois l’ajustement du modèle comme dans la méthode de validation croisée.</p>
 </div>
-<div id="aicc-pour-petits-echantillons" class="section level2">
+<div id="aicc-pour-petits-échantillons" class="section level2">
 <h2>AICc pour petits échantillons</h2>
 <p>La formule de l’AIC présentée ci-dessus est une bonne approximation lorsque le nombre d’observations <span class="math inline">\(n\)</span> est suffisant. Si <span class="math inline">\(n\)</span> est faible par rapport au nombre de paramètres estimés (si <span class="math inline">\(n/K\)</span> &lt; 40, selon le manuel de Burnham et Anderson), cette formule ne pénalise pas suffisamment les modèles complexes. Dans ce cas, on remplace l’AIC par l’AICc, qui inclut une correction supplémentaire:</p>
 <p><span class="math display">\[ AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right) \]</span> La fraction <span class="math inline">\(n / (n-K-1)\)</span> est supérieure à 1, donc le deuxième terme de l’AICc est un peu plus grand que <span class="math inline">\(2K\)</span>, mais la différence entre les deux diminue à mesure que <span class="math inline">\(n\)</span> augmente.</p>
 <p>Lorsqu’on compare plusieurs modèles, il faut utiliser la même mesure pour chacun d’eux. On utilise donc l’AICc pour tous les modèles dès qu’un des modèles a un petit ratio <span class="math inline">\(n/K\)</span>.</p>
 </div>
-<div id="classification-des-modeles-avec-laic" class="section level2">
+<div id="classification-des-modèles-avec-laic" class="section level2">
 <h2>Classification des modèles avec l’AIC</h2>
 <p>Comme il a été mentionné plus haut, la valeur absolue de l’AIC n’est pas importante, seules les différences d’AIC entre modèles comptent. Après avoir calculé l’AIC pour différents modèles, on classe ceux-ci en fonction de la différence entre leur AIC et le minimum des AIC (qui correspond au meilleur modèle): <span class="math inline">\(\Delta AIC = AIC - \min AIC\)</span>. Le meilleur modèle a un <span class="math inline">\(\Delta AIC = 0\)</span>.</p>
 <p>Bien sûr, puisque nos données sont basées sur un échantillonnage aléatoire, il n’est pas certain que le meilleur modèle identifié par l’AIC serait encore le même avec un échantillon différent.</p>
@@ -430,13 +507,13 @@ div.tocify {
 <p><span class="math display">\[ w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j}{2}}}\]</span></p>
 <p>Puisque la somme des <span class="math inline">\(w_i\)</span> est égale à 1, ces poids représentent la probabilité que chaque modèle soit identifié comme le meilleur modèle par l’AIC, si on répétait l’échantillonnage plusieurs fois.</p>
 </div>
-<div id="exemple-1" class="section level2">
+<div id="exemple-2" class="section level2">
 <h2>Exemple</h2>
-<p>Prenons le jeu de données de Johnson et Simberloff sur le nombre d’espèces de plantes vasculaires de différentes îles britanniques, que nous avons déjà utilisé au dernier laboratoire.</p>
+<p>Prenons le jeu de données de Johnson et Simberloff sur le nombre d’espèces de plantes vasculaires de différentes îles britanniques, que nous avons utilisé lors d’un laboratoire précédent.</p>
 <pre class="r"><code>iles &lt;- read.csv(&quot;../donnees/britain_species.csv&quot;)
 str(iles)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    42 obs. of  7 variables:
-##  $ island      : Factor w/ 42 levels &quot;Ailsa&quot;,&quot;Anglesey&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ island      : chr  &quot;Ailsa&quot; &quot;Anglesey&quot; &quot;Arran&quot; &quot;Barra&quot; ...
 ##  $ area        : num  0.8 712.5 429.4 18.4 31.1 ...
 ##  $ elevation   : int  340 127 874 384 226 1343 210 103 143 393 ...
 ##  $ soil_types  : int  1 3 4 2 1 16 1 3 1 1 ...
@@ -472,7 +549,7 @@ summary(mod_comp)</code></pre>
 ## Multiple R-squared:  0.6941, Adjusted R-squared:  0.6693 
 ## F-statistic: 27.99 on 3 and 37 DF,  p-value: 1.267e-09</code></pre>
 <p>Vérifions d’abord les graphiques de diagnostic pour le modèle complet:</p>
-<p><img src="8-Sélection_modèles_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="8-Selection_modeles_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Trois îles ont des résidus très négatifs (moins d’espèces que prévues) et s’éloignent de la normale, mais nous jugeons que l’ajustement est acceptable.</p>
 <p>Ensuite, nous créons une liste de modèles qui n’incluent qu’un ou deux des prédicteurs du modèle complet, ainsi qu’un modèle nul: <code>log_sp ~ 1</code>, qui représente une fonction constante (indépendante des prédicteurs).</p>
 <pre class="r"><code>liste_mod &lt;- list(
@@ -511,7 +588,7 @@ AICc(mod_comp)</code></pre>
 </ul>
 <p>Nous voyons que le modèle incluant la superficie et la latitude reçoit 77% du poids, le modèle complet reçoit 23% du poids et le reste des modèles ont un poids négligeable.</p>
 </div>
-<div id="conseils-et-points-a-surveiller" class="section level2">
+<div id="conseils-et-points-à-surveiller" class="section level2">
 <h2>Conseils et points à surveiller</h2>
 <ul>
 <li><p>Pour que les valeurs de l’AIC (ou AICc) soient comparables, tous les modèles doivent avoir la même variable réponse. On ne pourrait pas par exemple comparer des modèles où la réponse est <code>species</code> avec d’autres où la réponse est <code>log(species)</code>.</p></li>
@@ -523,11 +600,11 @@ AICc(mod_comp)</code></pre>
 </ul>
 </div>
 </div>
-<div id="comment-choisir-lensemble-de-modeles-a-comparer" class="section level1">
+<div id="comment-choisir-lensemble-de-modèles-à-comparer" class="section level1">
 <h1>Comment choisir l’ensemble de modèles à comparer?</h1>
 <p>Dans leur manuel sur la sélection de modèles avec l’AIC (voir les références à la fin du document), Burnham et Anderson recommandent de choisir un ensemble de modèles restreint basé sur la connaissance du sujet et des hypothèses scientifiques intéressantes.</p>
 <p>Il est important de noter que le nombre de modèles possibles augmente rapidement avec le nombre de prédicteurs, même si nous nous limitons aux modèles linéaires sans interaction. Pour <span class="math inline">\(k\)</span> prédicteurs, il y a <span class="math inline">\(2^k\)</span> modèles possibles. Dans l’exemple précédent, nous avions 8 modèles possibles pour 3 prédicteurs; avec 7 prédicteurs, ce nombre augmente à 128!</p>
-<div id="algorithmes-de-selection-sequentielle" class="section level2">
+<div id="algorithmes-de-sélection-séquentielle" class="section level2">
 <h2>Algorithmes de sélection séquentielle</h2>
 <p>Il existe des algorithmes de sélection séquentielle (<em>forward</em>, <em>backward</em> ou <em>stepwise</em>), comme la fonction <code>stepAIC</code> dans R, qui visent à trouver le meilleur modèle selon l’AIC sans avoir à évaluer tous les modèles possibles.</p>
 <p>Par exemple, une sélection par addition (<em>forward selection</em>) fonctionne ainsi:</p>
@@ -545,7 +622,7 @@ AICc(mod_comp)</code></pre>
 </ul>
 </div>
 </div>
-<div id="predictions-multi-modeles" class="section level1">
+<div id="prédictions-multi-modèles" class="section level1">
 <h1>Prédictions multi-modèles</h1>
 <p>Comme dans le dernier laboratoire, supposons que nous souhaitions prédire le nombre d’espèces pour de nouvelles îles avec des valeurs connues des prédicteurs.</p>
 <pre class="r"><code>iles_nouv &lt;- data.frame(area = c(1, 40), dist_britain = c(5, 20), 
@@ -569,9 +646,10 @@ iles_nouv</code></pre>
 ## 2        5.979     0.089    5.803    6.154</code></pre>
 <p>Notez que l’intervalle fourni est un intervalle de confiance, pas un intervalle de prédiction. Autrement dit, il nous indique l’incertitude sur la valeur moyenne de <code>log_sp</code> pour ces valeurs des prédicteurs et non l’incertitude sur <code>log_sp</code> pour une seule île.</p>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
+<li><p>Le facteur d’inflation de la variance (VIF) indique si la valeur d’un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé rend difficile l’estimation des coefficients pour les prédicteurs corrélés.</p></li>
 <li><p>Le choix entre plusieurs modèles avec différents niveaux de complexité requiert un compromis entre le biais (sous-ajustement) et la variance (surajustement).</p></li>
 <li><p>Pour estimer la qualité d’un modèle, il est utile de comparer ses prédictions à de nouvelles observations, différentes de celles utilisées pour estimer les paramètres du modèle.</p></li>
 <li><p>L’AIC (ou l’AICc, pour de petits échantillons) est basé sur la vraisemblance du modèle, avec une pénalité pour les modèles comprenant un plus grand nombre de paramètres.</p></li>
@@ -580,7 +658,7 @@ iles_nouv</code></pre>
 <li><p>Les poids d’Akaike, calculés à partir des différences d’AIC entre modèles, estiment la probabilité que chaque modèle soit identifié comme le meilleur modèle si on répétait l’échantillonnage. Ces poids servent aussi à faire la moyenne pondérée des prédictions de différents modèles.</p></li>
 </ul>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <p>Burnham, K.P et Anderson, D.R. (2002) <em>Model selection and multimodel inference : a practical information-theoretic approach</em>, 2e éd. Springer-Verlag, New York.</p>
 <p>Anderson, D.R. et Burnham, K.P. (2002) Avoiding pitfalls when using information-theoretic methods. <em>The Journal of Wildlife Management</em> 66: 912-918.</p>
@@ -604,6 +682,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -12,6 +12,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 5. [Chi-squared test and ANOVA](notes_cours/5E-Chi2_ANOVA.html) ([PDF](notes_cours/5E-Chi2_ANOVA.pdf))
 6. [Simple linear regression](notes_cours/6E-Linear_regression.html) ([PDF](notes_cours/6E-Linear_regression.pdf)) - [Data](donnees/plant_growth_rate.csv)
 7. [Multiple linear regression](notes_cours/7E-Multiple_regression.html) ([PDF](notes_cours/7E-Multiple_regression.pdf)) - Data [1](donnees/compensation.csv) [2](donnees/growth.csv) [3](donnees/antibiot.csv)
+8. [Model evaluation and selection](notes_cours/8E-Model_selection.html) ([PDF](notes_cours/8E-Model_selection.pdf)) - [Data](labos/britain_species.csv)
 
 
 ## Labs

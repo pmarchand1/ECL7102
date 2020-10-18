@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-10-21" />
+<meta name="date" content="2020-10-26" />
 
 <title>Model evaluation and selection</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Model evaluation and selection</h1>
-<h4 class="date"><br/>October 21, 2019</h4>
+<h4 class="date"><br/>October 26, 2020</h4>
 
 </div>
 
@@ -297,15 +262,127 @@ div.tocify {
 <div id="objectives" class="section level1">
 <h1>Objectives</h1>
 <ul>
+<li><p>Identify problems due to the collinearity of several predictors.</p></li>
 <li><p>Identify problems related to underfitting and overfitting models.</p></li>
 <li><p>Know the advantages and disadvantages of different methods to evaluate the fit of models.</p></li>
 <li><p>Use AIC to compare different models.</p></li>
 <li><p>Combine the predictions of several models.</p></li>
 </ul>
 </div>
+<div id="collinearity" class="section level1">
+<h1>Collinearity</h1>
+<p>In the previous class, we used the <code>hills</code> dataset, which presents record times (<em>time</em>, in minutes) for Scottish bike races based on the horizontal distance (<em>dist</em>, in miles) and the total change in altitude (<em>climb</em>, in feet).</p>
+<pre class="r"><code>library(MASS)
+str(hills)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    35 obs. of  3 variables:
+##  $ dist : num  2.5 6 6 7.5 8 8 16 6 5 6 ...
+##  $ climb: int  650 2500 900 800 3070 2866 7500 800 800 650 ...
+##  $ time : num  16.1 48.4 33.6 45.6 62.3 ...</code></pre>
+<p>We note that the two predictors (<em>dist</em> and <em>climb</em>) are themselves correlated.</p>
+<pre class="r"><code>cor(hills$dist, hills$climb)</code></pre>
+<pre><code>## [1] 0.6523461</code></pre>
+<p>The correlation between two predictors complicates the estimation of the effects of each predictor. Since the model coefficients represent the effect of one predictor when the others remain constant, when several of them vary together, it becomes difficult to isolate the effect of each. This problem is generalized to models with more than two predictors, if one of the predictors is correlated with a linear combination of the other predictors: this is called <strong>collinearity</strong>.</p>
+<p>The <code>vif</code> function of the <em>car</em> package calculates the variance inflation factor (VIF) of each predictor.</p>
+<pre class="r"><code>library(car)
+mod_hills &lt;- lm(time ~ dist + climb, hills)
+vif(mod_hills)</code></pre>
+<pre><code>##     dist    climb 
+## 1.740812 1.740812</code></pre>
+<p>The VIF is equal to <span class="math inline">\(1 - 1/R^2\)</span>, where <span class="math inline">\(R^2\)</span> is the coefficient of determination of a linear model of the predictor considered as a function of all the others. For example, if one of the predictors can be determined from the value of the others with a $R^2 $ of 0.9, VIF = 10. When the VIF of some predictors exceeds 10, it is recommended to eliminate one of the redundant predictors.</p>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>The <code>msleep</code> data frame included with the <em>ggplot</em> package contains sleep data for different mammal species. We choose three columns corresponding to total sleep time, body weight and brain weight.</p>
+<pre class="r"><code>msleep2 &lt;- dplyr::select(msleep, sleep_total, bodywt, brainwt)
+summary(msleep2)</code></pre>
+<pre><code>##   sleep_total        bodywt            brainwt       
+##  Min.   : 1.90   Min.   :   0.005   Min.   :0.00014  
+##  1st Qu.: 7.85   1st Qu.:   0.174   1st Qu.:0.00290  
+##  Median :10.10   Median :   1.670   Median :0.01240  
+##  Mean   :10.43   Mean   : 166.136   Mean   :0.28158  
+##  3rd Qu.:13.75   3rd Qu.:  41.750   3rd Qu.:0.12550  
+##  Max.   :19.90   Max.   :6654.000   Max.   :5.71200  
+##                                     NA&#39;s   :27</code></pre>
+<p>The <em>bodywt</em> and <em>brainwt</em> variables are very asymmetrical and vary over several orders of magnitude, thus we perform a logarithmic transformation of the three variables.</p>
+<pre class="r"><code>msleep2 &lt;- log(msleep2)</code></pre>
+<p>On a logarithmic scale, <em>bodywt</em> and <em>brainwt</em> are strongly correlated.</p>
+<pre class="r"><code>plot(msleep2)</code></pre>
+<p><img src="8E-Model_selection_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Here is what happens if we fit a linear model using one or both of the predictors.</p>
+<pre class="r"><code>summary(lm(sleep_total ~ bodywt, data = msleep2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sleep_total ~ bodywt, data = msleep2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.9757 -0.2712 -0.0096  0.2727  1.0004 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.31575    0.04647  49.830  &lt; 2e-16 ***
+## bodywt      -0.10265    0.01389  -7.388 1.19e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4097 on 81 degrees of freedom
+## Multiple R-squared:  0.4026, Adjusted R-squared:  0.3952 
+## F-statistic: 54.58 on 1 and 81 DF,  p-value: 1.193e-10</code></pre>
+<pre class="r"><code>summary(lm(sleep_total ~ brainwt, data = msleep2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sleep_total ~ brainwt, data = msleep2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.89025 -0.27043 -0.01841  0.30664  0.88271 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.69551    0.10037  16.892  &lt; 2e-16 ***
+## brainwt     -0.12640    0.02103  -6.011 1.64e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3943 on 54 degrees of freedom
+##   (27 observations deleted due to missingness)
+## Multiple R-squared:  0.4009, Adjusted R-squared:  0.3898 
+## F-statistic: 36.13 on 1 and 54 DF,  p-value: 1.637e-07</code></pre>
+<pre class="r"><code>summary(lm(sleep_total ~ bodywt + brainwt, data = msleep2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sleep_total ~ bodywt + brainwt, data = msleep2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.92817 -0.25572 -0.01949  0.28150  1.01779 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.317881   0.382108   6.066 1.42e-07 ***
+## bodywt      -0.105861   0.062787  -1.686   0.0977 .  
+## brainwt      0.002517   0.079212   0.032   0.9748    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3877 on 53 degrees of freedom
+##   (27 observations deleted due to missingness)
+## Multiple R-squared:  0.4314, Adjusted R-squared:  0.4099 
+## F-statistic:  20.1 on 2 and 53 DF,  p-value: 3.181e-07</code></pre>
+<p>Compare the standard errors of the coefficients of the third model with those for each of the predictors considered separately. We can confirm that these variables are collinear with <code>vif</code>.</p>
+<pre class="r"><code>vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))</code></pre>
+<pre><code>##   bodywt  brainwt 
+## 14.67386 14.67386</code></pre>
+<p>If you need to keep only one of the two variables of the model, which one should we choose?</p>
+<ul>
+<li><p>We can use our prior knowledge or hypotheses about how the system works to determine which of the predictors is most relevant.</p></li>
+<li><p>We can compare the fit of models using one predictor or the other.</p></li>
+</ul>
+<p>The methods presented in the rest of this class address the need to compare different models explaining the same response variable. They apply to any case where we have several candidate models for the same problem.</p>
+</div>
+</div>
 <div id="types-of-model-errors" class="section level1">
 <h1>Types of model errors</h1>
-<div id="example" class="section level2">
+<div id="example-1" class="section level2">
 <h2>Example</h2>
 <p><img src="../images/polatouche.jpg" /></p>
 <p>Suppose we want to estimate the population density of the northern flying squirrel (<em>Glaucomys sabrinus</em>) according to different variables, such as:</p>
@@ -332,7 +409,7 @@ div.tocify {
 <div id="another-example-fitting-a-polynomial-function" class="section level2">
 <h2>Another example: fitting a polynomial function</h2>
 <p>During the last class on linear regression, we saw the example of the growth of a plant species as a function of soil moisture. The graphs below show the fit of these data by regressions using polynomials of degree 1 (straight line), 2 and 4.</p>
-<p><img src="8E-Model_selection_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="8E-Model_selection_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>If the linear model may underfit the data here (there appears to be a curvature in the scatter plot), the model of degree 4 clearly overfits if we look slightly past the range of the data.</p>
 </div>
 <div id="summary-sources-of-error-and-complexity-of-models" class="section level2">
@@ -431,13 +508,13 @@ div.tocify {
 <p><span class="math display">\[ w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j}{2}}}\]</span></p>
 <p>Since the sum of the $ w_i $ equals 1, these weights represent the probability that each model would be identified as the best model by the AIC, if the sampling was repeated several times.</p>
 </div>
-<div id="example-1" class="section level2">
+<div id="example-2" class="section level2">
 <h2>Example</h2>
-<p>We use Johnson and Simberloff’s dataset of the number of vascular plant species from different British Isles, which was already introduced in the previous lab.</p>
+<p>We use Johnson and Simberloff’s dataset of the number of vascular plant species from different British Isles, which was already introduced in a previous lab.</p>
 <pre class="r"><code>iles &lt;- read.csv(&quot;../donnees/britain_species.csv&quot;)
 str(iles)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    42 obs. of  7 variables:
-##  $ island      : Factor w/ 42 levels &quot;Ailsa&quot;,&quot;Anglesey&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ island      : chr  &quot;Ailsa&quot; &quot;Anglesey&quot; &quot;Arran&quot; &quot;Barra&quot; ...
 ##  $ area        : num  0.8 712.5 429.4 18.4 31.1 ...
 ##  $ elevation   : int  340 127 874 384 226 1343 210 103 143 393 ...
 ##  $ soil_types  : int  1 3 4 2 1 16 1 3 1 1 ...
@@ -473,7 +550,7 @@ summary(mod_comp)</code></pre>
 ## Multiple R-squared:  0.6941, Adjusted R-squared:  0.6693 
 ## F-statistic: 27.99 on 3 and 37 DF,  p-value: 1.267e-09</code></pre>
 <p>Let’s first check the diagnostic plots for the full model:</p>
-<p><img src="8E-Model_selection_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="8E-Model_selection_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Three islands have large negative residuals (fewer species than expected) and are far from the normal Q-Q line, but we consider the overall fit acceptable.</p>
 <p>Next, we create a list of models that include only one or two predictors from the full model, as well as a null model: <code>log_sp ~ 1</code>, which represents a constant function (independent of the predictors).</p>
 <pre class="r"><code>liste_mod &lt;- list(
@@ -573,6 +650,7 @@ iles_nouv</code></pre>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <ul>
+<li><p>The variance inflation factor (VIF) indicates whether the value of a predictor is strongly correlated with that of the other predictors. A high VIF makes it difficult to estimate coefficients for correlated predictors.</p></li>
 <li><p>The selection between several models with different levels of complexity requires a compromise between bias (underfitting) and variance (overfitting).</p></li>
 <li><p>To estimate the goodness of fit of a model, it is useful to compare its predictions to new observations, different from those used to estimate the parameters of the model.</p></li>
 <li><p>The AIC (or AICc, for small samples) is based on the likelihood of the model, with a penalty for models with a larger number of parameters.</p></li>
@@ -605,6 +683,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -1,6 +1,6 @@
 ---
 title: "Model evaluation and selection"
-date: "<br/>October 21, 2019"
+date: "<br/>October 26, 2020"
 output:
     html_document:
         self_contained: false
@@ -12,12 +12,14 @@ output:
     
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectives
+
+- Identify problems due to the collinearity of several predictors.
 
 - Identify problems related to underfitting and overfitting models.
 
@@ -26,6 +28,77 @@ library(cowplot)
 - Use AIC to compare different models.
 
 - Combine the predictions of several models.
+
+
+# Collinearity
+
+In the previous class, we used the `hills` dataset, which presents record times (*time*, in minutes) for Scottish bike races based on the horizontal distance (*dist*, in miles) and the total change in altitude (*climb*, in feet).
+
+```{r, warning = FALSE, message = FALSE}
+library(MASS)
+str(hills)
+```
+
+We note that the two predictors (*dist* and *climb*) are themselves correlated.
+
+```{r}
+cor(hills$dist, hills$climb)
+```
+
+The correlation between two predictors complicates the estimation of the effects of each predictor. Since the model coefficients represent the effect of one predictor when the others remain constant, when several of them vary together, it becomes difficult to isolate the effect of each. This problem is generalized to models with more than two predictors, if one of the predictors is correlated with a linear combination of the other predictors: this is called **collinearity**.
+
+The `vif` function of the *car* package calculates the variance inflation factor (VIF) of each predictor.
+
+```{r, message = FALSE, warning = FALSE}
+library(car)
+mod_hills <- lm(time ~ dist + climb, hills)
+vif(mod_hills)
+```
+
+The VIF is equal to $1 - 1/R^2$, where $R^2$ is the coefficient of determination of a linear model of the predictor considered as a function of all the others. For example, if one of the predictors can be determined from the value of the others with a $R^2 $ of 0.9, VIF = 10. When the VIF of some predictors exceeds 10, it is recommended to eliminate one of the redundant predictors.
+
+## Example
+
+The `msleep` data frame included with the *ggplot* package contains sleep data for different mammal species. We choose three columns corresponding to total sleep time, body weight and brain weight.
+
+```{r}
+msleep2 <- dplyr::select(msleep, sleep_total, bodywt, brainwt)
+summary(msleep2)
+```
+
+The *bodywt* and *brainwt* variables are very asymmetrical and vary over several orders of magnitude, thus we perform a logarithmic transformation of the three variables.
+
+```{r}
+msleep2 <- log(msleep2)
+```
+
+On a logarithmic scale, *bodywt* and *brainwt* are strongly correlated.
+
+```{r}
+plot(msleep2)
+```
+
+Here is what happens if we fit a linear model using one or both of the predictors.
+
+```{r}
+summary(lm(sleep_total ~ bodywt, data = msleep2))
+summary(lm(sleep_total ~ brainwt, data = msleep2))
+summary(lm(sleep_total ~ bodywt + brainwt, data = msleep2))
+```
+
+Compare the standard errors of the coefficients of the third model with those for each of the predictors considered separately. We can confirm that these variables are collinear with `vif`.
+
+```{r}
+vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))
+```
+
+If you need to keep only one of the two variables of the model, which one should we choose? 
+
+- We can use our prior knowledge or hypotheses about how the system works to determine which of the predictors is most relevant.
+
+- We can compare the fit of models using one predictor or the other.
+
+The methods presented in the rest of this class address the need to compare different models explaining the same response variable. They apply to any case where we have several candidate models for the same problem.
 
 
 # Types of model errors
@@ -62,7 +135,7 @@ The error due to overfitting is random (depends on sampling coincidences) and de
 
 During the last class on linear regression, we saw the example of the growth of a plant species as a function of soil moisture. The graphs below show the fit of these data by regressions using polynomials of degree 1 (straight line), 2 and 4.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 pgr <- read.csv("../donnees/plant_growth_rate.csv")
 
 p1 <- ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
@@ -220,7 +293,7 @@ Since the sum of the $ w_i $ equals 1, these weights represent the probability t
 
 ## Example
 
-We use Johnson and Simberloff's dataset of the number of vascular plant species from different British Isles, which was already introduced in the previous lab.
+We use Johnson and Simberloff's dataset of the number of vascular plant species from different British Isles, which was already introduced in a previous lab.
 
 ```{r}
 iles <- read.csv("../donnees/britain_species.csv")
@@ -353,6 +426,8 @@ modavgPred(liste_mod, newdata = iles_nouv)
 Note that the interval provided is a confidence interval, not a prediction interval. In other words, it tells us about the uncertainty of the average value of `log_sp` for these predictor values, not the uncertainty of `log_sp` for a single island.
 
 # Summary
+
+- The variance inflation factor (VIF) indicates whether the value of a predictor is strongly correlated with that of the other predictors. A high VIF makes it difficult to estimate coefficients for correlated predictors.
 
 - The selection between several models with different levels of complexity requires a compromise between bias (underfitting) and variance (overfitting).
 

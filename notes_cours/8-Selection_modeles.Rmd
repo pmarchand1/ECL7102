@@ -1,6 +1,6 @@
 ---
 title: "Évaluation et sélection de modèles"
-date: "<br/>21 octobre 2019"
+date: "<br/>26 octobre 2020"
 output:
     html_document:
         self_contained: false
@@ -12,12 +12,14 @@ output:
     
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectifs
+
+- Identifier les problèmes dûs à la collinéarité de plusieurs prédicteurs.
 
 - Identifier les problèmes liés au sous-ajustement et surajustement de modèles.
 
@@ -26,6 +28,77 @@ library(cowplot)
 - Utiliser l'AIC pour comparer différents modèles.
 
 - Combiner les prédictions de plusieurs modèles.
+
+
+# Collinéarité
+
+Lors du dernier cours, nous avons utilisé le jeu de données `hills` présentant les records de temps (*time*, en minutes) pour des courses de vélo en Écosse en fonction de la distance horizontale (*dist*, en milles) et le dénivelé total du parcours (*climb*, en pieds).
+
+```{r, warning = FALSE, message = FALSE}
+library(MASS)
+str(hills)
+```
+
+Notons que les deux prédicteurs (*dist* et *climb*) sont eux-mêmes corrélés.
+
+```{r}
+cor(hills$dist, hills$climb)
+```
+
+La corrélation entre deux prédicteurs complique l'estimation des effets de chaque prédicteur. Puisque chaque coefficient du modèle représente l'effet d'un prédicteur lorsque les autres prennent la même valeur, lorsque plusieurs d'entre eux varient ensemble, il devient difficile d'isoler l'effet de chacun. Ce problème se généralise aux modèles avec plus de deux prédicteurs, si l'un des prédicteurs est corrélé avec une combinaison linéaire des autres prédicteurs: on parle alors de **collinéarité**.
+
+La fonction `vif` du package *car* calcule le facteur d'inflation de la variance (VIF, pour *variance inflation factor*) de chaque prédicteur d'un modèle. 
+
+```{r, message = FALSE, warning = FALSE}
+library(car)
+mod_hills <- lm(time ~ dist + climb, hills)
+vif(mod_hills)
+```
+
+Le VIF est égal à $1 - 1/R^2$, où $R^2$ est le coefficient de détermination d'un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un $R^2$ de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d'éliminer un des prédicteurs redondants.
+
+## Exemple
+
+Le tableau de données `msleep` inclus avec le package *ggplot*, contient des données sur le sommeil de différentes espèces de mammifères. Nous choisissons trois colonnes correspondant au temps de sommeil total (*sleep_total*), au poids de l'animal (*bodywt*) et au poids de son cerveau (*brainwt*). 
+
+```{r}
+msleep2 <- dplyr::select(msleep, sleep_total, bodywt, brainwt)
+summary(msleep2)
+```
+
+Les variables *bodywt* et *brainwt* sont très asymétriques et varient sur plusieurs ordres de grandeur, donc nous effectuons une transformation logarithmique des trois variables.
+
+```{r}
+msleep2 <- log(msleep2)
+```
+
+Sur une échelle logarithmique, les variables *bodywt* et *brainwt* sont fortement corrélées.
+
+```{r}
+plot(msleep2)
+```
+
+Voici ce qu'il arrive lorsqu'on estime un modèle linéaire avec un ou deux prédicteurs.
+
+```{r}
+summary(lm(sleep_total ~ bodywt, data = msleep2))
+summary(lm(sleep_total ~ brainwt, data = msleep2))
+summary(lm(sleep_total ~ bodywt + brainwt, data = msleep2))
+```
+
+Comparez les erreurs-types des coefficients du troisième modèle par rapport à ceux où chacun des prédicteurs est considéré séparément. Nous pouvons confirmer que ces variables sont fortement collinéaires avec `vif`.
+
+```{r}
+vif(lm(sleep_total ~ bodywt + brainwt, data = msleep2))
+```
+
+S'il faut ne conserver qu'une seule des deux variables du modèle, laquelle choisir? 
+
+- Nous pouvons utiliser nos connaissances préalables ou nos hypothèses sur le fonctionnement du système pour déterminer lequel des prédicteurs est le plus pertinent.
+
+- Nous pouvons comparer l'ajustement des modèles utilisant un prédicteur ou l'autre.
+
+Les méthodes vues dans le reste du cours répondent au besoin de comparer différents modèles expliquant la même variable réponse. Ils s'appliquent à tout cas où nous avons plusieurs modèles "candidats" pour un même problème. 
 
 
 # Types d'erreurs des modèles
@@ -62,7 +135,7 @@ L'erreur liée au surajustement est aléatoire (dépend des coïncidences de l'�
 
 Au dernier cours sur la régression linéaire, nous avons donné l'exemple de la croissance d'une espèce de plante en fonction de l'humidité du sol. Les graphiques ci-dessous montrent l'ajustement de ces données par des régressions effectuées avec des polynôme de degré 1 (ligne droite), 2 et 4.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 pgr <- read.csv("../donnees/plant_growth_rate.csv")
 
 p1 <- ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
@@ -221,7 +294,7 @@ Puisque la somme des $w_i$ est égale à 1, ces poids représentent la probabili
 
 ## Exemple
 
-Prenons le jeu de données de Johnson et Simberloff sur le nombre d'espèces de plantes vasculaires de différentes îles britanniques, que nous avons déjà utilisé au dernier laboratoire.
+Prenons le jeu de données de Johnson et Simberloff sur le nombre d'espèces de plantes vasculaires de différentes îles britanniques, que nous avons utilisé lors d'un laboratoire précédent.
 
 ```{r}
 iles <- read.csv("../donnees/britain_species.csv")
@@ -354,6 +427,8 @@ modavgPred(liste_mod, newdata = iles_nouv)
 Notez que l'intervalle fourni est un intervalle de confiance, pas un intervalle de prédiction. Autrement dit, il nous indique l'incertitude sur la valeur moyenne de `log_sp` pour ces valeurs des prédicteurs et non l'incertitude sur `log_sp` pour une seule île.
 
 # Résumé
+
+- Le facteur d'inflation de la variance (VIF) indique si la valeur d'un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé rend difficile l'estimation des coefficients pour les prédicteurs corrélés.
 
 - Le choix entre plusieurs modèles avec différents niveaux de complexité requiert un compromis entre le biais (sous-ajustement) et la variance (surajustement).
 
