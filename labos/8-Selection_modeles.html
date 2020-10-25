@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Sélection de modèles</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Sélection de modèles</h1>
+<h4 class="date">28 octobre 2020</h4>
+
+</div>
+
+
+<div id="biomasse-racinaire-en-fonction-de-lenvironnement" class="section level2">
+<h2>1. Biomasse racinaire en fonction de l’environnement</h2>
+<p>Le jeu de données <code>environment.csv</code> (tiré du manuel de Beckerman et Petchey, <em>Getting started with R: An introduction for biologists</em>) inclut des mesures de biomasse racinaire (<em>biomass</em>, en g/m<span class="math inline">\(^2\)</span>) pour 10 sites en fonction de l’altitude (en m), de la température (en degrés C) et de la précipitation annuelle (<em>rainfall</em>, en m).</p>
+<pre class="r"><code>enviro &lt;- read.csv(&quot;environment.csv&quot;)
+str(enviro)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
+##  $ site       : int  1 2 3 4 5 6 7 8 9 10
+##  $ altitude   : int  13 160 100 205 45 84 349 509 399 30
+##  $ temperature: int  24 18 17 15 20 21 14 11 13 19
+##  $ rainfall   : num  0.01 0.5 0.6 1.1 0.09 0.2 1.2 0.6 0.8 0.5
+##  $ biomass    : int  20 120 110 200 45 70 150 275 220 38</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimez les paramètres du modèle incluant les trois prédicteurs: <code>biomass ~ altitude + temperature + rainfall</code>. L’inclusion des trois prédicteurs dans le même modèle cause-t-elle des problèmes? Justifiez votre réponse.</p></li>
+<li><p>Proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Évitez d’inclure des prédicteurs fortement corrélés dans le même modèle. Créez un tableau comparant ces modèles selon leur AICc.</p></li>
+<li><p>Quel est le meilleur modèle pour prédire la biomasse racinaire à un nouveau site semblable à ceux échantillonnés? Serait-ce utile de faire des prédictions moyennes à partir de plusieurs modèles ici? Justifiez votre réponse.</p></li>
+</ol>
+</div>
+<div id="prédictions-de-la-migration-despèces-doiseaux" class="section level2">
+<h2>2. Prédictions de la migration d’espèces d’oiseaux</h2>
+<p>Le fichier <code>migration.csv</code> contient les données de Rubolini et al. (2005) sur 28 espèces d’oiseaux qui migrent entre l’Europe et l’Afrique.</p>
+<pre class="r"><code>migr &lt;- read.csv(&quot;migration.csv&quot;)
+str(migr)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    28 obs. of  14 variables:
+##  $ speciesID : int  1 3 4 5 7 8 9 11 12 13 ...
+##  $ species1  : chr  &quot;Acrocephalus&quot; &quot;Acrocephalus&quot; &quot;Anthus&quot; &quot;Anthus&quot; ...
+##  $ species2  : chr  &quot;arundinaceus&quot; &quot;scirpaceus&quot; &quot;campestris&quot; &quot;trivialis&quot; ...
+##  $ migDate   : num  33 38 32 27 35 30 31 30.8 30 28 ...
+##  $ latBreed  : num  46 48 43.5 55.3 47.5 50.3 51 51.5 48.8 59 ...
+##  $ latWntr   : num  -10.3 0 6 -10 -7.5 18.5 -15 7.5 -10 7.5 ...
+##  $ sexDchrmt : num  0 0 0 0 4.3 2 2.3 7 17.3 16 ...
+##  $ nestSite  : int  0 0 0 0 0 0 0 0 1 1 ...
+##  $ moult     : int  1 1 0 0 1 0 1 0 0 0 ...
+##  $ mWngLn    : num  96.8 66.8 91.6 88.7 192.1 ...
+##  $ fWngLn    : num  92.3 66 86.9 84.7 194.3 ...
+##  $ numSpecies: int  641 546 140 3531 269 104 166 101 737 12837 ...
+##  $ X         : num  -10.3 0 6 -10 -7.5 18.5 -15 7.5 -10 7.5 ...
+##  $ Y         : num  33 38 32 27 35 30 31 30.8 30 28 ...</code></pre>
+<p>Nous cherchons à prédire la date d’arrivée en Europe (<em>migDate</em>, mesurée en jours à partir du 1er avril) en fonction des prédicteurs suivants:</p>
+<ul>
+<li>Latitude du site de reproduction en Europe (<em>latBreed</em>)</li>
+<li>Latitude du site d’hivernage en Afrique (<em>latWntr</em>). <em>Note</em>: La latitude est positive au nord de l’équateur, négative au sud.</li>
+<li>Si l’espèce niche dans des cavités existantes (<em>nestSite</em>, 0=non, 1=oui)</li>
+<li>Si l’espèce mue au site d’hivernage (<em>moult</em>, 0=non, 1=oui)</li>
+</ul>
+<p>En théorie, on s’attend à ce que les oiseaux arrivent plus tard si leur site de reproduction est plus nordique (dû au climat et à la distance à parcourir) et s’ils muent au site d’hivernage. On s’attend à ce que les oiseaux arrivent plus tôt si leur site d’hivernage est plus nordique (moins de distance à parcourir) et s’ils nichent dans des cavités existantes.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Vérifiez l’ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l’ordonnée à l’origine). Ces résultats sont-ils conformes à ceux attendus en théorie?</p></li>
+<li><p>Comparez avec l’AICc les modèles incluant les combinaisons suivantes des 4 prédicteurs:</p></li>
+</ol>
+<ul>
+<li>latBreed</li>
+<li>latWntr</li>
+<li>latBreed + latWntr</li>
+<li>latBreed + nestSite</li>
+<li>latWntr + nestSite</li>
+<li>latBreed + latWntr + nestSite</li>
+<li>latBreed + nestSite + moult</li>
+<li>latWntr + nestSite + moult</li>
+<li>latBreed + latWntr + nestSite + moult (modèle complet)</li>
+</ul>
+<p>Combien de modèles ont un <span class="math inline">\(\Delta AIC \le 2\)</span>? Selon les poids d’Akaike, quelle est la probabilité qu’un ou l’autre de ces modèles soit le meilleur modèle?</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Chargez le jeu de données <code>migr_test.csv</code> qui contient les données de 10 autres espèces de l’étude de Rubolini et al.</li>
+</ol>
+<pre class="r"><code>migr_test &lt;- read.csv(&quot;migr_test.csv&quot;)
+str(migr_test)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10 obs. of  14 variables:
+##  $ speciesID : int  2 6 10 14 18 22 26 30 34 38
+##  $ species1  : chr  &quot;Acrocephalus&quot; &quot;Calandrella&quot; &quot;Delichon&quot; &quot;Hippolais&quot; ...
+##  $ species2  : chr  &quot;schoenobaenus&quot; &quot;brachydactyla&quot; &quot;urbica&quot; &quot;icterina&quot; ...
+##  $ migDate   : num  35 27.5 29 39 31.2 28 35 27 22 22
+##  $ latBreed  : num  57.5 39.5 48.5 56 54.5 49 45.5 56.5 48 44
+##  $ latWntr   : num  -7.5 15.5 -15 -19 13 -7.5 -12 -9 11 16
+##  $ sexDchrmt : num  0 0 0 0 0 9 19.3 0 5.7 2.3
+##  $ nestSite  : int  0 0 0 0 0 0 0 0 0 1
+##  $ moult     : int  1 0 1 1 1 0 1 1 0 1
+##  $ mWngLn    : num  67.2 93.4 111.1 78.9 64.6 ...
+##  $ fWngLn    : num  64.7 89.8 110 78 63.6 ...
+##  $ numSpecies: int  2524 138 1624 10297 63 1163 1525 24767 2658 410
+##  $ X         : num  -7.5 15.5 -15 -19 13 -7.5 -12 -9 11 16
+##  $ Y         : num  35 27.5 29 39 31.2 28 35 27 22 22</code></pre>
+<p>Calculez la moyenne de l’erreur carrée de prédiction <em>(observation - prédiction)</em><span class="math inline">\(^2\)</span> pour ces 10 nouvelles observations selon (i) le meilleur modèle identifié en (b) et (ii) la prédiction moyenne pondérée de tous les modèles.</p>
+<p><em>Indice</em>: Pour obtenir un vecteur des prédictions moyennes, choisissez la composante <code>mod.avg.pred</code> de l’objet produit par la fonction <code>modavgPred</code>.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

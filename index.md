@@ -24,3 +24,4 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 5. [Tableaux de contingence et ANOVA (solutions)](labos/5R-Chi2_ANOVA.html) ([PDF](labos/5R-Chi2_ANOVA.pdf))
 6. [Régression linéaire simple](labos/6-Regression_lineaire.html) ([PDF](labos/6-Regression_lineaire.pdf)) - [Données](labos/britain_species.csv)
 7. [Régression linéaire multiple](labos/7-Regression_multiple.html) ([PDF](labos/7-Regression_multiple.pdf)) - Données [1](labos/sablefish.csv) [2](labos/sardinella.csv)
+8. [Sélection de modèles](labos/8-Selection_modeles.html) ([PDF](labos/8-Selection_modeles.pdf)) - Données [1](labos/environment.csv) [2(a)](labos/migration.csv) [2(c)](labos/migr_test.csv)

@@ -1,10 +1,19 @@
 ---
 title: "Model selection"
-date: "October 23, 2019"
-output: pdf_document
+date: "October 28, 2020"
+output:
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
 ---
 
-Answers for this lab must be submitted before **November 6th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
 
 
 ## 1. Root biomass as a function of the environment

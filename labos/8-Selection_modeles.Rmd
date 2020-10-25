@@ -1,10 +1,19 @@
 ---
 title: "Sélection de modèles"
-date: "23 octobre 2019"
-output: pdf_document
+date: "28 octobre 2020"
+output:
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
 ---
 
-Ce laboratoire doit être remis le **6 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
 
 
 ## 1. Biomasse racinaire en fonction de l'environnement
