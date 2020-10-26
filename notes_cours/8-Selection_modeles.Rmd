@@ -55,7 +55,7 @@ mod_hills <- lm(time ~ dist + climb, hills)
 vif(mod_hills)
 ```
 
-Le VIF est égal à $1 - 1/R^2$, où $R^2$ est le coefficient de détermination d'un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un $R^2$ de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d'éliminer un des prédicteurs redondants.
+Le VIF est égal à $1 / (1 - R^2)$, où $R^2$ est le coefficient de détermination d'un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un $R^2$ de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d'éliminer un des prédicteurs redondants.
 
 ## Exemple
 

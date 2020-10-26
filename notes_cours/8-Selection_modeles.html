@@ -287,7 +287,7 @@ mod_hills &lt;- lm(time ~ dist + climb, hills)
 vif(mod_hills)</code></pre>
 <pre><code>##     dist    climb 
 ## 1.740812 1.740812</code></pre>
-<p>Le VIF est égal à <span class="math inline">\(1 - 1/R^2\)</span>, où <span class="math inline">\(R^2\)</span> est le coefficient de détermination d’un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un <span class="math inline">\(R^2\)</span> de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d’éliminer un des prédicteurs redondants.</p>
+<p>Le VIF est égal à <span class="math inline">\(1 / (1 - R^2)\)</span>, où <span class="math inline">\(R^2\)</span> est le coefficient de détermination d’un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un <span class="math inline">\(R^2\)</span> de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d’éliminer un des prédicteurs redondants.</p>
 <div id="exemple" class="section level2">
 <h2>Exemple</h2>
 <p>Le tableau de données <code>msleep</code> inclus avec le package <em>ggplot</em>, contient des données sur le sommeil de différentes espèces de mammifères. Nous choisissons trois colonnes correspondant au temps de sommeil total (<em>sleep_total</em>), au poids de l’animal (<em>bodywt</em>) et au poids de son cerveau (<em>brainwt</em>).</p>
