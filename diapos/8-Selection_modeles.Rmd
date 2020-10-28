@@ -1,52 +1,34 @@
 ---
 title: "Évaluation et sélection de modèles"
-date: "<br/>21 octobre 2019"
+date: "26 octobre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(8, 6))
-library(dplyr)
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
 
-
-```{css, echo = FALSE}
-.pull-left {
-  float: left;
-  width: 25%;
-}
-.pull-right {
-  float: right;
-  width: 70%;
-}
-```
-
-# Question éclair
-
-Voici les coefficients d'une régression de la masse foliaire $F$ (en grammes) d'une espèce de plantes mesurée sur plusieurs placettes en fonction de la température moyenne $T$ (en Celsius) et de la densité $D$ (en plantes/m<sup>2</sup>). 
-
-Coefficient | Estimé
-------------|-------
-(Intercept) | 240
-T | -10
-D | 8
-T:D | 2
-
-(a) Quelle est l'équation correspondant à ce modèle? 
-
-(b) Selon ce modèle, la température a-t-elle un effet positif ou négatif sur la masse foliaire, pour une placette avec 1 plante/m<sup>2</sup>? Est-ce la même chose pour une placette avec 10 plantes/m<sup>2</sup>?
-
----
 
 # Objectifs
+
+- Identifier les problèmes dûs à la collinéarité de plusieurs prédicteurs.
 
 - Identifier les problèmes liés au sous-ajustement et surajustement de modèles.
 
@@ -58,7 +40,45 @@ T:D | 2
 
 ---
 
-class: inverse, middle
+# Collinéarité
+
+- La corrélation entre deux prédicteurs complique l'estimation des effets de chaque prédicteur. 
+
+--
+
+- Puisque chaque coefficient du modèle représente l'effet d'un prédicteur lorsque les autres demeurent constants, lorsque plusieurs d'entre eux varient ensemble, il devient difficile d'isoler l'effet de chacun. 
+
+--
+
+- Avec plus de deux prédicteurs, ce problème survient si l'un des prédicteurs est corrélé avec une combinaison linéaire des autres prédicteurs (*collinéarité*).
+
+---
+
+# Facteur d'inflation de la variance (VIF)
+
+- Le VIF est égal à $1 / (1 - R^2)$, où $R^2$ est le coefficient de détermination d'un modèle linéaire du prédicteur considéré en fonction de tous les autres.
+
+--
+
+- Exemple: si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un $R^2$ de 0.9, VIF = 10. 
+
+--
+
+- Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d'éliminer un des prédicteurs redondants.
+
+---
+
+# Exemple
+
+Le tableau de données `msleep` inclus avec le package *ggplot*, contient des données sur le sommeil de différentes espèces de mammifères. 
+
+```{r}
+str(msleep)
+```
+
+---
+
+class: center, inverse, middle
 
 # Types d'erreurs des modèles
 
@@ -66,13 +86,13 @@ class: inverse, middle
 
 # Exemple
 
-.pull-left[
+.left-column[
 
 ![](../images/polatouche.jpg)
 
 ]
 
-.pull-right[
+.right-column[
 
 À partir de données d'un nombre limité de sites (ex.: 40 peuplements), nous souhaitons estimer la densité de population du grand polatouche en fonction de différentes variables, incluant: 
 
@@ -135,7 +155,7 @@ Quelle est la différence entre le type d'erreurs commises dans chaque cas?
 
 # Autre exemple: modèle polynomial
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.dim = c(10, 7)}
 pgr <- read.csv("../donnees/plant_growth_rate.csv")
 
 p1 <- ggplot(pgr, aes(x = soil.moisture.content, y = plant.growth.rate)) +
@@ -196,7 +216,7 @@ plot_grid(p1, p2, p4)
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Critères de comparaison des modèles
 
@@ -204,11 +224,11 @@ class: inverse, middle
 
 # Coefficient de détermination (R<sup>2</sup>)
 
-- Fraction de la variance totale de la réponse est expliquée par le modèle.
+- Fraction de la variance totale de la réponse qui est expliquée par le modèle.
 
 --
 
-- Deux versions rapportés dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
+- Deux versions rapportées dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
 
 --
 
@@ -256,11 +276,12 @@ $$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})
 
 ### Inconvénients
 
-- La valeur $p$ mesure la probabilité d'obtenir les résultats observés selon l'hypothèse nulle, pas le pouvoir prédictif du modèle.
+- La valeur $p$ est reliée à la probabilité cumulative d'une certaine statistique selon l'hypothèse nulle, pas au pouvoir prédictif du modèle.
 
 --
 
-- Le seuil de significativité pour l'inclusion d'une variable (ex.: $\alpha = 0.05$) est arbitraire. 
+- Le seuil de significativité pour l'inclusion d'une variable (ex.: $\alpha = 0.05$) est arbitraire.
+
 --
 
 - Avec les méthodes séquentielles, il faut considérer l'augmentation de la probabilité d'erreur de type I (problème des comparaisons multiples).
@@ -269,7 +290,7 @@ $$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})
 
 # Ensemble de validation
 
-- Évaluer un modèle d'après son erreur de prédiction (ex.: $\sum (y_i - \hat{y_i})^2$) pour un jeu de données *différent* de celui utilisé pour estimer les paramètres.
+- Évaluer un modèle d'après son erreur de prédiction, i.e. $\sum (y_i - \hat{y_i})^2$, pour un jeu de données *différent* de celui utilisé pour estimer les paramètres.
 
 --
 
@@ -279,7 +300,7 @@ $$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})
 
 - Méthode très courante pour de grands jeux de données. La majorité des observations (ex.: 70-80%) font partie de l'ensemble de calibration.
 
-- Pas efficace si on a peu de données.
+- Moins efficace si on a peu de données.
 
 ---
 
@@ -307,7 +328,7 @@ $$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y_i})^2}{\sum_{i=1}^n (y_i - \bar{y})
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Comparaison de modèles avec l'AIC
 
@@ -329,7 +350,7 @@ class: inverse, middle
 
 # Définition de l'AIC
 
-$$AIC = -2 \log(L) + 2 K$$
+$$AIC = -2 \log L + 2 K$$
 
 - $L$ est la fonction de vraisemblance (*likelihood*).
 - $K$ est le nombre de paramètres estimés par le modèle.
@@ -339,7 +360,7 @@ $$AIC = -2 \log(L) + 2 K$$
 
 # Vraisemblance
 
-$$AIC = -2 \log(L) + 2 K$$
+$$AIC = -2 \log L + 2 K$$
 
 - $L(\theta | y)$ correspond à la probabilité des observations de $y$ selon la valeur des paramètres $\theta$ du modèle.
 
@@ -351,7 +372,7 @@ $$AIC = -2 \log(L) + 2 K$$
 
 # Nombre de paramètres estimés
 
-$$AIC = -2 \log(L) + 2 K$$
+$$AIC = -2 \log L + 2 K$$
 
 - Comme $R^2$, la vraisemblance tend à augmenter avec chaque paramètre ajouté au modèle. 
 
@@ -366,7 +387,7 @@ $$AIC = -2 \log(L) + 2 K$$
     
 --
 
-- L'AIC aurait pu être défini comme $-\log(L) + K$. Le facteur de 2 a été ajouté pour des raisons historiques.
+- L'AIC aurait pu être défini comme $-\log L + K$. Le facteur de 2 a été ajouté pour des raisons historiques.
 
 ---
 
@@ -382,7 +403,7 @@ $$AIC = -2 \log(L) + 2 K$$
 
 - Si $n$ est petit par rapport au nombre de paramètres estimés (si $n/K$ < 40), on remplace l'AIC par l'AICc, qui inclut une correction supplémentaire.
 
-$$AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right)$$
+$$AICc = -2 \log L + 2 K \left( \frac{n}{n-K-1} \right)$$
 
 --
 
@@ -426,7 +447,7 @@ $$w_i = \frac{e^{\frac{-\Delta AIC_i}{2}}}{\sum_{j=1}^{m} e^{\frac{-\Delta AIC_j
 
 --
 
-- La somme des $w_i$ est égale à 1. Ces poids représentent la probabilité quun modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
+- La somme des $w_i$ est égale à 1. Ces poids représentent la probabilité qu'un modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
 
 ---
 
@@ -531,6 +552,16 @@ $$ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} $$
 --
 
 - Dans le package *AICcmodavg*, la fonction `modavgPred` calcule les prédictions multi-modèles de cette façon.
+
+---
+
+# Résumé
+
+- Le facteur d'inflation de la variance (VIF) indique si la valeur d'un prédicteur est fortement corrélée à celles des autres prédicteurs. 
+
+--
+
+- Un VIF élevé rend difficile l'estimation des coefficients pour les prédicteurs corrélés.
 
 ---
 

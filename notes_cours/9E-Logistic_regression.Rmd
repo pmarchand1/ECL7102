@@ -1,6 +1,6 @@
 ---
 title: "Logistic regression"
-date: "<br/>November 4, 2019"
+date: "<br/>November 2, 2020"
 output:
     html_document:
         self_contained: false
@@ -12,16 +12,16 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectives
 
 - Know the components of a generalized linear model.
 
-- Use logistic regression to model a binary response (e.g. presence/absence), a binomial response (e.g. number of presences and absences) or proportions.
+- Use logistic regression to model a binary response (e.g. presence/absence) or a binomial response (e.g. number of presences and absences).
 
 - Interpret the results of a logistic regression and visualize the effects of the predictors.
 
@@ -148,13 +148,12 @@ The value of $x$ for which the linear predictor is zero (here, $-1 + 0.4x = 0$ g
 
 # Logistic regression with R
 
-In R, logistic regression can be used for three types of responses:
+In R, logistic regression can be used for two types of responses:
 
 - a binary variable encoded by logical values (FALSE, TRUE), numerical values (0, 1) or a factor (the first level of the factor corresponds to 0, the others to 1);
-- a binomial variable described by two columns (number of presences, number of absences);
-- a variable indicating a proportion between 0 and 1.
+- a binomial variable described by two columns (number of presences, number of absences).
 
-We will see examples of the three cases in this class.
+We will see an example of each case in this class.
 
 ## Example: Arsenic concentrations in wells in Bangladesh
 
@@ -368,37 +367,11 @@ This example illustrates the so-called "perfect separation" problem. Due to the 
 There are so-called bias reduction methods that penalize coefficients that are too high in order to obtain realistic estimates even in the case of perfect separation. We will not discuss these further in this course, but you can find these methods in the **brglm** package.
 
 
-# Logistic regression for proportions
-
-In the previous example, the response was based on numbers of individuals (snails dead and alive at the end of the experiment), so the binomial distribution could apply exactly.
-
-In other cases, the response is directly expressed as continuous proportions, rather than a set of discrete measures of presence / absence. For example, it could be the proportion of a quadrat covered by a moss, the fraction of a region burned by fire, or another variable between 0 and 1.
-
-For this type of response, we can still use the logit to link the mean proportion to a linear predictor. However, the variance of this proportion will not necessarily correspond to that of a binomial distribution. We must therefore use the *quasibinomial* family option in `glm`.
-
-The quasibinomial model is not a statistical distribution per se. In fact, this model estimates the coefficients as if it were a usual logistic regression, but separately estimates a dispersion parameter $\phi$, so that the variance of the observed proportions is $\phi p(1-p)$.
-
-To illustrate the application of the quasibinomial model, let's create a new `prop` variable representing the mortality rate for each combination of predictors in the snails data frame.
-
-```{r}
-snails <- mutate(snails, prop = Deaths / N)
-mod_prop <- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-summary(mod_prop)
-```
-
-The estimated coefficients are the same as for the previous binomial logistic regression. The standard errors changed slightly, since the variance of the binomial model was fixed and based on the number of individuals tested.
-
-The dispersion parameter does not affect the values of the coefficients, only their standard errors. We'll talk more about it in the next class in the context of Poisson regression.
-
-A continuous variable between 0 and 1 can also be modeled with the *beta* distribution. The beta regression (*betareg* package in R) is not seen in this course, however.
-
-
 # Summary
 
 - A generalized linear model consists of a linear predictor (linear combination of explanatory variables), a link function for the mean response, and a statistical distribution of the response as a function of its mean.
 
-- Logistic regression is used to model binary responses or proportions. It uses a logit link and a binomial distribution of the response.
+- Logistic regression is used to model a binary (0 or 1) or binomial (number of 0s and 1s) response variable. It uses a logit link and a binomial distribution of the response.
 
 - The logit function transforms a probability between 0 and 1 into a real number between $-\infty$ and $+\infty$. A negative logit corresponds to a probability below 0.5, a positive logit corresponds to a probability above 0.5.
 

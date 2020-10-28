@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Évaluation et sélection de modèles</title>
     <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles-xar.css" type="text/css" />
@@ -12,43 +13,17 @@
 class: center, middle, inverse, title-slide
 
 # Évaluation et sélection de modèles
-### <br/>21 octobre 2019
+### 26 octobre 2020
 
 ---
 
 
 
 
-
-&lt;style type="text/css"&gt;
-.pull-left {
-  float: left;
-  width: 25%;
-}
-.pull-right {
-  float: right;
-  width: 70%;
-}
-&lt;/style&gt;
-
-# Question éclair
-
-Voici les coefficients d'une régression de la masse foliaire `\(F\)` (en grammes) d'une espèce de plantes mesurée sur plusieurs placettes en fonction de la température moyenne `\(T\)` (en Celsius) et de la densité `\(D\)` (en plantes/m&lt;sup&gt;2&lt;/sup&gt;). 
-
-Coefficient | Estimé
-------------|-------
-(Intercept) | 240
-T | -10
-D | 8
-T:D | 2
-
-(a) Quelle est l'équation correspondant à ce modèle? 
-
-(b) Selon ce modèle, la température a-t-elle un effet positif ou négatif sur la masse foliaire, pour une placette avec 1 plante/m&lt;sup&gt;2&lt;/sup&gt;? Est-ce la même chose pour une placette avec 10 plantes/m&lt;sup&gt;2&lt;/sup&gt;?
-
----
 
 # Objectifs
+
+- Identifier les problèmes dûs à la collinéarité de plusieurs prédicteurs.
 
 - Identifier les problèmes liés au sous-ajustement et surajustement de modèles.
 
@@ -60,7 +35,57 @@ T:D | 2
 
 ---
 
-class: inverse, middle
+# Collinéarité
+
+- La corrélation entre deux prédicteurs complique l'estimation des effets de chaque prédicteur. 
+
+--
+
+- Puisque chaque coefficient du modèle représente l'effet d'un prédicteur lorsque les autres demeurent constants, lorsque plusieurs d'entre eux varient ensemble, il devient difficile d'isoler l'effet de chacun. 
+
+--
+
+- Avec plus de deux prédicteurs, ce problème survient si l'un des prédicteurs est corrélé avec une combinaison linéaire des autres prédicteurs (*collinéarité*).
+
+---
+
+# Facteur d'inflation de la variance (VIF)
+
+- Le VIF est égal à `\(1 / (1 - R^2)\)`, où `\(R^2\)` est le coefficient de détermination d'un modèle linéaire du prédicteur considéré en fonction de tous les autres.
+
+--
+
+- Exemple: si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un `\(R^2\)` de 0.9, VIF = 10. 
+
+--
+
+- Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d'éliminer un des prédicteurs redondants.
+
+---
+
+# Exemple
+
+Le tableau de données `msleep` inclus avec le package *ggplot*, contient des données sur le sommeil de différentes espèces de mammifères. 
+
+
+```
+## tibble [83 x 11] (S3: tbl_df/tbl/data.frame)
+##  $ name        : chr [1:83] "Cheetah" "Owl monkey" "Mountain beaver" "Greater short-tailed shrew" ...
+##  $ genus       : chr [1:83] "Acinonyx" "Aotus" "Aplodontia" "Blarina" ...
+##  $ vore        : chr [1:83] "carni" "omni" "herbi" "omni" ...
+##  $ order       : chr [1:83] "Carnivora" "Primates" "Rodentia" "Soricomorpha" ...
+##  $ conservation: chr [1:83] "lc" NA "nt" "lc" ...
+##  $ sleep_total : num [1:83] 12.1 17 14.4 14.9 4 14.4 8.7 7 10.1 3 ...
+##  $ sleep_rem   : num [1:83] NA 1.8 2.4 2.3 0.7 2.2 1.4 NA 2.9 NA ...
+##  $ sleep_cycle : num [1:83] NA NA NA 0.133 0.667 ...
+##  $ awake       : num [1:83] 11.9 7 9.6 9.1 20 9.6 15.3 17 13.9 21 ...
+##  $ brainwt     : num [1:83] NA 0.0155 NA 0.00029 0.423 NA NA NA 0.07 0.0982 ...
+##  $ bodywt      : num [1:83] 50 0.48 1.35 0.019 600 ...
+```
+
+---
+
+class: center, inverse, middle
 
 # Types d'erreurs des modèles
 
@@ -68,13 +93,13 @@ class: inverse, middle
 
 # Exemple
 
-.pull-left[
+.left-column[
 
 ![](../images/polatouche.jpg)
 
 ]
 
-.pull-right[
+.right-column[
 
 À partir de données d'un nombre limité de sites (ex.: 40 peuplements), nous souhaitons estimer la densité de population du grand polatouche en fonction de différentes variables, incluant: 
 
@@ -137,7 +162,7 @@ Quelle est la différence entre le type d'erreurs commises dans chaque cas?
 
 # Autre exemple: modèle polynomial
 
-![](8-Sélection_modèles_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+![](8-Selection_modeles_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -173,7 +198,7 @@ Quelle est la différence entre le type d'erreurs commises dans chaque cas?
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Critères de comparaison des modèles
 
@@ -181,11 +206,11 @@ class: inverse, middle
 
 # Coefficient de détermination (R&lt;sup&gt;2&lt;/sup&gt;)
 
-- Fraction de la variance totale de la réponse est expliquée par le modèle.
+- Fraction de la variance totale de la réponse qui est expliquée par le modèle.
 
 --
 
-- Deux versions rapportés dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
+- Deux versions rapportées dans le résultat de `lm`: *Multiple R-squared* et *Adjusted R-squared*. 
 
 --
 
@@ -233,11 +258,12 @@ class: inverse, middle
 
 ### Inconvénients
 
-- La valeur `\(p\)` mesure la probabilité d'obtenir les résultats observés selon l'hypothèse nulle, pas le pouvoir prédictif du modèle.
+- La valeur `\(p\)` est reliée à la probabilité cumulative d'une certaine statistique selon l'hypothèse nulle, pas au pouvoir prédictif du modèle.
 
 --
 
-- Le seuil de significativité pour l'inclusion d'une variable (ex.: `\(\alpha = 0.05\)`) est arbitraire. 
+- Le seuil de significativité pour l'inclusion d'une variable (ex.: `\(\alpha = 0.05\)`) est arbitraire.
+
 --
 
 - Avec les méthodes séquentielles, il faut considérer l'augmentation de la probabilité d'erreur de type I (problème des comparaisons multiples).
@@ -246,7 +272,7 @@ class: inverse, middle
 
 # Ensemble de validation
 
-- Évaluer un modèle d'après son erreur de prédiction (ex.: `\(\sum (y_i - \hat{y_i})^2\)`) pour un jeu de données *différent* de celui utilisé pour estimer les paramètres.
+- Évaluer un modèle d'après son erreur de prédiction, i.e. `\(\sum (y_i - \hat{y_i})^2\)`, pour un jeu de données *différent* de celui utilisé pour estimer les paramètres.
 
 --
 
@@ -256,7 +282,7 @@ class: inverse, middle
 
 - Méthode très courante pour de grands jeux de données. La majorité des observations (ex.: 70-80%) font partie de l'ensemble de calibration.
 
-- Pas efficace si on a peu de données.
+- Moins efficace si on a peu de données.
 
 ---
 
@@ -284,7 +310,7 @@ class: inverse, middle
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Comparaison de modèles avec l'AIC
 
@@ -306,7 +332,7 @@ class: inverse, middle
 
 # Définition de l'AIC
 
-`$$AIC = -2 \log(L) + 2 K$$`
+`$$AIC = -2 \log L + 2 K$$`
 
 - `\(L\)` est la fonction de vraisemblance (*likelihood*).
 - `\(K\)` est le nombre de paramètres estimés par le modèle.
@@ -316,7 +342,7 @@ class: inverse, middle
 
 # Vraisemblance
 
-`$$AIC = -2 \log(L) + 2 K$$`
+`$$AIC = -2 \log L + 2 K$$`
 
 - `\(L(\theta | y)\)` correspond à la probabilité des observations de `\(y\)` selon la valeur des paramètres `\(\theta\)` du modèle.
 
@@ -328,7 +354,7 @@ class: inverse, middle
 
 # Nombre de paramètres estimés
 
-`$$AIC = -2 \log(L) + 2 K$$`
+`$$AIC = -2 \log L + 2 K$$`
 
 - Comme `\(R^2\)`, la vraisemblance tend à augmenter avec chaque paramètre ajouté au modèle. 
 
@@ -343,7 +369,7 @@ class: inverse, middle
     
 --
 
-- L'AIC aurait pu être défini comme `\(-\log(L) + K\)`. Le facteur de 2 a été ajouté pour des raisons historiques.
+- L'AIC aurait pu être défini comme `\(-\log L + K\)`. Le facteur de 2 a été ajouté pour des raisons historiques.
 
 ---
 
@@ -359,7 +385,7 @@ class: inverse, middle
 
 - Si `\(n\)` est petit par rapport au nombre de paramètres estimés (si `\(n/K\)` &lt; 40), on remplace l'AIC par l'AICc, qui inclut une correction supplémentaire.
 
-`$$AICc = -2 \log(L) + 2 K \left( \frac{n}{n-K-1} \right)$$`
+`$$AICc = -2 \log L + 2 K \left( \frac{n}{n-K-1} \right)$$`
 
 --
 
@@ -403,7 +429,7 @@ class: inverse, middle
 
 --
 
-- La somme des `\(w_i\)` est égale à 1. Ces poids représentent la probabilité quun modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
+- La somme des `\(w_i\)` est égale à 1. Ces poids représentent la probabilité qu'un modèle soit le meilleur selon l'AIC si on répétait l'échantillonnage.
 
 ---
 
@@ -412,14 +438,9 @@ class: inverse, middle
 Jeu de données de Johnson et Simberloff sur le nombre d'espèces de plantes vasculaires de différentes îles britanniques, vu au dernier laboratoire.
 
 
-```r
-iles &lt;- read.csv("../donnees/britain_species.csv")
-str(iles)
-```
-
 ```
 ## 'data.frame':	42 obs. of  7 variables:
-##  $ island      : Factor w/ 42 levels "Ailsa","Anglesey",..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ island      : chr  "Ailsa" "Anglesey" "Arran" "Barra" ...
 ##  $ area        : num  0.8 712.5 429.4 18.4 31.1 ...
 ##  $ elevation   : int  340 127 874 384 226 1343 210 103 143 393 ...
 ##  $ soil_types  : int  1 3 4 2 1 16 1 3 1 1 ...
@@ -525,6 +546,16 @@ $$ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} $$
 
 # Résumé
 
+- Le facteur d'inflation de la variance (VIF) indique si la valeur d'un prédicteur est fortement corrélée à celles des autres prédicteurs. 
+
+--
+
+- Un VIF élevé rend difficile l'estimation des coefficients pour les prédicteurs corrélés.
+
+---
+
+# Résumé
+
 - La sélection de modèles est un compromis entre biais (sous-ajustement) et variance (surajustement).
 
 --
@@ -560,7 +591,9 @@ $$ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} $$
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
+"highlightLines": true,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -601,9 +634,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -612,7 +661,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

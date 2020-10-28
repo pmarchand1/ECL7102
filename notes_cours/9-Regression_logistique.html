@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression logistique</h1>
-<h4 class="date"><br/>4 novembre 2019</h4>
+<h4 class="date"><br/>2 novembre 2020</h4>
 
 </div>
 
@@ -297,7 +262,7 @@ div.tocify {
 <h1>Objectifs</h1>
 <ul>
 <li><p>Connaître les composantes d’un modèle linéaire généralisé.</p></li>
-<li><p>Utiliser la régression logistique pour modéliser une réponse binaire (ex.: présence/absence), une réponse binomiale (ex.: nombre de présences et d’absences) ou des proportions.</p></li>
+<li><p>Utiliser la régression logistique pour modéliser une réponse binaire (ex.: présence/absence) ou binomiale (ex.: nombre de présences et d’absences).</p></li>
 <li><p>Interpréter les résultats d’une régression logistique et visualiser les effets des prédicteurs.</p></li>
 </ul>
 </div>
@@ -326,7 +291,7 @@ div.tocify {
 </ul>
 <p>Les modèles linéaires généralisés conservent le premier élément (la prédiction dépend d’une combinaison linéaire des variables <span class="math inline">\(x_i\)</span>), mais utilisent différentes fonctions de lien et différentes distributions pour la réponse. La régression logistique que nous verrons aujourd’hui est conçue pour modéliser les variables à réponse binaire, tandis que la régression de Poisson vue au prochain cours est conçue pour les données provenant de comptages (nombres entiers <span class="math inline">\(\ge\)</span> 0).</p>
 </div>
-<div id="modele-de-regression-logistique" class="section level1">
+<div id="modèle-de-régression-logistique" class="section level1">
 <h1>Modèle de régression logistique</h1>
 <p>La régression logistique est un exemple de modèle linéaire généralisé où la réponse correspond à une ou plusieurs observations d’un résultat binaire (0 ou 1). Dans ce modèle:</p>
 <ul>
@@ -368,7 +333,7 @@ div.tocify {
 <p><span class="math display">\[p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}}\]</span></p>
 <p>Contrairement à la régression linéaire, les coefficients <span class="math inline">\(\beta\)</span> d’un modèle linéaire généralisé ne sont pas estimés par la méthode des moindres carrés, mais plutôt par la méthode plus générale du maximum de vraisemblance (<em>maximum likelihood</em>). En bref, cette méthode choisit les valeurs des coefficients <span class="math inline">\(\beta\)</span> qui maximisent la probabilité conjointe de l’ensemble des observations de <span class="math inline">\(y\)</span>.</p>
 </div>
-<div id="interpretation-des-coefficients" class="section level2">
+<div id="interprétation-des-coefficients" class="section level2">
 <h2>Interprétation des coefficients</h2>
 <p>Le graphique ci-dessous présente la probabilité <span class="math inline">\(p\)</span> pour un modèle logistique à une variable <span class="math inline">\(x\)</span> avec <span class="math inline">\(\beta_0 = -1\)</span> et <span class="math inline">\(\beta_1\)</span> = 0.4, donc: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span>.</p>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-3-1.png" width="384" /></p>
@@ -379,15 +344,14 @@ invlogit(-1)</code></pre>
 <p>La valeur de <span class="math inline">\(x\)</span> pour laquelle le prédicteur linéaire est zéro (ici, <span class="math inline">\(-1 + 0.4x = 0\)</span> donne <span class="math inline">\(x = 2.5\)</span>) est associée à une probabilité <span class="math inline">\(p = 0.5\)</span>. C’est à cet endroit de la courbe que la pente de <span class="math inline">\(p\)</span> vs. <span class="math inline">\(x\)</span> est maximale: cette pente maximale, indiquée par un ligne bleue dans le graphique, est égale à <span class="math inline">\(\beta_1/4\)</span>, où <span class="math inline">\(\beta_1\)</span> est le coefficient de <span class="math inline">\(x\)</span> dans le prédicteur linéaire. Ici, puisque <span class="math inline">\(\beta_1 = 0.4\)</span>, on peut dire que lorsque <span class="math inline">\(x\)</span> augmente de 1, la probabilité <span class="math inline">\(p\)</span> augmente au maximum de 0.1 (ou 10%).</p>
 </div>
 </div>
-<div id="regression-logistique-avec-r" class="section level1">
+<div id="régression-logistique-avec-r" class="section level1">
 <h1>Régression logistique avec R</h1>
-<p>Dans R, la régression logistique peut être utilisée pour trois types de réponses:</p>
+<p>Dans R, la régression logistique peut être utilisée pour deux types de réponses:</p>
 <ul>
 <li>une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (le premier niveau du facteur correspond à 0, les autres à 1);</li>
-<li>une variable binomiale décrite par deux colonnes (nombre de présences, nombre d’absences);</li>
-<li>une variable indiquant une proportion entre 0 et 1.</li>
+<li>une variable binomiale décrite par deux colonnes (nombre de présences, nombre d’absences).</li>
 </ul>
-<p>Nous verrons des exemples des trois cas dans ce cours.</p>
+<p>Nous verrons un exemple de chaque cas dans ce cours.</p>
 <div id="exemple-concentrations-darsenic-dans-des-puits-au-bangladesh" class="section level2">
 <h2>Exemple: Concentrations d’arsenic dans des puits au Bangladesh</h2>
 <p>Le tableau de données <code>Wells</code> du package <strong>carData</strong> présente les données d’une étude menée auprès de 3020 ménages au Bangladesh. Les puits utilisés par ces ménages avaient une concentration d’arsenic (variable <code>arsenic</code>, en multiples de 100 <span class="math inline">\(\mu g/L\)</span>) supérieure au niveau jugé sûr. La réponse binaire <code>switch</code> indique si le ménage a changé de puits. En plus de la concentration d’arsenic, le tableau contient d’autres prédicteurs, dont la distance vers le puits sûr le plus près (<code>distance</code> en mètres).</p>
@@ -435,7 +399,7 @@ summary(mod)</code></pre>
 <p>L’ordonnée à l’origine est le logit de la probabilité de changer de puits pour une concentration d’arsenic et une distance toutes deux égales à zéro. Cette probabilité est donnée par <code>invlogit(0.0027)</code> soit environ 50%. Toutefois, puisque le modèle a été ajusté à un tableau de données où la concentration d’arsenic est toujours supérieure à 0.5, l’ordonnée à l’origine n’a pas vraiment de sens.</p>
 <p>Les coefficients des prédicteurs indiquent qu’une augmentation de la concentration d’arsenic d’une unité (100 <span class="math inline">\(\mu g/L\)</span>) résulte au maximum en une augmentation de ~0.12 de la probabilité de changer de puits (0.46/4), tandis qu’une augmentation de 1m de la distance résulte au maximum en une diminution de 0.0022 (0.0087/4) de cette probabilité (équivalent à une diminution de ~0.22 par 100m de distance).</p>
 </div>
-<div id="visualiser-les-predictions-du-modele" class="section level2">
+<div id="visualiser-les-prédictions-du-modèle" class="section level2">
 <h2>Visualiser les prédictions du modèle</h2>
 <p>Pour mieux comprendre l’effet non-linéaire des prédicteurs, nous pouvons visualiser les prédictions du modèle pour différentes combinaisons de la concentration d’arsenic et de la distance.</p>
 <p>Créons d’abord un nouveau tableau de données pour les prédictions, contenant les combinaisons de 10 concentrations d’arsenic (réparties entre 0.5 et 5) et 3 distances au puits sûr le plus près (50 m, 100 m et 200 m). Nous utilisons pour ce faire la fonction <code>expand.grid</code>.</p>
@@ -468,7 +432,7 @@ ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Notez qu’un intervalle de prédiction des observations individuelles serait moins intéressant ici, car ces observations sont toujours 0 ou 1.</p>
 </div>
-<div id="verifier-lajustement-du-modele" class="section level2">
+<div id="vérifier-lajustement-du-modèle" class="section level2">
 <h2>Vérifier l’ajustement du modèle</h2>
 <p>Les graphiques de diagnostic basés sur les résidus individuels ne sont pas très utiles lorsque la réponse est binaire, comme vous pouvez le constater en appelant la fonction <code>plot(mod)</code>.</p>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
@@ -481,7 +445,7 @@ binnedplot(fitted(mod), residuals(mod, type = &quot;response&quot;))</code></pre
 <p>Par défaut, <code>binnedplot</code> choisit le nombre de groupes d’après un compromis visant à avoir suffisamment de points par groupe (pour que chaque proportion moyenne soit précise) et suffisamment de groupes (pour voir la tendance s’il y en a une). Lorsque le nombre d’observations <span class="math inline">\(n &gt; 100\)</span>, le nombre de groupes choisi est environ <span class="math inline">\(\sqrt{n}\)</span>.</p>
 <p>Le graphique produit par <code>binnedplot</code> indique aussi un intervalle de prédiction à 95% (lignes grises) pour les résidus moyens. Ainsi, si le modèle binomial est bon, environ 95% des résidus devraient se trouver à l’intérieur de cet intervalle. Ici, c’est le cas de 52 résidus sur 54 ou 96%.</p>
 </div>
-<div id="coefficient-de-determination" class="section level2">
+<div id="coefficient-de-détermination" class="section level2">
 <h2>Coefficient de détermination</h2>
 <p>L’estimation des paramètres des modèles linéaires généralisés ne fait pas appel à la méthode des moindres carrés. Pour cette raison, le <span class="math inline">\(R^2\)</span> basé sur la somme des écarts carrés ne constitue pas une bonne mesure d’ajustement pour ce type de modèle.</p>
 <p>La <strong>déviance</strong> est une mesure d’écart entre les valeurs attendues et les observations calculée à partir de la vraisemblance (<span class="math inline">\(L\)</span>, pour <em>likelihood</em>) du modèle pour les paramètres estimés.</p>
@@ -501,10 +465,10 @@ r2_tjur</code></pre>
 <pre><code>## [1] 0.06004311</code></pre>
 </div>
 </div>
-<div id="regression-logistique-binomiale" class="section level1">
+<div id="régression-logistique-binomiale" class="section level1">
 <h1>Régression logistique binomiale</h1>
 <p>Dans l’exemple précédent, chaque rangée du tableau correspondait à une seule réponse binaire (0 ou 1) et des valeurs des prédicteurs qui lui sont associées. Dans un contexte expérimental, il est possible d’avoir plusieurs réplicats indépendants avec les mêmes valeurs des prédicteurs; le nombre de réponses égales à 1 (présences) parmi ces <span class="math inline">\(N\)</span> réplicats peut être modélisé directement comme une variable binomiale.</p>
-<div id="exemple-mortalite-descargots-en-fonction-de-lenvironnement" class="section level2">
+<div id="exemple-mortalité-descargots-en-fonction-de-lenvironnement" class="section level2">
 <h2>Exemple: Mortalité d’escargots en fonction de l’environnement</h2>
 <p>Le tableau de données <code>snails</code> du package <strong>MASS</strong> présente les résultats d’une expérience où des escargots de 2 espèces (<code>Species</code>) ont été exposés à 3 différentes valeurs de température (<code>Temp</code>) et 4 taux d’humidité relative (<code>Rel.Hum</code>) pour 1 à 4 semaines (<code>Exposure</code>). Vingt escargots (<code>N</code>) ont été suivis pour chacune des 96 combinaisons possible de ces quatre variables; la variable <code>Deaths</code> indique le nombre d’entre eux qui sont morts durant l’expérience.</p>
 <pre class="r"><code>library(MASS)
@@ -553,7 +517,7 @@ summary(mod_snails)</code></pre>
 <p>Puisque la réponse n’est pas supposée suivre une distribution normale, nous ne nous intéressons pas vraiment au diagramme quantile-quantile. Notez que les résidus utilisés dans ce diagramme ne sont pas les résidus de la réponse (<span class="math inline">\(y - \hat{y}\)</span>), mais plutôt les résidus de la déviance <code>residuals(mod_snails, type = "deviance")</code>, qui s’approchent davantage de la normalité. Ceux-ci sont calculés à partir de la contribution de chaque observation à la déviance totale, <span class="math inline">\(-2 \log L_k\)</span>, où <span class="math inline">\(L_k\)</span> est la vraisemblance de l’observation <span class="math inline">\(k\)</span> prise individuellement.</p>
 </div>
 </div>
-<div id="probleme-de-separation-parfaite" class="section level1">
+<div id="problème-de-séparation-parfaite" class="section level1">
 <h1>Problème de séparation parfaite</h1>
 <p>En utilisant le même jeu de données <code>snails</code>, essayons maintenant d’estimer l’effet de la durée d’exposition comme variable catégorique. Ceci revient à estimer séparément le taux de mortalité après 1, 2, 3 et 4 semaines.</p>
 <pre class="r"><code>mod_snails2 &lt;- glm(cbind(Deaths, N - Deaths) ~ as.factor(Exposure), data = snails,
@@ -585,6 +549,7 @@ summary(mod_snails2)</code></pre>
 <p>Pourquoi avons-nous des coefficients et des erreurs-types aussi élevés? Regardons quel est le nombre moyen d’escargots morts pour chacune des valeurs de la variable <code>Exposure</code>.</p>
 <pre class="r"><code>group_by(snails, Exposure) %&gt;%
     summarize(mean(Deaths))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 4 x 2
 ##   Exposure `mean(Deaths)`
 ##      &lt;int&gt;          &lt;dbl&gt;
@@ -624,52 +589,11 @@ summary(mod_snails3)</code></pre>
 <p>Cet exemple illustre le problème dit de <em>séparation parfaite</em>. En raison du lien logit, le modèle de régression logistique représente l’effet de paramètres qui modifient la probabilité d’une réponse de façon continue entre 0 et 1. Ce modèle ne peut pas estimer les effets d’un prédicteur s’il y a une séparation parfaite entre les cas où <span class="math inline">\(y = 0\)</span> et <span class="math inline">\(y = 1\)</span>. Pour un prédicteur catégorique, le problème survient si une catégorie contient entièrement des réponses positives ou négatives, comme dans l’exemple précédent. Pour une variable numérique, le problème survient si <span class="math inline">\(y\)</span> est toujours 0 en-dessous d’une certaine valeur de <span class="math inline">\(x\)</span> et toujours 1 au-dessus, ou vice versa.</p>
 <p>Il existe des méthodes dites de réduction de biais qui pénalisent les coefficients trop élevés afin d’obtenir des estimés réalistes même dans le cas de séparation parfaite. Nous n’en discuterons pas davantage dans ce cours, mais vous pouvez trouver ces méthodes dans le package <strong>brglm</strong>.</p>
 </div>
-<div id="regression-logistique-pour-des-proportions" class="section level1">
-<h1>Régression logistique pour des proportions</h1>
-<p>Dans l’exemple précédent, la réponse était basée sur des nombres d’individus (escargots morts et vivants au bout de l’expérience), donc la distribution binomiale pouvait s’appliquer exactement.</p>
-<p>Dans d’autres cas, la réponse est directement exprimée sous forme de proportions continues, plutôt qu’un ensemble de mesures discrètes de présence/absence. Il peut s’agir par exemple de la proportion d’un quadrat recouvert par une mousse, la fraction d’une région brûlée par le feu, ou d’une autre variable comprise entre 0 et 1.</p>
-<p>Pour ce type de réponse, on peut tout de même utiliser le lien logit pour relier la probabilité ou proportion moyenne à un prédicteur linéaire. Toutefois, la variance de cette proportion ne correspondra pas nécessairement à celle d’une distribution binomiale. Il faut donc utiliser l’option de famille <em>quasibinomiale</em> dans <code>glm</code>.</p>
-<p>Le modèle quasibinomial n’est pas une distribution statistique à proprement parler. En fait, ce modèle estime les coefficients comme s’il s’agissait d’une régression logistique habituelle, mais estime séparément un paramètre de dispersion <span class="math inline">\(\phi\)</span>, de façon à ce que la variance des proportions observées soit <span class="math inline">\(\phi p (1-p)\)</span>.</p>
-<p>Pour illustrer l’application du modèle quasibinomial, créons une nouvelle variable <code>prop</code> représentant le taux de mortalité pour chaque combinaison des prédicteurs du tableau de données <code>snails</code>.</p>
-<pre class="r"><code>snails &lt;- mutate(snails, prop = Deaths / N)
-mod_prop &lt;- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-summary(mod_prop)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = prop ~ Species + Exposure + Rel.Hum + Temp, family = quasibinomial, 
-##     data = snails)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -0.38597  -0.15892  -0.07517   0.09461   0.39153  
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -1.404947   0.689052  -2.039   0.0444 *  
-## SpeciesB     1.308638   0.116058  11.276  &lt; 2e-16 ***
-## Exposure     1.503389   0.072652  20.693  &lt; 2e-16 ***
-## Rel.Hum     -0.106843   0.009851 -10.846  &lt; 2e-16 ***
-## Temp         0.094041   0.013677   6.876 7.55e-10 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for quasibinomial family taken to be 0.02519503)
-## 
-##     Null deviance: 26.9860  on 95  degrees of freedom
-## Residual deviance:  2.7535  on 91  degrees of freedom
-## AIC: NA
-## 
-## Number of Fisher Scoring iterations: 6</code></pre>
-<p>Les coefficients estimés sont les mêmes que pour la régression logistique binomiale précédente. Les erreurs-types ont un peu changé, puisque la variance du modèle binomiale était fixe et basée sur le nombre d’individus testés.</p>
-<p>Le paramètre de dispersion n’affecte pas les valeurs des coefficients, seulement leurs erreurs-types. Nous en parlerons davantage au prochain cours dans le contexte de la régression de Poisson.</p>
-<p>Une variable continue comprise entre 0 et 1 peut aussi être modélisée avec la distribution <em>beta</em>. La régression beta (package <em>betareg</em> dans R) n’est cependant pas vue dans ce cours.</p>
-</div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
 <li><p>Un modèle linéaire généralisé est composé d’un prédicteur linéaire (combinaison linéaire des variables explicatives), d’une fonction de lien pour la réponse moyenne, et d’une distribution statistique de la réponse en fonction de sa moyenne.</p></li>
-<li><p>La régression logistique sert à modéliser des réponses binaires ou des proportions. Elle utilise un lien logit et une distribution binomiale de la réponse.</p></li>
+<li><p>La régression logistique sert à modéliser des réponses binaires (0 ou 1) ou binomiales (nombre de 0 et de 1). Elle utilise un lien logit et une distribution binomiale de la réponse.</p></li>
 <li><p>La fonction logit transforme une probabilité entre 0 et 1 en un nombre réel entre -<span class="math inline">\(\infty\)</span> et +<span class="math inline">\(\infty\)</span>. Un logit négatif correspond à une probabilité en-dessous de 0.5, un logit positif correspond à une probabilité au-dessus de 0.5.</p></li>
 <li><p>Dans une régression logistique, l’effet d’un prédicteur sur la réponse est non-linéaire et dépend de la valeur des autres prédicteurs. Il est donc utile de visualiser les prédictions du modèle pour différentes combinaisons des variables.</p></li>
 <li><p>Pour une réponse binaire (0 ou 1), les résidus individuels donnent peu d’information, mais on peut vérifier l’ajustement du modèle à partir des moyennes de groupes de résidus (<em>binned residuals</em>).</p></li>
@@ -694,6 +618,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-11-04" />
+<meta name="date" content="2020-11-02" />
 
 <title>Logistic regression</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Logistic regression</h1>
-<h4 class="date"><br/>November 4, 2019</h4>
+<h4 class="date"><br/>November 2, 2020</h4>
 
 </div>
 
@@ -298,7 +263,7 @@ div.tocify {
 <h1>Objectives</h1>
 <ul>
 <li><p>Know the components of a generalized linear model.</p></li>
-<li><p>Use logistic regression to model a binary response (e.g. presence/absence), a binomial response (e.g. number of presences and absences) or proportions.</p></li>
+<li><p>Use logistic regression to model a binary response (e.g. presence/absence) or a binomial response (e.g. number of presences and absences).</p></li>
 <li><p>Interpret the results of a logistic regression and visualize the effects of the predictors.</p></li>
 </ul>
 </div>
@@ -382,13 +347,12 @@ invlogit(-1)</code></pre>
 </div>
 <div id="logistic-regression-with-r" class="section level1">
 <h1>Logistic regression with R</h1>
-<p>In R, logistic regression can be used for three types of responses:</p>
+<p>In R, logistic regression can be used for two types of responses:</p>
 <ul>
 <li>a binary variable encoded by logical values (FALSE, TRUE), numerical values (0, 1) or a factor (the first level of the factor corresponds to 0, the others to 1);</li>
-<li>a binomial variable described by two columns (number of presences, number of absences);</li>
-<li>a variable indicating a proportion between 0 and 1.</li>
+<li>a binomial variable described by two columns (number of presences, number of absences).</li>
 </ul>
-<p>We will see examples of the three cases in this class.</p>
+<p>We will see an example of each case in this class.</p>
 <div id="example-arsenic-concentrations-in-wells-in-bangladesh" class="section level2">
 <h2>Example: Arsenic concentrations in wells in Bangladesh</h2>
 <p>The <code>Wells</code> data frame from the <strong>carData</strong> package contains data from a survey of 3020 households in Bangladesh. The wells used by these households had an arsenic concentration (<code>arsenic</code>, in multiples of 100 <span class="math inline">\(\mu g / L\)</span>) higher than the level considered safe. The <code>switch</code> binary response indicates whether the household has changed wells. In addition to the arsenic concentration, the table contains other predictors, including the distance to the nearest safe well (<code>distance</code> in meters).</p>
@@ -586,6 +550,7 @@ summary(mod_snails2)</code></pre>
 <p>Why do we have such high coefficients and standard errors? Let’s look at the average number of dead snails for each of the values of the <code>Exposure</code> variable.</p>
 <pre class="r"><code>group_by(snails, Exposure) %&gt;%
     summarize(mean(Deaths))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 4 x 2
 ##   Exposure `mean(Deaths)`
 ##      &lt;int&gt;          &lt;dbl&gt;
@@ -625,52 +590,11 @@ summary(mod_snails3)</code></pre>
 <p>This example illustrates the so-called “perfect separation” problem. Due to the logit link, the logistic regression model represents the effect of parameters that change the probability of a response gradually between 0 and 1. This model cannot estimate the effects of a predictor if there is a perfect separation between the cases where <span class="math inline">\(y = 0\)</span> and <span class="math inline">\(y = 1\)</span>. For a categorical predictor, the problem occurs if a category contains entirely positive or negative responses, as in the previous example. For a numeric variable, the problem occurs if <span class="math inline">\(y\)</span> is always 0 below a certain value of <span class="math inline">\(x\)</span> and always 1 above, or vice versa.</p>
 <p>There are so-called bias reduction methods that penalize coefficients that are too high in order to obtain realistic estimates even in the case of perfect separation. We will not discuss these further in this course, but you can find these methods in the <strong>brglm</strong> package.</p>
 </div>
-<div id="logistic-regression-for-proportions" class="section level1">
-<h1>Logistic regression for proportions</h1>
-<p>In the previous example, the response was based on numbers of individuals (snails dead and alive at the end of the experiment), so the binomial distribution could apply exactly.</p>
-<p>In other cases, the response is directly expressed as continuous proportions, rather than a set of discrete measures of presence / absence. For example, it could be the proportion of a quadrat covered by a moss, the fraction of a region burned by fire, or another variable between 0 and 1.</p>
-<p>For this type of response, we can still use the logit to link the mean proportion to a linear predictor. However, the variance of this proportion will not necessarily correspond to that of a binomial distribution. We must therefore use the <em>quasibinomial</em> family option in <code>glm</code>.</p>
-<p>The quasibinomial model is not a statistical distribution per se. In fact, this model estimates the coefficients as if it were a usual logistic regression, but separately estimates a dispersion parameter <span class="math inline">\(\phi\)</span>, so that the variance of the observed proportions is <span class="math inline">\(\phi p(1-p)\)</span>.</p>
-<p>To illustrate the application of the quasibinomial model, let’s create a new <code>prop</code> variable representing the mortality rate for each combination of predictors in the snails data frame.</p>
-<pre class="r"><code>snails &lt;- mutate(snails, prop = Deaths / N)
-mod_prop &lt;- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-summary(mod_prop)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = prop ~ Species + Exposure + Rel.Hum + Temp, family = quasibinomial, 
-##     data = snails)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -0.38597  -0.15892  -0.07517   0.09461   0.39153  
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -1.404947   0.689052  -2.039   0.0444 *  
-## SpeciesB     1.308638   0.116058  11.276  &lt; 2e-16 ***
-## Exposure     1.503389   0.072652  20.693  &lt; 2e-16 ***
-## Rel.Hum     -0.106843   0.009851 -10.846  &lt; 2e-16 ***
-## Temp         0.094041   0.013677   6.876 7.55e-10 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for quasibinomial family taken to be 0.02519503)
-## 
-##     Null deviance: 26.9860  on 95  degrees of freedom
-## Residual deviance:  2.7535  on 91  degrees of freedom
-## AIC: NA
-## 
-## Number of Fisher Scoring iterations: 6</code></pre>
-<p>The estimated coefficients are the same as for the previous binomial logistic regression. The standard errors changed slightly, since the variance of the binomial model was fixed and based on the number of individuals tested.</p>
-<p>The dispersion parameter does not affect the values of the coefficients, only their standard errors. We’ll talk more about it in the next class in the context of Poisson regression.</p>
-<p>A continuous variable between 0 and 1 can also be modeled with the <em>beta</em> distribution. The beta regression (<em>betareg</em> package in R) is not seen in this course, however.</p>
-</div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <ul>
 <li><p>A generalized linear model consists of a linear predictor (linear combination of explanatory variables), a link function for the mean response, and a statistical distribution of the response as a function of its mean.</p></li>
-<li><p>Logistic regression is used to model binary responses or proportions. It uses a logit link and a binomial distribution of the response.</p></li>
+<li><p>Logistic regression is used to model a binary (0 or 1) or binomial (number of 0s and 1s) response variable. It uses a logit link and a binomial distribution of the response.</p></li>
 <li><p>The logit function transforms a probability between 0 and 1 into a real number between <span class="math inline">\(-\infty\)</span> and <span class="math inline">\(+\infty\)</span>. A negative logit corresponds to a probability below 0.5, a positive logit corresponds to a probability above 0.5.</p></li>
 <li><p>In a logistic regression, the effect of a predictor on the response is non-linear and depends on the value of the other predictors. It is therefore useful to visualize model predictions for different combinations of variables.</p></li>
 <li><p>For a binary response (0 or 1), individual residuals give little information, but we can check model fit with a binned residual plot.</p></li>
@@ -695,6 +619,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

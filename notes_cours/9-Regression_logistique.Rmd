@@ -1,6 +1,6 @@
 ---
 title: "Régression logistique"
-date: "<br/>4 novembre 2019"
+date: "<br/>2 novembre 2020"
 output:
     html_document:
         self_contained: false
@@ -12,16 +12,16 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectifs
 
 - Connaître les composantes d'un modèle linéaire généralisé.
 
-- Utiliser la régression logistique pour modéliser une réponse binaire (ex.: présence/absence), une réponse binomiale (ex.: nombre de présences et d'absences) ou des proportions.
+- Utiliser la régression logistique pour modéliser une réponse binaire (ex.: présence/absence) ou binomiale (ex.: nombre de présences et d'absences).
 
 - Interpréter les résultats d'une régression logistique et visualiser les effets des prédicteurs.
 
@@ -148,13 +148,12 @@ La valeur de $x$ pour laquelle le prédicteur linéaire est zéro (ici, $-1 + 0.
 
 # Régression logistique avec R
 
-Dans R, la régression logistique peut être utilisée pour trois types de réponses:
+Dans R, la régression logistique peut être utilisée pour deux types de réponses:
 
 - une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (le premier niveau du facteur correspond à 0, les autres à 1);
-- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences);
-- une variable indiquant une proportion entre 0 et 1.
+- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences).
 
-Nous verrons des exemples des trois cas dans ce cours.
+Nous verrons un exemple de chaque cas dans ce cours.
 
 ## Exemple: Concentrations d'arsenic dans des puits au Bangladesh
 
@@ -369,37 +368,11 @@ Cet exemple illustre le problème dit de *séparation parfaite*. En raison du li
 Il existe des méthodes dites de réduction de biais qui pénalisent les coefficients trop élevés afin d'obtenir des estimés réalistes même dans le cas de séparation parfaite. Nous n'en discuterons pas davantage dans ce cours, mais vous pouvez trouver ces méthodes dans le package **brglm**.
 
 
-# Régression logistique pour des proportions
-
-Dans l'exemple précédent, la réponse était basée sur des nombres d'individus (escargots morts et vivants au bout de l'expérience), donc la distribution binomiale pouvait s'appliquer exactement. 
-
-Dans d'autres cas, la réponse est directement exprimée sous forme de proportions continues, plutôt qu'un ensemble de mesures discrètes de présence/absence. Il peut s'agir par exemple de la proportion d'un quadrat recouvert par une mousse, la fraction d'une région brûlée par le feu, ou d'une autre variable comprise entre 0 et 1.
-
-Pour ce type de réponse, on peut tout de même utiliser le lien logit pour relier la probabilité ou proportion moyenne à un prédicteur linéaire. Toutefois, la variance de cette proportion ne correspondra pas nécessairement à celle d'une distribution binomiale. Il faut donc utiliser l'option de famille *quasibinomiale* dans `glm`.
-
-Le modèle quasibinomial n'est pas une distribution statistique à proprement parler. En fait, ce modèle estime les coefficients comme s'il s'agissait d'une régression logistique habituelle, mais estime séparément un paramètre de dispersion $\phi$, de façon à ce que la variance des proportions observées soit $\phi p (1-p)$.
-
-Pour illustrer l'application du modèle quasibinomial, créons une nouvelle variable `prop` représentant le taux de mortalité pour chaque combinaison des prédicteurs du tableau de données `snails`. 
-
-```{r}
-snails <- mutate(snails, prop = Deaths / N)
-mod_prop <- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-summary(mod_prop)
-```
-
-Les coefficients estimés sont les mêmes que pour la régression logistique binomiale précédente. Les erreurs-types ont un peu changé, puisque la variance du modèle binomiale était fixe et basée sur le nombre d'individus testés. 
-
-Le paramètre de dispersion n'affecte pas les valeurs des coefficients, seulement leurs erreurs-types. Nous en parlerons davantage au prochain cours dans le contexte de la régression de Poisson.
-
-Une variable continue comprise entre 0 et 1 peut aussi être modélisée avec la distribution *beta*. La régression beta (package *betareg* dans R) n'est cependant pas vue dans ce cours.
-
-
 # Résumé
 
 - Un modèle linéaire généralisé est composé d'un prédicteur linéaire (combinaison linéaire des variables explicatives), d'une fonction de lien pour la réponse moyenne, et d'une distribution statistique de la réponse en fonction de sa moyenne.
 
-- La régression logistique sert à modéliser des réponses binaires ou des proportions. Elle utilise un lien logit et une distribution binomiale de la réponse.
+- La régression logistique sert à modéliser des réponses binaires (0 ou 1) ou binomiales (nombre de 0 et de 1). Elle utilise un lien logit et une distribution binomiale de la réponse.
 
 - La fonction logit transforme une probabilité entre 0 et 1 en un nombre réel entre -$\infty$ et +$\infty$. Un logit négatif correspond à une probabilité en-dessous de 0.5, un logit positif correspond à une probabilité au-dessus de 0.5.
 
