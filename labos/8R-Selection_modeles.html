@@ -11,7 +11,7 @@
 
 
 
-<title>Sélection de modèles</title>
+<title>Sélection de modèles - Solutions</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -252,8 +252,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Sélection de modèles</h1>
-<h4 class="date">28 octobre 2020</h4>
+<h1 class="title toc-ignore">Sélection de modèles - Solutions</h1>
 
 </div>
 
@@ -270,10 +269,50 @@ str(enviro)</code></pre>
 ##  $ rainfall   : num  0.01 0.5 0.6 1.1 0.09 0.2 1.2 0.6 0.8 0.5
 ##  $ biomass    : int  20 120 110 200 45 70 150 275 220 38</code></pre>
 <ol style="list-style-type: lower-alpha">
-<li><p>Estimez les paramètres du modèle incluant les trois prédicteurs: <code>biomass ~ altitude + temperature + rainfall</code>. L’inclusion des trois prédicteurs dans le même modèle cause-t-elle des problèmes? Justifiez votre réponse.</p></li>
-<li><p>Proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Évitez d’inclure des prédicteurs fortement corrélés dans le même modèle. Créez un tableau comparant ces modèles selon leur AICc.</p></li>
-<li><p>Quel est le meilleur modèle pour prédire la biomasse racinaire à un nouveau site semblable à ceux échantillonnés? Serait-ce utile de faire des prédictions moyennes à partir de plusieurs modèles ici? Justifiez votre réponse.</p></li>
+<li>Estimez les paramètres du modèle incluant les trois prédicteurs: <code>biomass ~ altitude + temperature + rainfall</code>. L’inclusion des trois prédicteurs dans le même modèle cause-t-elle des problèmes? Justifiez votre réponse.</li>
 </ol>
+<p><strong>Réponse</strong></p>
+<p>L’altitude et la température sont fortement corrélées (VIF de 11 pour la température et corrélation de -0.92 entre température et altitude), donc il est préférable de ne pas les utiliser dans le même modèle.</p>
+<pre class="r"><code>mod_comp &lt;- lm(biomass ~ altitude + temperature + rainfall, enviro)
+
+library(car)
+vif(mod_comp)</code></pre>
+<pre><code>##    altitude temperature    rainfall 
+##    7.258410   11.178113    2.878935</code></pre>
+<pre class="r"><code>cor(enviro$temperature, enviro$altitude)</code></pre>
+<pre><code>## [1] -0.9174924</code></pre>
+<p>Notez que la variable <code>rainfall</code> est un peu corrélée avec les autres, mais le VIF n’est pas trop élevé dans un modèle incluant soit <code>temperature + rainfall</code>, soit <code>altitude + rainfall</code>.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Évitez d’inclure des prédicteurs fortement corrélés dans le même modèle. Créez un tableau comparant ces modèles selon leur AICc.</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<p>Sur 8 modèles possibles avec 3 prédicteurs, nous excluons ceux qui contiennent à la fois l’altitude et la température, donc il en reste 6.</p>
+<pre class="r"><code>liste_mod &lt;- list(
+    nul = lm(biomass ~ 1, enviro),
+    alt = lm(biomass ~ altitude, enviro),
+    temp = lm(biomass ~ temperature, enviro),
+    rain = lm(biomass ~ rainfall, enviro),
+    altrain = lm(biomass ~ altitude + rainfall, enviro),
+    temprain = lm(biomass ~ temperature + rainfall, enviro)
+)
+
+library(AICcmodavg)
+aictab(liste_mod)</code></pre>
+<pre><code>## 
+## Model selection based on AICc:
+## 
+##          K   AICc Delta_AICc AICcWt Cum.Wt     LL
+## temp     3 105.64       0.00   0.51   0.51 -47.82
+## alt      3 106.05       0.41   0.42   0.93 -48.03
+## altrain  4 110.97       5.32   0.04   0.96 -47.48
+## temprain 4 111.03       5.39   0.03   1.00 -47.51
+## rain     3 120.37      14.73   0.00   1.00 -55.19
+## nul      2 122.05      16.41   0.00   1.00 -58.17</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Quel est le meilleur modèle pour prédire la biomasse racinaire à un nouveau site semblable à ceux échantillonnés? Serait-ce utile de faire des prédictions moyennes à partir de plusieurs modèles ici? Justifiez votre réponse.</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<p>Le modèle avec seulement la température obtient le meilleur AICc, suivi de près du modèle avec l’altitude seule. En général, lorsque deux modèles sont presque égaux en AICc, il est utile de faire la moyenne de leurs prédictions. Toutefois, puisque la température et l’altitude sont fortement corrélées, les deux modèles contiennent presque la même information.</p>
 </div>
 <div id="prédictions-de-la-migration-despèces-doiseaux" class="section level2">
 <h2>2. Prédictions de la migration d’espèces d’oiseaux</h2>
@@ -304,8 +343,46 @@ str(migr)</code></pre>
 </ul>
 <p>En théorie, on s’attend à ce que les oiseaux arrivent plus tard si leur site de reproduction est plus nordique (dû au climat et à la distance à parcourir) et s’ils muent au site d’hivernage. On s’attend à ce que les oiseaux arrivent plus tôt si leur site d’hivernage est plus au nord en Afrique (moins de distance à parcourir) et s’ils nichent dans des cavités existantes.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>Vérifiez l’ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l’ordonnée à l’origine). Ces résultats sont-ils conformes à ceux attendus en théorie?</p></li>
-<li><p>Comparez avec l’AICc les modèles incluant les combinaisons suivantes des 4 prédicteurs:</p></li>
+<li>Vérifiez l’ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l’ordonnée à l’origine). Ces résultats sont-ils conformes à ceux attendus en théorie?</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>mod_comp &lt;- lm(migDate ~ latBreed + latWntr + nestSite + moult, migr)
+
+par(mfrow = c(2, 2)) # Pour afficher 4 graphiques en une matrice 2x2
+plot(mod_comp)</code></pre>
+<p><img src="8R-Selection_modeles_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>L’ajustement est bon.</p>
+<pre class="r"><code>summary(mod_comp)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = migDate ~ latBreed + latWntr + nestSite + moult, 
+##     data = migr)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -6.7117 -2.7590  0.1129  2.1641  5.3685 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept) 20.65761    6.04429   3.418  0.00236 **
+## latBreed     0.19281    0.12473   1.546  0.13582   
+## latWntr     -0.08874    0.09007  -0.985  0.33476   
+## nestSite    -2.98943    1.62521  -1.839  0.07880 . 
+## moult        2.71921    1.74632   1.557  0.13310   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 3.315 on 23 degrees of freedom
+## Multiple R-squared:  0.4967, Adjusted R-squared:  0.4092 
+## F-statistic: 5.676 on 4 and 23 DF,  p-value: 0.002497</code></pre>
+<p>Interprétation des coefficients:</p>
+<ul>
+<li>En moyenne, la migration se produit 0.19 jours plus tard pour chaque degré de <em>latBreed</em> et 0.09 jours plus tôt pour chaque degré de <em>latWntr</em>.</li>
+<li>En moyenne, la migration se produit 3.0 jours plus tôt pour les oiseaux nichant dans des cavités et 2.7 jours plus tard pour les oiseaux qui muent au site d’hivernage.</li>
+</ul>
+<p>La direction de ces effets correspond à la théorie.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Comparez avec l’AICc les modèles incluant les combinaisons suivantes des 4 prédicteurs:</li>
 </ol>
 <ul>
 <li>latBreed</li>
@@ -319,6 +396,34 @@ str(migr)</code></pre>
 <li>latBreed + latWntr + nestSite + moult (modèle complet)</li>
 </ul>
 <p>Combien de modèles ont un <span class="math inline">\(\Delta AIC \le 2\)</span>? Selon les poids d’Akaike, quelle est la probabilité que le meilleur modèle se trouve parmi ceux-ci?</p>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>liste_mod &lt;- list(
+    breed = lm(migDate ~ latBreed, migr),
+    wntr = lm(migDate ~ latWntr, migr),
+    breed_wntr = lm(migDate ~ latBreed + latWntr, migr),
+    breed_nest = lm(migDate ~ latBreed + nestSite, migr),
+    wntr_nest = lm(migDate ~ latWntr + nestSite, migr), 
+    breed_wntr_nest = lm(migDate ~ latBreed + latWntr + nestSite, migr),
+    breed_nest_moult = lm(migDate ~ latBreed + nestSite + moult, migr),
+    wntr_nest_moult = lm(migDate ~ latWntr + nestSite + moult, migr),
+    comp = lm(migDate ~ latBreed + latWntr + nestSite + moult, migr)
+)
+
+aictab(liste_mod)</code></pre>
+<pre><code>## 
+## Model selection based on AICc:
+## 
+##                  K   AICc Delta_AICc AICcWt Cum.Wt     LL
+## breed_nest_moult 5 154.94       0.00   0.31   0.31 -71.11
+## wntr_nest        4 156.07       1.12   0.18   0.49 -73.17
+## wntr_nest_moult  5 156.55       1.61   0.14   0.63 -71.91
+## breed_wntr_nest  5 156.59       1.65   0.14   0.77 -71.93
+## comp             6 157.06       2.12   0.11   0.88 -70.53
+## breed_nest       4 158.25       3.30   0.06   0.94 -74.25
+## wntr             3 159.01       4.07   0.04   0.98 -76.01
+## breed_wntr       4 160.67       5.73   0.02   1.00 -75.47
+## breed            3 163.90       8.95   0.00   1.00 -78.45</code></pre>
+<p>Quatre modèles ont un <span class="math inline">\(\Delta AIC \le 2\)</span>. Ces modèles ont un poids combiné (cumulatif) de 77%.</p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Chargez le jeu de données <code>migr_test.csv</code> qui contient les données de 10 autres espèces de l’étude de Rubolini et al.</li>
 </ol>
@@ -341,6 +446,18 @@ str(migr_test)</code></pre>
 ##  $ Y         : num  35 27.5 29 39 31.2 28 35 27 22 22</code></pre>
 <p>Calculez la moyenne de l’erreur carrée de prédiction <em>(observation - prédiction)</em><span class="math inline">\(^2\)</span> pour ces 10 nouvelles observations selon (i) le meilleur modèle identifié en (b) et (ii) la prédiction moyenne pondérée de tous les modèles.</p>
 <p><em>Indice</em>: Pour obtenir un vecteur des prédictions moyennes, choisissez la composante <code>mod.avg.pred</code> de l’objet produit par la fonction <code>modavgPred</code>.</p>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>pred_meilleur &lt;- predict(liste_mod$breed_nest_moult, newdata = migr_test)
+pred_moyenne &lt;- modavgPred(liste_mod, newdata = migr_test)
+
+err_meilleur &lt;- mean((migr_test$migDate - pred_meilleur)^2)
+err_moyenne &lt;- mean((migr_test$migDate - pred_moyenne$mod.avg.pred)^2)
+
+err_meilleur</code></pre>
+<pre><code>## [1] 22.8912</code></pre>
+<pre class="r"><code>err_moyenne</code></pre>
+<pre><code>## [1] 17.76706</code></pre>
+<p>L’erreur moyenne carrée est plus petite pour la prédiction moyenne.</p>
 </div>
 
 

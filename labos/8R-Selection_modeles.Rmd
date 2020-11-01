@@ -1,6 +1,5 @@
 ---
-title: "Sélection de modèles"
-date: "28 octobre 2020"
+title: "Sélection de modèles - Solutions"
 output:
     html_document:
         self_contained: false
@@ -9,12 +8,6 @@ output:
         toc: true
         toc_float: true
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
-```
-
 
 ## 1. Biomasse racinaire en fonction de l'environnement
 
@@ -27,9 +20,46 @@ str(enviro)
 
 a) Estimez les paramètres du modèle incluant les trois prédicteurs: `biomass ~ altitude + temperature + rainfall`. L'inclusion des trois prédicteurs dans le même modèle cause-t-elle des problèmes? Justifiez votre réponse.
 
+**Réponse**
+
+L'altitude et la température sont fortement corrélées (VIF de 11 pour la température et corrélation de -0.92 entre température et altitude), donc il est préférable de ne pas les utiliser dans le même modèle.
+
+```{r, message = FALSE, warning = FALSE}
+mod_comp <- lm(biomass ~ altitude + temperature + rainfall, enviro)
+
+library(car)
+vif(mod_comp)
+
+cor(enviro$temperature, enviro$altitude)
+```
+
+Notez que la variable `rainfall` est un peu corrélée avec les autres, mais le VIF n'est pas trop élevé dans un modèle incluant soit `temperature + rainfall`, soit `altitude + rainfall`.
+
 b) Proposez plusieurs modèles alternatifs pour ce jeu de données, incluant le modèle nul (0 prédicteur) et des modèles à 1 ou 2 prédicteurs (sans interactions). Évitez d'inclure des prédicteurs fortement corrélés dans le même modèle. Créez un tableau comparant ces modèles selon leur AICc.
 
+**Réponse**
+
+Sur 8 modèles possibles avec 3 prédicteurs, nous excluons ceux qui contiennent à la fois l'altitude et la température, donc il en reste 6.
+
+```{r, message = FALSE, warning = FALSE}
+liste_mod <- list(
+    nul = lm(biomass ~ 1, enviro),
+    alt = lm(biomass ~ altitude, enviro),
+    temp = lm(biomass ~ temperature, enviro),
+    rain = lm(biomass ~ rainfall, enviro),
+    altrain = lm(biomass ~ altitude + rainfall, enviro),
+    temprain = lm(biomass ~ temperature + rainfall, enviro)
+)
+
+library(AICcmodavg)
+aictab(liste_mod)
+```
+
 c) Quel est le meilleur modèle pour prédire la biomasse racinaire à un nouveau site semblable à ceux échantillonnés? Serait-ce utile de faire des prédictions moyennes à partir de plusieurs modèles ici? Justifiez votre réponse.
+
+**Réponse**
+
+Le modèle avec seulement la température obtient le meilleur AICc, suivi de près du modèle avec l'altitude seule. En général, lorsque deux modèles sont presque égaux en AICc, il est utile de faire la moyenne de leurs prédictions. Toutefois, puisque la température et l'altitude sont fortement corrélées, les deux modèles contiennent presque la même information.
 
 
 ## 2. Prédictions de la migration d'espèces d'oiseaux
@@ -53,6 +83,29 @@ En théorie, on s'attend à ce que les oiseaux arrivent plus tard si leur site d
 
 a) Vérifiez l'ajustement du modèle linéaire complet incluant les 4 prédicteurs. Interprétez les valeurs obtenues pour chacun des coefficients de ces prédicteurs (mais pas l'ordonnée à l'origine). Ces résultats sont-ils conformes à ceux attendus en théorie? 
 
+**Réponse**
+
+```{r}
+mod_comp <- lm(migDate ~ latBreed + latWntr + nestSite + moult, migr)
+
+par(mfrow = c(2, 2)) # Pour afficher 4 graphiques en une matrice 2x2
+plot(mod_comp)
+```
+
+L'ajustement est bon.
+
+```{r}
+summary(mod_comp)
+```
+
+Interprétation des coefficients:
+
+- En moyenne, la migration se produit 0.19 jours plus tard pour chaque degré de *latBreed* et 0.09 jours plus tôt pour chaque degré de *latWntr*.
+- En moyenne, la migration se produit 3.0 jours plus tôt pour les oiseaux nichant dans des cavités et 2.7 jours plus tard pour les oiseaux qui muent au site d'hivernage.
+
+La direction de ces effets correspond à la théorie.
+
+
 b) Comparez avec l'AICc les modèles incluant les combinaisons suivantes des 4 prédicteurs:
 
 - latBreed
@@ -67,6 +120,26 @@ b) Comparez avec l'AICc les modèles incluant les combinaisons suivantes des 4 p
 
 Combien de modèles ont un $\Delta AIC \le 2$? Selon les poids d'Akaike, quelle est la probabilité que le meilleur modèle se trouve parmi ceux-ci?
 
+**Réponse**
+
+```{r}
+liste_mod <- list(
+    breed = lm(migDate ~ latBreed, migr),
+    wntr = lm(migDate ~ latWntr, migr),
+    breed_wntr = lm(migDate ~ latBreed + latWntr, migr),
+    breed_nest = lm(migDate ~ latBreed + nestSite, migr),
+    wntr_nest = lm(migDate ~ latWntr + nestSite, migr), 
+    breed_wntr_nest = lm(migDate ~ latBreed + latWntr + nestSite, migr),
+    breed_nest_moult = lm(migDate ~ latBreed + nestSite + moult, migr),
+    wntr_nest_moult = lm(migDate ~ latWntr + nestSite + moult, migr),
+    comp = lm(migDate ~ latBreed + latWntr + nestSite + moult, migr)
+)
+
+aictab(liste_mod)
+```
+
+Quatre modèles ont un $\Delta AIC \le 2$. Ces modèles ont un poids combiné (cumulatif) de 77%.
+
 c) Chargez le jeu de données `migr_test.csv` qui contient les données de 10 autres espèces de l'étude de Rubolini et al.
 
 ```{r}
@@ -77,3 +150,19 @@ str(migr_test)
 Calculez la moyenne de l'erreur carrée de prédiction *(observation - prédiction)*$^2$ pour ces 10 nouvelles observations selon (i) le meilleur modèle identifié en (b) et (ii) la prédiction moyenne pondérée de tous les modèles.
 
 *Indice*: Pour obtenir un vecteur des prédictions moyennes, choisissez la composante `mod.avg.pred` de l'objet produit par la fonction `modavgPred`.
+
+**Réponse**
+
+```{r}
+pred_meilleur <- predict(liste_mod$breed_nest_moult, newdata = migr_test)
+pred_moyenne <- modavgPred(liste_mod, newdata = migr_test)
+
+err_meilleur <- mean((migr_test$migDate - pred_meilleur)^2)
+err_moyenne <- mean((migr_test$migDate - pred_moyenne$mod.avg.pred)^2)
+
+err_meilleur
+err_moyenne
+```
+
+L'erreur moyenne carrée est plus petite pour la prédiction moyenne.
+

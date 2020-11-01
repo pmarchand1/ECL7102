@@ -96,7 +96,7 @@ Cette deuxième équation porte souvent le nom de *fonction logistique*. Voici s
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
 ggplot(data.frame(x = seq(-5,5,0.1)), aes(x = x)) +
     labs(x = expression(eta), y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(-x))) +
+    stat_function(fun = plogis) +
     geom_segment(x = -5, xend = 0, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 0, xend = 0, y = 0, yend = 0.5, linetype = "dotted") +
     scale_x_continuous(expand = c(0, 0)) +
@@ -126,7 +126,7 @@ Le graphique ci-dessous présente la probabilité $p$ pour un modèle logistique
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
 ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     labs(y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+    stat_function(fun = function(x) plogis(-1 + 0.4*x)) +
     geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted") +
     geom_segment(x = -10, xend = 0, y = 0.27, yend = 0.27, linetype = "dotted") +
@@ -136,11 +136,11 @@ ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
 ```
 
-L'ordonnée à l'origine $\beta_0$ est égale au logit de $p$ lorsque $x = 0$. Pour calculer la valeur de $p$ correspondante, on peut définir la fonction inverse du logit (`invlogit`).
+L'ordonnée à l'origine $\beta_0$ est égale au logit de $p$ lorsque $x = 0$. Pour calculer la valeur de $p$ correspondant à une valeur donnée de $\text{logit}(p)$, on peut utiliser la fonction `plogis` dans R, tandis que la transformation logit elle-même est obtenue par la fonction `qlogis`.
 
 ```{r}
-invlogit <- function(x) 1/(1+exp(-x))
-invlogit(-1)
+plogis(-1)
+qlogis(0.5)
 ```
 
 La valeur de $x$ pour laquelle le prédicteur linéaire est zéro (ici, $-1 + 0.4x = 0$ donne $x = 2.5$) est associée à une probabilité $p = 0.5$. C'est à cet endroit de la courbe que la pente de $p$ vs. $x$ est maximale: cette pente maximale, indiquée par un ligne bleue dans le graphique, est égale à $\beta_1/4$, où $\beta_1$ est le coefficient de $x$ dans le prédicteur linéaire. Ici, puisque $\beta_1 = 0.4$, on peut dire que lorsque $x$ augmente de 1, la probabilité $p$ augmente au maximum de 0.1 (ou 10%).
@@ -189,7 +189,7 @@ mod <- glm(switch ~ arsenic + distance, data = Wells,
 summary(mod)
 ```
 
-L'ordonnée à l'origine est le logit de la probabilité de changer de puits pour une concentration d'arsenic et une distance toutes deux égales à zéro. Cette probabilité est donnée par `invlogit(0.0027)` soit environ 50%. Toutefois, puisque le modèle a été ajusté à un tableau de données où la concentration d'arsenic est toujours supérieure à 0.5, l'ordonnée à l'origine n'a pas vraiment de sens. 
+L'ordonnée à l'origine est le logit de la probabilité de changer de puits pour une concentration d'arsenic et une distance toutes deux égales à zéro. Cette probabilité est donnée par `plogis(0.0027)` soit environ 50%. Toutefois, puisque le modèle a été ajusté à un tableau de données où la concentration d'arsenic est toujours supérieure à 0.5, l'ordonnée à l'origine n'a pas vraiment de sens. 
 
 Les coefficients des prédicteurs indiquent qu'une augmentation de la concentration d'arsenic d'une unité (100 $\mu g/L$) résulte au maximum en une augmentation de ~0.12 de la probabilité de changer de puits (0.46/4), tandis qu'une augmentation de 1m de la distance résulte au maximum en une diminution de 0.0022 (0.0087/4) de cette probabilité (équivalent à une diminution de ~0.22 par 100m de distance). 
 

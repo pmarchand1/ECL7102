@@ -337,10 +337,11 @@ div.tocify {
 <h2>Interprétation des coefficients</h2>
 <p>Le graphique ci-dessous présente la probabilité <span class="math inline">\(p\)</span> pour un modèle logistique à une variable <span class="math inline">\(x\)</span> avec <span class="math inline">\(\beta_0 = -1\)</span> et <span class="math inline">\(\beta_1\)</span> = 0.4, donc: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span>.</p>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-3-1.png" width="384" /></p>
-<p>L’ordonnée à l’origine <span class="math inline">\(\beta_0\)</span> est égale au logit de <span class="math inline">\(p\)</span> lorsque <span class="math inline">\(x = 0\)</span>. Pour calculer la valeur de <span class="math inline">\(p\)</span> correspondante, on peut définir la fonction inverse du logit (<code>invlogit</code>).</p>
-<pre class="r"><code>invlogit &lt;- function(x) 1/(1+exp(-x))
-invlogit(-1)</code></pre>
+<p>L’ordonnée à l’origine <span class="math inline">\(\beta_0\)</span> est égale au logit de <span class="math inline">\(p\)</span> lorsque <span class="math inline">\(x = 0\)</span>. Pour calculer la valeur de <span class="math inline">\(p\)</span> correspondant à une valeur donnée de <span class="math inline">\(\text{logit}(p)\)</span>, on peut utiliser la fonction <code>plogis</code> dans R, tandis que la transformation logit elle-même est obtenue par la fonction <code>qlogis</code>.</p>
+<pre class="r"><code>plogis(-1)</code></pre>
 <pre><code>## [1] 0.2689414</code></pre>
+<pre class="r"><code>qlogis(0.5)</code></pre>
+<pre><code>## [1] 0</code></pre>
 <p>La valeur de <span class="math inline">\(x\)</span> pour laquelle le prédicteur linéaire est zéro (ici, <span class="math inline">\(-1 + 0.4x = 0\)</span> donne <span class="math inline">\(x = 2.5\)</span>) est associée à une probabilité <span class="math inline">\(p = 0.5\)</span>. C’est à cet endroit de la courbe que la pente de <span class="math inline">\(p\)</span> vs. <span class="math inline">\(x\)</span> est maximale: cette pente maximale, indiquée par un ligne bleue dans le graphique, est égale à <span class="math inline">\(\beta_1/4\)</span>, où <span class="math inline">\(\beta_1\)</span> est le coefficient de <span class="math inline">\(x\)</span> dans le prédicteur linéaire. Ici, puisque <span class="math inline">\(\beta_1 = 0.4\)</span>, on peut dire que lorsque <span class="math inline">\(x\)</span> augmente de 1, la probabilité <span class="math inline">\(p\)</span> augmente au maximum de 0.1 (ou 10%).</p>
 </div>
 </div>
@@ -396,7 +397,7 @@ summary(mod)</code></pre>
 ## AIC: 3936.7
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>L’ordonnée à l’origine est le logit de la probabilité de changer de puits pour une concentration d’arsenic et une distance toutes deux égales à zéro. Cette probabilité est donnée par <code>invlogit(0.0027)</code> soit environ 50%. Toutefois, puisque le modèle a été ajusté à un tableau de données où la concentration d’arsenic est toujours supérieure à 0.5, l’ordonnée à l’origine n’a pas vraiment de sens.</p>
+<p>L’ordonnée à l’origine est le logit de la probabilité de changer de puits pour une concentration d’arsenic et une distance toutes deux égales à zéro. Cette probabilité est donnée par <code>plogis(0.0027)</code> soit environ 50%. Toutefois, puisque le modèle a été ajusté à un tableau de données où la concentration d’arsenic est toujours supérieure à 0.5, l’ordonnée à l’origine n’a pas vraiment de sens.</p>
 <p>Les coefficients des prédicteurs indiquent qu’une augmentation de la concentration d’arsenic d’une unité (100 <span class="math inline">\(\mu g/L\)</span>) résulte au maximum en une augmentation de ~0.12 de la probabilité de changer de puits (0.46/4), tandis qu’une augmentation de 1m de la distance résulte au maximum en une diminution de 0.0022 (0.0087/4) de cette probabilité (équivalent à une diminution de ~0.22 par 100m de distance).</p>
 </div>
 <div id="visualiser-les-prédictions-du-modèle" class="section level2">

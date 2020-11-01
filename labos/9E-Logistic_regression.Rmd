@@ -1,10 +1,16 @@
 ---
 title: "Logistic regression"
-date: "November 6, 2019"
-output: pdf_document
+date: "November 4, 2020"
+output:
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
 ---
 
-Answers for this lab must be submitted before **November 13th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **November 11th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Wells data revisited
@@ -28,7 +34,7 @@ d) Based on the values of the AIC, compare the models in (a) and (c) with the ba
 
 e) From an appropriate diagnostic plot, verify that the residuals of the best model in (d) are distributed according to the logistic regression model.
 
-f) Visualize the probability of switching wells predicted by the best model in (d) for arsenic concentrations between 0.5 and 5 (on the data scale) and for three levels of education (0, 5 and 10 years). The variable `distance` will not appear on the graph, but you can use a constant distance of 50 m for predictions.
+f) Create a graph of the probability of switching wells (y-axis) predicted by the best model in (d) for values of the arsenic variable (x-axis) between 0.5 and 5 (i.e. 50 to 500 $\mu g/L$), with three lines corresponding to 0, 5 and 10 years of education. The variable `distance` will not appear on the graph, but you can use a constant distance of 50 m for predictions.
 
 
 ## 2. Incidence of esophageal cancer
@@ -54,11 +60,7 @@ a) Fit a binomial logistic regression model to these data, assuming an additive 
 
 b) Which of the two risk factors (alcohol or tobacco) increases the incidence of esophageal cancer the most for this population? Justify your answer.
 
-c) Answer the following questions based on the coefficients of the model and using the `invlogit` function, which converts the value of the linear predictor into a probability.
-
-```{r}
-invlogit <- function(x) 1/(1 + exp(-x))
-```
+c) Answer the following questions based on the coefficients of the model and using the `plogis` function, which converts the value of the linear predictor into a probability.
 
    - How do you interpret the value of the `Intercept` coefficient?
 

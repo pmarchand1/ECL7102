@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Régression logistique</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Régression logistique</h1>
+<h4 class="date">4 novembre 2020</h4>
+
+</div>
+
+
+<p>Ce laboratoire doit être remis le <strong>11 novembre à 17h sur Moodle</strong>. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s’il y a lieu) et des résultats obtenus.</p>
+<div id="retour-sur-les-données-de-puits" class="section level2">
+<h2>1. Retour sur les données de puits</h2>
+<p>Chargez le package <em>carData</em> pour avoir accès au tableau de données <code>Wells</code>, contenant les données d’une étude sur des puits à haute concentration en arsenic au Bangladesh.</p>
+<pre class="r"><code>library(carData)
+head(Wells)</code></pre>
+<pre><code>##   switch arsenic distance education association
+## 1    yes    2.36   16.826         0          no
+## 2    yes    0.71   47.322         0          no
+## 3     no    2.07   20.967        10          no
+## 4    yes    1.15   21.486        12          no
+## 5    yes    1.10   40.874        14         yes
+## 6    yes    3.90   69.518         9         yes</code></pre>
+<p>Durant le cours sur la régression logistique, nous avions modélisé la décision d’un ménage de changer de puits ou non (<code>switch</code>) en fonction de la concentration d’arsenic du puits (<code>arsenic</code>, en multiples de 100 <span class="math inline">\(\mu g/L\)</span>) et de la distance au puits sûr le plus près (<code>distance</code>, en m). Le but de cet exercice est d’évaluer l’effet du prédicteur <code>education</code>, représentant le nombre d’années de scolarité de l’adulte répondant pour le ménage.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimez les paramètres d’un modèle où les trois variables (concentration d’arsenic, distance et scolarité) ont un effet additif. Interprétez <em>de façon qualitative</em> le coefficient de la variable <code>education</code>: selon le signe de ce coefficient, quel effet a le niveau de scolarité sur la décision de changer de puits?</p></li>
+<li><p>Dans le contexte de cette étude, que signifierait une <strong>interaction</strong> entre le niveau de scolarité et la concentration d’arsenic sur la décision de changer de puits? Formulez une hypothèse sur la direction possible de cette interaction, avec une brève explication de votre choix.</p></li>
+<li><p>Estimez les paramètres du modèle avec une interaction entre le niveau de scolarité et la concentration d’arsenic, puis vérifiez si le résultat correspond à votre hypothèse formulée en (b).</p></li>
+<li><p>En vous basant sur les valeurs de l’AIC, comparez les modèles en (a) et (c) avec le modèle de base du cours (<code>switch ~ arsenic + distance</code>). Quel est le meilleur modèle? Est-il raisonnable d’effectuer des prédictions avec ce modèle seulement?</p></li>
+<li><p>À partir d’un graphique de diagnostic approprié, vérifiez que les résidus du meilleur modèle en (d) sont distribués conformément au modèle de régression logistique.</p></li>
+<li><p>Produisez un graphique de la probabilité de changer de puits (axe des y) prédite par le meilleur modèle en (d) pour des valeurs de la variable arsenic (axe des x) variant entre 0.5 et 5 (i.e. 50 à 500 <span class="math inline">\(\mu g/L\)</span>), avec trois lignes correspondant aux niveaux de scolarité de 0, 5 et 10 ans. La variable <code>distance</code> n’apparaîtra pas sur le graphique, mais vous pouvez utiliser une distance constante de 50 m pour les prédictions.</p></li>
+</ol>
+</div>
+<div id="incidence-du-cancer-de-loesophage" class="section level2">
+<h2>2. Incidence du cancer de l’oesophage</h2>
+<p>Le tableau de données <code>esoph</code> inclus dans R contient des données d’une étude menée en France sur l’incidence du cancer de l’oesophage en fonction de l’âge, de la consommation d’alcool et de tabac.</p>
+<pre class="r"><code>head(esoph)</code></pre>
+<pre><code>##   agegp     alcgp    tobgp ncases ncontrols
+## 1 25-34 0-39g/day 0-9g/day      0        40
+## 2 25-34 0-39g/day    10-19      0        10
+## 3 25-34 0-39g/day    20-29      0         6
+## 4 25-34 0-39g/day      30+      0         5
+## 5 25-34     40-79 0-9g/day      0        27
+## 6 25-34     40-79    10-19      0         7</code></pre>
+<p>Les données indiquent le nombre de sujets affectés (<code>ncases</code>) et non-affectés (<code>ncontrols</code>) pour chaque combinaison des catégories des trois prédicteurs.</p>
+<p>Le tableau original utilise des facteurs ordonnés pour chaque prédicteur. Puisque l’analyse de variables ordinales n’est pas vue dans ce cours, nous convertissons ces prédicteurs en facteurs non-ordonnés (variables nominales).</p>
+<pre class="r"><code>library(dplyr)
+esoph &lt;- mutate(esoph, agegp = factor(agegp, ordered = FALSE),
+                alcgp = factor(alcgp, ordered = FALSE),
+                tobgp = factor(tobgp, ordered = FALSE))</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Ajustez un modèle de régression logistique binomiale à ces données, en supposant un effet additif des trois prédicteurs, puis évaluez le coefficient pseudo-<span class="math inline">\(R^2\)</span> de McFadden du modèle.</p></li>
+<li><p>Lequel des deux facteurs de risque (alcool ou tabac) augmente le plus l’incidence du cancer de l’oesophage pour cette population? Justifiez votre réponse.</p></li>
+<li><p>Répondez aux questions suivantes en vous basant sur les coefficients du modèle et en utilisant la fonction <code>plogis</code>, qui permet convertir la valeur du prédicteur linéaire en probabilité.</p></li>
+</ol>
+<ul>
+<li><p>Comment interprétez-vous la valeur du coefficient <code>Intercept</code>?</p></li>
+<li><p>Quelle est la probabilité d’incidence du cancer pour une personne âgée entre 55 et 64 ans qui consomme moins de 39 g d’alcool et moins de 9 g de tabac par jour?</p></li>
+</ul>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Si on inversait les nombres des cas atteints (<code>ncases</code>) et non-atteints (<code>ncontrols</code>) dans la formule du modèle: <code>cbind(ncontrols, ncases) ~ agegp + alcgp + tobgp</code>, quel serait l’effet sur les coefficients estimés? Tentez de prédire la réponse selon votre connaissance du modèle logistique, puis vérifiez avec R.</li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

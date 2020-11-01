@@ -1,10 +1,16 @@
 ---
 title: "Régression logistique"
-date: "6 novembre 2019"
-output: pdf_document
+date: "4 novembre 2020"
+output:
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
 ---
 
-Ce laboratoire doit être remis le **13 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **11 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Retour sur les données de puits
@@ -27,7 +33,7 @@ d) En vous basant sur les valeurs de l'AIC, comparez les modèles en (a) et (c) 
 
 e) À partir d'un graphique de diagnostic approprié, vérifiez que les résidus du meilleur modèle en (d) sont distribués conformément au modèle de régression logistique.
 
-f) Visualisez la probabilité de changer de puits prédite par le meilleur modèle en (d) pour des concentrations en arsenic variant entre 0.5 et 5 (sur l'échelle des données) et pour trois niveaux de scolarité (0, 5 et 10 ans). La variable `distance` n'apparaîtra pas sur le graphique, mais vous pouvez utiliser une distance constante de 50 m pour les prédictions.
+f) Produisez un graphique de la probabilité de changer de puits (axe des y) prédite par le meilleur modèle en (d) pour des valeurs de la variable arsenic (axe des x) variant entre 0.5 et 5 (i.e. 50 à 500 $\mu g/L$), avec trois lignes correspondant aux niveaux de scolarité de 0, 5 et 10 ans. La variable `distance` n'apparaîtra pas sur le graphique, mais vous pouvez utiliser une distance constante de 50 m pour les prédictions.
 
 
 ## 2. Incidence du cancer de l'oesophage
@@ -53,11 +59,7 @@ a) Ajustez un modèle de régression logistique binomiale à ces données, en su
 
 b) Lequel des deux facteurs de risque (alcool ou tabac) augmente le plus l'incidence du cancer de l'oesophage pour cette population? Justifiez votre réponse.
 
-c) Répondez aux questions suivantes en vous basant sur les coefficients du modèle et en utilisant la fonction `invlogit`, qui permet convertir la valeur du prédicteur linéaire en probabilité.
-
-```{r}
-invlogit <- function(x) 1/(1 + exp(-x))
-```
+c) Répondez aux questions suivantes en vous basant sur les coefficients du modèle et en utilisant la fonction `plogis`, qui permet convertir la valeur du prédicteur linéaire en probabilité.
 
   - Comment interprétez-vous la valeur du coefficient `Intercept`?
 

@@ -1,6 +1,5 @@
 ---
-title: "Model selection"
-date: "October 28, 2020"
+title: "Model selection - Solutions"
 output:
     html_document:
         self_contained: false
@@ -27,9 +26,46 @@ str(enviro)
 
 a) Estimate the parameters of the model including the three predictors: `biomass ~ altitude + temperature + rainfall`. Does the inclusion of the three predictors in the same model cause problems? Justify your answer.
 
+**Solution**
+
+Altitude and temperature are strongly correlated (VIF of 11 for temperature and correlation of -0.92 between temperature and altitude), so it is preferrable to not include them in the same model.
+
+```{r, message = FALSE, warning = FALSE}
+mod_comp <- lm(biomass ~ altitude + temperature + rainfall, enviro)
+
+library(car)
+vif(mod_comp)
+
+cor(enviro$temperature, enviro$altitude)
+```
+
+Note that `rainfall` is somewhat correlated with the other predictors, but the VIF is not too large for a model with `temperature + rainfall` or `altitude + rainfall`.
+
 b) Propose several alternative models for this dataset, including the null model (0 predictor) and models with 1 or 2 predictors (without interactions). Avoid using highly correlated predictors in the same model. Create a table comparing these models according to their AICc.
 
+**Solution**
+
+Out of 8 possible models with 3 predictors, we exclude those that contain both temperature and altitude, leaving 6 models.
+
+```{r, message = FALSE, warning = FALSE}
+liste_mod <- list(
+    nul = lm(biomass ~ 1, enviro),
+    alt = lm(biomass ~ altitude, enviro),
+    temp = lm(biomass ~ temperature, enviro),
+    rain = lm(biomass ~ rainfall, enviro),
+    altrain = lm(biomass ~ altitude + rainfall, enviro),
+    temprain = lm(biomass ~ temperature + rainfall, enviro)
+)
+
+library(AICcmodavg)
+aictab(liste_mod)
+```
+
 c) What is the best model for predicting root biomass at a new site similar to those sampled? Would it be useful to make average predictions from several models here? Justify your answer.
+
+**Solution**
+
+The model with only temperature has the best AICc, closely followed by the model with only altitude. Generally, when two models have almost the same AICc, it is useful to average their predictions. However, since temperature and altitude are strongly correlated, both models contain almost the same information here.
 
 
 ## 2. Predictions of the migration of bird species
@@ -52,6 +88,28 @@ In theory, birds are expected to arrive later if their breeding site is further 
 
 a) Check the fit of the complete linear model including the 4 predictors. Interpret the values obtained for each of the coefficients of these predictors (but not the intercept). Are these results consistent with those expected in theory?
 
+**Solution**
+
+```{r}
+mod_comp <- lm(migDate ~ latBreed + latWntr + nestSite + moult, migr)
+
+par(mfrow = c(2, 2)) # Show 4 graphs in a 2x2 matrix
+plot(mod_comp)
+```
+
+The diagnostics don't show any major problem.
+
+```{r}
+summary(mod_comp)
+```
+
+Interpreting the coefficients:
+
+- On average, migration occurs 0.19 days later for each degree of *latBreed* and 0.09 days earlier for each degree of *latWntr*.
+- On average, migration occurs 3.0 days earlier for birds nesting in cavities and 2.7 days later for birds that moult at the wintering site.
+
+The direction of these effects corresponds to the theory.
+
 b) Using AICc, compare models including each of the following combinations of the 4 predictors:
 
 - latBreed
@@ -66,6 +124,26 @@ b) Using AICc, compare models including each of the following combinations of th
 
 How many models have a $\Delta AIC \le 2$? According to the Akaike weights, what is the probability that the best model is among those?
 
+**Solution**
+
+```{r}
+liste_mod <- list(
+    breed = lm(migDate ~ latBreed, migr),
+    wntr = lm(migDate ~ latWntr, migr),
+    breed_wntr = lm(migDate ~ latBreed + latWntr, migr),
+    breed_nest = lm(migDate ~ latBreed + nestSite, migr),
+    wntr_nest = lm(migDate ~ latWntr + nestSite, migr), 
+    breed_wntr_nest = lm(migDate ~ latBreed + latWntr + nestSite, migr),
+    breed_nest_moult = lm(migDate ~ latBreed + nestSite + moult, migr),
+    wntr_nest_moult = lm(migDate ~ latWntr + nestSite + moult, migr),
+    comp = lm(migDate ~ latBreed + latWntr + nestSite + moult, migr)
+)
+
+aictab(liste_mod)
+```
+
+Four models have a $\Delta AIC \le 2$. These models have a combined weight (cumulative) of 77%.
+
 c) Load the dataset `migr_test.csv` which contains the data of 10 other species from the Rubolini et al.
 
 ```{r}
@@ -76,4 +154,19 @@ str(migr_test)
 Calculate the mean of the square prediction error *(observation - prediction)*$^2$ for these 10 new observations according to (i) the best model identified in (b) and (ii) the weighted average prediction of all models.
 
 *Tip*: To obtain a vector of the average predictions, choose the `mod.avg.pred` component of the object produced by the `modavgPred` function.
+
+**Solution**
+
+```{r}
+pred_best <- predict(liste_mod$breed_nest_moult, newdata = migr_test)
+pred_average <- modavgPred(liste_mod, newdata = migr_test)
+
+err_best <- mean((migr_test$migDate - pred_best)^2)
+err_average <- mean((migr_test$migDate - pred_average$mod.avg.pred)^2)
+
+err_best
+err_average
+```
+
+The mean square error is smaller for the model-averaged predictions.
 

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-11-04" />
+
+<title>Logistic regression</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Logistic regression</h1>
+<h4 class="date">November 4, 2020</h4>
+
+</div>
+
+
+<p>Answers for this lab must be submitted before <strong>November 11th at 5pm on Moodle</strong>. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.</p>
+<div id="wells-data-revisited" class="section level2">
+<h2>1. Wells data revisited</h2>
+<p>Load the <em>carData</em> package to access the <code>Wells</code> data frame, containing data from a study of wells with high arsenic concentration in Bangladesh.</p>
+<pre class="r"><code>library(carData)
+head(Wells)</code></pre>
+<pre><code>##   switch arsenic distance education association
+## 1    yes    2.36   16.826         0          no
+## 2    yes    0.71   47.322         0          no
+## 3     no    2.07   20.967        10          no
+## 4    yes    1.15   21.486        12          no
+## 5    yes    1.10   40.874        14         yes
+## 6    yes    3.90   69.518         9         yes</code></pre>
+<p>During the class on logistic regression, we modeled a household’s decision to switch wells or not (<code>switch</code>) based on the arsenic concentration of the well (<code>arsenic</code>, in multiples of 100 <span class="math inline">\(\mu g/L\)</span>) and the distance to the nearest safe well (<code>distance</code>, in m). The purpose of this exercise is to evaluate the effect of the <code>education</code> predictor, representing the number of years of edcuation of the responding adult for the household.</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimate the parameters of a model in which the three variables (concentration of arsenic, distance and education) have an additive effect. Interpret <em>qualitatively</em> the coefficient of the variable <code>education</code>: according to the sign of this coefficient, what is the effect of education on the decision to switch wells or not?</p></li>
+<li><p>In the context of this study, what would an <strong>interaction</strong> between the level of education and the concentration of arsenic mean for the decision to switch wells? Formulate a hypothesis about the possible direction of this interaction, with a brief explanation of your choice.</p></li>
+<li><p>Estimate the parameters of the model with an interaction between the level of education and the arsenic concentration, then check whether the result corresponds to your hypothesis formulated in (b).</p></li>
+<li><p>Based on the values of the AIC, compare the models in (a) and (c) with the base model fitted during the course (<code>switch ~ arsenic + distance</code>). What is the best model? Is it reasonable to make predictions with this model only?</p></li>
+<li><p>From an appropriate diagnostic plot, verify that the residuals of the best model in (d) are distributed according to the logistic regression model.</p></li>
+<li><p>Create a graph of the probability of switching wells (y-axis) predicted by the best model in (d) for values of the arsenic variable (x-axis) between 0.5 and 5 (i.e. 50 to 500 <span class="math inline">\(\mu g/L\)</span>), with three lines corresponding to 0, 5 and 10 years of education. The variable <code>distance</code> will not appear on the graph, but you can use a constant distance of 50 m for predictions.</p></li>
+</ol>
+</div>
+<div id="incidence-of-esophageal-cancer" class="section level2">
+<h2>2. Incidence of esophageal cancer</h2>
+<p>The <code>esoph</code> data frame included in R contains data from a study on the incidence of esophageal cancer in France as a function of age, alcohol consumption and tobacco use.</p>
+<pre class="r"><code>head(esoph)</code></pre>
+<pre><code>##   agegp     alcgp    tobgp ncases ncontrols
+## 1 25-34 0-39g/day 0-9g/day      0        40
+## 2 25-34 0-39g/day    10-19      0        10
+## 3 25-34 0-39g/day    20-29      0         6
+## 4 25-34 0-39g/day      30+      0         5
+## 5 25-34     40-79 0-9g/day      0        27
+## 6 25-34     40-79    10-19      0         7</code></pre>
+<p>The data indicate the number of people diagnosed with cancer (<code>ncases</code>) and the number of unaffected people (<code>ncontrols</code>) for each combination of categories of the three predictors.</p>
+<p>The original table uses ordered factors for each predictor. Since the analysis of ordinal variables is not seen in this course, we convert these predictors to unordered factors (nominal variables).</p>
+<pre class="r"><code>library(dplyr)
+esoph &lt;- mutate(esoph, agegp = factor(agegp, ordered = FALSE),
+                alcgp = factor(alcgp, ordered = FALSE),
+                tobgp = factor(tobgp, ordered = FALSE))</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Fit a binomial logistic regression model to these data, assuming an additive effect of the three predictors, and then evaluate the McFadden pseudo-<span class="math inline">\(R^2\)</span> coefficient of the model.</p></li>
+<li><p>Which of the two risk factors (alcohol or tobacco) increases the incidence of esophageal cancer the most for this population? Justify your answer.</p></li>
+<li><p>Answer the following questions based on the coefficients of the model and using the <code>plogis</code> function, which converts the value of the linear predictor into a probability.</p>
+<ul>
+<li><p>How do you interpret the value of the <code>Intercept</code> coefficient?</p></li>
+<li><p>What is the probability of cancer incidence for a person aged 55 to 64 who consume less than 39 g of alcohol and less than 9 g of tobacco a day?</p></li>
+</ul></li>
+<li><p>If the number of cases and controls were reversed in the model formula: <code>cbind(ncontrols, ncases) ~ agegp + alcgp + tobgp</code>, what would be the effect on the estimated coefficients? Try to predict the answer based on your knowledge of the logistic model, then check with R.</p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -96,7 +96,7 @@ This last equation is often called the *logistic function*. Here is its graphica
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
 ggplot(data.frame(x = seq(-5,5,0.1)), aes(x = x)) +
     labs(x = expression(eta), y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(-x))) +
+    stat_function(fun = plogis) +
     geom_segment(x = -5, xend = 0, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 0, xend = 0, y = 0, yend = 0.5, linetype = "dotted") +
     scale_x_continuous(expand = c(0, 0)) +
@@ -126,7 +126,7 @@ The graph below shows the probability $p$ for a logistic regression model with o
 ```{r, echo = FALSE, fig.dim = c(4, 3)}
 ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     labs(y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+    stat_function(fun = function(x) plogis(-1 + 0.4*x)) +
     geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted") +
     geom_segment(x = -10, xend = 0, y = 0.27, yend = 0.27, linetype = "dotted") +
@@ -136,11 +136,11 @@ ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
 ```
 
-The intercept $\beta_0$ is equal to logit($p$) when $x = 0$. To calculate the corresponding value of $p$, we can define an inverse logit (`invlogit`) function.
+The intercept $\beta_0$ is equal to logit($p$) when $x = 0$. To calculate the value of $p$ corresponding to a given value of logit($p$), we can use the `plogis` function in R, whereas the logit transform itself is done by the `qlogis` function.
 
 ```{r}
-invlogit <- function(x) 1/(1+exp(-x))
-invlogit(-1)
+plogis(-1)
+qlogis(0.5)
 ```
 
 The value of $x$ for which the linear predictor is zero (here, $-1 + 0.4x = 0$ gives $x = 2.5$) is associated with a probability $p = 0.5$. It is at this point of the curve that the slope of $p$ vs. $x$ is maximal: this maximum slope, indicated by a blue line in the graph, is equal to $\beta_1 / 4$, where $\beta_1$ is the coefficient of $x$ in the linear predictor. Here, since $\beta_1 = 0.4$, we can say that when $x$ increases by 1, the probability $p$ increases by a maximum of 0.1 (or 10%).
