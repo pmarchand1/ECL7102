@@ -338,7 +338,7 @@ div.tocify {
 <h2>Interpreting the coefficients</h2>
 <p>The graph below shows the probability <span class="math inline">\(p\)</span> for a logistic regression model with one predictor <span class="math inline">\(x\)</span>, with coefficients <span class="math inline">\(\beta_0 = -1\)</span> and <span class="math inline">\(\beta_1\)</span> = 0.4, i.e. <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span>.</p>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-3-1.png" width="384" /></p>
-<p>The intercept <span class="math inline">\(\beta_0\)</span> is equal to logit(<span class="math inline">\(p\)</span>) when <span class="math inline">\(x = 0\)</span>. To calculate the value of <span class="math inline">\(p\)</span> corresponding to a given value of logit(<span class="math inline">\(p\)</span>), we can use the <code>plogis</code> function in R, whereas the logit transform itself is done by the <code>qlogis</code> function.</p>
+<p>The intercept <span class="math inline">\(\beta_0\)</span> is equal to logit(<span class="math inline">\(p\)</span>) when <span class="math inline">\(x = 0\)</span>. To calculate the value of <span class="math inline">\(p\)</span> corresponding to a given value of logit(<span class="math inline">\(p\)</span>), we can use the <code>plogis</code> function in R (which corresponds to the logistic function, also called “inverse logit”), whereas the logit transform itself is done by the <code>qlogis</code> function.</p>
 <pre class="r"><code>plogis(-1)</code></pre>
 <pre><code>## [1] 0.2689414</code></pre>
 <pre class="r"><code>qlogis(0.5)</code></pre>

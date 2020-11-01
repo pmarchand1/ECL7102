@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Régression logistique</title>
     <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles-xar.css" type="text/css" />
@@ -12,44 +13,18 @@
 class: center, middle, inverse, title-slide
 
 # Régression logistique
-### <br/>4 novembre 2019
+### 2 novembre 2020
 
 ---
 
 
 
-
-&lt;style type="text/css"&gt;
-.pull-left {
-  float: left;
-  width: 35%;
-}
-.pull-right {
-  float: right;
-  width: 60%;
-}
-
-.small { font-size: 70% }
-&lt;/style&gt;
-
-# Questions éclair
-
-Q1. Selon les valeurs d'AIC ci-dessous, dans lequel des cas l'ajustement des modèles A et B est-il le plus semblable? 
-
-| | AIC (cas 1)  | AIC (cas 2)  |
-|-|-------------:|-------------:|
-| Modèle A |  850 | 46 |
-| Modèle B |  855 | 49 |
-
-Q2. Pourquoi peut-on obtenir de meilleures prédictions en faisant la moyenne des prédictions de plusieurs modèles, plutôt qu'en se fiant uniquement au meilleur modèle?
-
----
 
 # Objectifs
 
 - Connaître les composantes d'un modèle linéaire généralisé.
 
-- Utiliser la régression logistique pour modéliser une réponse binaire (+/-), une réponse binomiale (nombre de + et -) ou des proportions.
+- Utiliser la régression logistique pour modéliser une réponse binaire (0 ou 1) ou binomiale (nombre de 0 et 1).
 
 - Interpréter les résultats d'une régression logistique et visualiser les effets des prédicteurs.
 
@@ -89,7 +64,7 @@ Est-ce qu'on peut modéliser la relation entre la réponse moyenne `\(\hat{y}\)`
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Modèles linéaires généralisés (GLM)
 
@@ -101,7 +76,7 @@ Extensions de la régression linéaire
 
 - différentes distributions de la réponse (pas seulement normale);
 
-- différentes transformation des prédictions linéaires.
+- différentes transformations des prédictions linéaires.
 
 ---
 
@@ -143,7 +118,7 @@ Extensions de la régression linéaire
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Modèle de régression logistique
 
@@ -212,7 +187,7 @@ dbinom(2, 5, 0.3)
 
 --
 
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -230,7 +205,7 @@ Inverse du logit: fonction logistique
 
 .center[
 
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
 ]
 
@@ -240,7 +215,7 @@ Inverse du logit: fonction logistique
 
 .pull-left[
 
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 
 ]
 
@@ -293,57 +268,99 @@ Lien logit:
 
 # Interprétation des coefficients
 
-**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+`\(\text{logit}(p) = -1 + 0.4x\)`
 
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
 
 ---
 
 # Interprétation des coefficients
 
-**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+`\(\text{logit}(p) = -1 + 0.4x\)`
 
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+.pull-left[
+
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+]
+
+.pull-right[
 
 - `\(\beta_0\)`: `\(\text{logit}(p)\)` si `\(x = 0\)`.
 
---
+]
+
+---
+
+# Interprétation des coefficients
+
+`\(\text{logit}(p) = -1 + 0.4x\)`
+
+.pull-left[
+
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+]
+
+.pull-right[
+
+- `\(\beta_0\)`: `\(\text{logit}(p)\)` si `\(x = 0\)`.
 
 
 ```r
-invlogit &lt;- function(x) 1/(1+exp(-x))
-invlogit(-1)
+plogis(-1)
 ```
 
 ```
 ## [1] 0.2689414
 ```
 
----
+*Note*: Dans R, `plogis` est la fonction logistique (parfois appelée *invlogit*),`qlogis` est la fonction logit.
 
-# Interprétation des coefficients
-
-**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
-
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
-
-- `\(p = 0.5\)` si `\(-1 + 0.4x = 0\)` (donc `\(x = 2.5\)`)
+]
 
 ---
 
 # Interprétation des coefficients
 
-**Exemple**: `\(\text{logit}(p) = -1 + 0.4x\)`
+`\(\text{logit}(p) = -1 + 0.4x\)`
 
-![](9-Régression_logistique_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+.pull-left[
+
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+]
+
+.pull-right[
+
+- `\(p = 0.5\)` si `\(-1 + 0.4x = 0\)`, donc `\(x = 2.5\)`
+
+]
+
+---
+
+# Interprétation des coefficients
+
+.pull-left[ 
+
+`\(\text{logit}(p) = -1 + 0.4x\)`
+
+![](9-Regression_logistique_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+]
+
+
+.pull-right[
 
 - `\(\beta_1/4\)` est la pente maximale de `\(p\)` vs. `\(x\)`. 
 
 - Si `\(x\)` augmente de 1, `\(p\)` augmente au plus de 0.1.
 
+]
+
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Régression logistique avec R
 
@@ -351,17 +368,15 @@ class: inverse, middle
 
 # Régression logistique avec R
 
-Nous verrons des exemples pour trois types de réponse:
+Nous verrons des exemples pour deux types de réponse:
+
+--
 
 - une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (1er niveau = 0, autres niveaux = 1);
 
 --
 
-- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences);
-
---
-
-- une variable indiquant une proportion entre 0 et 1.
+- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences).
 
 ---
 
@@ -456,7 +471,7 @@ group_by(snails, Exposure) %&gt;%
 
 --
 
-- L'ordonnée à l'origine `(Intercept)` correspond à logit( `\(p\)` ) pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
+- L'ordonnée à l'origine `(Intercept)` correspond à `\(\textrm{logit}(p)\)` pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
 
 --
 
@@ -474,121 +489,6 @@ group_by(snails, Exposure) %&gt;%
 --
 
 - Il existe des méthodes de réduction de biais (ex.: package **brglm**) qui aident dans ce cas, en pénalisant les coefficients trop élevés.
-
----
-
-# Régression logistique de proportions
-
-- Pour une réponse basée sur un nombre d'individus (ex.: escargots morts ou vivants), la distribution binomiale s'applique directement.
-
---
-
-- Parfois, la réponse existe seulement sous forme de proportion, par exemple:
-
-    + proportion d'un quadrat recouvert par une mousse;
-    + fraction d'un peuplement brûlée par un feu.
-    
----
-    
-# Régression logistique de proportions    
-    
-- Le lien logit fonctionne pour transformer un prédicteur linéaire en une proportion entre 0 et 1.
-
---
-
-- Toutefois, la variance de cette proportion n'est pas connue si elle ne provient pas d'un processus binomial.
-
---
-
-- Famille *quasibinomiale*:
-
-    + pas une vraie distribution
-    + estimation des coefficients suit la même formule que la binomiale
-    + on estime séparément un paramètre de dispersion `\(\phi\)`, pour que la variance des proportions soit égale à `\(\phi p (1-p)\)`.
-    
----
-
-# Exemple des escargots
-
-- Supposons qu'on ne connait que la proportion d'escargots morts par traitement.
-
-
-```r
-snails &lt;- mutate(snails, prop = Deaths / N)
-mod_prop &lt;- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-```
-
----
-
-# Exemple des escargots
-
-.small[
-
-
-```r
-summary(mod_prop)
-```
-
-```
-## 
-## Call:
-## glm(formula = prop ~ Species + Exposure + Rel.Hum + Temp, family = quasibinomial, 
-##     data = snails)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -0.38597  -0.15892  -0.07517   0.09461   0.39153  
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -1.404947   0.689052  -2.039   0.0444 *  
-## SpeciesB     1.308638   0.116058  11.276  &lt; 2e-16 ***
-## Exposure     1.503389   0.072652  20.693  &lt; 2e-16 ***
-## Rel.Hum     -0.106843   0.009851 -10.846  &lt; 2e-16 ***
-## Temp         0.094041   0.013677   6.876 7.55e-10 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for quasibinomial family taken to be 0.02519503)
-## 
-##     Null deviance: 26.9860  on 95  degrees of freedom
-## Residual deviance:  2.7535  on 91  degrees of freedom
-## AIC: NA
-## 
-## Number of Fisher Scoring iterations: 6
-```
-
-]
-
----
-
-# Régression logistique de proportions 
-
-- Nous parlerons davantage du paramètre de dispersion au prochain cours.
-
---
-
-- Une autre option pour la modélisation de proportions est la régression beta (package **betareg**).
-
-
----
-
-# Questions éclair
-
-Considérez le modèle de régression logistique `\(\textrm{logit}(p) = \alpha + \beta x\)`, où `\(p\)` est la probabilité d'un événement et `\(x\)` est un prédicteur numérique. 
-
-1. Est-ce que l'effet sur `\(p\)` est le même si `\(x\)` passe de 0 à 1 que si `\(x\)` passe de 10 à 11?
-
-2. Parmi les expressions suivantes, laquelle ou lesquelles décrivent correctement l'effet sur `\(p\)` lorsque `\(x\)` passe de 0 à 1?
-
-(a) `\(\textrm{invlogit}(\beta)\)`
-
-(b) `\(\textrm{invlogit}(\beta) - \textrm{invlogit}(\alpha)\)`
-
-(c) `\(\textrm{invlogit}(\alpha + \beta) - \textrm{invlogit}(\alpha)\)`
-
-(d) `\(\beta / 4\)`
 
 ---
 
@@ -613,13 +513,13 @@ Considérez le modèle de régression logistique `\(\textrm{logit}(p) = \alpha +
 --
 
 - Pour une réponse binaire (0 ou 1), les résidus individuels donnent peu d'information, mais on peut vérifier l'ajustement du modèle à partir des moyennes de groupes de résidus (*binned residuals*).
-
----
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
+"highlightLines": true,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -660,9 +560,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -671,7 +587,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

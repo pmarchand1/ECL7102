@@ -136,7 +136,7 @@ ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
 ```
 
-L'ordonnée à l'origine $\beta_0$ est égale au logit de $p$ lorsque $x = 0$. Pour calculer la valeur de $p$ correspondant à une valeur donnée de $\text{logit}(p)$, on peut utiliser la fonction `plogis` dans R, tandis que la transformation logit elle-même est obtenue par la fonction `qlogis`.
+L'ordonnée à l'origine $\beta_0$ est égale au logit de $p$ lorsque $x = 0$. Pour calculer la valeur de $p$ correspondant à une valeur donnée de $\text{logit}(p)$, on peut utiliser la fonction `plogis` dans R (qui correspond donc à la fonction logistique ou "inverse du logit"), tandis que la transformation logit elle-même est obtenue par la fonction `qlogis`.
 
 ```{r}
 plogis(-1)

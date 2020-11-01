@@ -1,53 +1,35 @@
 ---
 title: "Régression logistique"
-date: "<br/>4 novembre 2019"
+date: "2 novembre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(6, 4))
-library(dplyr)
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
-
-```{css, echo = FALSE}
-.pull-left {
-  float: left;
-  width: 35%;
-}
-.pull-right {
-  float: right;
-  width: 60%;
-}
-
-.small { font-size: 70% }
-```
-
-# Questions éclair
-
-Q1. Selon les valeurs d'AIC ci-dessous, dans lequel des cas l'ajustement des modèles A et B est-il le plus semblable? 
-
-| | AIC (cas 1)  | AIC (cas 2)  |
-|-|-------------:|-------------:|
-| Modèle A |  850 | 46 |
-| Modèle B |  855 | 49 |
-
-Q2. Pourquoi peut-on obtenir de meilleures prédictions en faisant la moyenne des prédictions de plusieurs modèles, plutôt qu'en se fiant uniquement au meilleur modèle?
-
----
 
 # Objectifs
 
 - Connaître les composantes d'un modèle linéaire généralisé.
 
-- Utiliser la régression logistique pour modéliser une réponse binaire (+/-), une réponse binomiale (nombre de + et -) ou des proportions.
+- Utiliser la régression logistique pour modéliser une réponse binaire (0 ou 1) ou binomiale (nombre de 0 et 1).
 
 - Interpréter les résultats d'une régression logistique et visualiser les effets des prédicteurs.
 
@@ -87,7 +69,7 @@ $$\hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Modèles linéaires généralisés (GLM)
 
@@ -99,7 +81,7 @@ Extensions de la régression linéaire
 
 - différentes distributions de la réponse (pas seulement normale);
 
-- différentes transformation des prédictions linéaires.
+- différentes transformations des prédictions linéaires.
 
 ---
 
@@ -141,7 +123,7 @@ $$\hat{y} = \beta_0 + \sum_{i = 1}^m \beta_i x_i$$
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Modèle de régression logistique
 
@@ -199,7 +181,7 @@ Fonctions `rbinom`, `dbinom`, `pbinom` et `qbinom`.
 
 Exemple: Probabilité d'obtenir 2 présences sur 5 essais, avec $p$ = 0.3.
 
-```{r}
+```{r, echo = TRUE}
 dbinom(2, 5, 0.3)
 ```
 
@@ -232,7 +214,7 @@ $$p = \frac{1}{1 + e^{-\eta}}$$
 ```{r, echo = FALSE, fig.dim = c(5, 4)}
 graph_invlogit <- ggplot(data.frame(x = seq(-5,5,0.1)), aes(x = x)) +
     labs(x = expression(eta), y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(-x))) +
+    stat_function(fun = plogis) +
     geom_segment(x = -5, xend = 0, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 0, xend = 0, y = 0, yend = 0.5, linetype = "dotted") +
     scale_x_continuous(expand = c(0, 0)) +
@@ -248,7 +230,7 @@ graph_invlogit
 
 .pull-left[
 
-```{r, echo = FALSE, fig.dim = c(3, 3)}
+```{r, echo = FALSE, fig.dim = c(5, 5)}
 graph_invlogit
 ```
 
@@ -303,12 +285,12 @@ $$p = \frac{1}{1 + e^{-(\beta_0 + \sum_{i = 1}^m \beta_i x_i)}}$$
 
 # Interprétation des coefficients
 
-**Exemple**: $\text{logit}(p) = -1 + 0.4x$
+$\text{logit}(p) = -1 + 0.4x$
 
-```{r, echo = FALSE, fig.dim = c(4, 3)}
+```{r, echo = FALSE, fig.dim = c(5, 4)}
 ex_logit <- ggplot(data.frame(x = seq(-10,10,0.1)), aes(x = x)) +
     labs(y = "p") +
-    stat_function(fun = function(x) 1/(1+exp(1-0.4*x))) +
+    stat_function(fun = function(x) plogis(-1 + 0.4*x)) +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0), breaks = seq(0, 1, 0.25), limits = c(0, 1))
 ex_logit
@@ -318,57 +300,103 @@ ex_logit
 
 # Interprétation des coefficients
 
-**Exemple**: $\text{logit}(p) = -1 + 0.4x$
+$\text{logit}(p) = -1 + 0.4x$
 
-```{r, echo = FALSE, fig.dim = c(4, 3)}
+.pull-left[
+
+```{r, echo = FALSE, fig.dim = c(5, 4)}
 ex_logit +
     geom_segment(x = -10, xend = 0, y = 0.27, yend = 0.27, linetype = "dotted") +
     geom_segment(x = 0, xend = 0, y = 0, yend = 0.27, linetype = "dotted")
 ```
 
+]
+
+.pull-right[
+
 - $\beta_0$: $\text{logit}(p)$ si $x = 0$.
 
---
-
-```{r}
-invlogit <- function(x) 1/(1+exp(-x))
-invlogit(-1)
-```
+]
 
 ---
 
 # Interprétation des coefficients
 
-**Exemple**: $\text{logit}(p) = -1 + 0.4x$
+$\text{logit}(p) = -1 + 0.4x$
 
-```{r, echo = FALSE, fig.dim = c(4, 3)}
+.pull-left[
+
+```{r, echo = FALSE, fig.dim = c(5, 4)}
+ex_logit +
+    geom_segment(x = -10, xend = 0, y = 0.27, yend = 0.27, linetype = "dotted") +
+    geom_segment(x = 0, xend = 0, y = 0, yend = 0.27, linetype = "dotted")
+```
+
+]
+
+.pull-right[
+
+- $\beta_0$: $\text{logit}(p)$ si $x = 0$.
+
+```{r, echo = TRUE}
+plogis(-1)
+```
+
+*Note*: Dans R, `plogis` est la fonction logistique (parfois appelée *invlogit*),`qlogis` est la fonction logit.
+
+]
+
+---
+
+# Interprétation des coefficients
+
+$\text{logit}(p) = -1 + 0.4x$
+
+.pull-left[
+
+```{r, echo = FALSE, fig.dim = c(5, 4)}
 ex_logit +
     geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted")
 ```
 
-- $p = 0.5$ si $-1 + 0.4x = 0$ (donc $x = 2.5$)
+]
+
+.pull-right[
+
+- $p = 0.5$ si $-1 + 0.4x = 0$, donc $x = 2.5$
+
+]
 
 ---
 
 # Interprétation des coefficients
 
-**Exemple**: $\text{logit}(p) = -1 + 0.4x$
+.pull-left[ 
 
-```{r, echo = FALSE, fig.dim = c(4, 3)}
+$\text{logit}(p) = -1 + 0.4x$
+
+```{r, echo = FALSE, fig.dim = c(5, 4)}
 ex_logit + 
     geom_segment(x = -10, xend = 2.5, y = 0.5, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 2.5, xend = 2.5, y = 0, yend = 0.5, linetype = "dotted") +
     geom_segment(x = 0.5, xend = 4.5, y = 0.3, yend = 0.7, color = "blue", size = 1)
 ```
 
+]
+
+
+.pull-right[
+
 - $\beta_1/4$ est la pente maximale de $p$ vs. $x$. 
 
 - Si $x$ augmente de 1, $p$ augmente au plus de 0.1.
 
+]
+
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Régression logistique avec R
 
@@ -376,17 +404,15 @@ class: inverse, middle
 
 # Régression logistique avec R
 
-Nous verrons des exemples pour trois types de réponse:
+Nous verrons des exemples pour deux types de réponse:
+
+--
 
 - une variable binaire codée par des valeurs logiques (FALSE, TRUE), des valeurs numériques (0, 1) ou un facteur (1er niveau = 0, autres niveaux = 1);
 
 --
 
-- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences);
-
---
-
-- une variable indiquant une proportion entre 0 et 1.
+- une variable binomiale décrite par deux colonnes (nombre de présences, nombre d'absences).
 
 ---
 
@@ -465,14 +491,14 @@ $${R^2}_{\text{Tjur}} = \bar{\hat{y}}_{(y=1)} - \bar{\hat{y}}_{(y=0)}$$
 library(MASS)
 ```
 
-```{r}
+```{r, echo = TRUE}
 group_by(snails, Exposure) %>%
     summarize(mean(Deaths))
 ```
 
 --
 
-- L'ordonnée à l'origine `(Intercept)` correspond à logit( $p$ ) pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
+- L'ordonnée à l'origine `(Intercept)` correspond à $\textrm{logit}(p)$ pour `Exposure` = 1, mais il n'y a aucun escargot mort pour ce niveau.  
 
 --
 
@@ -490,90 +516,6 @@ group_by(snails, Exposure) %>%
 --
 
 - Il existe des méthodes de réduction de biais (ex.: package **brglm**) qui aident dans ce cas, en pénalisant les coefficients trop élevés.
-
----
-
-# Régression logistique de proportions
-
-- Pour une réponse basée sur un nombre d'individus (ex.: escargots morts ou vivants), la distribution binomiale s'applique directement.
-
---
-
-- Parfois, la réponse existe seulement sous forme de proportion, par exemple:
-
-    + proportion d'un quadrat recouvert par une mousse;
-    + fraction d'un peuplement brûlée par un feu.
-    
----
-    
-# Régression logistique de proportions    
-    
-- Le lien logit fonctionne pour transformer un prédicteur linéaire en une proportion entre 0 et 1.
-
---
-
-- Toutefois, la variance de cette proportion n'est pas connue si elle ne provient pas d'un processus binomial.
-
---
-
-- Famille *quasibinomiale*:
-
-    + pas une vraie distribution
-    + estimation des coefficients suit la même formule que la binomiale
-    + on estime séparément un paramètre de dispersion $\phi$, pour que la variance des proportions soit égale à $\phi p (1-p)$.
-    
----
-
-# Exemple des escargots
-
-- Supposons qu'on ne connait que la proportion d'escargots morts par traitement.
-
-```{r}
-snails <- mutate(snails, prop = Deaths / N)
-mod_prop <- glm(prop ~ Species + Exposure + Rel.Hum + Temp, 
-                data = snails, family = quasibinomial)
-```
-
----
-
-# Exemple des escargots
-
-.small[
-
-```{r}
-summary(mod_prop)
-```
-
-]
-
----
-
-# Régression logistique de proportions 
-
-- Nous parlerons davantage du paramètre de dispersion au prochain cours.
-
---
-
-- Une autre option pour la modélisation de proportions est la régression beta (package **betareg**).
-
-
----
-
-# Questions éclair
-
-Considérez le modèle de régression logistique $\textrm{logit}(p) = \alpha + \beta x$, où $p$ est la probabilité d'un événement et $x$ est un prédicteur numérique. 
-
-1. Est-ce que l'effet sur $p$ est le même si $x$ passe de 0 à 1 que si $x$ passe de 10 à 11?
-
-2. Parmi les expressions suivantes, laquelle ou lesquelles décrivent correctement l'effet sur $p$ lorsque $x$ passe de 0 à 1?
-
-(a) $\textrm{invlogit}(\beta)$
-
-(b) $\textrm{invlogit}(\beta) - \textrm{invlogit}(\alpha)$
-
-(c) $\textrm{invlogit}(\alpha + \beta) - \textrm{invlogit}(\alpha)$
-
-(d) $\beta / 4$
 
 ---
 
@@ -598,6 +540,4 @@ Considérez le modèle de régression logistique $\textrm{logit}(p) = \alpha + \
 --
 
 - Pour une réponse binaire (0 ou 1), les résidus individuels donnent peu d'information, mais on peut vérifier l'ajustement du modèle à partir des moyennes de groupes de résidus (*binned residuals*).
-
----
 

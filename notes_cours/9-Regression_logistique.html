@@ -337,7 +337,7 @@ div.tocify {
 <h2>Interprétation des coefficients</h2>
 <p>Le graphique ci-dessous présente la probabilité <span class="math inline">\(p\)</span> pour un modèle logistique à une variable <span class="math inline">\(x\)</span> avec <span class="math inline">\(\beta_0 = -1\)</span> et <span class="math inline">\(\beta_1\)</span> = 0.4, donc: <span class="math inline">\(\text{logit}(p) = -1 + 0.4x\)</span>.</p>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-3-1.png" width="384" /></p>
-<p>L’ordonnée à l’origine <span class="math inline">\(\beta_0\)</span> est égale au logit de <span class="math inline">\(p\)</span> lorsque <span class="math inline">\(x = 0\)</span>. Pour calculer la valeur de <span class="math inline">\(p\)</span> correspondant à une valeur donnée de <span class="math inline">\(\text{logit}(p)\)</span>, on peut utiliser la fonction <code>plogis</code> dans R, tandis que la transformation logit elle-même est obtenue par la fonction <code>qlogis</code>.</p>
+<p>L’ordonnée à l’origine <span class="math inline">\(\beta_0\)</span> est égale au logit de <span class="math inline">\(p\)</span> lorsque <span class="math inline">\(x = 0\)</span>. Pour calculer la valeur de <span class="math inline">\(p\)</span> correspondant à une valeur donnée de <span class="math inline">\(\text{logit}(p)\)</span>, on peut utiliser la fonction <code>plogis</code> dans R (qui correspond donc à la fonction logistique ou “inverse du logit”), tandis que la transformation logit elle-même est obtenue par la fonction <code>qlogis</code>.</p>
 <pre class="r"><code>plogis(-1)</code></pre>
 <pre><code>## [1] 0.2689414</code></pre>
 <pre class="r"><code>qlogis(0.5)</code></pre>
