@@ -224,21 +224,24 @@ ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance)))
 
 Nous pourrions noter par exemple que plus la distance vers un puits sûr augmente, plus la concentration doit être élevée pour qu'un ménage change de puits la majorité du temps (ligne pointillée à $p = 0.5$).
 
-Pour visualiser l'intervalle de confiance de ces probabilités, nous devons choisir l'option `se.fit = TRUE` de `predict` pour obtenir les erreurs-types, puis ajouter un ruban correspondant à une région de 1.96 erreur-type de part et d'autre de la valeur moyenne, pour un intervalle de confiance à 95%.
+Pour visualiser l'intervalle de confiance de ces probabilités, nous devons revenir à l'échelle du prédicteur linéaire $\eta$ plutôt que celle de la réponse, obtenir les erreurs-types des valeurs $\eta$ avec l'option `se.fit = TRUE`, calculer un intervalle de 1.96 erreur-type de part et d'autre de $\eta$, puis finalement convertir $\eta$ et les bornes de l'intervalle en valeurs de $p$ avec la fonction `plogis`. 
 
 ```{r}
-prob_pred <- predict(mod, wells_nouv, type = "response", se.fit = TRUE)
+prob_pred <- predict(mod, wells_nouv, se.fit = TRUE)
+wells_nouv$prob_pred <- prob_pred$fit
 wells_nouv$prob_se <- prob_pred$se.fit
 
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
+ggplot(wells_nouv, aes(x = arsenic, y = plogis(prob_pred), color = as.factor(distance),
                        fill = as.factor(distance))) +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
+    geom_ribbon(aes(ymin = plogis(prob_pred - 1.96*prob_se), 
+                    ymax = plogis(prob_pred + 1.96*prob_se)), alpha = 0.3) +
     geom_line() +
     scale_color_brewer(palette = "Dark2") +
     scale_fill_brewer(palette = "Dark2")
 
 ```
+
+La raison pour laquelle nous devons d'abord calculer l'intervalle de confiance sur l'échelle du prédicteur linéaire est que l'incertitude sur celui-ci suit davantage une distribution normale que l'incertitude sur $p$.
 
 Notez qu'un intervalle de prédiction des observations individuelles serait moins intéressant ici, car ces observations sont toujours 0 ou 1.
 
@@ -332,8 +335,7 @@ plot(mod_snails)
 par(mfrow = c(1, 1))
 ```
 
-Puisque la réponse n'est pas supposée suivre une distribution normale, nous ne nous intéressons pas vraiment au diagramme quantile-quantile. Notez que les résidus utilisés dans ce diagramme ne sont pas les résidus de la réponse ($y - \hat{y}$), mais plutôt les résidus de la déviance `residuals(mod_snails, type = "deviance")`, qui s'approchent davantage de la normalité. Ceux-ci sont calculés à partir de la contribution de chaque observation à la déviance totale, $-2 \log L_k$, où $L_k$ est la vraisemblance de l'observation $k$ prise individuellement.
-
+Puisque la réponse n'est pas supposée suivre une distribution normale, nous ne nous intéressons pas vraiment au diagramme quantile-quantile. Le graphique *Residuals vs Fitted* permet de vérifier l'absence de tendance dans les résidus et le graphique *Residuals vs Leverage* permet de détecter des points avec une grande influence sur la régression. Notez que trois des graphiques utilisent les résidus de Pearson (Std. Pearson resid.) qui correspondent aux résidus divisés par l'écart-type attendu de la réponse (rappelons-nous que cet écart-type dépend de la valeur attendue de la réponse ici). Ces résidus devraient donc avoir une variance plus homogène que les résidus bruts.
 
 # Problème de séparation parfaite
 

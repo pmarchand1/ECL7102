@@ -420,18 +420,20 @@ ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance)))
     scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>We could note, for example, that the more the distance to a safe well increases, the higher the concentration must be for a household to change wells a majority of the time (dashed line at <span class="math inline">\(p = 0.5\)</span>).</p>
-<p>To visualize the confidence interval of these probabilities, we must choose the <code>se.fit = TRUE</code> option of<code>predict</code> to obtain the standard errors, then add a ribbon corresponding to a region of 1.96 standard error on each side of the mean value, for a 95% confidence interval.</p>
-<pre class="r"><code>prob_pred &lt;- predict(mod, wells_nouv, type = &quot;response&quot;, se.fit = TRUE)
+<p>To visualize the confidence interval of these probabilities, we need to go back to the scale of the linear predictor <span class="math inline">\(\eta\)</span> rather than that of the response, get the standard errors of the <span class="math inline">\(\eta\)</span> values with the <code>se.fit = TRUE</code> option, compute an interval of 1.96 standard errors on each side of <span class="math inline">\(\eta\)</span>, and finally convert <span class="math inline">\(\eta\)</span> and the bounds of the interval into values of <span class="math inline">\(p\)</span> with the function <code>plogis</code>.</p>
+<pre class="r"><code>prob_pred &lt;- predict(mod, wells_nouv, se.fit = TRUE)
+wells_nouv$prob_pred &lt;- prob_pred$fit
 wells_nouv$prob_se &lt;- prob_pred$se.fit
 
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
+ggplot(wells_nouv, aes(x = arsenic, y = plogis(prob_pred), color = as.factor(distance),
                        fill = as.factor(distance))) +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
+    geom_ribbon(aes(ymin = plogis(prob_pred - 1.96*prob_se), 
+                    ymax = plogis(prob_pred + 1.96*prob_se)), alpha = 0.3) +
     geom_line() +
     scale_color_brewer(palette = &quot;Dark2&quot;) +
     scale_fill_brewer(palette = &quot;Dark2&quot;)</code></pre>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>The reason we must first calculate the confidence interval on the scale of the linear predictor is that its uncertainty is closer to being normally distributed, whereas the uncertainty on <span class="math inline">\(p\)</span> is not.</p>
 <p>Note that a prediction interval for individual observations would be less interesting here, since these observations are always 0 or 1.</p>
 </div>
 <div id="checking-the-model-fit" class="section level2">
@@ -516,7 +518,7 @@ summary(mod_snails)</code></pre>
 <p>According to the sign of the coefficients, mortality is greater for species B than species A. This mortality also increases with time of exposure and temperature, but decreases with a rise in relative humidity (in the range of values considered).</p>
 <p>With several observations per row, individual residuals contain more information, so conventional diagnostic charts are more useful than in the previous example. However, almost half of the rows have no dead snail (<code>Deaths</code> = 0) and these zeros are the cause of the “line” of residuals in some graphs.</p>
 <p><img src="9E-Logistic_regression_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. Note that the residuals used in that plot are not the response residuals (<span class="math inline">\(y - \hat{y}\)</span>), but rather the deviance residuals <code>residuals(mod_snails, type = "deviance")</code>, which are are closer to normality. These are calculated from the contribution of each observation to the total deviance, <span class="math inline">\(-2 \log L_k\)</span>, where <span class="math inline">\(L_k\)</span> is the likelihood of observation <span class="math inline">\(k\)</span> taken individually.</p>
+<p>Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. The <em>Residuals vs Fitted</em> plot allows us to check for a trend in the residuals and the <em>Residuals vs Leverage</em> plot allows us to detect points with a great influence on the regression. Note that three of the graphs use Pearson residuals (Std. Pearson resid.), which correspond to the residuals divided by the expected standard deviation of the response (remember that this standard deviation depends on the expected value of the response here). These standardized residuals should therefore have a more homogeneous variance than the raw residuals.</p>
 </div>
 </div>
 <div id="perfect-separation-problem" class="section level1">

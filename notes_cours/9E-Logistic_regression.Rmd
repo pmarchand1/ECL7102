@@ -224,21 +224,23 @@ ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance)))
 
 We could note, for example, that the more the distance to a safe well increases, the higher the concentration must be for a household to change wells a majority of the time (dashed line at $p =  0.5$).
 
-To visualize the confidence interval of these probabilities, we must choose the `se.fit = TRUE` option of` predict` to obtain the standard errors, then add a ribbon corresponding to a region of 1.96 standard error on each side of the mean value, for a 95% confidence interval.
+To visualize the confidence interval of these probabilities, we need to go back to the scale of the linear predictor $\eta$ rather than that of the response, get the standard errors of the $\eta$ values with the `se.fit = TRUE` option, compute an interval of 1.96 standard errors on each side of $\eta$, and finally convert $\eta$ and the bounds of the interval into values of $p$ with the function `plogis`. 
 
 ```{r}
-prob_pred <- predict(mod, wells_nouv, type = "response", se.fit = TRUE)
+prob_pred <- predict(mod, wells_nouv, se.fit = TRUE)
+wells_nouv$prob_pred <- prob_pred$fit
 wells_nouv$prob_se <- prob_pred$se.fit
 
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
+ggplot(wells_nouv, aes(x = arsenic, y = plogis(prob_pred), color = as.factor(distance),
                        fill = as.factor(distance))) +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
+    geom_ribbon(aes(ymin = plogis(prob_pred - 1.96*prob_se), 
+                    ymax = plogis(prob_pred + 1.96*prob_se)), alpha = 0.3) +
     geom_line() +
     scale_color_brewer(palette = "Dark2") +
     scale_fill_brewer(palette = "Dark2")
-
 ```
+
+The reason we must first calculate the confidence interval on the scale of the linear predictor is that its uncertainty is closer to being normally distributed, whereas the uncertainty on $p$ is not.
 
 Note that a prediction interval for individual observations would be less interesting here, since these observations are always 0 or 1.
 
@@ -332,8 +334,7 @@ plot(mod_snails)
 par(mfrow = c(1, 1))
 ```
 
-Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. Note that the residuals used in that plot are not the response residuals ($y - \hat{y}$), but rather the deviance residuals `residuals(mod_snails, type = "deviance")`, which are are closer to normality. These are calculated from the contribution of each observation to the total deviance, $-2 \log L_k$, where $L_k$ is the likelihood of observation $k$ taken individually.
-
+Since the response is not supposed to follow a normal distribution, we are not really interested in the quantile-quantile plot. The *Residuals vs Fitted* plot allows us to check for a trend in the residuals and the *Residuals vs Leverage* plot allows us to detect points with a great influence on the regression. Note that three of the graphs use Pearson residuals (Std. Pearson resid.), which correspond to the residuals divided by the expected standard deviation of the response (remember that this standard deviation depends on the expected value of the response here). These standardized residuals should therefore have a more homogeneous variance than the raw residuals.
 
 # Perfect separation problem
 

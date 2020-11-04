@@ -419,18 +419,20 @@ ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance)))
     scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Nous pourrions noter par exemple que plus la distance vers un puits sûr augmente, plus la concentration doit être élevée pour qu’un ménage change de puits la majorité du temps (ligne pointillée à <span class="math inline">\(p = 0.5\)</span>).</p>
-<p>Pour visualiser l’intervalle de confiance de ces probabilités, nous devons choisir l’option <code>se.fit = TRUE</code> de <code>predict</code> pour obtenir les erreurs-types, puis ajouter un ruban correspondant à une région de 1.96 erreur-type de part et d’autre de la valeur moyenne, pour un intervalle de confiance à 95%.</p>
-<pre class="r"><code>prob_pred &lt;- predict(mod, wells_nouv, type = &quot;response&quot;, se.fit = TRUE)
+<p>Pour visualiser l’intervalle de confiance de ces probabilités, nous devons revenir à l’échelle du prédicteur linéaire <span class="math inline">\(\eta\)</span> plutôt que celle de la réponse, obtenir les erreurs-types des valeurs <span class="math inline">\(\eta\)</span> avec l’option <code>se.fit = TRUE</code>, calculer un intervalle de 1.96 erreur-type de part et d’autre de <span class="math inline">\(\eta\)</span>, puis finalement convertir <span class="math inline">\(\eta\)</span> et les bornes de l’intervalle en valeurs de <span class="math inline">\(p\)</span> avec la fonction <code>plogis</code>.</p>
+<pre class="r"><code>prob_pred &lt;- predict(mod, wells_nouv, se.fit = TRUE)
+wells_nouv$prob_pred &lt;- prob_pred$fit
 wells_nouv$prob_se &lt;- prob_pred$se.fit
 
-ggplot(wells_nouv, aes(x = arsenic, y = prob_pred, color = as.factor(distance),
+ggplot(wells_nouv, aes(x = arsenic, y = plogis(prob_pred), color = as.factor(distance),
                        fill = as.factor(distance))) +
-    geom_ribbon(aes(ymin = prob_pred - 1.96*prob_se, ymax = prob_pred + 1.96*prob_se),
-                alpha = 0.3) +
+    geom_ribbon(aes(ymin = plogis(prob_pred - 1.96*prob_se), 
+                    ymax = plogis(prob_pred + 1.96*prob_se)), alpha = 0.3) +
     geom_line() +
     scale_color_brewer(palette = &quot;Dark2&quot;) +
     scale_fill_brewer(palette = &quot;Dark2&quot;)</code></pre>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>La raison pour laquelle nous devons d’abord calculer l’intervalle de confiance sur l’échelle du prédicteur linéaire est que l’incertitude sur celui-ci suit davantage une distribution normale que l’incertitude sur <span class="math inline">\(p\)</span>.</p>
 <p>Notez qu’un intervalle de prédiction des observations individuelles serait moins intéressant ici, car ces observations sont toujours 0 ou 1.</p>
 </div>
 <div id="vérifier-lajustement-du-modèle" class="section level2">
@@ -515,7 +517,7 @@ summary(mod_snails)</code></pre>
 <p>D’après le signe des coefficients, la mortalité est plus grande pour l’espèce B que l’espèce A. Cette mortalité augmente aussi avec le temps d’exposition et la température, mais diminue avec une hausse d’humidité relative (dans la plage de valeurs considérée).</p>
 <p>Avec plusieurs observations par rangée, les résidus individuels contiennent davantage d’information, donc les graphiques de diagnostic conventionnels sont plus utiles que dans l’exemple précédent. Cependant, près de la moitié des rangées n’ont aucun escargot mort (<code>Deaths</code> = 0) et ces zéros sont la cause de la “ligne” de résidus dans certains graphiques.</p>
 <p><img src="9-Regression_logistique_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>Puisque la réponse n’est pas supposée suivre une distribution normale, nous ne nous intéressons pas vraiment au diagramme quantile-quantile. Notez que les résidus utilisés dans ce diagramme ne sont pas les résidus de la réponse (<span class="math inline">\(y - \hat{y}\)</span>), mais plutôt les résidus de la déviance <code>residuals(mod_snails, type = "deviance")</code>, qui s’approchent davantage de la normalité. Ceux-ci sont calculés à partir de la contribution de chaque observation à la déviance totale, <span class="math inline">\(-2 \log L_k\)</span>, où <span class="math inline">\(L_k\)</span> est la vraisemblance de l’observation <span class="math inline">\(k\)</span> prise individuellement.</p>
+<p>Puisque la réponse n’est pas supposée suivre une distribution normale, nous ne nous intéressons pas vraiment au diagramme quantile-quantile. Le graphique <em>Residuals vs Fitted</em> permet de vérifier l’absence de tendance dans les résidus et le graphique <em>Residuals vs Leverage</em> permet de détecter des points avec une grande influence sur la régression. Notez que trois des graphiques utilisent les résidus de Pearson (Std. Pearson resid.) qui correspondent aux résidus divisés par l’écart-type attendu de la réponse (rappelons-nous que cet écart-type dépend de la valeur attendue de la réponse ici). Ces résidus devraient donc avoir une variance plus homogène que les résidus bruts.</p>
 </div>
 </div>
 <div id="problème-de-séparation-parfaite" class="section level1">
