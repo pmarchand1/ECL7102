@@ -525,7 +525,7 @@ group_by(snails, Exposure) %>%
 
 --
 
-- La régression logistique sert à modéliser des réponses binaires ou des proportions. Elle utilise un lien logit et une distribution binomiale de la réponse.
+- La régression logistique sert à modéliser des réponses binaires ou binomiales. Elle utilise un lien logit et une distribution binomiale de la réponse.
 
 --
 

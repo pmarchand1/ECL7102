@@ -1,6 +1,6 @@
 ---
 title: "Poisson regression"
-date: "<br/>November 11, 2019"
+date: "<br/>November 9, 2020"
 output:
     html_document:
         self_contained: false
@@ -12,9 +12,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectives
@@ -28,7 +28,7 @@ library(cowplot)
 
 # Introduction
 
-At the last class, we applied logistic regression to the analysis of binary data and proportions. In this course, we will see another type of generalized linear model, Poisson regression, which is used to model the number of observations of a certain event in a defined sampling unit.
+At the last class, we applied logistic regression to the analysis of binary and binomial data. In this course, we will see another type of generalized linear model, Poisson regression, which is used to model the number of observations of a certain event in a defined sampling unit.
 
 Here are some examples of this type of data in ecology:
 
@@ -220,10 +220,7 @@ par(mfrow = c(1, 1))
 
 Without having completely eliminated the trend, this fit seems much better.
 
-**Note**
-
-- As for the other generalized linear models, the residuals displayed in these diagnostic graphs are not "response" residuals ($y - \hat{y}$), but deviance residuals, representing the contribution of each observation to total deviance.
-- In this case, these residuals approach normality, according to the quantile-quantile plot, because the observed values of the response are quite high (mean number of 20 species per quadrat). We had the same situation for binomial logistic regression when $n$ was high. However, we do not expect the quantile-quantile plot to show a straight line if $\lambda$ is small, even if the Poisson model applies perfectly.
+**Note**: In this case, these residuals approach normality, according to the quantile-quantile plot, because the observed values of the response are quite high (mean number of 20 species per quadrat). We had the same situation for binomial logistic regression when $n$ was high. However, we do not expect the quantile-quantile plot to show a straight line if $\lambda$ is small, even if the Poisson model applies perfectly.
 
 Now let's look at the model summary.
 
@@ -390,7 +387,7 @@ summary(mod_quasi)
 
 ## Dispersion parameter for the binomial family
 
-For a regression where the response is binomial (number of successes $y$ and failures $n - y$), it can also be overdispersed or underdispersed. In this case, the dispersion parameter is estimated in the same way with the $\chi^2$ statistic. You can also use the `quasibinomial` family with the` glm` function. In the previous class, we saw another application of the quasibinomial model (directly modeling proportions between 0 and 1).
+For a regression where the response is binomial (number of successes $y$ and failures $n - y$), it can also be overdispersed or underdispersed. In this case, the dispersion parameter is estimated in the same way with the $\chi^2$ statistic. You can also use the `quasibinomial` family with the` glm` function.
 
 For a binary response (0 or 1), the concept of dispersion parameter does not apply because the variance is always $p(1-p)$.
 

@@ -1,6 +1,6 @@
 ---
 title: "Régression de Poisson"
-date: "<br/>11 novembre 2019"
+date: "<br/>9 novembre 2020"
 output:
     html_document:
         self_contained: false
@@ -10,11 +10,12 @@ output:
         toc_float: true
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectifs
@@ -28,7 +29,7 @@ library(cowplot)
 
 # Introduction
 
-Au dernier cours, nous avons appliqué la régression logistique à l'analyse de données binaires et de proportions. Dans ce cours-ci, nous verrons un autre type de modèle linéaire généralisé, la régression de Poisson, qui sert à modéliser le nombre d'observations d'un certain événement dans une unité d'échantillonnage définie. 
+Au dernier cours, nous avons appliqué la régression logistique à l'analyse de données binaires et binomiales. Dans ce cours-ci, nous verrons un autre type de modèle linéaire généralisé, la régression de Poisson, qui sert à modéliser le nombre d'observations d'un certain événement dans une unité d'échantillonnage définie. 
 
 Voici quelques exemples de ce type de données en écologie:
 
@@ -220,10 +221,7 @@ par(mfrow = c(1, 1))
 
 Sans avoir éliminé complètement la tendance, cet ajustement semble bien meilleur. 
 
-**Notes**
-
-- Comme pour les autres modèles linéaires généralisés, les résidus affichés dans ces graphiques de diagnostic ne sont pas des résidus de type "réponse" ($y - \hat{y}$), mais des résidus de type "déviance", représentant la contribution de chaque observation à la déviance totale. 
-- Dans ce cas-ci, ces résidus s'approchent de la normalité (d'après le diagramme quantile-quantile) car les valeurs observées de la réponse sont assez élevées (nombre moyen de 20 espèces par quadrat). Nous avions la même situation pour la régression logistique binomiale lorsque $n$ était élevé. Toutefois, nous ne nous attendons pas à ce que le diagramme quantile-quantile montre une droite si $\lambda$ est petit, même si le modèle de Poisson s'applique parfaitement.
+**Note**: Dans ce cas-ci, ces résidus s'approchent de la normalité (d'après le diagramme quantile-quantile) car les valeurs observées de la réponse sont assez élevées (nombre moyen de 20 espèces par quadrat). Nous avions la même situation pour la régression logistique binomiale lorsque $n$ était élevé. Toutefois, nous ne nous attendons pas à ce que le diagramme quantile-quantile montre une droite si $\lambda$ est petit, même si le modèle de Poisson s'applique parfaitement.
 
 Regardons maintenant le sommaire du modèle.
 
@@ -388,7 +386,7 @@ summary(mod_quasi)
 
 ## Paramètre de dispersion pour la famille binomiale
 
-Pour une régression ou la réponse est binomiale (nombre de succès $y$ et d'échecs $n - y$), les réponses peuvent aussi être surdispersées ou sous-dispersées. Dans ce cas, on estime le paramètre de dispersion de la même façon avec la statistique du $\chi^2$. On peut aussi utiliser la famille `quasibinomial` avec la fonction `glm`. Dans le cours précédent, nous avons vu une autre application du modèle quasibinomial (modéliser directement des proportions entre 0 et 1).
+Pour une régression ou la réponse est binomiale (nombre de succès $y$ et d'échecs $n - y$), les réponses peuvent aussi être surdispersées ou sous-dispersées. Dans ce cas, on estime le paramètre de dispersion de la même façon avec la statistique du $\chi^2$. On peut aussi utiliser la famille `quasibinomial` avec la fonction `glm`.
 
 Pour une réponse binaire (0 ou 1), le concept de paramètre de dispersion ne s'applique pas, car la variance est toujours $p(1-p)$.
 

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-11-11" />
+<meta name="date" content="2020-11-09" />
 
 <title>Poisson regression</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Poisson regression</h1>
-<h4 class="date"><br/>November 11, 2019</h4>
+<h4 class="date"><br/>November 9, 2020</h4>
 
 </div>
 
@@ -304,7 +269,7 @@ div.tocify {
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>At the last class, we applied logistic regression to the analysis of binary data and proportions. In this course, we will see another type of generalized linear model, Poisson regression, which is used to model the number of observations of a certain event in a defined sampling unit.</p>
+<p>At the last class, we applied logistic regression to the analysis of binary and binomial data. In this course, we will see another type of generalized linear model, Poisson regression, which is used to model the number of observations of a certain event in a defined sampling unit.</p>
 <p>Here are some examples of this type of data in ecology:</p>
 <ul>
 <li>the number of seedlings of a species in several quadrats;</li>
@@ -474,11 +439,7 @@ summary(mod_sp)</code></pre>
 <pre class="r"><code>mod_sp_inter &lt;- glm(Species ~ Biomass * pH, sp, family = poisson)</code></pre>
 <p><img src="10E-Poisson_regression_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Without having completely eliminated the trend, this fit seems much better.</p>
-<p><strong>Note</strong></p>
-<ul>
-<li>As for the other generalized linear models, the residuals displayed in these diagnostic graphs are not “response” residuals (<span class="math inline">\(y - \hat{y}\)</span>), but deviance residuals, representing the contribution of each observation to total deviance.</li>
-<li>In this case, these residuals approach normality, according to the quantile-quantile plot, because the observed values of the response are quite high (mean number of 20 species per quadrat). We had the same situation for binomial logistic regression when <span class="math inline">\(n\)</span> was high. However, we do not expect the quantile-quantile plot to show a straight line if <span class="math inline">\(\lambda\)</span> is small, even if the Poisson model applies perfectly.</li>
-</ul>
+<p><strong>Note</strong>: In this case, these residuals approach normality, according to the quantile-quantile plot, because the observed values of the response are quite high (mean number of 20 species per quadrat). We had the same situation for binomial logistic regression when <span class="math inline">\(n\)</span> was high. However, we do not expect the quantile-quantile plot to show a straight line if <span class="math inline">\(\lambda\)</span> is small, even if the Poisson model applies perfectly.</p>
 <p>Now let’s look at the model summary.</p>
 <pre class="r"><code>summary(mod_sp_inter)</code></pre>
 <pre><code>## 
@@ -620,7 +581,7 @@ chisq/mod_sp$df.residual</code></pre>
 <pre class="r"><code>glp &lt;- read.csv(&quot;../donnees/galapagos.csv&quot;)
 str(glp)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    30 obs. of  8 variables:
-##  $ Name     : Factor w/ 30 levels &quot;Baltra&quot;,&quot;Bartolome&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ Name     : chr  &quot;Baltra&quot; &quot;Bartolome&quot; &quot;Caldwell&quot; &quot;Champion&quot; ...
 ##  $ Species  : int  58 31 3 25 2 18 24 10 8 2 ...
 ##  $ Endemics : int  23 21 3 9 1 11 0 7 4 2 ...
 ##  $ Area     : num  25.09 1.24 0.21 0.1 0.05 ...
@@ -735,7 +696,7 @@ summary(mod_quasi)</code></pre>
 </div>
 <div id="dispersion-parameter-for-the-binomial-family" class="section level2">
 <h2>Dispersion parameter for the binomial family</h2>
-<p>For a regression where the response is binomial (number of successes <span class="math inline">\(y\)</span> and failures <span class="math inline">\(n - y\)</span>), it can also be overdispersed or underdispersed. In this case, the dispersion parameter is estimated in the same way with the <span class="math inline">\(\chi^2\)</span> statistic. You can also use the <code>quasibinomial</code> family with the<code>glm</code> function. In the previous class, we saw another application of the quasibinomial model (directly modeling proportions between 0 and 1).</p>
+<p>For a regression where the response is binomial (number of successes <span class="math inline">\(y\)</span> and failures <span class="math inline">\(n - y\)</span>), it can also be overdispersed or underdispersed. In this case, the dispersion parameter is estimated in the same way with the <span class="math inline">\(\chi^2\)</span> statistic. You can also use the <code>quasibinomial</code> family with the<code>glm</code> function.</p>
 <p>For a binary response (0 or 1), the concept of dispersion parameter does not apply because the variance is always <span class="math inline">\(p(1-p)\)</span>.</p>
 </div>
 <div id="model-selection-with-overdispersion" class="section level2">
@@ -828,6 +789,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

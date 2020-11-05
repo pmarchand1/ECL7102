@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression de Poisson</h1>
-<h4 class="date"><br/>11 novembre 2019</h4>
+<h4 class="date"><br/>9 novembre 2020</h4>
 
 </div>
 
@@ -303,7 +268,7 @@ div.tocify {
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Au dernier cours, nous avons appliqué la régression logistique à l’analyse de données binaires et de proportions. Dans ce cours-ci, nous verrons un autre type de modèle linéaire généralisé, la régression de Poisson, qui sert à modéliser le nombre d’observations d’un certain événement dans une unité d’échantillonnage définie.</p>
+<p>Au dernier cours, nous avons appliqué la régression logistique à l’analyse de données binaires et binomiales. Dans ce cours-ci, nous verrons un autre type de modèle linéaire généralisé, la régression de Poisson, qui sert à modéliser le nombre d’observations d’un certain événement dans une unité d’échantillonnage définie.</p>
 <p>Voici quelques exemples de ce type de données en écologie:</p>
 <ul>
 <li>le nombre de semis d’une espèce dans plusieurs quadrats;</li>
@@ -315,7 +280,7 @@ div.tocify {
 <li>le nombre de patients arrivant à l’urgence par heure;</li>
 <li>le nombre de voitures traversant une intersection par minute.</li>
 </ul>
-<div id="proprietes-des-donnees-de-comptage" class="section level2">
+<div id="propriétés-des-données-de-comptage" class="section level2">
 <h2>Propriétés des données de comptage</h2>
 <ul>
 <li><p>Les données de comptage sont des nombres discrets <span class="math inline">\(\ge\)</span> 0; on peut avoir 0, 1, 2, … observations, mais pas -1 ou 1.5.</p></li>
@@ -354,7 +319,7 @@ dpois(1, 3)</code></pre>
 <p>Autrement dit, si le nombre moyen est assez grand, le nombre d’observations se comporte presque comme une variable continue suivant une distribution normale avec <span class="math inline">\(\mu = \lambda\)</span>.</p>
 <p>Dans ce cas, la régression linéaire pourrait s’appliquer. Toutefois, il faut se rappeler que les deux modèles font différentes suppositions au sujet de la variance de la réponse. Dans le modèle de régression linéaire, la moyenne <span class="math inline">\(\mu\)</span> dépend des prédicteurs, mais la variance <span class="math inline">\(\sigma^2\)</span> est constante. Dans le modèle de régression de Poisson, la moyenne et la variance dépendent des prédicteurs, parce qu’elles sont toutes deux égales à <span class="math inline">\(\lambda\)</span>. Il faudra donc observer les graphiques de résidus pour déterminer quel modèle est le plus approprié.</p>
 </div>
-<div id="independance-des-observations-et-surdispersion" class="section level2">
+<div id="indépendance-des-observations-et-surdispersion" class="section level2">
 <h2>Indépendance des observations et surdispersion</h2>
 <p>Tel que mentionné plus haut, la distribution de Poisson suppose l’indépendance des observations individuelles. Il est rare que cette condition soit parfaitement respectée dans la nature. Par exemple:</p>
 <ul>
@@ -367,7 +332,7 @@ dpois(1, 3)</code></pre>
 <p>Nous verrons plus loin comment identifier et traiter les cas de surdispersion.</p>
 </div>
 </div>
-<div id="regression-de-poisson" class="section level1">
+<div id="régression-de-poisson" class="section level1">
 <h1>Régression de Poisson</h1>
 <p>La régression de Poisson est un modèle linéaire généralisé où la réponse <span class="math inline">\(y\)</span> suit une distribution de Poisson:</p>
 <p><span class="math display">\[ y \sim Pois(\lambda) \]</span></p>
@@ -380,7 +345,7 @@ dpois(1, 3)</code></pre>
 <p>Puisque l’addition de puissances correspond à une multiplication, ce modèle correspond à des effets multiplicatifs des prédicteurs sur la réponse.</p>
 <p><span class="math display">\[ \hat{y} = e^{\beta_0} e^{\beta_1 x_1} e^{\beta_2 x_2} \ldots \]</span></p>
 <p>Le logarithme est la fonction de lien par défaut pour la régression de Poisson. Pour bien interpréter les résultats de la régression, il faut se rappeler qu’une transformation logarithmique est appliquée à la réponse moyenne.</p>
-<div id="resume-des-modeles-lineaires-generalises-vu-dans-ce-cours" class="section level2">
+<div id="résumé-des-modèles-linéaires-généralisés-vu-dans-ce-cours" class="section level2">
 <h2>Résumé des modèles linéaires généralisés vu dans ce cours</h2>
 <table>
 <colgroup>
@@ -473,11 +438,7 @@ summary(mod_sp)</code></pre>
 <pre class="r"><code>mod_sp_inter &lt;- glm(Species ~ Biomass * pH, sp, family = poisson)</code></pre>
 <p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Sans avoir éliminé complètement la tendance, cet ajustement semble bien meilleur.</p>
-<p><strong>Notes</strong></p>
-<ul>
-<li>Comme pour les autres modèles linéaires généralisés, les résidus affichés dans ces graphiques de diagnostic ne sont pas des résidus de type “réponse” (<span class="math inline">\(y - \hat{y}\)</span>), mais des résidus de type “déviance”, représentant la contribution de chaque observation à la déviance totale.</li>
-<li>Dans ce cas-ci, ces résidus s’approchent de la normalité (d’après le diagramme quantile-quantile) car les valeurs observées de la réponse sont assez élevées (nombre moyen de 20 espèces par quadrat). Nous avions la même situation pour la régression logistique binomiale lorsque <span class="math inline">\(n\)</span> était élevé. Toutefois, nous ne nous attendons pas à ce que le diagramme quantile-quantile montre une droite si <span class="math inline">\(\lambda\)</span> est petit, même si le modèle de Poisson s’applique parfaitement.</li>
-</ul>
+<p><strong>Note</strong>: Dans ce cas-ci, ces résidus s’approchent de la normalité (d’après le diagramme quantile-quantile) car les valeurs observées de la réponse sont assez élevées (nombre moyen de 20 espèces par quadrat). Nous avions la même situation pour la régression logistique binomiale lorsque <span class="math inline">\(n\)</span> était élevé. Toutefois, nous ne nous attendons pas à ce que le diagramme quantile-quantile montre une droite si <span class="math inline">\(\lambda\)</span> est petit, même si le modèle de Poisson s’applique parfaitement.</p>
 <p>Regardons maintenant le sommaire du modèle.</p>
 <pre class="r"><code>summary(mod_sp_inter)</code></pre>
 <pre><code>## 
@@ -514,7 +475,7 @@ summary(mod_sp)</code></pre>
     scale_color_brewer(palette = &quot;Dark2&quot;)</code></pre>
 <p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
-<div id="interpretation-des-coefficients" class="section level2">
+<div id="interprétation-des-coefficients" class="section level2">
 <h2>Interprétation des coefficients</h2>
 <p>L’interprétation des coefficients du modèle est plus complexe avec les interactions, donc commençons avec le modèle sans interaction.</p>
 <pre class="r"><code>summary(mod_sp)</code></pre>
@@ -594,7 +555,7 @@ summary(mod_sp)</code></pre>
 <p>Le sommaire des résultats des régressions de Poisson effectuées dans la partie précédente incluait le message: <code>(Dispersion parameter for poisson family taken to be 1)</code>. Ce message nous rappelle que la variance des observations n’est pas estimée de façon indépendante dans ce modèle (contrairement au modèle de régression linéaire), mais égale à la valeur moyenne <span class="math inline">\(\lambda\)</span> estimée en fonction des prédicteurs pour chaque point.</p>
 <p>Tel qu’il a été mentionné dans l’introduction, la non-indépendance des observations individuelles peut causer une surdispersion des données par rapport aux suppositions de la distribution de Poisson. Cette surdispersion est représentée par un paramètre <span class="math inline">\(\phi\)</span> qui multiplie la variance attendue: pour une moyenne <span class="math inline">\(\lambda\)</span>, la variance devient donc <span class="math inline">\(\phi \lambda\)</span>.</p>
 <p>De façon moins fréquente, il arrive que <span class="math inline">\(\phi &lt; 1\)</span>, correspondant à une <em>sous-dispersion</em> des observations. Contrairement à la surdispersion, où les observations tendent à être regroupées (ex.: quelques quadrats avec de nombreux individus, et plusieurs avec peu ou pas d’individus), la sous-dispersion signifie que les observations sont réparties de façon plus régulière que prévue. Cela pourrait être dû par exemple à la compétition intraspécifique ou à la territorialité (dans le cas d’animaux) qui mène les individus à s’espacer de façon régulière.</p>
-<div id="estimation-du-parametre-de-dispersion" class="section level2">
+<div id="estimation-du-paramètre-de-dispersion" class="section level2">
 <h2>Estimation du paramètre de dispersion</h2>
 <p>Pour détecter la présente de surdispersion ou de sous-dispersion, nous utiliserons la statistique du <span class="math inline">\(\chi^2\)</span>, qui a déjà été vue dans le contexte des tableaux de contingence. Cette statistique est calculée à partir des écarts carrés entre les valeurs observées <span class="math inline">\(y\)</span> et attendues <span class="math inline">\(\hat{y}\)</span>, normalisés par la valeur attendue, pour chacun des <span class="math inline">\(n\)</span> points du jeu de données.</p>
 <p><span class="math display">\[ \chi^2 = \sum_{k=1}^n \frac{(y_k - \hat{y_k})^2}{\hat{y_k}} \]</span></p>
@@ -613,13 +574,13 @@ chisq/mod_sp$df.residual</code></pre>
 <pre><code>## [1] 0.2336238</code></pre>
 <p>Dans ce cas, la surdispersion n’est pas significative, il n’est donc pas nécessaire d’ajuster les résultats du modèle.</p>
 </div>
-<div id="exemple-de-donnees-surdispersees" class="section level2">
+<div id="exemple-de-données-surdispersées" class="section level2">
 <h2>Exemple de données surdispersées</h2>
 <p>Le tableau de données <a href="../donnees/galapagos.csv">galapagos.csv</a> donne le nombre d’espèces de tortues (<code>Species</code>) et le nombre d’espèces endémiques (<code>Endemics</code>) pour différentes îles de l’archipel des Galapagos en fonction de leur superficie (<code>Area</code>), de leur altitude moyenne (<code>Elevation</code>), de la superficie de l’île la plus près (<code>Adjacent</code>), de la distance à l’île la plus près (<code>Nearest</code>) et de la distance à l’île de Santa Cruz (<code>Scruz</code>).</p>
 <pre class="r"><code>glp &lt;- read.csv(&quot;../donnees/galapagos.csv&quot;)
 str(glp)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    30 obs. of  8 variables:
-##  $ Name     : Factor w/ 30 levels &quot;Baltra&quot;,&quot;Bartolome&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ Name     : chr  &quot;Baltra&quot; &quot;Bartolome&quot; &quot;Caldwell&quot; &quot;Champion&quot; ...
 ##  $ Species  : int  58 31 3 25 2 18 24 10 8 2 ...
 ##  $ Endemics : int  23 21 3 9 1 11 0 7 4 2 ...
 ##  $ Area     : num  25.09 1.24 0.21 0.1 0.05 ...
@@ -732,12 +693,12 @@ summary(mod_quasi)</code></pre>
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div id="parametre-de-dispersion-pour-la-famille-binomiale" class="section level2">
+<div id="paramètre-de-dispersion-pour-la-famille-binomiale" class="section level2">
 <h2>Paramètre de dispersion pour la famille binomiale</h2>
-<p>Pour une régression ou la réponse est binomiale (nombre de succès <span class="math inline">\(y\)</span> et d’échecs <span class="math inline">\(n - y\)</span>), les réponses peuvent aussi être surdispersées ou sous-dispersées. Dans ce cas, on estime le paramètre de dispersion de la même façon avec la statistique du <span class="math inline">\(\chi^2\)</span>. On peut aussi utiliser la famille <code>quasibinomial</code> avec la fonction <code>glm</code>. Dans le cours précédent, nous avons vu une autre application du modèle quasibinomial (modéliser directement des proportions entre 0 et 1).</p>
+<p>Pour une régression ou la réponse est binomiale (nombre de succès <span class="math inline">\(y\)</span> et d’échecs <span class="math inline">\(n - y\)</span>), les réponses peuvent aussi être surdispersées ou sous-dispersées. Dans ce cas, on estime le paramètre de dispersion de la même façon avec la statistique du <span class="math inline">\(\chi^2\)</span>. On peut aussi utiliser la famille <code>quasibinomial</code> avec la fonction <code>glm</code>.</p>
 <p>Pour une réponse binaire (0 ou 1), le concept de paramètre de dispersion ne s’applique pas, car la variance est toujours <span class="math inline">\(p(1-p)\)</span>.</p>
 </div>
-<div id="selection-de-modeles-avec-surdispersion" class="section level2">
+<div id="sélection-de-modèles-avec-surdispersion" class="section level2">
 <h2>Sélection de modèles avec surdispersion</h2>
 <p>En plus d’augmenter l’erreur-type des coefficients du modèle, la surdispersion affecte aussi la sélection de modèles avec l’AIC. Le QAIC, l’équivalent de l’AIC pour les modèles de type quasibinomial ou quasipoisson, est calculé en divisant le premier terme de l’AIC par l’estimé du paramètre de dispersion.</p>
 <p><span class="math display">\[ QAIC = -\frac{2 \log L}{\hat{c}} + 2 K \]</span></p>
@@ -782,9 +743,9 @@ aictab(mod_list, c.hat = disp)</code></pre>
 <p>Non seulement la surdispersion change l’ordre des modèles, mais elle diminue la différence entre les modèles: les <span class="math inline">\(\Delta QAICc\)</span> sont beaucoup plus rapprochés que les <span class="math inline">\(\Delta AICc\)</span>. Les quatre modèles ont un poids supérieur à 10% dans le premier cas, tandis que le premier modèle obtient 95% des poids dans le deuxième tableau. Ainsi, il y a davantage d’incertitude sur le choix d’un meilleur modele.</p>
 </div>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
-<div id="regression-de-poisson-1" class="section level2">
+<div id="régression-de-poisson-1" class="section level2">
 <h2>Régression de Poisson</h2>
 <ul>
 <li><p>La distribution de Poisson représente le nombre d’observations indépendantes d’un événement dans une unité d’échantillonnage.</p></li>
@@ -794,7 +755,7 @@ aictab(mod_list, c.hat = disp)</code></pre>
 <li><p>Si le paramètre de dispersion n’est pas trop élevé (<span class="math inline">\(\hat{c} &lt; 4\)</span>), on peut tout de même utiliser le modèle de Poisson (ou binomial) et multiplier les erreurs-types des coefficients par <span class="math inline">\(\sqrt{\hat{c}}\)</span>. Pour la sélection de modèles, l’AIC(c) doit être remplacé par le QAIC(c) pour tenir compte de la surdispersion.</p></li>
 </ul>
 </div>
-<div id="modelisation-statistique-points-generaux-a-retenir" class="section level2">
+<div id="modélisation-statistique-points-généraux-à-retenir" class="section level2">
 <h2>Modélisation statistique: points généraux à retenir</h2>
 <p>Nous avons étudié différents types de modèles cette session (ANOVA, régression linéaire, modèles linéaires généralisés et modèles mixtes à venir). Vous aurez peut-être remarqué que nous appliquons des étapes semblables dans chaque cas.</p>
 <ul>
@@ -827,6 +788,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

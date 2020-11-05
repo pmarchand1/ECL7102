@@ -14,6 +14,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 7. [Régression linéaire multiple](notes_cours/7-Regression_multiple.html) ([PDF](notes_cours/7-Regression_multiple.pdf)) - Données [1](donnees/compensation.csv) [2](donnees/growth.csv) [3](donnees/antibiot.csv)
 8. [Évaluation et sélection de modèles](notes_cours/8-Selection_modeles.html) ([PDF](notes_cours/8-Selection_modeles.pdf)) - [Données](labos/britain_species.csv)
 9. [Régression logistique](notes_cours/9-Regression_logistique.html) ([PDF](notes_cours/9-Regression_logistique.pdf))
+10. [Régression de Poisson](notes_cours/10-Regression_Poisson.html) ([PDF](notes_cours/10-Regression_Poisson.pdf) - Données [1](donnees/species.csv) [2](donnees/galapagos.csv))
 
 
 ## Laboratoires
