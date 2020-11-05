@@ -10,7 +10,7 @@ output:
         toc_float: true
 ---
 
-Ce laboratoire doit être remis le **11 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **18 novembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Retour sur les données de puits
