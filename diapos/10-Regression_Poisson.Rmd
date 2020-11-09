@@ -1,24 +1,28 @@
 ---
 title: "Régression de Poisson"
-date: "<br/>11 novembre 2019"
+date: "9 novembre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(6, 4))
-library(dplyr)
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
-```
-
-```{css, echo = FALSE}
-.small { font-size: 70% }
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
 
 # Objectifs
@@ -31,7 +35,7 @@ library(cowplot)
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Distribution de Poisson
 
@@ -91,13 +95,13 @@ Dans R, la fonction `rpois` génère des valeur suivant une distribution de Pois
 
 --
 
-```{r}
+```{r, echo = TRUE}
 dpois(1, lambda = 3)
 ```
 
 --
 
-```{r, fig.dim = c(4, 3), echo = FALSE}
+```{r, fig.dim = c(5, 4), echo = FALSE}
 # Diagramme à barres de 10000 valeurs aléatoires tirées 
 # de la distribution de Poisson avec lambda = 3
 ggplot(NULL, aes(x = rpois(10000, 3))) +
@@ -127,7 +131,7 @@ ggplot(NULL, aes(x = rpois(10000, 3))) +
 
 Lorsque $\lambda$ est assez grand, la distribution de Poisson devient plus symétrique et tend vers une distribution normale.
 
-```{r, echo = FALSE, fig.dim = c(8, 4)}
+```{r, echo = FALSE, fig.dim = c(10, 5)}
 # Distribution de Poisson avec lambda = 5
 p1 <- ggplot(NULL, aes(x = rpois(10000, 5))) +
     labs(x = "y", title = expression(lambda == 5)) +
@@ -185,7 +189,7 @@ ggplot(NULL) +
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Régression de Poisson
 
@@ -256,6 +260,12 @@ sp <- read.csv("../donnees/species.csv")
 sp$pH <- factor(sp$pH, levels = c("low", "mid", "high"))
 str(sp)
 ```
+
+---
+
+class: center, inverse, middle
+
+# Surdispersion
 
 ---
 
@@ -352,7 +362,7 @@ $$ QAICc = -\frac{2 \log L}{\hat{c}} + 2 K \left( \frac{n}{n-K-1} \right) $$
 
 Quatre modèles pour prédire le nombre d'espèces endémiques sur les îles Galapagos.
 
-```{r}
+```{r, echo = TRUE}
 mod_area <- glm(Endemics ~ log(Area), data = glp, family = poisson)
 mod_area_near <- glm(Endemics ~ log(Area) + log(Nearest), data = glp, family = poisson)
 mod_area_adj <- glm(Endemics ~ log(Area) + log(Adjacent), data = glp, family = poisson)
@@ -361,7 +371,7 @@ mod_comp <- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp,
 
 --
 
-```{r}
+```{r, echo = TRUE}
 library(AICcmodavg)
 disp <- c_hat(mod_comp)
 disp
@@ -373,7 +383,7 @@ disp
 
 Voici le tableau du QAICc pour ces modèles:
 
-```{r}
+```{r, echo = TRUE}
 mod_list <- list(mod_area = mod_area, mod_area_near = mod_area_near, 
                  mod_area_adj = mod_area_adj, mod_comp = mod_comp)
 aictab(mod_list, c.hat = disp)
@@ -385,7 +395,7 @@ aictab(mod_list, c.hat = disp)
 
 Comparons le QAICc et l'AICc
 
-.small[
+.code70[
 
 ```{r, echo = FALSE}
 aictab(mod_list, c.hat = disp)

@@ -504,8 +504,8 @@ summary(mod_sp)</code></pre>
 ## AIC: 526.43
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>Il est plus facile de déterminer d’abord l’effet de chaque coefficient du modèle sur le prédicteur linéaire: <span class="math inline">\(\eta = \beta_0 + \sum_{i=1}^{m} \beta_i x_i\)</span>, puis de déduire l’effet sur la moyenne de la réponse (<span class="math inline">\(\lambda\)</span>) à partir de la fonction <span class="math inline">\(\lambda = e^{-\eta}\)</span>.</p>
-<p>Par exemple, l’ordonnée à l’origine indique que dans le cas où la biomasse est 0 et le pH est bas (niveau de référence), <span class="math inline">\(\eta = 2.71\)</span> et donc <span class="math inline">\(\lambda = e^{-\eta} = 15.0\)</span> espèces. Bien sûr, cette valeur n’est pas réaliste car il ne peut pas y avoir d’espèces sans biomasse.</p>
+<p>Il est plus facile de déterminer d’abord l’effet de chaque coefficient du modèle sur le prédicteur linéaire: <span class="math inline">\(\eta = \beta_0 + \sum_{i=1}^{m} \beta_i x_i\)</span>, puis de déduire l’effet sur la moyenne de la réponse (<span class="math inline">\(\lambda\)</span>) à partir de la fonction <span class="math inline">\(\lambda = e^{\eta}\)</span>.</p>
+<p>Par exemple, l’ordonnée à l’origine indique que dans le cas où la biomasse est 0 et le pH est bas (niveau de référence), <span class="math inline">\(\eta = 2.71\)</span> et donc <span class="math inline">\(\lambda = e^{\eta} = 15.0\)</span> espèces. Bien sûr, cette valeur n’est pas réaliste car il ne peut pas y avoir d’espèces sans biomasse.</p>
 <p>Pour les autres paramètres:</p>
 <ul>
 <li><p>Le coefficient <code>Biomass</code> indique que <span class="math inline">\(\eta\)</span> diminue de 0.13 pour chaque augmentation d’une unité de biomasse, si les autres variables (donc le pH) restent constantes. Un changement additif de -0.13 sur l’échelle logarithmique correspond à un changement multiplicatif de <span class="math inline">\(e^{-0.13} = 0.88\)</span>, soit une perte de 12% du nombre moyen d’espèces par unité de biomasse supplémentaire.</p></li>

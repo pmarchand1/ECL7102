@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Régression de Poisson</title>
     <meta charset="utf-8" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles-xar.css" type="text/css" />
@@ -12,16 +13,12 @@
 class: center, middle, inverse, title-slide
 
 # Régression de Poisson
-### <br/>11 novembre 2019
+### 9 novembre 2020
 
 ---
 
 
 
-
-&lt;style type="text/css"&gt;
-.small { font-size: 70% }
-&lt;/style&gt;
 
 # Objectifs
 
@@ -33,7 +30,7 @@ class: center, middle, inverse, title-slide
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Distribution de Poisson
 
@@ -104,7 +101,7 @@ dpois(1, lambda = 3)
 
 --
 
-![](10-Régression_Poisson_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+![](10-Regression_Poisson_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -128,7 +125,7 @@ dpois(1, lambda = 3)
 
 Lorsque `\(\lambda\)` est assez grand, la distribution de Poisson devient plus symétrique et tend vers une distribution normale.
 
-![](10-Régression_Poisson_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+![](10-Regression_Poisson_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -163,11 +160,11 @@ La régression linéaire et la régression de Poisson supposent différents comp
 
 - Deux distributions avec moyenne égale à 5: Poisson en rouge, surdispersée en bleu.
 
-![](10-Régression_Poisson_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+![](10-Regression_Poisson_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Régression de Poisson
 
@@ -193,7 +190,7 @@ Puisque `\(\lambda\)` doit être positif, nous utiliserons la fonction de logari
 
 --
 
-![](10-Régression_Poisson_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+![](10-Regression_Poisson_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -226,19 +223,18 @@ Régression de Poisson | Poisson: `\(y \sim Pois(\lambda)\)` | Log: `\(\log(\lam
 Nombre d'espèces de plantes dans différents quadrats en fonction de la biomasse totale du quadrat et du pH codé selon trois niveaux.
 
 
-```r
-sp &lt;- read.csv("../donnees/species.csv") 
-# Niveaux de pH dans le bon ordre
-sp$pH &lt;- factor(sp$pH, levels = c("low", "mid", "high"))
-str(sp)
-```
-
 ```
 ## 'data.frame':	90 obs. of  3 variables:
 ##  $ pH     : Factor w/ 3 levels "low","mid","high": 3 3 3 3 3 3 3 3 3 3 ...
 ##  $ Biomass: num  0.469 1.731 2.09 3.926 4.367 ...
 ##  $ Species: int  30 39 44 35 25 29 23 18 19 12 ...
 ```
+
+---
+
+class: center, inverse, middle
+
+# Surdispersion
 
 ---
 
@@ -279,14 +275,9 @@ $$ \hat{c} = \frac{\chi^2}{df_{res}} $$
 Nombre d'espèces de tortues et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
 
 
-```r
-glp &lt;- read.csv("../donnees/galapagos.csv")
-str(glp)
-```
-
 ```
 ## 'data.frame':	30 obs. of  8 variables:
-##  $ Name     : Factor w/ 30 levels "Baltra","Bartolome",..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ Name     : chr  "Baltra" "Bartolome" "Caldwell" "Champion" ...
 ##  $ Species  : int  58 31 3 25 2 18 24 10 8 2 ...
 ##  $ Endemics : int  23 21 3 9 1 11 0 7 4 2 ...
 ##  $ Area     : num  25.09 1.24 0.21 0.1 0.05 ...
@@ -400,7 +391,7 @@ aictab(mod_list, c.hat = disp)
 
 Comparons le QAICc et l'AICc
 
-.small[
+.code70[
 
 
 ```
@@ -476,7 +467,9 @@ Comparons le QAICc et l'AICc
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:9",
 "highlightStyle": "github",
+"highlightLines": true,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -517,9 +510,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -528,7 +537,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

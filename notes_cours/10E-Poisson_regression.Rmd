@@ -247,9 +247,9 @@ The interpretation of the model coefficients is more complex with the interactio
 summary(mod_sp)
 ```
 
-It is easier to first determine the effect of each coefficient of the model on the linear predictor: $\eta = \beta_0 + \sum_{i = 1}^{m} \beta_i x_i$, then deduce the effect on the mean response ($\lambda$) from the function $\lambda = e^{-\eta}$.
+It is easier to first determine the effect of each coefficient of the model on the linear predictor: $\eta = \beta_0 + \sum_{i = 1}^{m} \beta_i x_i$, then deduce the effect on the mean response ($\lambda$) from the function $\lambda = e^{\eta}$.
 
-For example, the intercept indicates that in the case where the biomass is 0 and the pH is low (reference level), $\eta = 2.71$ and therefore $\lambda = e^{-\eta} = 15.0$. Of course, this value is not realistic because there can be no species without biomass.
+For example, the intercept indicates that in the case where the biomass is 0 and the pH is low (reference level), $\eta = 2.71$ and therefore $\lambda = e^{\eta} = 15.0$. Of course, this value is not realistic because there can be no species without biomass.
 
 For other parameters:
 

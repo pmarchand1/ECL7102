@@ -1,6 +1,6 @@
 ---
 title: "Poisson regression"
-date: "November 13, 2019"
+date: "November 11, 2020"
 output: 
     html_document:
         self_contained: false
@@ -65,7 +65,7 @@ exp(0.45)
 
 d) Display the observed number of species and the fitted value curves for pH values ranging from 5.5 to 7.5 and for three temperature values: 15, 17 and 19 degrees C.
 
-**Hint**: With *ggplot*, to ensure that prediction curves link points with the same value of a numeric variable (e.g. temperature), you must define a group (e.g. `group = temperature`) in the `aes` function.
+**Hint**: With *ggplot*, to ensure that prediction curves link points with the same value of a numeric variable (e.g. temperature), you must define a group (e.g. `group = temperature`) in the `aes` function. You could also convert the temperature to a factor.
 
 **Answer**
 

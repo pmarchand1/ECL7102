@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,12 +253,12 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression de Poisson</h1>
-<h4 class="date">13 novembre 2019</h4>
+<h4 class="date">11 novembre 2020</h4>
 
 </div>
 
 
-<div id="communautes-dinsectes-de-cours-deau" class="section level2">
+<div id="communautés-dinsectes-de-cours-deau" class="section level2">
 <h2>1. Communautés d’insectes de cours d’eau</h2>
 <p>Le tableau de données <a href="stream_composition.csv">stream_composition.csv</a> indique le nombre d’espèces de cinq ordres d’insectes présentes dans 20 cours d’eau, en fonction de la température et du pH.</p>
 <pre class="r"><code>stream &lt;- read.csv(&quot;stream_composition.csv&quot;)
@@ -313,13 +278,13 @@ str(stream)</code></pre>
 <li><p>Si l’une des deux variables a un effet significatif, interprétez la valeur du coefficient.</p></li>
 <li><p>Affichez le nombre d’espèces observées et les courbes de prédiction du modèle pour des valeurs du pH allant de 5.5 à 7.5 et pour trois valeurs de la température: 15, 17 et 19 degrés C.</p></li>
 </ol>
-<p><strong>Truc</strong>: Avec <em>ggplot</em>, pour que les courbes de prédiction relient les points ayant la même valeur d’une variable numérique (ex.: température), vous devez définir un groupe (ex.: <code>group = temperature</code>) dans la fonction <code>aes</code>.</p>
+<p><strong>Truc</strong>: Avec <em>ggplot</em>, pour que les courbes de prédiction relient les points ayant la même valeur d’une variable numérique (ex.: température), vous devez définir un groupe (ex.: <code>group = temperature</code>) dans la fonction <code>aes</code>. Vous pouvez aussi convertir la température en facteur.</p>
 <ol start="5" style="list-style-type: lower-alpha">
 <li><p>Répétez les étapes (a)-(d) pour un modèle du nombre d’espèces d’éphémères (<code>mayfly</code>).</p></li>
 <li><p>Quel est le nombre moyen d’espèces d’éphémères prédit par le modèle en (e) pour un cours d’eau avec une température de 17 degrés et un pH de 8.5? Cette prédiction est-elle fiable?</p></li>
 </ol>
 </div>
-<div id="salamandres-dans-differents-paysages-forestiers" class="section level2">
+<div id="salamandres-dans-différents-paysages-forestiers" class="section level2">
 <h2>2. Salamandres dans différents paysages forestiers</h2>
 <p><img src="../images/Plethodon_elongatus.jpg" /> <small><em>Photo: Bill Bouton</em></small></p>
 <p>Le fichier <a href="salamander.csv">salamander.csv</a> contient des données de Welsh et Lind (1995) sur le nombre de salamandres (<code>salaman</code>) de l’espèce <em>Plethodon elongatus</em> dans 47 placettes (<code>site</code>), en fonction du pourcentage de couvert forestier (<code>pct_cover</code>) et de l’âge du peuplement (<code>forest_age</code>).</p>
@@ -356,6 +321,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

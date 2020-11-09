@@ -505,8 +505,8 @@ summary(mod_sp)</code></pre>
 ## AIC: 526.43
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>It is easier to first determine the effect of each coefficient of the model on the linear predictor: <span class="math inline">\(\eta = \beta_0 + \sum_{i = 1}^{m} \beta_i x_i\)</span>, then deduce the effect on the mean response (<span class="math inline">\(\lambda\)</span>) from the function <span class="math inline">\(\lambda = e^{-\eta}\)</span>.</p>
-<p>For example, the intercept indicates that in the case where the biomass is 0 and the pH is low (reference level), <span class="math inline">\(\eta = 2.71\)</span> and therefore <span class="math inline">\(\lambda = e^{-\eta} = 15.0\)</span>. Of course, this value is not realistic because there can be no species without biomass.</p>
+<p>It is easier to first determine the effect of each coefficient of the model on the linear predictor: <span class="math inline">\(\eta = \beta_0 + \sum_{i = 1}^{m} \beta_i x_i\)</span>, then deduce the effect on the mean response (<span class="math inline">\(\lambda\)</span>) from the function <span class="math inline">\(\lambda = e^{\eta}\)</span>.</p>
+<p>For example, the intercept indicates that in the case where the biomass is 0 and the pH is low (reference level), <span class="math inline">\(\eta = 2.71\)</span> and therefore <span class="math inline">\(\lambda = e^{\eta} = 15.0\)</span>. Of course, this value is not realistic because there can be no species without biomass.</p>
 <p>For other parameters:</p>
 <ul>
 <li><p>The <code>Biomass</code> coefficient indicates that <span class="math inline">\(\eta\)</span> decreases by 0.13 for each increase of one unit of biomass, if the other variables (i.e. the pH) remain constant. An additive change of -0.13 on the logarithmic scale corresponds to a multiplicative change of <span class="math inline">\(e^{-0.13} = 0.88\)</span>, a loss of 12% of the mean number of species per additional biomass unit.</p></li>

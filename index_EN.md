@@ -28,4 +28,5 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 7. [Multiple linear regression](labos/7E-Multiple_regression.html) ([PDF](labos/7E-Multiple_regression.pdf)) - Data [1](labos/sablefish.csv) [2](labos/sardinella.csv)
 8. [Model selection (solutions)](labos/8RE-Model_selection.html) ([PDF](labos/8RE-Model_selection.pdf)) - Data [1](labos/environment.csv) [2(a)](labos/migration.csv) [2(c)](labos/migr_test.csv)
 9. [Logistic regression](labos/9E-Logistic_regression.html) ([PDF](labos/9E-Logistic_regression.pdf)) 
+10. [Poisson regression](labos/10E-Poisson_regression.html) ([PDF](labos/10E-Poisson_regression.pdf) - Data [1](labos/stream_composition.csv) [2](labos/salamander.csv))
 

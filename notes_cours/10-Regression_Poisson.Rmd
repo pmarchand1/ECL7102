@@ -248,9 +248,9 @@ L'interprétation des coefficients du modèle est plus complexe avec les interac
 summary(mod_sp)
 ```
 
-Il est plus facile de déterminer d'abord l'effet de chaque coefficient du modèle sur le prédicteur linéaire: $\eta = \beta_0 + \sum_{i=1}^{m} \beta_i x_i$, puis de déduire l'effet sur la moyenne de la réponse ($\lambda$) à partir de la fonction $\lambda = e^{-\eta}$.
+Il est plus facile de déterminer d'abord l'effet de chaque coefficient du modèle sur le prédicteur linéaire: $\eta = \beta_0 + \sum_{i=1}^{m} \beta_i x_i$, puis de déduire l'effet sur la moyenne de la réponse ($\lambda$) à partir de la fonction $\lambda = e^{\eta}$.
 
-Par exemple, l'ordonnée à l'origine indique que dans le cas où la biomasse est 0 et le pH est bas (niveau de référence), $\eta = 2.71$ et donc $\lambda = e^{-\eta} = 15.0$ espèces. Bien sûr, cette valeur n'est pas réaliste car il ne peut pas y avoir d'espèces sans biomasse.
+Par exemple, l'ordonnée à l'origine indique que dans le cas où la biomasse est 0 et le pH est bas (niveau de référence), $\eta = 2.71$ et donc $\lambda = e^{\eta} = 15.0$ espèces. Bien sûr, cette valeur n'est pas réaliste car il ne peut pas y avoir d'espèces sans biomasse.
 
 Pour les autres paramètres:
 
