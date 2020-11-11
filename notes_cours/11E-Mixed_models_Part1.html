@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-11-18" />
+<meta name="date" content="2020-11-16" />
 
 <title>Linear mixed models, part 1</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Linear mixed models, part 1</h1>
-<h4 class="date"><br/>November 18, 2019</h4>
+<h4 class="date"><br/>November 16, 2020</h4>
 
 </div>
 
@@ -605,16 +570,16 @@ summary(mod4_1)</code></pre>
 <p>We then create a second dataset containing only the beaches and their exposure index. We use the <code>distinct</code> function of <em>dplyr</em>, which extracts the unique combinations the specified variables from a data frame.</p>
 <pre class="r"><code>rikz_beach &lt;- distinct(rikz, Beach, Exposure)
 rikz_beach</code></pre>
-<pre><code>##   Beach Exposure
-## 1     1       10
-## 2     2        8
-## 3     3       11
-## 4     4       11
-## 5     5       10
-## 6     6       11
-## 7     7       11
-## 8     8       10
-## 9     9       10</code></pre>
+<pre><code>##   Exposure Beach
+## 1       10     1
+## 2        8     2
+## 3       11     3
+## 4       11     4
+## 5       10     5
+## 6       11     6
+## 7       11     7
+## 8       10     8
+## 9       10     9</code></pre>
 <p>We then add to this data frame the beach intercepts obtained at step 1, which is the response we want to model at step 2.</p>
 <pre class="r"><code>rikz_beach$coef &lt;- coef(mod4_1)[-1] # Coefficient 1 is NAP
 
@@ -717,14 +682,16 @@ summary(mmod)</code></pre>
 <pre><code>## $Beach
 ##   (Intercept)
 ## 1   0.4962684
-## 2   1.0050818
+## 2   1.0050819
 ## 3  -0.4791252
 ## 4  -0.4104708
 ## 5   0.2444787
 ## 6  -0.2252788
 ## 7  -0.2858167
 ## 8  -0.2124511
-## 9  -0.1326862</code></pre>
+## 9  -0.1326862
+## 
+## with conditional variances for &quot;Beach&quot;</code></pre>
 <p>The random effects are the estimates of the difference between the intercept of each beach (1 to 9) and their mean given by <code>(Intercept)</code>. The estimated intercept for beach 1 is 2.37 + 0.50 = 2.87 and so on. Instead of calculating these values for each beach, we can get them with the <code>coef</code> function.</p>
 <pre class="r"><code>coef(mmod)</code></pre>
 <pre><code>## $Beach
@@ -732,7 +699,7 @@ summary(mmod)</code></pre>
 ## 1    2.870511 -0.6806307
 ## 2    3.379324 -0.6806307
 ## 3    1.895117 -0.6806307
-## 4    1.963772 -0.6806307
+## 4    1.963771 -0.6806307
 ## 5    2.618721 -0.6806307
 ## 6    2.148964 -0.6806307
 ## 7    2.088426 -0.6806307
@@ -875,6 +842,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

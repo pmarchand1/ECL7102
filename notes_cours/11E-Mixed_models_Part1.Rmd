@@ -1,6 +1,6 @@
 ---
 title: "Linear mixed models, part 1"
-date: "<br/>November 18, 2019"
+date: "<br/>November 16, 2020"
 output:
     html_document:
         self_contained: false
@@ -13,9 +13,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectives
@@ -288,12 +288,11 @@ Let's look at the different components of this result. The first line indicates 
 The random effects block contains the estimates for the variance and standard deviation of the intercept ($\sigma_\alpha$), as well as the residual variance and standard deviation ($\sigma_y$). The fixed effects block shows the estimate for the mean intercept ($\mu_\alpha$) and the effect of the NAP. The summary also indicates the estimated correlation between the two fixed effects. A negative correlation is to be expected when the mean value of the predictor is greater than zero: if the line is rotated around the mean so as to increase the slope, the position of the intercept moves down the $y$ axis (see diagram below).
 
 ```{r, echo = FALSE, fig.dim = c(3, 3)}
-ggplot(NULL, aes(x = seq(0, 5))) +
+ggplot(NULL) + xlim(0, 5) +
     labs(x = "x") +
     stat_function(fun = function(x) x + 1.5, color = "blue") +
     stat_function(fun = function(x) 1.2*x + 1, color = "blue", linetype = "dotted") +
     stat_function(fun = function(x) 1.6*x, color = "blue", linetype = "dotted") +
-    scale_x_continuous(expand = c(0, 0)) +
     theme(axis.text = element_blank(), axis.ticks = element_blank())
     
 ```

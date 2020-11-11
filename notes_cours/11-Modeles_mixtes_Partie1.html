@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Modèles linéaires mixtes, partie 1</h1>
-<h4 class="date"><br/>18 novembre 2019</h4>
+<h4 class="date"><br/>16 novembre 2020</h4>
 
 </div>
 
@@ -303,7 +268,7 @@ div.tocify {
 </div>
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
-<div id="exemple-croissance-de-lepinette-blanche-sur-plusieurs-sites" class="section level2">
+<div id="exemple-croissance-de-lépinette-blanche-sur-plusieurs-sites" class="section level2">
 <h2>Exemple: Croissance de l’épinette blanche sur plusieurs sites</h2>
 <p>Supposons que vous devez modéliser la croissance de l’épinette blanche sur plusieurs sites dans une région. Vous avez mesuré les variables numériques suivantes sur un échantillon de 100 arbres, répartis entre les différents sites:</p>
 <ul>
@@ -354,7 +319,7 @@ head(rikz)</code></pre>
 <p>Puisque la réponse est un nombre d’espèces, une régression de Poisson pourrait être plus appropriée. Toutefois, les modèles linéaires mixtes généralisés ne font pas partie de ce cours. Nous appliquons donc une transformation racine carrée à la réponse afin d’utiliser la régression linéaire. Cette transformation améliore généralement l’homogénéité des variances pour les données de comptage.</p>
 <pre class="r"><code>rikz &lt;- mutate(rikz, srich = sqrt(Richness))</code></pre>
 <p>À partir de ces données, nous illustrerons différentes stratégies pour tenir compte de la nature groupée des données (9 plages) et du prédicteur défini au niveau du groupe (indice d’exposition).</p>
-<div id="modele-1-ignorer-les-groupes" class="section level3">
+<div id="modèle-1-ignorer-les-groupes" class="section level3">
 <h3>Modèle 1: Ignorer les groupes</h3>
 <p>Le premier modèle inclut seulement le prédicteur au niveau du site (NAP), avec un <span class="math inline">\(R^2\)</span> ajusté de 0.46. L’effet de ce prédicteur est significatif et indique que les sites plus élevés ont une richesse spécifique plus faible.</p>
 <pre class="r"><code>mod1 &lt;- lm(srich ~ NAP, rikz)
@@ -389,7 +354,7 @@ ggplot(rikz, aes(x = NAP, y = srich)) +
     geom_point()</code></pre>
 <p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
-<div id="modele-2-estimation-des-coefficients-pour-chaque-groupe" class="section level3">
+<div id="modèle-2-estimation-des-coefficients-pour-chaque-groupe" class="section level3">
 <h3>Modèle 2: Estimation des coefficients pour chaque groupe</h3>
 <p>L’ajout du facteur <code>Beach</code> au modèle permet d’estimer les différences systématiques de richesse entre les plages.</p>
 <pre class="r"><code>mod2 &lt;- lm(srich ~ NAP + Beach, rikz)
@@ -483,7 +448,7 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
     geom_line(aes(y = fit2i))</code></pre>
 <p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
-<div id="modele-3-predicteur-lie-aux-groupes" class="section level3">
+<div id="modèle-3-prédicteur-lié-aux-groupes" class="section level3">
 <h3>Modèle 3: Prédicteur lié aux groupes</h3>
 <p>Plutôt que d’estimer la richesse moyenne et/ou la relation entre richesse et le NAP de façon indépendante pour chaque plage (comme dans le modèle précédent), nous pourrions plutôt essayer d’expliquer ces différences en fonction de facteurs mesurés au niveau de la plage.</p>
 <p>Le modèle suivant suppose que la richesse spécifique (transformée) est une fonction de l’interaction entre NAP (défini par site) et l’indice d’exposition défini par plage.</p>
@@ -569,7 +534,7 @@ summary(mod_exp_beach)</code></pre>
 all.equal(fitted(mod_exp_beach), fitted(mod2_inter)) </code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
-<div id="modele-4-modele-lineaire-en-deux-etapes" class="section level3">
+<div id="modèle-4-modèle-linéaire-en-deux-étapes" class="section level3">
 <h3>Modèle 4: Modèle linéaire en deux étapes</h3>
 <p>Pour résoudre le problème évoqué à la fin de la section précédente, nous pourrions d’abord estimer les différences de richesse entre plages à partir des données des sites, puis ensuite modéliser l’effet des plages en fonction de l’indice d’exposition.</p>
 <p>Pour la première étape, nous utilisons le modèle 2 ci-dessus (ordonnée à l’origine qui varie par plage), sauf que nous ajoutons <code>- 1</code> à la formule du modèle pour signifier que l’ordonnée à l’origine est zéro. Ce truc nous permet d’obtenir des coefficients pour chaque plage qui correspondent à l’ordonnée à l’origine de cette plage, plutôt qu’à une différence mesurée à partir d’un niveau de référence. Notez que ce truc fonctionne seulement pour la première variable catégorielle dans une régression.</p>
@@ -604,16 +569,16 @@ summary(mod4_1)</code></pre>
 <p>Créons ensuite un deuxième jeu de données contenant seulement les plages et leur indice d’exposition. Nous utiliserons pour cela la fonction <code>distinct</code> de <em>dplyr</em>, qui extrait les combinaisons uniques des variables spécifiées dans un tableau de données.</p>
 <pre class="r"><code>rikz_beach &lt;- distinct(rikz, Beach, Exposure)
 rikz_beach</code></pre>
-<pre><code>##   Beach Exposure
-## 1     1       10
-## 2     2        8
-## 3     3       11
-## 4     4       11
-## 5     5       10
-## 6     6       11
-## 7     7       11
-## 8     8       10
-## 9     9       10</code></pre>
+<pre><code>##   Exposure Beach
+## 1       10     1
+## 2        8     2
+## 3       11     3
+## 4       11     4
+## 5       10     5
+## 6       11     6
+## 7       11     7
+## 8       10     8
+## 9       10     9</code></pre>
 <p>Nous ajoutons ensuite à ce tableau les coefficients de l’étape 1 qui constituent la réponse à modéliser au niveau de la plage.</p>
 <pre class="r"><code>rikz_beach$coef &lt;- coef(mod4_1)[-1] # Le coefficient 1 est NAP
 
@@ -642,7 +607,7 @@ summary(mod4_2)</code></pre>
 </div>
 </div>
 </div>
-<div id="modeles-lineaires-mixtes" class="section level1">
+<div id="modèles-linéaires-mixtes" class="section level1">
 <h1>Modèles linéaires mixtes</h1>
 <p>Les <strong>modèles mixtes</strong> sont conceptuellement semblables à la régression en deux étapes effectuée ci-dessus, sauf que les deux étapes sont réalisées simultanément afin de tenir compte de l’incertitude des coefficients de groupe. Ce type de modèle est particulièrement utile lorsqu’une ou plusieurs des conditions suivantes s’appliquent:</p>
 <ul>
@@ -652,7 +617,7 @@ summary(mod4_2)</code></pre>
 <li><p>on s’intéresse davantage à la variation entre les groupes qu’à l’effet de groupes particuliers;</p></li>
 <li><p>on souhaite appliquer le modèle à des groupes où aucune mesure n’a été prise.</p></li>
 </ul>
-<div id="representation-mathematique-dun-modele-lineaire-mixte" class="section level2">
+<div id="représentation-mathématique-dun-modèle-linéaire-mixte" class="section level2">
 <h2>Représentation mathématique d’un modèle linéaire mixte</h2>
 <p>Un <strong>modèle linéaire mixte</strong> est une régression linéaire dont un ou plusieurs des coefficients varient d’un groupe d’observations à une autre, <em>et où cette variation est modélisée par une distribution statistique</em>. Ils sont aussi connus sous le nom de modèles <em>hiérarchiques</em> ou <em>multi-niveaux</em>, car ils modélisent la variation à au moins deux niveaux (observation individuelle et groupe).</p>
 <p>Nous commencerons par traiter des modèles mixtes où seule l’ordonnée à l’origine varie par groupe. Pour ce type de modèle, la valeur moyenne de la réponse de l’observation <span class="math inline">\(k\)</span> (<span class="math inline">\(\hat{y_k}\)</span>) correspond à la combinaison linéaire des prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, etc. à laquelle s’ajoute une ordonnée à l’origine spécifique au groupe <span class="math inline">\(j\)</span> qui contient l’observation <span class="math inline">\(k\)</span>: <span class="math inline">\(\alpha_{j[k]}\)</span>. (Nous utilisons <span class="math inline">\(\alpha\)</span> plutôt que <span class="math inline">\(\beta_0\)</span> pour l’ordonnée à l’origine afin de simplifier un peu la notation.)</p>
@@ -664,7 +629,7 @@ summary(mod4_2)</code></pre>
 <p>L’effet de groupe <span class="math inline">\(\alpha_j\)</span> est désigné comme un effet <em>aléatoire</em>, en opposition aux effets <em>fixes</em> qui sont estimés de façon indépendante sans faire partie d’une distribution commune (par exemple, les <span class="math inline">\(m - 1\)</span> coefficients d’un facteur à <span class="math inline">\(m\)</span> catégories dans une régression linéaire classique). Ce modèle est appelé <em>mixte</em> car il contient à la fois des effets fixes (les <span class="math inline">\(\beta\)</span> associés aux prédicteurs <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, etc.) et des effets aléatoires.</p>
 <p>Il n’y a pas de raison particulière d’avoir choisi une distribution normale pour les <span class="math inline">\(\alpha_j\)</span>. Cependant, si tout ce qu’on sait d’une variable est sa moyenne et son écart-type, la distribution normale est dans un certain sens la plus probable, c’est-à-dire celle qui amène le moins de suppositions supplémentaires.</p>
 </div>
-<div id="modele-lineaire-mixte-avec-r" class="section level2">
+<div id="modèle-linéaire-mixte-avec-r" class="section level2">
 <h2>Modèle linéaire mixte avec R</h2>
 <p>Dans cet exemple, nous ajusterons un modèle mixte du type présenté ci-dessus aux mêmes données du tableau <code>rikz</code>. Le modèle inclut le prédicteur <code>NAP</code> et une ordonnée à l’origine qui varie selon la plage.</p>
 <p>Pour estimer les paramètres d’un modèle mixte, nous utilisons la fonction <code>lmer</code> du package <em>lme4</em>. La formule d’un modèle mixte ressemble à celles déjà vues, sauf pour le dernier terme: <code>(1 | Beach)</code>. Ce terme signifie que l’ordonnée à l’origine (désignée par <code>1</code>) varie entre les niveaux de la variable <code>Beach</code>.</p>
@@ -716,14 +681,16 @@ summary(mmod)</code></pre>
 <pre><code>## $Beach
 ##   (Intercept)
 ## 1   0.4962684
-## 2   1.0050818
+## 2   1.0050819
 ## 3  -0.4791252
 ## 4  -0.4104708
 ## 5   0.2444787
 ## 6  -0.2252788
 ## 7  -0.2858167
 ## 8  -0.2124511
-## 9  -0.1326862</code></pre>
+## 9  -0.1326862
+## 
+## with conditional variances for &quot;Beach&quot;</code></pre>
 <p>Les effets aléatoires sont les estimés de la différence entre l’ordonnée à l’origine de chaque plage (1 à 9) et leur moyenne donnée par <code>(Intercept)</code>. L’ordonnée à l’origine estimée pour la plage 1 est donc 2.37 + 0.50 = 2.87 et ainsi de suite. Plutôt que ce calculer ces valeurs pour chaque plage, nous pouvons les obtenir avec la fonction <code>coef</code>.</p>
 <pre class="r"><code>coef(mmod)</code></pre>
 <pre><code>## $Beach
@@ -731,7 +698,7 @@ summary(mmod)</code></pre>
 ## 1    2.870511 -0.6806307
 ## 2    3.379324 -0.6806307
 ## 3    1.895117 -0.6806307
-## 4    1.963772 -0.6806307
+## 4    1.963771 -0.6806307
 ## 5    2.618721 -0.6806307
 ## 6    2.148964 -0.6806307
 ## 7    2.088426 -0.6806307
@@ -752,7 +719,7 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 <p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <p>Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu’on s’éloigne de la moyenne (voir par exemple la plage 2 en haut du graphique). En statistique, on parle d’une contraction (<em>shrinkage</em>) des estimés des effets de groupe.</p>
 </div>
-<div id="modele-mixte-comme-compromis-entre-sous-ajustement-et-surajustement" class="section level2">
+<div id="modèle-mixte-comme-compromis-entre-sous-ajustement-et-surajustement" class="section level2">
 <h2>Modèle mixte comme compromis entre sous-ajustement et surajustement</h2>
 <p>Que se passe-t-il ici? En supposant que les effets de chaque plage proviennent d’une distribution commune, le modèle mixte estime l’ordonnée à l’origine de chaque plage en tenant compte non seulement des valeurs mesurées à cette plage, mais aussi de celles des autres plages. Il s’agit donc d’un compromis entre sous-ajustement (ex.: le modèle 1, qui ignore totalement les différences entre plages) et surajustement (ex.: le modèle 2, qui estime indépendamment les moyennes de chaque plage à partir des 5 points de cette plage).</p>
 <p>Autrement dit, les différences entre les valeurs moyennes mesurées par plage peuvent être dues soit à des différences réelles de richesse spécifique entre les plages, soit au hasard de l’échantillonnage. L’ANOVA que nous avons vue plus tôt cette session visait à déterminer si ces différences entre groupes d’observations sont trop grandes pour être dues au hasard. Le modèle mixte tente plutôt d’estimer la portion des différences observées qui est due à un réel effet de groupe et la portion qui est due au hasard de l’échantillonnage dans chaque groupe.</p>
@@ -775,7 +742,7 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <p>Notez que les mesures d’influence des observations comme la distance de Cook ne s’appliquent pas aux modèles mixtes.</p>
 </div>
 </div>
-<div id="modele-mixte-avec-predicteur-lie-aux-groupes" class="section level1">
+<div id="modèle-mixte-avec-prédicteur-lié-aux-groupes" class="section level1">
 <h1>Modèle mixte avec prédicteur lié aux groupes</h1>
 <p>À la fin de la section précédente, nous avons vu que les différences entre chaque plage et la moyenne des données ne suivent pas une distribution normale. Est-ce qu’une partie de ces différences pourrait être expliquée par l’indice d’exposition (<code>Exposure</code>) mesuré par plage?</p>
 <p>Pour inclure l’effet d’un prédicteur mesuré au niveau du groupe, nous devons modifier le modèle de la section précédente. L’ordonnée à l’origine par groupe était définie par une distribution normale:</p>
@@ -828,7 +795,7 @@ qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
 <p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 </div>
-<div id="correlation-intra-classe" class="section level1">
+<div id="corrélation-intra-classe" class="section level1">
 <h1>Corrélation intra-classe</h1>
 <p>Dans les modèles mixtes présentés ci-dessus, <span class="math inline">\(\sigma_\alpha\)</span> représente l’écart-type de la réponse moyenne entre les groupes tandis que <span class="math inline">\(\sigma_y\)</span> représente l’écart-type de la réponse entre observations d’un même groupe.</p>
 <p>La <em>corrélation intra-classe</em> est définie comme le rapport:</p>
@@ -837,7 +804,7 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <p>La corrélation intra-classe est d’environ 0.45 pour le premier modèle (<code>mmod</code>) et diminue à 0.06 en tenant compte de l’indice d’exposition (modèle <code>mmod_exp</code>).</p>
 <p>D’un point de vue pratique, la corrélation intra-classe indique quelle échelle contribue davantage à la variation de la réponse, donc à quelle échelle nous pourrions échantillonner davantage pour réduire l’incertitude du modèle. Dans notre exemple, si cette corrélation approchait 1, il serait préférable d’échantillonner plusieurs plages avec peu d’échantillons par plage; dans le cas contraire, nous pourrions obtenir un plus grand échantillon sur un nombre limité de plages. Bien sûr, cela suppose que les plages observées jusqu’à maintenant sont représentatives de la “population” des plages qui nous intéressent.</p>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
 <li><p>Un modèle linéaire mixte (aussi appelé modèle multi-niveaux) est une extension de la régression linéaire pour des données groupées, où certains des coefficients varient de façon aléatoire d’un groupe à l’autre.</p></li>
@@ -847,7 +814,7 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <li><p>Dans une régression linéaire classique, on ne peut inclure à la fois un effet fixe par groupe et un prédicteur défini à l’échelle du groupe. Un modèle mixte peut inclure à la fois l’effet aléatoire des groupes et une variable explicative définie à l’échelle du groupe.</p></li>
 </ul>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <p>Voici deux excellents manuels à consulter pour plus de détails sur les modèles mixtes ou multi-niveaux.</p>
 <ul>
@@ -874,6 +841,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -1,6 +1,6 @@
 ---
 title: "Modèles linéaires mixtes, partie 1"
-date: "<br/>18 novembre 2019"
+date: "<br/>16 novembre 2020"
 output:
     html_document:
         self_contained: false
@@ -13,9 +13,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectifs
@@ -288,12 +288,11 @@ Regardons les différentes composantes de ce résultat. La première ligne indiq
 Le bloc d'effets aléatoires (`Random effects`) contient les estimés pour la variance et l'écart-type de l'ordonnée à l'origine ($\sigma_\alpha$), ainsi que la variance et l'écart-type résiduel ($\sigma_y$). Le bloc d'effets fixes indique l'estimé pour la moyenne de l'ordonnée à l'origine ($\mu_\alpha$) et l'effet du NAP. Le sommaire indique aussi la corrélation estimée entre les deux effets fixes. Une corrélation négative est normale lorsque la valeur moyenne du prédicteur est supérieure à zéro: si on pivote la droite autour de la moyenne de façon à augmenter la pente, la position de l'ordonnée à l'origine descend le long de l'axe des $y$ (voir diagramme ci-dessous).
 
 ```{r, echo = FALSE, fig.dim = c(3, 3)}
-ggplot(NULL, aes(x = seq(0, 5))) +
+ggplot(NULL) + xlim(0, 5) +
     labs(x = "x") +
     stat_function(fun = function(x) x + 1.5, color = "blue") +
     stat_function(fun = function(x) 1.2*x + 1, color = "blue", linetype = "dotted") +
     stat_function(fun = function(x) 1.6*x, color = "blue", linetype = "dotted") +
-    scale_x_continuous(expand = c(0, 0)) +
     theme(axis.text = element_blank(), axis.ticks = element_blank())
     
 ```
