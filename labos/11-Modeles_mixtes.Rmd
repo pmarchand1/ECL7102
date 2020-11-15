@@ -1,10 +1,17 @@
 ---
 title: "Modèles mixtes"
-date: "20 novembre 2019"
-output: pdf_document
+date: "18 novembre 2020"
+output: 
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
 ---
 
-Ce laboratoire doit être remis le **4 décembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **2 décembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+
 
 ## 1. Rendement du blé en fonction de l'engrais et de l'humidité du sol
 
@@ -16,10 +23,9 @@ data(Wheat)
 head(Wheat)
 ```
 
+(a) Estimez les paramètres d'un modèle linéaire incluant les effets additifs de l'engrais et de l'humidité sur le rendement. Est-il correct d'ignorer le groupement des mesures par plateau? Justifiez votre réponse à partir d'un graphique des résidus par plateau. 
 
-(a) Estimez les paramètres d'un modèle linéaire incluant les effets additifs de l'engrais et de l'humidité sur le rendement. Est-il correct d'ignorer le groupement des mesures par plateau? Justifiez votre réponse à partir d'un graphique des résidus par plateau.
-
-(b) Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu'un effet aléatoire représentant la structure groupée des données. Comparez les coefficients des effets fixes (engrais et humidité) pour les deux modèles, ainsi que les erreurs-types de ces coefficients. Expliquez les différences s'il y a lieu.
+(b) Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu'un effet aléatoire représentant la structure groupée des données. Pour chacun des deux effets fixes (engrais et humidité), comment l'erreur-type des estimés change-t-elle par rapport au modèle sans effet aléatoire en (a)? Expliquez ces différences en fonction de la structure de l'expérience. 
 
 (c) À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) sont répartis aléatoirement en suivant une distribution normale.
 
@@ -35,15 +41,16 @@ data(Spruce)
 head(Spruce)
 ```
 
-(a) Créez un graphique de la courbe de croissance observée (`logSize` en fonction du nombre de jours) pour ces arbres, avec un code de couleur pour la placette. Pourquoi serait-il préférable de modéliser la courbe de croissance en prenant `days` comme facteur, donc `logSize ~ as.factor(days)` plutôt que `logSize ~ days`?
+(a) Puisque la croissance n'est pas linéaire dans le temps, nous transformons le nombre de jours en facteurs, ce qui permettra d'estimer indépendamment la croissance à chaque point dans le temps.
 
-*Truc*: Avec `ggplot`, vous pouvez superposer un `geom_point` et un `geom_line`, puis spécifier `group = Tree` dans la fonction `aes` afin d'assurer que les lignes soient tracées entre les points pour chaque arbre.
+```{r}
+Spruce$days <- as.factor(Spruce$days)
+```
 
-(b) Estimez les paramètres du modèle linéaire `logSize ~ as.factor(days)`. Selon ce modèle, quel est la variation moyenne de `logSize` entre le jour 152 et le jour 201? Quel est son écart-type?
+Estimez les paramètres du modèle linéaire de `logSize` en fonction du nombre de jours écoulé et répondez aux questions suivantes: (i) Comment interprétez-vous l'ordonnée à l'origine de ce modèle? (ii) Quelle est la variation moyenne de `logSize` entre le jour 152 et le jour 201 et quel est son écart-type?
 
-(c) Ajustez maintenant un modèle mixte qui tient compte du fait qu'il s'agit de mesures répétées sur les mêmes arbres. (*Note*: Ignorez la placette `plot` pour l'instant.) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d'échantillonnage afin d'estimer une courbe de croissance? 
+(b) Ajustez maintenant un modèle mixte qui tient compte du fait qu'il s'agit de mesures répétées sur les mêmes arbres et répondez aux questions suivantes (*Note*: Ignorez la placette `plot` pour l'instant.) (i) Comment interprétez-vous l'écart-type de l'effet aléatoire et l'écart-type résiduel? (ii) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d'échantillonnage afin d'estimer une courbe de croissance?
 
-(d) Quelle est la corrélation intra-classe pour le modèle en (c)? Selon ce résultat, est-ce que la variation de taille parmi les arbres à un moment donné de l'expérience est due davantage (i) aux différences initiales de taille entre les arbres ou (ii) à une variation de la croissance d'un arbre à l'autre?
+(c) Quelle est la corrélation intra-classe pour le modèle en (b)? Selon ce résultat, est-ce que la variation de taille parmi les arbres à un moment donné de l'expérience est due davantage (i) aux différences de taille entre les arbres au premier jour 152 ou (ii) à la variation aléatoire de croissance d'un arbre à l'autre pour chaque période de temps?
 
-(e) Ajoutez au modèle en (c) un effet aléatoire de la placette `plot`. Selon ce modèle, est-ce que la taille des arbres diffère de façon marquée entre les placettes?
-
+(d) Ajoutez au modèle en (b) un effet aléatoire de la placette `plot`. Selon ce modèle, est-ce que la taille des arbres diffère de façon marquée entre les placettes? 

@@ -1,25 +1,30 @@
 ---
 title: "Modèles linéaires mixtes, partie 1"
-date: "<br/>18 novembre 2019"
+date: "16 novembre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(6, 4))
-library(dplyr)
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
 
-```{css, echo = FALSE}
-.small { font-size: 70% }
-```
 
 # Objectifs
 
@@ -31,7 +36,7 @@ library(cowplot)
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Pourquoi les modèles mixtes?
 
@@ -108,7 +113,7 @@ $$\alpha_j \sim N(\gamma_0 + \gamma_1 u_{1j}, \sigma_\alpha)$$
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Modèles linéaires mixtes
 

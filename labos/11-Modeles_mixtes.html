@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Modèles mixtes</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Modèles mixtes</h1>
+<h4 class="date">18 novembre 2020</h4>
+
+</div>
+
+
+<p>Ce laboratoire doit être remis le <strong>2 décembre à 17h sur Moodle</strong>. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s’il y a lieu) et des résultats obtenus.</p>
+<div id="rendement-du-blé-en-fonction-de-lengrais-et-de-lhumidité-du-sol" class="section level2">
+<h2>1. Rendement du blé en fonction de l’engrais et de l’humidité du sol</h2>
+<p>Le tableau de données <code>Wheat</code> inclus dans le package <em>nlme</em> présente le résultat d’une expérience agricole visant à mesurer l’effet de la quantité d’engrais (<code>fertilizer</code>) et de l’humidité du sol (<code>Moisture</code>) sur le rendement d’une variété de blé (<code>DryMatter</code>, la variable réponse). Les plants ont été répartis en 12 plateaux (<code>Tray</code>). L’humidité du sol est constante dans un plateau, mais chaque plateau est divisé en 4 sections recevant chacune une quantité différente d’engrais. Il y a donc 48 mesures individuelles du rendement, soit 4 par plateau.</p>
+<pre class="r"><code>library(nlme)
+data(Wheat)
+head(Wheat)</code></pre>
+<pre><code>## Grouped Data: DryMatter ~ fertilizer | Tray
+##   Tray Moisture fertilizer DryMatter
+## 1    1       10          2    3.3458
+## 2    1       10          4    4.3170
+## 3    1       10          6    4.5572
+## 4    1       10          8    5.8794
+## 5    2       10          2    4.0444
+## 6    2       10          4    4.1413</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Estimez les paramètres d’un modèle linéaire incluant les effets additifs de l’engrais et de l’humidité sur le rendement. Est-il correct d’ignorer le groupement des mesures par plateau? Justifiez votre réponse à partir d’un graphique des résidus par plateau.</p></li>
+<li><p>Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu’un effet aléatoire représentant la structure groupée des données. Pour chacun des deux effets fixes (engrais et humidité), comment l’erreur-type des estimés change-t-elle par rapport au modèle sans effet aléatoire en (a)? Expliquez ces différences en fonction de la structure de l’expérience.</p></li>
+<li><p>À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) sont répartis aléatoirement en suivant une distribution normale.</p></li>
+<li><p>Calculez la corrélation intra-classe pour le modèle mixte en (b). Quelle est l’interprétation mathématique de cette valeur?</p></li>
+</ol>
+</div>
+<div id="courbes-de-croissance-dépinettes" class="section level2">
+<h2>2. Courbes de croissance d’épinettes</h2>
+<p>Le tableau <code>Spruce</code> inclus dans le package <em>nlme</em> contient des données sur la croissance de 79 épinettes. Le logarithme du volume (<code>logSize</code>) pour chaque épinette (identifiée par un numéro d’arbre <code>Tree</code>) a été mesuré à 13 différents moments à partir du début de l’expérience (nombre de jours <code>days</code>). Les épinettes sont aussi réparties entre 4 placettes (<code>plot</code>).</p>
+<pre class="r"><code>data(Spruce)
+head(Spruce)</code></pre>
+<pre><code>## Grouped Data: logSize ~ days | Tree
+##    Tree days logSize plot
+## 1 O1T01  152    4.51    1
+## 2 O1T01  174    4.98    1
+## 3 O1T01  201    5.41    1
+## 4 O1T01  227    5.90    1
+## 5 O1T01  258    6.15    1
+## 6 O1T01  469    6.16    1</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Puisque la croissance n’est pas linéaire dans le temps, nous transformons le nombre de jours en facteurs, ce qui permettra d’estimer indépendamment la croissance à chaque point dans le temps.</li>
+</ol>
+<pre class="r"><code>Spruce$days &lt;- as.factor(Spruce$days)</code></pre>
+<p>Estimez les paramètres du modèle linéaire de <code>logSize</code> en fonction du nombre de jours écoulé et répondez aux questions suivantes: (i) Comment interprétez-vous l’ordonnée à l’origine de ce modèle? (ii) Quelle est la variation moyenne de <code>logSize</code> entre le jour 152 et le jour 201 et quel est son écart-type?</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Ajustez maintenant un modèle mixte qui tient compte du fait qu’il s’agit de mesures répétées sur les mêmes arbres et répondez aux questions suivantes (<em>Note</em>: Ignorez la placette <code>plot</code> pour l’instant.) (i) Comment interprétez-vous l’écart-type de l’effet aléatoire et l’écart-type résiduel? (ii) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d’échantillonnage afin d’estimer une courbe de croissance?</p></li>
+<li><p>Quelle est la corrélation intra-classe pour le modèle en (b)? Selon ce résultat, est-ce que la variation de taille parmi les arbres à un moment donné de l’expérience est due davantage (i) aux différences de taille entre les arbres au premier jour 152 ou (ii) à la variation aléatoire de croissance d’un arbre à l’autre pour chaque période de temps?</p></li>
+<li><p>Ajoutez au modèle en (b) un effet aléatoire de la placette <code>plot</code>. Selon ce modèle, est-ce que la taille des arbres diffère de façon marquée entre les placettes?</p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
