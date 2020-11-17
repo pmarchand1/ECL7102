@@ -26,7 +26,7 @@ head(Wheat)
 
 (b) Now fit a mixed model that includes the same fixed effects, as well as a random effect representing the grouped data structure. For each of the two fixed effects (fertilizer and moisture), how does the standard error of the coefficients vary compared with the model without random effects in (a)? Explain these differences in terms of the experimental design.
 
-(c) From appropriate diagnostic plots, verify that the mixed model residuals in (b) are randomly distributed following a normal distribution.
+(c) From appropriate diagnostic plots, check if the mixed model residuals in (b) show no residual pattern and follow a normal distribution.
 
 (d) Calculate the intra-class correlation for the mixed model in (b). What is the mathematical interpretation of this value?
 

@@ -1,6 +1,6 @@
 ---
 title: "Modèles linéaires mixtes, partie 2"
-date: "<br/>25 novembre 2019"
+date: "<br/>23 novembre 2020"
 output:
     html_document:
         self_contained: false
@@ -12,9 +12,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Rappel
@@ -249,8 +249,8 @@ summary(mm_oats2)
 En consultant les intervalles de confiance de ces deux modèles, nous remarquons que le deuxième donne un intervalle de confiance plus large pour les effets fixes des variétés, mais moins large pour l'effet de l'azote.
 
 ```{r}
-confint(mm_oats)
-confint(mm_oats2)
+confint(mm_oats, oldNames = FALSE)
+confint(mm_oats2, oldNames = FALSE)
 ```
 
 Comment pouvons-nous expliquer ces différences?

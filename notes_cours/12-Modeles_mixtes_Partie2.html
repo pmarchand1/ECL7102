@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Modèles linéaires mixtes, partie 2</h1>
-<h4 class="date"><br/>25 novembre 2019</h4>
+<h4 class="date"><br/>23 novembre 2020</h4>
 
 </div>
 
@@ -315,7 +280,7 @@ div.tocify {
 <li><p>Appliquer la sélection de modèles avec l’AIC aux modèles mixtes.</p></li>
 </ul>
 </div>
-<div id="modeles-mixtes-pour-groupes-non-equilibres" class="section level1">
+<div id="modèles-mixtes-pour-groupes-non-équilibrés" class="section level1">
 <h1>Modèles mixtes pour groupes non-équilibrés</h1>
 <p>Dans les exemples vus lors du cours et du laboratoire de la semaine dernière, le nombre d’observations était équilibré entre les groupes. Les modèles mixtes ont aussi des propriétés intéressantes pour les cas où les groupes ne contiennent pas le même nombre d’observations, comme nous le verrons dans le prochain exemple.</p>
 <div id="exemple-concentration-de-radon-dans-des-maisons-du-minnesota" class="section level2">
@@ -370,6 +335,7 @@ summary(mm_radon)</code></pre>
 <pre class="r"><code>comtes &lt;- group_by(radon, county, log_uranium) %&gt;%
     summarize(n = n()) %&gt;%
     ungroup()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;county&#39; (override with `.groups` argument)</code></pre>
 <p>Voici le graphique des prédictions:</p>
 <pre class="r"><code>comtes$floor &lt;- 0 # sous-sol
 comtes$mm_pred &lt;- predict(mm_radon, comtes)
@@ -404,7 +370,7 @@ ggplot(comtes, aes(x = log_uranium)) +
 <p>Ce résultat montre que plus l’échantillon est faible dans un comté, plus l’effet de contraction est important. Autrement dit, moins il y a de points dans un comté, plus la déviation observée entre ce comté et la tendance globale risque d’être due au hasard de l’échantillonnage et plus le modèle mixte doit “corriger” cette valeur en la ramenant près de la tendance générale.</p>
 </div>
 </div>
-<div id="predictions-a-partir-dun-modele-mixte" class="section level1">
+<div id="prédictions-à-partir-dun-modèle-mixte" class="section level1">
 <h1>Prédictions à partir d’un modèle mixte</h1>
 <p>Au dernier cours, nous avons vu la représentation suivante pour un modèle mixte avec des prédicteurs mesurés au niveau individuel (observation <span class="math inline">\(k\)</span>) et au niveau du groupe (groupe <span class="math inline">\(j\)</span>), ainsi qu’une ordonnée à l’origine qui varie aléatoirement entre les groupes.</p>
 <p><span class="math display">\[ y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \nu_{j[k]} + \epsilon_k \]</span></p>
@@ -430,8 +396,8 @@ head(eff_alea)</code></pre>
     eff_fixes[&quot;log_uranium&quot;] * comtes$log_uranium + eff_alea$`(Intercept)`
                 
 all.equal(pred_man, comtes$mm_pred)</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<div id="predictions-pour-un-nouveau-groupe" class="section level2">
+<pre><code>## [1] &quot;names for current but not for target&quot;</code></pre>
+<div id="prédictions-pour-un-nouveau-groupe" class="section level2">
 <h2>Prédictions pour un nouveau groupe</h2>
 <p>Si on tente de prédire la concentration de radon d’un sous-sol pour un groupe (comté) non inclus dans le modèle, R génère une erreur.</p>
 <pre class="r"><code>nouv_comte &lt;- data.frame(county = &quot;NOUVEAU&quot;, log_uranium = 0.5, floor = 0)
@@ -449,9 +415,9 @@ predict(mm_radon, nouv_comte)</code></pre>
 <p>La fonction <code>predict</code> n’offre pas d’intervalles de confiance ou de prédiction pour des modèles mixtes. Ces intervalles peuvent être estimés en simulant des données à partir du modèle. Ces méthodes basées sur la simulation ne sont pas couvertes dans ce cours, mais font partie du cours Analyse des données complexes.</p>
 </div>
 </div>
-<div id="effets-aleatoires-multiples" class="section level1">
+<div id="effets-aléatoires-multiples" class="section level1">
 <h1>Effets aléatoires multiples</h1>
-<div id="exemple-croissance-depinettes-sur-plusieurs-sites" class="section level2">
+<div id="exemple-croissance-dépinettes-sur-plusieurs-sites" class="section level2">
 <h2>Exemple: Croissance d’épinettes sur plusieurs sites</h2>
 <p>Considérons de nouveau l’exemple vu au début du dernier cours. Nous souhaitons modéliser la croissance annuelle de l’épinette blanche sur différents sites. Pour cinq années consécutives, nous avons mesuré la croissance annuelle des mêmes 100 arbres en fonction de deux prédicteurs (<span class="math inline">\(x_1, x_2\)</span>; disons le diamètre et l’âge) qui varient pour chaque observation (arbre et année). Nous connaissons aussi la valeur d’un prédicteur fixe au niveau du site (<span class="math inline">\(u_1\)</span>; par exemple la pente). Comment pourrions-nous représenter ces données avec un modèle linéaire mixte?</p>
 <p>Pour choisir les effets aléatoires du modèle, nous pouvons poser la question suivante: pour quels groupes d’observations la variation de la réponse serait-elle corrélée (entre observations d’un même groupe)? Dans ce cas-ci:</p>
@@ -474,7 +440,7 @@ predict(mm_radon, nouv_comte)</code></pre>
 <p><code>croissance ~ pente + DHP + age + (1 | site / id_arbre) + (1 | annee)</code></p>
 <p>Si les numéros d’identification des arbres ne sont pas répétés d’un site à l’autre, il n’est pas nécessaire de préciser les effets nichés: les deux formules sont équivalentes pour <code>lmer</code>. Cependant, si les arbres étaient numérotés 1, 2, … pour chaque site, il serait nécessaire d’utiliser la formule avec l’effet niché: dans le cas contraire, R supposerait que les arbres “1” de chaque site représenteraient le même individu.</p>
 </div>
-<div id="exemple-plan-dexperience-en-parcelles-divisees" class="section level2">
+<div id="exemple-plan-dexpérience-en-parcelles-divisées" class="section level2">
 <h2>Exemple: Plan d’expérience en parcelles divisées</h2>
 <p>Le tableau de données <code>Oats</code> du package <em>nlme</em> présente les résultats d’une expérience agricole en parcelles divisées (<em>split-plot</em>). L’expérience est réalisée en six blocs (<code>Block</code>). Chaque bloc est divisé en trois sections où une variété différente d’avoine est semée (<code>Variety</code>), puis chaque section est divisée en quatre quadrants qui reçoivent chacun une concentration différente d’azote (<code>nitro</code>): 0, 0.2, 0.4 ou 0.6. La variable réponse est le rendement (<code>yield</code>) en avoine pour chacun des 72 quadrants (6 blocs x 3 variétés x 4 concentrations d’azote).</p>
 <pre class="r"><code>library(nlme)
@@ -505,7 +471,7 @@ summary(mm_oats2)</code></pre>
 ## 
 ## Scaled residuals: 
 ##      Min       1Q   Median       3Q      Max 
-## -1.62948 -0.65840 -0.07206  0.55785  1.71466 
+## -1.62948 -0.65841 -0.07207  0.55785  1.71463 
 ## 
 ## Random effects:
 ##  Groups        Name        Variance Std.Dev.
@@ -517,7 +483,7 @@ summary(mm_oats2)</code></pre>
 ## Fixed effects:
 ##                   Estimate Std. Error t value
 ## (Intercept)         82.400      8.059  10.225
-## nitro               73.667      6.782  10.863
+## nitro               73.667      6.781  10.863
 ## VarietyMarvellous    5.292      7.079   0.748
 ## VarietyVictory      -6.875      7.079  -0.971
 ## 
@@ -528,25 +494,25 @@ summary(mm_oats2)</code></pre>
 ## VarityVctry -0.439  0.000  0.500</code></pre>
 <p>À première vue, il apparaît contradictoire d’utiliser la même variable <code>Variety</code> comme effet fixe et comme effet aléatoire. Toutefois, l’effet aléatoire ne s’applique pas aux différences entre les 3 variétés (il serait incorrect d’écrire <code>(1 | Variety)</code>), mais plutôt aux différences entre les 18 sections représentées par les combinaisons d’un bloc et d’une variété. C’est d’ailleurs pourquoi cet effet aléatoire est noté comme une interaction <code>Variety:Block</code> dans le sommaire.</p>
 <p>En consultant les intervalles de confiance de ces deux modèles, nous remarquons que le deuxième donne un intervalle de confiance plus large pour les effets fixes des variétés, mais moins large pour l’effet de l’azote.</p>
-<pre class="r"><code>confint(mm_oats)</code></pre>
+<pre class="r"><code>confint(mm_oats, oldNames = FALSE)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                        2.5 %    97.5 %
-## .sig01              8.126934 29.461033
-## .sigma             12.737325 17.936286
-## (Intercept)        67.144282 97.655713
-## nitro              57.976482 89.356851
-## VarietyMarvellous  -3.302201 13.885535
-## VarietyVictory    -15.468868  1.718868</code></pre>
-<pre class="r"><code>confint(mm_oats2)</code></pre>
+<pre><code>##                           2.5 %    97.5 %
+## sd_(Intercept)|Block   8.126934 29.461033
+## sigma                 12.737325 17.936286
+## (Intercept)           67.144282 97.655713
+## nitro                 57.976482 89.356851
+## VarietyMarvellous     -3.302201 13.885535
+## VarietyVictory       -15.468868  1.718868</code></pre>
+<pre class="r"><code>confint(mm_oats2, oldNames = FALSE)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                        2.5 %    97.5 %
-## .sig01              4.211238 16.580605
-## .sig02              5.476923 29.072343
-## .sigma             10.674601 15.588813
-## (Intercept)        66.501053 98.298957
-## nitro              60.261178 87.072155
-## VarietyMarvellous  -8.458427 19.041762
-## VarietyVictory    -20.625094  6.875096</code></pre>
+<pre><code>##                                   2.5 %    97.5 %
+## sd_(Intercept)|Variety:Block   4.211239 16.580608
+## sd_(Intercept)|Block           5.476922 29.072388
+## sigma                         10.674601 15.588813
+## (Intercept)                   66.501050 98.298960
+## nitro                         60.261178 87.072155
+## VarietyMarvellous             -8.458427 19.041762
+## VarietyVictory               -20.625094  6.875096</code></pre>
 <p>Comment pouvons-nous expliquer ces différences?</p>
 <ul>
 <li><p>Dans le premier modèle, nous supposions que toutes les observations étaient indépendantes à l’intérieur d’un bloc. Dans le deuxième modèle, les observations d’une même section sont corrélées, donc nous n’avons pas vraiment 4 réplicats indépendants de chaque variété. Cela augmente l’incertitude sur l’effet des variétés.</p></li>
@@ -554,7 +520,7 @@ summary(mm_oats2)</code></pre>
 </ul>
 </div>
 </div>
-<div id="modele-mixte-avec-pente-aleatoire" class="section level1">
+<div id="modèle-mixte-avec-pente-aléatoire" class="section level1">
 <h1>Modèle mixte avec pente aléatoire</h1>
 <p>Reprenons le jeu de données <code>rikz</code> vu au dernier cours, présentant la richesse spécifique de 45 sites intertidaux répartis sur 9 plages des Pays-Bas.</p>
 <pre class="r"><code>rikz &lt;- read.csv(&quot;../donnees/rikz.csv&quot;)
@@ -588,7 +554,7 @@ summary(mm_rikz2)</code></pre>
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -1.6245 -0.4431 -0.1095  0.3023  2.1610 
+## -1.6245 -0.4430 -0.1095  0.3023  2.1610 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev. Corr 
@@ -610,15 +576,15 @@ summary(mm_rikz2)</code></pre>
 <pre class="r"><code>coef(mm_rikz2)</code></pre>
 <pre><code>## $Beach
 ##   (Intercept)        NAP
-## 1    3.022760 -0.4129637
-## 2    3.485562 -0.6702528
-## 3    1.840189 -0.5388190
-## 4    1.816459 -0.4861692
-## 5    3.149916 -1.4983801
-## 6    2.067749 -0.4565707
-## 7    2.003300 -0.6094894
-## 8    2.142432 -0.6761895
-## 9    2.404104 -0.9748217
+## 1    3.022771 -0.4129465
+## 2    3.485563 -0.6702417
+## 3    1.840190 -0.5388216
+## 4    1.816460 -0.4861710
+## 5    3.149914 -1.4983867
+## 6    2.067750 -0.4565699
+## 7    2.003302 -0.6094925
+## 8    2.142433 -0.6761907
+## 9    2.404104 -0.9748255
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;coef.mer&quot;</code></pre>
@@ -630,7 +596,7 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
     geom_line(aes(y = fit2))</code></pre>
 <p><img src="12-Modeles_mixtes_Partie2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
-<div id="selection-de-modeles" class="section level1">
+<div id="sélection-de-modèles" class="section level1">
 <h1>Sélection de modèles</h1>
 <p>Le processus de comparaison et sélection de modèles est plus complexe pour les modèles mixtes, car il faut choisir à la fois les termes fixes et aléatoires.</p>
 <p>Par exemple, comparons l’AICc des deux modèles précédents pour la richesse spécifique en fonction du NAP dans le tableau de données <code>rikz</code>: (1) le modèle avec effets aléatoires de plage sur l’ordonnée à l’origine et (2) le modèle avec effets aléatoires sur l’ordonnée à l’origine et la pente.</p>
@@ -680,7 +646,7 @@ aictab(list(mod_comp_ml = mod_comp_ml, mod_nap_ml = mod_nap_ml))</code></pre>
 ## mod_comp_ml 6  92.13        0.0   0.99   0.99 -38.96
 ## mod_nap_ml  4 101.83        9.7   0.01   1.00 -46.42</code></pre>
 <p>En conclusion, le meilleur modèle inclut l’effet du NAP et de l’indice d’exposition, ainsi qu’un effet aléatoire de la plage sur l’ordonnée à l’origine.</p>
-<div id="effet-fixe-ou-aleatoire" class="section level2">
+<div id="effet-fixe-ou-aléatoire" class="section level2">
 <h2>Effet fixe ou aléatoire?</h2>
 <p>Puisqu’une méthode différente est requise pour comparer les modèles avec différents effets aléatoires (REML) ou avec différents effets fixes (ML), on ne peut pas utiliser l’AIC pour déterminer si une variable devrait être considérée comme effet fixe ou aléatoire. Ex.: On ne peut pas comparer <code>srich ~ NAP + Beach</code> avec <code>srich ~ NAP + (1 | Beach)</code>.</p>
 <p>Il faut donc déterminer <em>a priori</em> quelles variables constituent des effets fixes ou aléatoires. Voici quelques lignes directrices pour choisir si une variable catégorielle devrait être incluse comme effet aléatoire:</p>
@@ -693,7 +659,7 @@ aictab(list(mod_comp_ml = mod_comp_ml, mod_nap_ml = mod_nap_ml))</code></pre>
 <p>Finalement, il n’y a pas de mal à inclure un effet aléatoire même si cet effet n’explique pas une grande partie de la variance. Par exemple, dans le modèle <code>srich ~ NAP + Exposure + (1 | Beach)</code>, il y avait très peu de variation entre plages une fois que l’on contrôle pour la variable <code>Exposure</code>, comme l’indiquait la corrélation intra-classe de 0.06. Le but des effets aléatoires n’est pas de détecter des différences significatives entre groupes, mais plutôt de tenir compte de la structure hiérarchique de la variation de la réponse, afin d’obtenir des meilleurs estimés des effets fixes et de leur incertitude.</p>
 </div>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
 <li><p>Les modèles mixtes ajustent les estimés des effets aléatoires en fonction du nombre d’observations par groupe: moins il y a d’observations par groupe, plus son effet est contracté vers la moyenne générale.</p></li>
@@ -703,7 +669,7 @@ aictab(list(mod_comp_ml = mod_comp_ml, mod_nap_ml = mod_nap_ml))</code></pre>
 <li><p>L’AIC(c) est une mesure valide pour la comparaison de modèles avec différents effets aléatoires et les mêmes effets fixes, ou avec différents effets fixes et les mêmes effets aléatoires. Ces modèles doivent être ajustés par REML dans le premier cas et par ML (<code>REML = FALSE</code>) dans le deuxième.</p></li>
 </ul>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <p>Article de synthèse sur l’application des modèles mixtes et la sélection de modèles en écologie:</p>
 <ul>
@@ -734,6 +700,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -1,6 +1,6 @@
 ---
 title: "Linear mixed models, part 2"
-date: "<br/>November 25, 2019"
+date: "<br/>November 23, 2020"
 output:
     html_document:
         self_contained: false
@@ -12,9 +12,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Review
@@ -248,8 +248,8 @@ At first glance, it seems contradictory to use the same `Variety` variable as a 
 By looking at the confidence intervals of these two models, we notice that the second gives a wider confidence interval for the fixed effects of the varieties, but a narrower interval for the effect of nitrogen.
 
 ```{r}
-confint(mm_oats)
-confint(mm_oats2)
+confint(mm_oats, oldNames = FALSE)
+confint(mm_oats2, oldNames = FALSE)
 ```
 
 How can we explain these differences?

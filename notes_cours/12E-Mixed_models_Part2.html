@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-11-25" />
+<meta name="date" content="2020-11-23" />
 
 <title>Linear mixed models, part 2</title>
 
@@ -87,7 +87,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -149,6 +148,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -161,48 +161,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -216,6 +177,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -251,8 +218,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -289,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Linear mixed models, part 2</h1>
-<h4 class="date"><br/>November 25, 2019</h4>
+<h4 class="date"><br/>November 23, 2020</h4>
 
 </div>
 
@@ -371,6 +336,7 @@ summary(mm_radon)</code></pre>
 <pre class="r"><code>comtes &lt;- group_by(radon, county, log_uranium) %&gt;%
     summarize(n = n()) %&gt;%
     ungroup()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;county&#39; (override with `.groups` argument)</code></pre>
 <p>Here is the graph of county-level predicted values:</p>
 <pre class="r"><code>comtes$floor &lt;- 0 # basement
 comtes$mm_pred &lt;- predict(mm_radon, comtes)
@@ -419,11 +385,11 @@ eff_fixes</code></pre>
 head(eff_alea)</code></pre>
 <pre><code>##            (Intercept)
 ## AITKIN    -0.020642363
-## ANOKA      0.011245768
+## ANOKA      0.011245769
 ## BECKER     0.012422028
-## BELTRAMI   0.111128436
+## BELTRAMI   0.111128434
 ## BENTON     0.008235846
-## BIG STONE -0.026196358</code></pre>
+## BIG STONE -0.026196357</code></pre>
 <p>Earlier, when we predicted basement radon concentration for each county, the <code>predict</code> function used both fixed and random effects estimates. In other words, the predicted value <span class="math inline">\(\hat{y}\)</span> for a basement (<span class="math inline">\(x_1 = 0\)</span>) in county <span class="math inline">\(j\)</span> is given by:</p>
 <p><span class="math display">\[ \hat{y} = \hat{\gamma_0} + \hat{\gamma_1} u_{1j} + \hat{\nu_{j}} \]</span> ,</p>
 <p>where the hat symbols mean that we use the estimated values of each coefficient. Therefore we could manually calculate the predictions for each county as follows.</p>
@@ -431,7 +397,7 @@ head(eff_alea)</code></pre>
     eff_fixes[&quot;log_uranium&quot;] * comtes$log_uranium + eff_alea$`(Intercept)`
                 
 all.equal(pred_man, comtes$mm_pred)</code></pre>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code>## [1] &quot;names for current but not for target&quot;</code></pre>
 <div id="predictions-for-a-new-group" class="section level2">
 <h2>Predictions for a new group</h2>
 <p>If we try to predict the basement radon concentration for a group (county) not included in the model, R generates an error.</p>
@@ -529,25 +495,25 @@ summary(mm_oats2)</code></pre>
 ## VarityVctry -0.439  0.000  0.500</code></pre>
 <p>At first glance, it seems contradictory to use the same <code>Variety</code> variable as a fixed effect and as a random effect. However, the random effect does not apply to the differences between the 3 varieties (it would be incorrect to write <code>(1 | Variety)</code>), but rather to the differences between the 18 sections represented by the combinations of a block and of a variety. This is why this random effect is noted as a <code>Variety: Block</code> interaction in the summary.</p>
 <p>By looking at the confidence intervals of these two models, we notice that the second gives a wider confidence interval for the fixed effects of the varieties, but a narrower interval for the effect of nitrogen.</p>
-<pre class="r"><code>confint(mm_oats)</code></pre>
+<pre class="r"><code>confint(mm_oats, oldNames = FALSE)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                        2.5 %    97.5 %
-## .sig01              8.126934 29.461033
-## .sigma             12.737325 17.936286
-## (Intercept)        67.144282 97.655713
-## nitro              57.976482 89.356851
-## VarietyMarvellous  -3.302201 13.885535
-## VarietyVictory    -15.468868  1.718868</code></pre>
-<pre class="r"><code>confint(mm_oats2)</code></pre>
+<pre><code>##                           2.5 %    97.5 %
+## sd_(Intercept)|Block   8.126934 29.461033
+## sigma                 12.737325 17.936286
+## (Intercept)           67.144282 97.655713
+## nitro                 57.976482 89.356851
+## VarietyMarvellous     -3.302201 13.885535
+## VarietyVictory       -15.468868  1.718868</code></pre>
+<pre class="r"><code>confint(mm_oats2, oldNames = FALSE)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                        2.5 %    97.5 %
-## .sig01              4.211238 16.580613
-## .sig02              5.476922 29.072404
-## .sigma             10.674601 15.588813
-## (Intercept)        66.501050 98.298960
-## nitro              60.261178 87.072155
-## VarietyMarvellous  -8.458427 19.041762
-## VarietyVictory    -20.625094  6.875096</code></pre>
+<pre><code>##                                   2.5 %    97.5 %
+## sd_(Intercept)|Variety:Block   4.211239 16.580608
+## sd_(Intercept)|Block           5.476922 29.072388
+## sigma                         10.674601 15.588813
+## (Intercept)                   66.501050 98.298960
+## nitro                         60.261178 87.072155
+## VarietyMarvellous             -8.458427 19.041762
+## VarietyVictory               -20.625094  6.875096</code></pre>
 <p>How can we explain these differences?</p>
 <ul>
 <li><p>In the first model, we assumed that all observations were independent within a block. In the second model, the observations of the same section are correlated, so we do not really have 4 independent replicates of each variety. This increases uncertainty about the effect of varieties.</p></li>
@@ -611,15 +577,15 @@ summary(mm_rikz2)</code></pre>
 <pre class="r"><code>coef(mm_rikz2)</code></pre>
 <pre><code>## $Beach
 ##   (Intercept)        NAP
-## 1    3.022772 -0.4129461
-## 2    3.485563 -0.6702414
+## 1    3.022771 -0.4129465
+## 2    3.485563 -0.6702417
 ## 3    1.840190 -0.5388216
 ## 4    1.816460 -0.4861710
-## 5    3.149914 -1.4983870
+## 5    3.149914 -1.4983867
 ## 6    2.067750 -0.4565699
 ## 7    2.003302 -0.6094925
 ## 8    2.142433 -0.6761907
-## 9    2.404104 -0.9748256
+## 9    2.404104 -0.9748255
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;coef.mer&quot;</code></pre>
@@ -670,8 +636,9 @@ aictab(list(mod_comp = mod_comp, mod_comp2 = mod_comp2))</code></pre>
 ## mod_comp  6 100.18        0.0    0.8    0.8 -42.98
 ## mod_comp2 8 102.98        2.8    0.2    1.0 -41.49</code></pre>
 <p>We thus choose the first model (random effect on intercept only). Next, compare models with or without the exposure index. Since we compare different fixed effects, we have to refit the models with ML rather than REML.</p>
-<pre class="r"><code>mod_comp_ml &lt;- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz, REML = FALSE)
-mod_nap_ml &lt;- lmer(srich ~ NAP + (1 | Beach), rikz, REML = FALSE)
+<pre class="r"><code>mod_comp_ml &lt;- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz, REML = FALSE)</code></pre>
+<pre><code>## boundary (singular) fit: see ?isSingular</code></pre>
+<pre class="r"><code>mod_nap_ml &lt;- lmer(srich ~ NAP + (1 | Beach), rikz, REML = FALSE)
 
 aictab(list(mod_comp_ml = mod_comp_ml, mod_nap_ml = mod_nap_ml))</code></pre>
 <pre><code>## 
@@ -735,6 +702,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

@@ -665,15 +665,15 @@ summary(mmod)</code></pre>
 <p>Let’s look at the different components of this result. The first line indicates that the model has been fit with the restricted maximum likelihood (REML) method. Without going into too much detail, the maximum likelihood produces a bias when estimating variances (random effects), and the REML serves to correct that bias.</p>
 <p>The random effects block contains the estimates for the variance and standard deviation of the intercept (<span class="math inline">\(\sigma_\alpha\)</span>), as well as the residual variance and standard deviation (<span class="math inline">\(\sigma_y\)</span>). The fixed effects block shows the estimate for the mean intercept (<span class="math inline">\(\mu_\alpha\)</span>) and the effect of the NAP. The summary also indicates the estimated correlation between the two fixed effects. A negative correlation is to be expected when the mean value of the predictor is greater than zero: if the line is rotated around the mean so as to increase the slope, the position of the intercept moves down the <span class="math inline">\(y\)</span> axis (see diagram below).</p>
 <p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
-<p>Note that <code>lmer</code> does not provide a <span class="math inline">\(p\)</span>-value for the estimated effects, because unlike the case of a linear model, the exact distribution of these estimates is not known. We can nevertheless obtain approximate confidence intervals with <code>confint</code>.</p>
-<pre class="r"><code>confint(mmod)</code></pre>
+<p>Note that <code>lmer</code> does not provide a <span class="math inline">\(p\)</span>-value for the estimated effects, because unlike the case of a linear model, the exact distribution of these estimates is not known. We can nevertheless obtain approximate confidence intervals with <code>confint</code>. The argument <code>oldNames = FALSE</code> ensures that the random effects are clearly identified in the table.</p>
+<pre class="r"><code>confint(mmod, oldNames = FALSE)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                  2.5 %     97.5 %
-## .sig01       0.2664346  0.9469885
-## .sigma       0.4682062  0.7455375
-## (Intercept)  1.9537581  2.7916024
-## NAP         -0.8729868 -0.4948024</code></pre>
-<p>The effect of the NAP is therefore significant with a threshold of <span class="math inline">\(\alpha = 0.05\)</span>. In this table, <code>.sig01</code> is <span class="math inline">\(\sigma_\alpha\)</span> and <code>.sigma</code> is <span class="math inline">\(\sigma_y\)</span>. Standard deviations must be positive. A value less than or equal to zero for a standard deviation or its confidence interval indicates that the model is incorrectly specified.</p>
+<pre><code>##                           2.5 %     97.5 %
+## sd_(Intercept)|Beach  0.2664346  0.9469885
+## sigma                 0.4682062  0.7455375
+## (Intercept)           1.9537581  2.7916024
+## NAP                  -0.8729868 -0.4948024</code></pre>
+<p>The effect of the NAP is therefore significant with a threshold of <span class="math inline">\(\alpha = 0.05\)</span>. The first two rows in the table correspond to <span class="math inline">\(\sigma_\alpha\)</span> and <span class="math inline">\(\sigma_y\)</span>, respectively. Standard deviations must be positive. A value less than or equal to zero for a standard deviation or its confidence interval indicates that the model is incorrectly specified.</p>
 <p>We can separately extract the fixed and random effects of the model with the <code>fixef</code> and<code>ranef</code> functions.</p>
 <pre class="r"><code>fixef(mmod)</code></pre>
 <pre><code>## (Intercept)         NAP 
@@ -720,6 +720,45 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 <p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <p>Predictions of the mixed model for each beach are shifted towards the overall mean. This effect is more pronounced as one moves away from the mean (see for example beach 2 at the top of the graph). In statistics, this is called a <em>shrinkage</em> of the group effects.</p>
 </div>
+<div id="other-useful-packages-for-mixed-models" class="section level2">
+<h2>Other useful packages for mixed models</h2>
+<p>The <em>lmerTest</em> package adds approximate <span class="math inline">\(p\)</span>-values to a <code>lmer</code> model, whereas the <em>MuMIn</em> package contains a <code>r.squaredGLMM</code> function that calculates an equivalent of the <span class="math inline">\(R^2\)</span> for mixed models.</p>
+<pre class="r"><code>library(lmerTest)
+mmod &lt;- lmer(srich ~ NAP + (1 | Beach), rikz)
+summary(mmod)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: srich ~ NAP + (1 | Beach)
+##    Data: rikz
+## 
+## REML criterion at convergence: 97.1
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.5693 -0.4286 -0.1869  0.3230  2.9399 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  Beach    (Intercept) 0.2957   0.5438  
+##  Residual             0.3460   0.5882  
+## Number of obs: 45, groups:  Beach, 9
+## 
+## Fixed effects:
+##             Estimate Std. Error       df t value Pr(&gt;|t|)    
+## (Intercept)  2.37424    0.20405  8.36034  11.635 1.88e-06 ***
+## NAP         -0.68063    0.09501 37.15971  -7.163 1.68e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##     (Intr)
+## NAP -0.162</code></pre>
+<pre class="r"><code>library(MuMIn)
+r.squaredGLMM(mmod)</code></pre>
+<pre><code>##            R2m       R2c
+## [1,] 0.4164714 0.6853641</code></pre>
+<p>In the output of <code>r.squaredGLMM</code>, the <code>R2m</code> value (marginal <span class="math inline">\(R^2\)</span>) estimates the fraction of the variance explained by the fixed effects in the model, whereas the <code>R2c</code> value (conditional <span class="math inline">\(R^2\)</span>) estimates the fraction explained by the fixed and random effects. Therefore, the conditional <span class="math inline">\(R^2\)</span> is always greater than the marginal <span class="math inline">\(R^2\)</span>.</p>
+</div>
 <div id="mixed-models-as-a-compromise-between-underfitting-and-overfitting" class="section level2">
 <h2>Mixed models as a compromise between underfitting and overfitting</h2>
 <p>What is happening here? Assuming that the effects of each beach come from a common distribution, the mixed model estimates the intercept of each beach by taking into account not only the values measured at that beach, but also those of the other beaches. It is therefore a compromise between underfitting (e.g. model 1, which totally ignores differences between beaches) and overfitting (e.g. model 2, which independently estimates the mean intercept for each beach based on its 5 sites).</p>
@@ -729,16 +768,16 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 <h2>Diagnostic plots</h2>
 <p>The <code>plot</code> function applied to a mixed model output only produces on graph, that of residuals vs. fitted values.</p>
 <pre class="r"><code>plot(mmod)</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <p>To reproduce the quantile-quantile plot of residuals, we can call the <code>qqnorm</code> and<code>qqline</code> functions. This graph shows that the most extreme residuals are further from the mean than those predicted by the normal distribution.</p>
 <pre class="r"><code>qqnorm(residuals(mmod))
 qqline(residuals(mmod))</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <p>In a mixed model, group effects are also assumed to follow a normal distribution. We test this assumption with a quantile-quantile plot of random effects (<code>ranef</code>).</p>
 <pre class="r"><code>beach_coef &lt;- ranef(mmod)$Beach
 qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>Even with just 9 points, it is obvious that differences between beaches are not normally distributed.</p>
 <p>Note that the influence measures of observations such as Cook distance do not apply to mixed models.</p>
 </div>
@@ -757,7 +796,8 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <p>We can think of <span class="math inline">\(\nu_j\)</span> as the part of the residual that is shared by all the observations of group <span class="math inline">\(j\)</span>, while <span class="math inline">\(\epsilon\)</span> is an independent residual from one observation to another. To fit this model in R, we simply add the predictor to the formula in <code>lmer</code>. The estimate works without the need to explicitly tell R that the value of this variable is the same for all observations in a group.</p>
 <pre class="r"><code>mmod_exp &lt;- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz)
 summary(mmod_exp)</code></pre>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
 ## Formula: srich ~ NAP + Exposure + (1 | Beach)
 ##    Data: rikz
 ## 
@@ -774,11 +814,13 @@ summary(mmod_exp)</code></pre>
 ## Number of obs: 45, groups:  Beach, 9
 ## 
 ## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  3.62081    0.30510  11.867
-## NAP         -0.70349    0.09107  -7.724
-## Exposure10  -1.11766    0.33998  -3.287
-## Exposure11  -1.66923    0.34021  -4.907
+##             Estimate Std. Error       df t value Pr(&gt;|t|)    
+## (Intercept)  3.62081    0.30510  5.76006  11.867 2.89e-05 ***
+## NAP         -0.70349    0.09107 40.64879  -7.724 1.69e-09 ***
+## Exposure10  -1.11766    0.33998  5.69172  -3.287   0.0180 *  
+## Exposure11  -1.66923    0.34021  5.70544  -4.907   0.0031 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##            (Intr) NAP    Exps10
@@ -794,7 +836,7 @@ summary(mmod_exp)</code></pre>
 <pre class="r"><code>beach_coef &lt;- ranef(mmod_exp)$`Beach`
 qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
-<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="11E-Mixed_models_Part1_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 </div>
 <div id="intra-class-correlation" class="section level1">
 <h1>Intra-class correlation</h1>

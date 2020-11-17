@@ -664,15 +664,15 @@ summary(mmod)</code></pre>
 <p>Regardons les différentes composantes de ce résultat. La première ligne indique que le modèle a été ajusté avec la méthode du maximum de vraisemblance restreint (REML, pour <em>restricted maximum likelihood</em>). Sans entrer trop dans les détails, le REML sert à corriger le biais du maximum de vraisemblance lorsque vient le temps d’estimer des variances (effets aléatoires).</p>
 <p>Le bloc d’effets aléatoires (<code>Random effects</code>) contient les estimés pour la variance et l’écart-type de l’ordonnée à l’origine (<span class="math inline">\(\sigma_\alpha\)</span>), ainsi que la variance et l’écart-type résiduel (<span class="math inline">\(\sigma_y\)</span>). Le bloc d’effets fixes indique l’estimé pour la moyenne de l’ordonnée à l’origine (<span class="math inline">\(\mu_\alpha\)</span>) et l’effet du NAP. Le sommaire indique aussi la corrélation estimée entre les deux effets fixes. Une corrélation négative est normale lorsque la valeur moyenne du prédicteur est supérieure à zéro: si on pivote la droite autour de la moyenne de façon à augmenter la pente, la position de l’ordonnée à l’origine descend le long de l’axe des <span class="math inline">\(y\)</span> (voir diagramme ci-dessous).</p>
 <p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-20-1.png" width="288" /></p>
-<p>Remarquez que <code>lmer</code> ne fournit pas de valeur <span class="math inline">\(p\)</span> pour les effets estimés, car contrairement au cas d’un modèle linéaire, la distribution exacte de ces estimés n’est pas connue. Nous pouvons néanmoins obtenir des intervalle de confiance approximatifs avec <code>confint</code>.</p>
-<pre class="r"><code>confint(mmod)</code></pre>
+<p>Remarquez que <code>lmer</code> ne fournit pas de valeur <span class="math inline">\(p\)</span> pour les effets estimés, car contrairement au cas d’un modèle linéaire, la distribution exacte de ces estimés n’est pas connue. Nous pouvons néanmoins obtenir des intervalle de confiance approximatifs avec <code>confint</code>. L’argument <code>oldNames = FALSE</code> assure que les effets aléatoires soient identifiés clairement dans le tableau.</p>
+<pre class="r"><code>confint(mmod, oldNames = FALSE)</code></pre>
 <pre><code>## Computing profile confidence intervals ...</code></pre>
-<pre><code>##                  2.5 %     97.5 %
-## .sig01       0.2664346  0.9469885
-## .sigma       0.4682062  0.7455375
-## (Intercept)  1.9537581  2.7916024
-## NAP         -0.8729868 -0.4948024</code></pre>
-<p>L’effet du NAP est donc significatif avec un seuil de <span class="math inline">\(\alpha = 0.05\)</span>. Dans ce tableau <code>.sig01</code> correspond à <span class="math inline">\(\sigma_\alpha\)</span> et <code>.sigma</code> à <span class="math inline">\(\sigma_y\)</span>. Les écarts-types doivent être positifs. Une valeur inférieure ou égale à zéro pour un écart-type ou son intervalle de confiance indique que le modèle est mal spécifié.</p>
+<pre><code>##                           2.5 %     97.5 %
+## sd_(Intercept)|Beach  0.2664346  0.9469885
+## sigma                 0.4682062  0.7455375
+## (Intercept)           1.9537581  2.7916024
+## NAP                  -0.8729868 -0.4948024</code></pre>
+<p>L’effet du NAP est donc significatif avec un seuil de <span class="math inline">\(\alpha = 0.05\)</span>. Les deux premiers intervalles du tableau correspondent à <span class="math inline">\(\sigma_\alpha\)</span> et <span class="math inline">\(\sigma_y\)</span>, respectivement. Les écarts-types doivent être positifs. Une valeur inférieure ou égale à zéro pour un écart-type ou son intervalle de confiance indique que le modèle est mal spécifié.</p>
 <p>Nous pouvons extraire séparément les effets fixes et aléatoires du modèle avec les fonctions <code>fixef</code> et <code>ranef</code>.</p>
 <pre class="r"><code>fixef(mmod)</code></pre>
 <pre><code>## (Intercept)         NAP 
@@ -719,6 +719,45 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 <p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <p>Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu’on s’éloigne de la moyenne (voir par exemple la plage 2 en haut du graphique). En statistique, on parle d’une contraction (<em>shrinkage</em>) des estimés des effets de groupe.</p>
 </div>
+<div id="autres-packages-utiles-pour-les-modèles-mixtes" class="section level2">
+<h2>Autres packages utiles pour les modèles mixtes</h2>
+<p>Le package <em>lmerTest</em> ajoute des valeurs <span class="math inline">\(p\)</span> approximatives au sommaire d’un modèle <code>lmer</code>, tandis que le package <em>MuMIn</em> contient une fonction <code>r.squaredGLMM</code>, qui calcule l’équivalent du coefficient de détermination <span class="math inline">\(R^2\)</span> pour les modèles mixtes.</p>
+<pre class="r"><code>library(lmerTest)
+mmod &lt;- lmer(srich ~ NAP + (1 | Beach), rikz)
+summary(mmod)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: srich ~ NAP + (1 | Beach)
+##    Data: rikz
+## 
+## REML criterion at convergence: 97.1
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.5693 -0.4286 -0.1869  0.3230  2.9399 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  Beach    (Intercept) 0.2957   0.5438  
+##  Residual             0.3460   0.5882  
+## Number of obs: 45, groups:  Beach, 9
+## 
+## Fixed effects:
+##             Estimate Std. Error       df t value Pr(&gt;|t|)    
+## (Intercept)  2.37424    0.20405  8.36034  11.635 1.88e-06 ***
+## NAP         -0.68063    0.09501 37.15971  -7.163 1.68e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##     (Intr)
+## NAP -0.162</code></pre>
+<pre class="r"><code>library(MuMIn)
+r.squaredGLMM(mmod)</code></pre>
+<pre><code>##            R2m       R2c
+## [1,] 0.4164714 0.6853641</code></pre>
+<p>Dans le résultat de <code>r.squaredGLMM</code>, la valeur <code>R2m</code> (<span class="math inline">\(R^2\)</span> marginal) estime la fraction de la variance expliquée par les effets fixes du modèle, tandis que la valeur <code>R2c</code> (<span class="math inline">\(R^2\)</span> conditionnel) estime la fraction expliquée par les effets fixes et aléatoires. Ainsi, le <span class="math inline">\(R^2\)</span> conditionnel est toujours plus élevé que le <span class="math inline">\(R^2\)</span> marginal.</p>
+</div>
 <div id="modèle-mixte-comme-compromis-entre-sous-ajustement-et-surajustement" class="section level2">
 <h2>Modèle mixte comme compromis entre sous-ajustement et surajustement</h2>
 <p>Que se passe-t-il ici? En supposant que les effets de chaque plage proviennent d’une distribution commune, le modèle mixte estime l’ordonnée à l’origine de chaque plage en tenant compte non seulement des valeurs mesurées à cette plage, mais aussi de celles des autres plages. Il s’agit donc d’un compromis entre sous-ajustement (ex.: le modèle 1, qui ignore totalement les différences entre plages) et surajustement (ex.: le modèle 2, qui estime indépendamment les moyennes de chaque plage à partir des 5 points de cette plage).</p>
@@ -728,16 +767,16 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 <h2>Graphiques de diagnostic</h2>
 <p>La fonction <code>plot</code> appliquée à un modèle mixte ne produit qu’un graphique, celui des résidus en fonction des valeurs attendues.</p>
 <pre class="r"><code>plot(mmod)</code></pre>
-<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <p>Pour reproduire le diagramme quantile-quantile des résidus, nous pouvons appeler les fonctions <code>qqnorm</code> et <code>qqline</code>. Ce graphique montre que les résidus aux extrêmes sont plus grands que ceux prévus par la distribution normale.</p>
 <pre class="r"><code>qqnorm(residuals(mmod))
 qqline(residuals(mmod))</code></pre>
-<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <p>Dans le modèle mixte, les effets de groupe sont aussi supposés suivre une distribution normale. Nous vérifions cette supposition en réalisant un diagramme quantile-quantile des effets aléatoires (<code>ranef</code>).</p>
 <pre class="r"><code>beach_coef &lt;- ranef(mmod)$Beach
 qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
-<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>Même avec seulement 9 points, il est évident que les différences au niveau de la plage ne sont pas normalement distribuées.</p>
 <p>Notez que les mesures d’influence des observations comme la distance de Cook ne s’appliquent pas aux modèles mixtes.</p>
 </div>
@@ -756,7 +795,8 @@ qqline(beach_coef$`(Intercept)`)</code></pre>
 <p>On peut considérer <span class="math inline">\(\nu_j\)</span> comme la portion du résidu qui est partagée par toutes les observations du groupe <span class="math inline">\(j\)</span>, tandis que <span class="math inline">\(\epsilon\)</span> est un résidu indépendant d’une observation à l’autre. Pour estimer ce modèle dans R, nous ajoutons simplement le prédicteur <code>Exposure</code> à la formule dans <code>lmer</code>. L’estimation fonctionne sans avoir besoin de dire explicitement à R que la valeur de cette variable est la même pour toutes les observations d’un groupe.</p>
 <pre class="r"><code>mmod_exp &lt;- lmer(srich ~ NAP + Exposure + (1 | Beach), rikz)
 summary(mmod_exp)</code></pre>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
 ## Formula: srich ~ NAP + Exposure + (1 | Beach)
 ##    Data: rikz
 ## 
@@ -773,11 +813,13 @@ summary(mmod_exp)</code></pre>
 ## Number of obs: 45, groups:  Beach, 9
 ## 
 ## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)  3.62081    0.30510  11.867
-## NAP         -0.70349    0.09107  -7.724
-## Exposure10  -1.11766    0.33998  -3.287
-## Exposure11  -1.66923    0.34021  -4.907
+##             Estimate Std. Error       df t value Pr(&gt;|t|)    
+## (Intercept)  3.62081    0.30510  5.76006  11.867 2.89e-05 ***
+## NAP         -0.70349    0.09107 40.64879  -7.724 1.69e-09 ***
+## Exposure10  -1.11766    0.33998  5.69172  -3.287   0.0180 *  
+## Exposure11  -1.66923    0.34021  5.70544  -4.907   0.0031 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##            (Intr) NAP    Exps10
@@ -793,7 +835,7 @@ summary(mmod_exp)</code></pre>
 <pre class="r"><code>beach_coef &lt;- ranef(mmod_exp)$`Beach`
 qqnorm(beach_coef$`(Intercept)`)
 qqline(beach_coef$`(Intercept)`)</code></pre>
-<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="11-Modeles_mixtes_Partie1_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 </div>
 <div id="corrélation-intra-classe" class="section level1">
 <h1>Corrélation intra-classe</h1>

@@ -16,6 +16,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 9. [Logistic regression](notes_cours/9E-Logistic_regression.html) ([PDF](notes_cours/9E-Logistic_regression.pdf))
 10. [Poisson regression](notes_cours/10E-Poisson_regression.html) ([PDF](notes_cours/10E-Poisson_regression.pdf)) - Data [1](donnees/species.csv) [2](donnees/galapagos.csv)
 11. [Mixed models - Part 1](notes_cours/11E-Mixed_models_Part1.html) ([PDF](notes_cours/11E-Mixed_models_Part1.pdf)) - [Data](donnees/rikz.csv)
+12. [Mixed models - Part 2](notes_cours/12E-Mixed_models_Part2.html) ([PDF](notes_cours/12E-Mixed_models_Part2.pdf)) - [Data](donnees/radon.csv)
 
 
 ## Labs

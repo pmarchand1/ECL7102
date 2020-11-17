@@ -297,13 +297,13 @@ ggplot(NULL) + xlim(0, 5) +
     
 ```
 
-Remarquez que `lmer` ne fournit pas de valeur $p$ pour les effets estimés, car contrairement au cas d'un modèle linéaire, la distribution exacte de ces estimés n'est pas connue. Nous pouvons néanmoins obtenir des intervalle de confiance approximatifs avec `confint`.
+Remarquez que `lmer` ne fournit pas de valeur $p$ pour les effets estimés, car contrairement au cas d'un modèle linéaire, la distribution exacte de ces estimés n'est pas connue. Nous pouvons néanmoins obtenir des intervalle de confiance approximatifs avec `confint`. L'argument `oldNames = FALSE` assure que les effets aléatoires soient identifiés clairement dans le tableau.
 
 ```{r}
-confint(mmod)
+confint(mmod, oldNames = FALSE)
 ```
 
-L'effet du NAP est donc significatif avec un seuil de $\alpha = 0.05$. Dans ce tableau `.sig01` correspond à $\sigma_\alpha$ et `.sigma` à $\sigma_y$. Les écarts-types doivent être positifs. Une valeur inférieure ou égale à zéro pour un écart-type ou son intervalle de confiance indique que le modèle est mal spécifié.
+L'effet du NAP est donc significatif avec un seuil de $\alpha = 0.05$. Les deux premiers intervalles du tableau correspondent à $\sigma_\alpha$ et $\sigma_y$, respectivement. Les écarts-types doivent être positifs. Une valeur inférieure ou égale à zéro pour un écart-type ou son intervalle de confiance indique que le modèle est mal spécifié.
 
 Nous pouvons extraire séparément les effets fixes et aléatoires du modèle avec les fonctions `fixef` et `ranef`.
 
@@ -334,6 +334,23 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 ```
 
 Les prédictions du modèle mixte pour chaque plage sont décalées vers la moyenne générale. Cet effet est plus prononcé à mesure qu'on s'éloigne de la moyenne (voir par exemple la plage 2 en haut du graphique). En statistique, on parle d'une contraction (*shrinkage*) des estimés des effets de groupe.
+
+## Autres packages utiles pour les modèles mixtes
+
+Le package *lmerTest* ajoute des valeurs $p$ approximatives au sommaire d'un modèle `lmer`, tandis que le package *MuMIn* contient une fonction `r.squaredGLMM`, qui calcule l'équivalent du coefficient de détermination $R^2$ pour les modèles mixtes.
+
+```{r, warning = FALSE, message = FALSE}
+library(lmerTest)
+mmod <- lmer(srich ~ NAP + (1 | Beach), rikz)
+summary(mmod)
+```
+
+```{r, warning = FALSE, message = FALSE}
+library(MuMIn)
+r.squaredGLMM(mmod)
+```
+
+Dans le résultat de `r.squaredGLMM`, la valeur `R2m` ($R^2$ marginal) estime la fraction de la variance expliquée par les effets fixes du modèle, tandis que la valeur `R2c` ($R^2$ conditionnel) estime la fraction expliquée par les effets fixes et aléatoires. Ainsi, le $R^2$ conditionnel est toujours plus élevé que le $R^2$ marginal.
 
 ## Modèle mixte comme compromis entre sous-ajustement et surajustement
 

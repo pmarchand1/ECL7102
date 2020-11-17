@@ -27,7 +27,7 @@ head(Wheat)
 
 (b) Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu'un effet aléatoire représentant la structure groupée des données. Pour chacun des deux effets fixes (engrais et humidité), comment l'erreur-type des estimés change-t-elle par rapport au modèle sans effet aléatoire en (a)? Expliquez ces différences en fonction de la structure de l'expérience. 
 
-(c) À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) sont répartis aléatoirement en suivant une distribution normale.
+(c) À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) ne montrent aucune tendance résiduelle et suivent une distribution normale.
 
 (d) Calculez la corrélation intra-classe pour le modèle mixte en (b). Quelle est l'interprétation mathématique de cette valeur?
 

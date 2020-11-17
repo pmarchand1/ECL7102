@@ -297,13 +297,13 @@ ggplot(NULL) + xlim(0, 5) +
     
 ```
 
-Note that `lmer` does not provide a $p$-value for the estimated effects, because unlike the case of a linear model, the exact distribution of these estimates is not known. We can nevertheless obtain approximate confidence intervals with `confint`.
+Note that `lmer` does not provide a $p$-value for the estimated effects, because unlike the case of a linear model, the exact distribution of these estimates is not known. We can nevertheless obtain approximate confidence intervals with `confint`. The argument `oldNames = FALSE` ensures that the random effects are clearly identified in the table.
 
 ```{r}
-confint(mmod)
+confint(mmod, oldNames = FALSE)
 ```
 
-The effect of the NAP is therefore significant with a threshold of $\alpha = 0.05$. In this table, `.sig01` is $\sigma_\alpha$ and `.sigma` is $\sigma_y$. Standard deviations must be positive. A value less than or equal to zero for a standard deviation or its confidence interval indicates that the model is incorrectly specified.
+The effect of the NAP is therefore significant with a threshold of $\alpha = 0.05$. The first two rows in the table correspond to $\sigma_\alpha$ and $\sigma_y$, respectively. Standard deviations must be positive. A value less than or equal to zero for a standard deviation or its confidence interval indicates that the model is incorrectly specified.
 
 We can separately extract the fixed and random effects of the model with the `fixef` and` ranef` functions.
 
@@ -333,6 +333,23 @@ ggplot(rikz, aes(x = NAP, y = srich, color = Beach)) +
 ```
 
 Predictions of the mixed model for each beach are shifted towards the overall mean. This effect is more pronounced as one moves away from the mean (see for example beach 2 at the top of the graph). In statistics, this is called a *shrinkage* of the group effects.
+
+## Other useful packages for mixed models
+
+The *lmerTest* package adds approximate $p$-values to a `lmer` model, whereas the *MuMIn* package contains a `r.squaredGLMM` function that calculates an equivalent of the $R^2$ for mixed models.
+
+```{r, warning = FALSE, message = FALSE}
+library(lmerTest)
+mmod <- lmer(srich ~ NAP + (1 | Beach), rikz)
+summary(mmod)
+```
+
+```{r, warning = FALSE, message = FALSE}
+library(MuMIn)
+r.squaredGLMM(mmod)
+```
+
+In the output of `r.squaredGLMM`, the `R2m` value (marginal $R^2$) estimates the fraction of the variance explained by the fixed effects in the model, whereas the `R2c` value (conditional $R^2$) estimates the fraction explained by the fixed and random effects. Therefore, the conditional $R^2$ is always greater than the marginal $R^2$. 
 
 ## Mixed models as a compromise between underfitting and overfitting
 
