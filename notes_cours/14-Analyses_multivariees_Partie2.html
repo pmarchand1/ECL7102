@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -288,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Analyses multivariées, Partie 2</h1>
-<h4 class="date"><br/>9 décembre 2019</h4>
+<h4 class="date"><br/>7 décembre 2020</h4>
 
 </div>
 
@@ -302,7 +267,7 @@ div.tocify {
 <li><p>Utiliser l’ordination sous contraintes (analyse de redondance et analyse canonique de correspondance) afin de représenter la variation entre observations expliquée par des prédicteurs.</p></li>
 </ul>
 </div>
-<div id="donnees-de-presence-ou-dabondance-despeces" class="section level1">
+<div id="données-de-présence-ou-dabondance-despèces" class="section level1">
 <h1>Données de présence ou d’abondance d’espèces</h1>
 <p>En écologie, les données multivariées prennent souvent la forme d’un tableau indiquant l’abondance (nombre d’individus, % de recouvrement) de différentes espèces sur chacun des sites étudiés.</p>
 <pre class="r"><code>esp &lt;- cbind(esp1 = c(2, 8, 0, 3), esp2 = c(1, 3, 0, 0), esp3 = c(0, 0, 1, 0))
@@ -314,7 +279,7 @@ esp</code></pre>
 ## site3    0    0    1
 ## site4    3    0    0</code></pre>
 <p>Dans certains cas, nous n’avons pas d’estimation numérique de l’abondance, mais seulement un indicateur binaire de présence (1) ou d’absence (0) pour chaque combinaison espèce/site.</p>
-<div id="problemes-avec-la-distance-euclidienne" class="section level2">
+<div id="problèmes-avec-la-distance-euclidienne" class="section level2">
 <h2>Problèmes avec la distance euclidienne</h2>
 <p>La semaine dernière, nous avons appliqué des méthodes d’ordination (analyse en composantes principales) et de regroupement à des variables numériques continues, telles que les variables climatiques d’un lieu ou la composition chimique d’un échantillon. Pour ce type de variable, la <em>distance euclidienne</em> constituait une bonne mesure de distance entre deux observations dans un espace multivarié (<span class="math inline">\(n\)</span> observations de <span class="math inline">\(p\)</span> variables). Cette distance correspond à la somme du carré des écarts entre les deux observations pour chacune des variables:</p>
 <p><span class="math display">\[ d_{ij} = \sqrt{\sum_{k = 1}^p (y_{ik} - y_{jk})^2} \]</span></p>
@@ -372,7 +337,7 @@ dist(esp_chi2)</code></pre>
 <li>la distance du <span class="math inline">\(\chi^2\)</span> si on se préoccupe des différences relatives et qu’on veut accorder une plus grande importance aux espèces rares.</li>
 </ul>
 </div>
-<div id="mesures-de-distance-pour-les-donnees-de-presence" class="section level2">
+<div id="mesures-de-distance-pour-les-données-de-présence" class="section level2">
 <h2>Mesures de distance pour les données de présence</h2>
 <p>Avec des données sur la présence ou l’absence d’espèces, on peut résumer la relation entre deux sites par un tableau 2x2.</p>
 <p><img src="../images/pres_abs.png" /></p>
@@ -385,7 +350,7 @@ dist(esp_chi2)</code></pre>
 <p>La fonction <code>vegdist(..., method = "jaccard")</code> calcule la distance de Jaccard (<span class="math inline">\(1 - J\)</span>). Quant à <span class="math inline">\(1 - S\)</span>, sa valeur correspond exactement à la distance de Bray-Curtis si celle-ci est appliquée à une matrice binaire.</p>
 </div>
 </div>
-<div id="ordination-de-matrices-de-communautes-ecologiques" class="section level1">
+<div id="ordination-de-matrices-de-communautés-écologiques" class="section level1">
 <h1>Ordination de matrices de communautés écologiques</h1>
 <div id="analyse-de-correspondance" class="section level2">
 <h2>Analyse de correspondance</h2>
@@ -422,18 +387,14 @@ summary(ac_dune, display = &quot;reg&quot;) </code></pre>
 ## Eigenvalue            0.5360 0.4001 0.2598 0.17598 0.14476 0.10791 0.09247
 ## Proportion Explained  0.2534 0.1892 0.1228 0.08319 0.06844 0.05102 0.04372
 ## Cumulative Proportion 0.2534 0.4426 0.5654 0.64858 0.71702 0.76804 0.81175
-##                           CA8     CA9    CA10    CA11    CA12    CA13
-## Eigenvalue            0.08091 0.07332 0.05630 0.04826 0.04125 0.03523
-## Proportion Explained  0.03825 0.03466 0.02661 0.02282 0.01950 0.01665
-## Cumulative Proportion 0.85000 0.88467 0.91128 0.93410 0.95360 0.97025
-##                           CA14     CA15     CA16     CA17     CA18
-## Eigenvalue            0.020529 0.014911 0.009074 0.007938 0.007002
-## Proportion Explained  0.009705 0.007049 0.004290 0.003753 0.003310
-## Cumulative Proportion 0.979955 0.987004 0.991293 0.995046 0.998356
-##                           CA19
-## Eigenvalue            0.003477
-## Proportion Explained  0.001644
-## Cumulative Proportion 1.000000
+##                           CA8     CA9    CA10    CA11    CA12    CA13     CA14
+## Eigenvalue            0.08091 0.07332 0.05630 0.04826 0.04125 0.03523 0.020529
+## Proportion Explained  0.03825 0.03466 0.02661 0.02282 0.01950 0.01665 0.009705
+## Cumulative Proportion 0.85000 0.88467 0.91128 0.93410 0.95360 0.97025 0.979955
+##                           CA15     CA16     CA17     CA18     CA19
+## Eigenvalue            0.014911 0.009074 0.007938 0.007002 0.003477
+## Proportion Explained  0.007049 0.004290 0.003753 0.003310 0.001644
+## Cumulative Proportion 0.987004 0.991293 0.995046 0.998356 1.000000
 ## 
 ## Scaling 2 for species and site scores
 ## * Species are scaled proportional to eigenvalues
@@ -452,11 +413,11 @@ summary(ac_dune, display = &quot;reg&quot;) </code></pre>
 <p>Les coordonnées des espèces et des sites peuvent être extraites avec la fonction <code>scores(ac_dune)</code>.</p>
 <p>Nous pouvons voir l’influence des espèces rares dans cette ordination, qui se retrouvent aux extrêmes du graphique. En contrepartie, une espèce près du centre de l’ordination est soit présente sur de nombreux sites, soit associée fortement à des sites aussi situés au centre du graphique; on ne peut pas distinguer ces deux cas sans revenir à la matrice originale.</p>
 </div>
-<div id="deformation-des-gradients" class="section level2">
+<div id="déformation-des-gradients" class="section level2">
 <h2>Déformation des gradients</h2>
 <p>En général, l’abondance d’une espèce n’est pas une fonction linéaire d’un gradient environnemental (ex.: température); l’espèce atteint un maximum à une valeur optimale et son abondance diminue pour des valeurs plus grandes ou plus petites de la variable environnementale. Cette non-linéarité fait qu’une série de sites ordonnés selon un gradient environnemental suivront une courbe sur un graphique d’ordination. C’est possiblement le cas pour le graphique ci-dessus (série de sites partant du milieu à droite, vers le bas à gauche puis vers le haut). Des méthodes ont été proposées pour rectifier ces courbes (<em>detrended correspondence analysis</em> ou DCA), mais ces méthodes ne sont pas recommandées, sauf dans les rares cas où nous savons d’avance que l’ordination est dominée par un seul gradient important. Une meilleure solution serait de superposer le gradient environnemental au graphique de l’ordination, comme nous verrons plus tard.</p>
 </div>
-<div id="analyse-en-coordonnees-principales" class="section level2">
+<div id="analyse-en-coordonnées-principales" class="section level2">
 <h2>Analyse en coordonnées principales</h2>
 <p>L’analyse en coordonnées principales (<em>principal coordinate analysis</em>, ou PCoA) est une méthode plus générale qui englobe l’ACP et l’analyse de correspondance comme cas particuliers. Si l’ACP vise à bien représenter la distance euclidienne entre les sites et l’analyse de correspondance est basée sur la distance du <span class="math inline">\(\chi^2\)</span>, la PCoA peut être appliquée à diverses mesures de distance.</p>
 <p>Nous utiliserons la fonction <code>pcoa</code> du package <em>ape</em> pour réaliser une PCoA du jeu de données <code>dune</code>, à partir de la distance de Bray-Curtis (l’argument <code>correction</code> est expliqué ci-dessous).</p>
@@ -465,48 +426,27 @@ dune_bray &lt;- vegdist(dune, method = &quot;bray&quot;)
 pcoa_dune &lt;- pcoa(dune_bray, correction = &quot;lingoes&quot;)</code></pre>
 <p>Les valeurs propres (<em>eigenvalues</em>) de la PCoA représentent la portion de la distance totale entre les sites contenue dans chacun des axes obtenus. Ces valeurs se retrouvent dans le tableau <code>values</code> de l’objet produit par <code>pcoa</code>.</p>
 <pre class="r"><code>pcoa_dune$values</code></pre>
-<pre><code>##     Eigenvalues   Corr_eig Rel_corr_eig Broken_stick Cum_corr_eig
-## 1   1.716266188 1.81305186  0.295383959  0.194172671    0.2953840
-## 2   1.022398050 1.11918372  0.182338369  0.138617115    0.4777223
-## 3   0.461464091 0.55824976  0.090950529  0.110839338    0.5686729
-## 4   0.382249161 0.47903483  0.078044764  0.092320819    0.6467176
-## 5   0.279134546 0.37592022  0.061245243  0.078431930    0.7079629
-## 6   0.236630925 0.33341660  0.054320517  0.067320819    0.7622834
-## 7   0.169120371 0.26590604  0.043321640  0.058061560    0.8056050
-## 8   0.096245175 0.19303085  0.031448750  0.050125052    0.8370538
-## 9   0.074491756 0.17127743  0.027904665  0.043180608    0.8649584
-## 10  0.061711999 0.15849767  0.025822576  0.037007768    0.8907810
-## 11  0.054940459 0.15172613  0.024719351  0.031452212    0.9155004
-## 12  0.019174290 0.11595996  0.018892296  0.026401707    0.9343927
-## 13  0.016118974 0.11290464  0.018394521  0.021772078    0.9527872
-## 14  0.004000912 0.10078658  0.016420236  0.017498574    0.9692074
-## 15  0.000000000 0.07036054  0.011463200  0.013530320    0.9806706
-## 16 -0.026425126 0.05392868  0.008786106  0.009826616    0.9894567
-## 17 -0.042856993 0.04205150  0.006851066  0.006354394    0.9963078
-## 18 -0.054734175 0.02266261  0.003692212  0.003086420    1.0000000
-## 19 -0.074123061 0.00000000  0.000000000  0.000000000    1.0000000
-## 20 -0.096785671 0.00000000  0.000000000  0.000000000    1.0000000
-##    Cum_br_stick
-## 1     0.1941727
-## 2     0.3327898
-## 3     0.4436291
-## 4     0.5359499
-## 5     0.6143819
-## 6     0.6817027
-## 7     0.7397643
-## 8     0.7898893
-## 9     0.8330699
-## 10    0.8700777
-## 11    0.9015299
-## 12    0.9279316
-## 13    0.9497037
-## 14    0.9672023
-## 15    0.9807326
-## 16    0.9905592
-## 17    0.9969136
-## 18    1.0000000
-## 19    1.0000000
-## 20    1.0000000</code></pre>
+<pre><code>##     Eigenvalues   Corr_eig Rel_corr_eig Broken_stick Cum_corr_eig Cum_br_stick
+## 1   1.716266188 1.81305186  0.295383959  0.194172671    0.2953840    0.1941727
+## 2   1.022398050 1.11918372  0.182338369  0.138617115    0.4777223    0.3327898
+## 3   0.461464091 0.55824976  0.090950529  0.110839338    0.5686729    0.4436291
+## 4   0.382249161 0.47903483  0.078044764  0.092320819    0.6467176    0.5359499
+## 5   0.279134546 0.37592022  0.061245243  0.078431930    0.7079629    0.6143819
+## 6   0.236630925 0.33341660  0.054320517  0.067320819    0.7622834    0.6817027
+## 7   0.169120371 0.26590604  0.043321640  0.058061560    0.8056050    0.7397643
+## 8   0.096245175 0.19303085  0.031448750  0.050125052    0.8370538    0.7898893
+## 9   0.074491756 0.17127743  0.027904665  0.043180608    0.8649584    0.8330699
+## 10  0.061711999 0.15849767  0.025822576  0.037007768    0.8907810    0.8700777
+## 11  0.054940459 0.15172613  0.024719351  0.031452212    0.9155004    0.9015299
+## 12  0.019174290 0.11595996  0.018892296  0.026401707    0.9343927    0.9279316
+## 13  0.016118974 0.11290464  0.018394521  0.021772078    0.9527872    0.9497037
+## 14  0.004000912 0.10078658  0.016420236  0.017498574    0.9692074    0.9672023
+## 15  0.000000000 0.07036054  0.011463200  0.013530320    0.9806706    0.9807326
+## 16 -0.026425126 0.05392868  0.008786106  0.009826616    0.9894567    0.9905592
+## 17 -0.042856993 0.04205150  0.006851066  0.006354394    0.9963078    0.9969136
+## 18 -0.054734175 0.02266261  0.003692212  0.003086420    1.0000000    1.0000000
+## 19 -0.074123061 0.00000000  0.000000000  0.000000000    1.0000000    1.0000000
+## 20 -0.096785671 0.00000000  0.000000000  0.000000000    1.0000000    1.0000000</code></pre>
 <p>Dans ce tableau, on remarque que les dernières valeurs propres sont négatives; cela se produit pour certaines mesures de distance comme Bray-Curtis. La correction spécifiée comme argument dans <code>pcoa</code> transforme les distances afin que toutes les valeurs soient positives (2e colonne, <em>Corr_eig</em>). La colonne <em>Rel_corr_eig</em> peut donc être interprétée comme la proportion de la distance originale entre les sites représentée par chaque axe de la PCoA.</p>
 <p>Regardons maintenant la position des sites sur les deux premiers axes.</p>
 <pre class="r"><code>biplot(pcoa_dune)</code></pre>
@@ -517,7 +457,7 @@ pcoa_dune &lt;- pcoa(dune_bray, correction = &quot;lingoes&quot;)</code></pre>
 <p><img src="14-Analyses_multivariees_Partie2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Nous avons vu au début de ce cours que certaines mesures de distance sont équivalentes à la distance euclidienne appliquée à des données transformées; par exemple, la distance de Hellinger est une distance euclidienne appliquée à la suite d’une transformation de Hellinger. Dans ce cas, il est plus simple d’appliquer une ACP aux données transformées, qui est équivalente à la PCoA pour la mesure de distance correspondante.</p>
 </div>
-<div id="positionnement-multidimensionnel-non-metrique" class="section level2">
+<div id="positionnement-multidimensionnel-non-métrique" class="section level2">
 <h2>Positionnement multidimensionnel non-métrique</h2>
 <p>Une autre méthode d’ordination couramment appliquée en écologie est le positionnement multidimensionnel non-métrique (<em>non-metric multidimensional scaling</em>, ou NMDS). Comme la PCoA, le NMDS part d’une matrice de distance entre les sites, mais la méthode d’ordination est très différente.</p>
 <p>Les méthodes vues précédemment (ACP, AC, PCoA) réalisent une rotation d’une espace multivarié afin que la portion la plus importante des distances entre sites se retrouve dans les premiers axes. En contrepartie, le NMDS spécifie au départ le nombre d’axes à utiliser (généralement 2), puis utilise un algorithme itératif qui place les sites à des positions aléatoires dans cet espace, puis les déplace graduellement jusqu’à ce que la distance entre chaque paire de sites soit le plus près possible de la distance réelle multivariée entre les sites, selon la mesure de distance choisie. La différence entre les distances dans l’espace réduit et les distances réelles est représentée par une mesure de <em>stress</em> que la méthode tente de réduire le plus possible.</p>
@@ -533,7 +473,7 @@ pcoa_dune &lt;- pcoa(dune_bray, correction = &quot;lingoes&quot;)</code></pre>
 <p><img src="14-Analyses_multivariees_Partie2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 </div>
-<div id="effet-de-predicteurs-sur-une-reponse-multivariee" class="section level1">
+<div id="effet-de-prédicteurs-sur-une-réponse-multivariée" class="section level1">
 <h1>Effet de prédicteurs sur une réponse multivariée</h1>
 <p>Jusqu’à présent, nous avons vu comment représenter la variation entre les communautés écologiques présentes sur divers sites. Cette dernière partie porte sur des méthodes permettant d’associer cette variation à des prédicteurs mesurés à chaque site.</p>
 <p>Nous utiliserons encore le tableau de données <code>dune</code> comme exemple, avec le tableau associé <code>dune.env</code> qui contient les valeurs de cinq variables associées aux 20 sites.</p>
@@ -547,7 +487,7 @@ head(dune.env)</code></pre>
 ## 5 6.3        1         HF Hayfield      2
 ## 6 4.3        1         HF Haypastu      2</code></pre>
 <p>Ce tableau contient une seule variable numérique (<em>A1</em>, l’épaisseur de la couche A1 du sol), deux variables catégorielles nominales (<em>Management</em> et <em>Use</em>) et deux variables catégorielles ordinales (<em>Moisture</em> et <em>Manure</em>).</p>
-<div id="analyse-de-variance-multivariee" class="section level2">
+<div id="analyse-de-variance-multivariée" class="section level2">
 <h2>Analyse de variance multivariée</h2>
 <p>Il existe plusieurs versions multivariées de l’ANOVA. La fonction <code>adonis</code> de <em>vegan</em> estime la fraction des distances entre sites expliquée par différents prédicteurs. Pour chaque variable indépendante, cette méthode calcule une statistique <span class="math inline">\(F\)</span> semblable à l’ANOVA univariée. Toutefois, la valeur <span class="math inline">\(p\)</span> de cette statistique n’est pas basée sur un test théorique, mais plutôt par un test de permutation: la fonction effectue 999 permutations aléatoires des valeurs de la variable indépendante et calcule la statistique <span class="math inline">\(F\)</span> pour chaque permutation. La distribution résultante représente l’hypothèse nulle selon laquelle la variable n’a aucun effet. Cette méthode est connue sous le nom de PERMANOVA (pour <em>permutational multivariate analysis of variance</em>).</p>
 <p>La formule donnée à la fonction <code>adonis</code> ressemble à celle d’un modèle linéaire en R, sauf que la réponse est une matrice de communauté plutôt qu’une variable unique. On peut spécifier la mesure de distance à utiliser; il s’agit de la distance de Bray-Curtis par défaut.</p>
@@ -562,11 +502,11 @@ head(dune.env)</code></pre>
 ## Terms added sequentially (first to last)
 ## 
 ##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)   
-## A1          1    0.7230 0.72295  5.2038 0.16817  0.002 **
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.007 **
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.026 * 
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.975   
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.476   
+## A1          1    0.7230 0.72295  5.2038 0.16817  0.003 **
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.006 **
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.024 * 
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.968   
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.464   
 ## Residuals   7    0.9725 0.13893         0.22621          
 ## Total      19    4.2990                 1.00000          
 ## ---
@@ -574,7 +514,7 @@ head(dune.env)</code></pre>
 <p>Comme pour l’ANOVA univariée, cette méthode considère les variables dans l’ordre donné: <em>Moisture</em> donne la fraction de la distance expliquée après avoir tenu compte de l’effet de <em>A1</em>, <em>Management</em> la fraction expliquée après avoir tenu compte de <em>A1</em> et <em>Moisture</em>, etc.</p>
 <p>Dans l’ANOVA univariée, nous vérifions d’abord que la variance était constante entre les groupes avant de comparer les moyennes. La PERMANOVA ne suppose pas l’égalité des variances; toutefois, une différence significative associée à une variable peut représenter soit une différence de la composition “moyenne” des communautés selon cette variable, soit une différence dans la variance de la composition. Pour bien interpréter les résultats, il peut être utile de visualiser la relation entre les variables et les sites placés sur une ordination, comme nous le verrons dans la section suivante.</p>
 </div>
-<div id="superpositions-des-predicteurs-aux-axes-dordination" class="section level2">
+<div id="superpositions-des-prédicteurs-aux-axes-dordination" class="section level2">
 <h2>Superpositions des prédicteurs aux axes d’ordination</h2>
 <p>Une deuxième technique pour déterminer l’effet de variables explicatives sur une réponse multivariée consiste à réaliser d’abord une ordination de la réponse, puis de corréler les variables au résultat de l’ordination.</p>
 <p>Si les composantes principales sont orthogonales (ce qui est le cas pour l’ACP, l’AC et la PCoA, mais pas le NMDS), on peut effectuer une régression séparée de chaque composante en fonction des prédicteurs. Une autre option est d’estimer simultanément la corrélation entre des variables explicatives et chacun des axes, ce qui est fait par la fonction <code>envfit</code> de <em>vegan</em>.</p>
@@ -586,8 +526,8 @@ envf</code></pre>
 <pre><code>## 
 ## ***VECTORS
 ## 
-##       Dim1    Dim2     r2 Pr(&gt;r)   
-## A1 0.98847 0.15139 0.3845   0.01 **
+##       Dim1    Dim2     r2 Pr(&gt;r)  
+## A1 0.98847 0.15139 0.3845  0.019 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -604,7 +544,7 @@ envf</code></pre>
 ## 
 ## Goodness of fit:
 ##                r2 Pr(&gt;r)   
-## Management 0.4513  0.003 **
+## Management 0.4513  0.006 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -659,10 +599,10 @@ rda_dune</code></pre>
 ## 4.395 3.404 1.755 1.295 
 ## 
 ## Eigenvalues for unconstrained axes:
-##   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9  PC10  PC11  PC12 
-## 4.302 3.120 2.343 1.965 1.667 1.414 1.029 0.947 0.784 0.625 0.368 0.277 
-##  PC13  PC14  PC15 
-## 0.133 0.119 0.056</code></pre>
+##   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9  PC10  PC11  PC12  PC13 
+## 4.302 3.120 2.343 1.965 1.667 1.414 1.029 0.947 0.784 0.625 0.368 0.277 0.133 
+##  PC14  PC15 
+## 0.119 0.056</code></pre>
 <p>La régression linéaire effectuée en première étape de l’ADR compte ici 4 prédicteurs (1 pour <em>A1</em> et 3 pour le facteur à 4 niveaux <em>Management</em>). Dans ce cas, puisque la matrice <span class="math inline">\(\hat{Y}\)</span> est une combinaison linéaire des prédicteurs, elle ne peut avoir que 4 composantes principales. La résultat de l’ADR nomme ces 4 composantes “axes contraints” (RDA1 à RDA4). L’ADR effectue aussi une ACP séparée pour les résidus de la régression (<span class="math inline">\(Y\)</span> - <span class="math inline">\(\hat{Y}\)</span>); cette ACP résulte en 15 axes non contraints pour les 15 degrés de liberté résiduels.</p>
 <p>Le graphique d’une ADR est appelé diagramme de triple projection (<em>triplot</em>), car il représente à la fois les observations (sites), les variables de réponse (espèce) et les prédicteurs (conditions environnementales). Notez que puisque l’ADR est basée sur l’ACP, les espèces devraient être représentées par des vecteurs ici (comme le prédicteur numérique A1), mais les flèches sont omises par <em>vegan</em> pour éviter de surcharger le graphique; le nom des espèces est placé à la position de la pointe de chaque vecteur.</p>
 <pre class="r"><code>plot(rda_dune)</code></pre>
@@ -695,16 +635,16 @@ cca_dune</code></pre>
 ## 0.3187 0.2372 0.1322 0.0917 
 ## 
 ## Eigenvalues for unconstrained axes:
-##    CA1    CA2    CA3    CA4    CA5    CA6    CA7    CA8    CA9   CA10 
-## 0.3620 0.2029 0.1527 0.1345 0.1110 0.0800 0.0767 0.0553 0.0444 0.0415 
-##   CA11   CA12   CA13   CA14   CA15 
-## 0.0317 0.0178 0.0116 0.0087 0.0047</code></pre>
+##    CA1    CA2    CA3    CA4    CA5    CA6    CA7    CA8    CA9   CA10   CA11 
+## 0.3620 0.2029 0.1527 0.1345 0.1110 0.0800 0.0767 0.0553 0.0444 0.0415 0.0317 
+##   CA12   CA13   CA14   CA15 
+## 0.0178 0.0116 0.0087 0.0047</code></pre>
 <p>Voici le diagramme de triple projection correspondant à cette analyse:</p>
 <pre class="r"><code>plot(cca_dune)</code></pre>
 <p><img src="14-Analyses_multivariees_Partie2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 </div>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
 <li><p>Le package <em>vegan</em> dans R contient plusieurs outils pour l’analyse multivariée des données de communautés écologiques. Ces données prennent habituellement la forme d’une matrice indiquant l’abondance ou la présence d’espèces sur chacun des sites étudiés.</p></li>
@@ -715,7 +655,7 @@ cca_dune</code></pre>
 <li><p>Dans l’ordination sous contraintes, une régression est effectuée sur les données multivariées et l’ordination est réalisée sur la partie de la réponse expliquée par les prédicteurs. L’analyse de redondance est une méthode d’ordination sous contraintes basée sur l’ACP, tandis que l’analyse canonique des correspondances est basée sur l’AC.</p></li>
 </ul>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <ul>
 <li><p>Legendre, P. et Legendre, L. (2012) <em>Numerical Ecology</em>, 3e éd. Elsevier.</p></li>
@@ -741,6 +681,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

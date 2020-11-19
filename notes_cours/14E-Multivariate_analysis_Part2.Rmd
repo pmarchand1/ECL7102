@@ -1,6 +1,6 @@
 ---
 title: "Multivariate analysis, Part 2"
-date: "<br/>December 9, 2019"
+date: "<br/>December 7, 2020"
 output:
     html_document:
         self_contained: false

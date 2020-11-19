@@ -1,6 +1,6 @@
 ---
 title: "Analyses multivariées, Partie 1"
-date: "<br/>2 décembre 2019"
+date: "<br/>30 novembre 2020"
 output:
     html_document:
         self_contained: false
@@ -12,9 +12,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(cowplot)
+theme_set(theme_cowplot())
 ```
 
 # Objectifs

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -25,13 +25,13 @@
 <script src="libs/navigation-1.1/tabsets.js"></script>
 <link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
-<script src="libs/plotly-binding-4.8.0/plotly.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.9.2.1/plotly.js"></script>
 <script src="libs/typedarray-0.1/typedarray.min.js"></script>
-<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
-<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
-<link href="libs/plotly-htmlwidgets-css-1.39.2/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="libs/plotly-main-1.39.2/plotly-latest.min.js"></script>
+<link href="libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-1.52.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-1.52.2/plotly-latest.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -93,7 +93,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -155,6 +154,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -167,48 +167,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -222,6 +183,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -257,8 +224,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -295,7 +260,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Analyses multivariées, Partie 1</h1>
-<h4 class="date"><br/>2 décembre 2019</h4>
+<h4 class="date"><br/>30 novembre 2020</h4>
 
 </div>
 
@@ -309,7 +274,7 @@ div.tocify {
 <li><p>Diviser les observations en classes à partir des méthodes de regroupement hiérarchique (<em>hierarchical clustering</em>).</p></li>
 </ul>
 </div>
-<div id="pourquoi-les-analyses-multivariees" class="section level1">
+<div id="pourquoi-les-analyses-multivariées" class="section level1">
 <h1>Pourquoi les analyses multivariées?</h1>
 <p>Les analyses multivariées visent à modéliser la <em>distribution conjointe</em> de plusieurs variables, c’est-à-dire la variation des variables prises individuellement et les corrélations entre elles.</p>
 <p>Voici certaines situations où ces méthodes pourraient être utiles:</p>
@@ -319,7 +284,7 @@ div.tocify {
 <li><p>On veut expliquer une réponse univariée en fonction d’un grand nombre de prédicteurs qui sont partiellement corrélés. Par exemple, la présence d’une espèce en fonction des conditions climatiques, la croissance d’arbres de différentes espèces sur un site en fonction de leurs traits fonctionnels, etc. Dans les cours précédents sur la régression, nous avons vu qu’il est difficile d’estimer l’effet d’un grand nombre de prédicteurs potentiellement corrélés dans un même modèle. La sélection de modèles est aussi compliquée lorsque le nombre de prédicteurs est grand.</p></li>
 </ul>
 </div>
-<div id="structure-des-donnees-multivariees" class="section level1">
+<div id="structure-des-données-multivariées" class="section level1">
 <h1>Structure des données multivariées</h1>
 <p>Supposons que nous réalisons <span class="math inline">\(n\)</span> observations de <span class="math inline">\(p\)</span> variables. Nous représentons ces observations par une matrice où <span class="math inline">\(x_{ij}\)</span> est la valeur de la variable <span class="math inline">\(j\)</span> pour l’observation <span class="math inline">\(i\)</span>:</p>
 <p><span class="math display">\[  
@@ -333,20 +298,13 @@ x_{n1} &amp; ... &amp; ... &amp; x_{np}
 <p>Par exemple, prenons le tableau de données <a href="../donnees/cities_climate.csv">cities_climate.csv</a>, qui contient des données climatiques tirées de WorldClim pour 49 grandes villes.</p>
 <pre class="r"><code>villes &lt;- read.csv(&quot;../donnees/cities_climate.csv&quot;)
 head(villes)</code></pre>
-<pre><code>##       city    long    lat t_mean t_diu  t_sd t_max t_min p_ann p_max p_min
-## 1    Tokyo 139.751 35.685   15.6   7.9 7.492  30.7   0.7  1428   185    47
-## 2 Shanghai 121.400 31.046   16.2   7.4 8.339  31.6   0.8  1050   167    41
-## 3   Mumbai  72.826 18.975   26.8   7.3 1.767  32.7  18.9  2370   827     0
-## 4  Karachi  67.082 24.906   25.9   9.9 4.035  34.2  12.0   194    82     0
-## 5    Delhi  77.217 28.667   25.1  13.1 6.715  40.5   7.3   734   274     3
-## 6   Manila 120.982 14.604   27.3   8.0 1.078  33.8  21.4  2150   466     8
-##   p_cv
-## 1   40
-## 2   46
-## 3  143
-## 4  134
-## 5  142
-## 6   90</code></pre>
+<pre><code>##       city    long    lat t_mean t_diu  t_sd t_max t_min p_ann p_max p_min p_cv
+## 1    Tokyo 139.751 35.685   15.6   7.9 7.492  30.7   0.7  1428   185    47   40
+## 2 Shanghai 121.400 31.046   16.2   7.4 8.339  31.6   0.8  1050   167    41   46
+## 3   Mumbai  72.826 18.975   26.8   7.3 1.767  32.7  18.9  2370   827     0  143
+## 4  Karachi  67.082 24.906   25.9   9.9 4.035  34.2  12.0   194    82     0  134
+## 5    Delhi  77.217 28.667   25.1  13.1 6.715  40.5   7.3   734   274     3  142
+## 6   Manila 120.982 14.604   27.3   8.0 1.078  33.8  21.4  2150   466     8   90</code></pre>
 <p>Voici la liste des variables climatiques de ce tableau de données:</p>
 <ul>
 <li><em>t_mean</em>: Température moyenne annuelle.</li>
@@ -364,7 +322,7 @@ head(villes)</code></pre>
 <pre class="r"><code>climat &lt;- villes[, 4:12]
 rownames(climat) &lt;- villes$city</code></pre>
 <p>Dans un contexte d’analyse multivariée, nous traiterons nos 49 observations comme des “points” dans un espace à 9 dimensions (une dimension pour chaque variable).</p>
-<div id="normalisation-des-donnees" class="section level2">
+<div id="normalisation-des-données" class="section level2">
 <h2>Normalisation des données</h2>
 <p>Les méthodes d’ordination et de regroupement que nous verrons dans ce cours sont basées sur le concept de <em>distance</em> entre les points dans cet espace multidimensionnel. Toutefois, nous ne pouvons calculer ces distances si les unités diffèrent entre les variables: par exemple, on ne peut pas dire si une variation de température d’un degré C est plus ou moins importante qu’une variation de précipitation d’un mm.</p>
 <p>Pour cette raison, nous commençons par normaliser nos données, c’est-à-dire représenter chaque variable sous une forme centrée et réduite. Lorsque appliquée à un tableau de données où toutes les variables sont numériques, la fonction <code>scale</code> transforme chaque variable en soustrayant sa moyenne et en divisant par son écart-type.</p>
@@ -386,7 +344,7 @@ round(head(clim_norm), 2) # Afficher seulement 2 décimales</code></pre>
 <p>Pour comprendre cette commande, il est plus facile de lire l’instruction à l’envers. La commande <code>apply(clim_norm, 2, sd)</code> dit d’appliquer la fonction écart-type <code>sd</code> à chaque colonne (le chiffre 2 signifie colonne, le chiffre 1 rangée) de la matrice <code>clim_norm</code>.</p>
 <p>Il existe des raccourcis dans R pour calculer la somme ou la moyenne des rangées ou des colonnes d’une matrice: <code>rowSums</code>, <code>colSums</code>, <code>rowMeans</code> et <code>colMeans</code>.</p>
 </div>
-<div id="reduction-de-la-dimensionnalite" class="section level2">
+<div id="réduction-de-la-dimensionnalité" class="section level2">
 <h2>Réduction de la dimensionnalité</h2>
 <p>Il n’est pas possible de visualiser un nuage de points en 9 dimensions. D’un point de vue de l’analyse exploratoire, nous aimerions pouvoir réduire la dimensionnalité de nos données tout en conservant le maximum d’information sur la variation climatique entre les villes. Ce cours vise à offrir une introduction à deux types de méthodes pour effectuer cette réduction</p>
 <ul>
@@ -400,12 +358,12 @@ round(head(clim_norm), 2) # Afficher seulement 2 décimales</code></pre>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>Voici un nuage de points représentant trois des variables climatiques des 49 villes: la température moyenne, l’écart-type de la température et la précipitation annuelle.</p>
-<div id="htmlwidget-a19ba51bcab8f9fd5677" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a19ba51bcab8f9fd5677">{"x":{"visdat":{"19842dcf3e2e":["function () ","plotlyVisDat"]},"cur_data":"19842dcf3e2e","attrs":{"19842dcf3e2e":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","size":1,"inherit":true},"19842dcf3e2e.1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"text":{},"type":"scatter3d","mode":"text","size":0.5,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"t_mean"},"yaxis":{"title":"t_sd"},"zaxis":{"title":"p_ann"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[15.6,16.2,26.8,25.9,25.1,27.3,4.9,10.9,18.2,14,27,15.8,27.5,12,25.6,21.4,18.8,12.1,11,11.4,25.9,24,23.1,22.7,28,14.7,7.9,27.3,17.6,4.9,18.3,14.8,26.7,17.7,26.8,25.4,27.4,16.6,9,6.5,14.1,12.1,24.4,15.2,18.4,24.7,15.7,25.7,11.3],"y":[7.492,8.339,1.767,4.035,6.715,1.078,9.803,10.167,2.137,6.292,1.09,2.039,0.43,8.775,1.333,5.242,2.659,10.686,4.943,0.324,3.667,7.331,1.969,8.704,1.329,4.373,9.543,1.485,3.668,8.937,3.509,3.768,1.055,3.705,0.446,7.128,0.999,2.941,6.918,10.737,6.672,8.676,2.336,1.139,1.205,2.499,5.805,1.086,5.687],"z":[1428,1050,2370,194,734,2150,679,1420,1388,759,1672,641,1949,1150,1370,20,15,608,627,994,1979,608,1255,159,1457,355,793,2465,1275,636,394,656,1790,411,2363,111,1822,885,574,965,437,330,440,1156,935,461,788,1506,633],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[100],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":100},"error_y":{"color":"rgba(31,119,180,1)","width":100},"error_x":{"color":"rgba(31,119,180,1)","width":100},"line":{"color":"rgba(31,119,180,1)","width":100},"frame":null},{"x":[15.6,16.2,26.8,25.9,25.1,27.3,4.9,10.9,18.2,14,27,15.8,27.5,12,25.6,21.4,18.8,12.1,11,11.4,25.9,24,23.1,22.7,28,14.7,7.9,27.3,17.6,4.9,18.3,14.8,26.7,17.7,26.8,25.4,27.4,16.6,9,6.5,14.1,12.1,24.4,15.2,18.4,24.7,15.7,25.7,11.3],"y":[7.492,8.339,1.767,4.035,6.715,1.078,9.803,10.167,2.137,6.292,1.09,2.039,0.43,8.775,1.333,5.242,2.659,10.686,4.943,0.324,3.667,7.331,1.969,8.704,1.329,4.373,9.543,1.485,3.668,8.937,3.509,3.768,1.055,3.705,0.446,7.128,0.999,2.941,6.918,10.737,6.672,8.676,2.336,1.139,1.205,2.499,5.805,1.086,5.687],"z":[1428,1050,2370,194,734,2150,679,1420,1388,759,1672,641,1949,1150,1370,20,15,608,627,994,1979,608,1255,159,1457,355,793,2465,1275,636,394,656,1790,411,2363,111,1822,885,574,965,437,330,440,1156,935,461,788,1506,633],"text":["Tokyo","Shanghai","Mumbai","Karachi","Delhi","Manila","Moscow","Seoul","Sao Paulo","Istanbul","Lagos","Mexico","Jakarta","New York","Kinshasa","Cairo","Lima","Beijing","London","Bogota","Dhaka","Lahore","Rio de Janeiro","Baghdad","Bangkok","Santiago","Toronto","Rangoon","Sydney","Saint Petersburg","Los Angeles","Melbourne","Abidjan","Casablanca","Singapore","Riyadh","Ho Chi Minh City","Cape Town","Berlin","Montreal","Madrid","Kabul","Luanda","Addis Abeba","Nairobi","Dakar","Rome","Santo Domingo","Paris"],"type":"scatter3d","mode":"text","marker":{"color":"rgba(255,127,14,1)","size":[10],"sizemode":"area","line":{"color":"rgba(255,127,14,1)"}},"textfont":{"size":10},"error_y":{"color":"rgba(255,127,14,1)","width":10},"error_x":{"color":"rgba(255,127,14,1)","width":10},"line":{"color":"rgba(255,127,14,1)","width":10},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":[]}</script>
+<div id="htmlwidget-e085500c378ddf04c9c7" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e085500c378ddf04c9c7">{"x":{"visdat":{"34c8774028b1":["function () ","plotlyVisDat"]},"cur_data":"34c8774028b1","attrs":{"34c8774028b1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","size":1,"inherit":true},"34c8774028b1.1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"text":{},"type":"scatter3d","mode":"text","size":0.5,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"t_mean"},"yaxis":{"title":"t_sd"},"zaxis":{"title":"p_ann"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[15.6,16.2,26.8,25.9,25.1,27.3,4.9,10.9,18.2,14,27,15.8,27.5,12,25.6,21.4,18.8,12.1,11,11.4,25.9,24,23.1,22.7,28,14.7,7.9,27.3,17.6,4.9,18.3,14.8,26.7,17.7,26.8,25.4,27.4,16.6,9,6.5,14.1,12.1,24.4,15.2,18.4,24.7,15.7,25.7,11.3],"y":[7.492,8.339,1.767,4.035,6.715,1.078,9.803,10.167,2.137,6.292,1.09,2.039,0.43,8.775,1.333,5.242,2.659,10.686,4.943,0.324,3.667,7.331,1.969,8.704,1.329,4.373,9.543,1.485,3.668,8.937,3.509,3.768,1.055,3.705,0.446,7.128,0.999,2.941,6.918,10.737,6.672,8.676,2.336,1.139,1.205,2.499,5.805,1.086,5.687],"z":[1428,1050,2370,194,734,2150,679,1420,1388,759,1672,641,1949,1150,1370,20,15,608,627,994,1979,608,1255,159,1457,355,793,2465,1275,636,394,656,1790,411,2363,111,1822,885,574,965,437,330,440,1156,935,461,788,1506,633],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":100},"error_y":{"color":"rgba(31,119,180,1)","width":100},"error_x":{"color":"rgba(31,119,180,1)","width":100},"line":{"color":"rgba(31,119,180,1)","width":100},"frame":null},{"x":[15.6,16.2,26.8,25.9,25.1,27.3,4.9,10.9,18.2,14,27,15.8,27.5,12,25.6,21.4,18.8,12.1,11,11.4,25.9,24,23.1,22.7,28,14.7,7.9,27.3,17.6,4.9,18.3,14.8,26.7,17.7,26.8,25.4,27.4,16.6,9,6.5,14.1,12.1,24.4,15.2,18.4,24.7,15.7,25.7,11.3],"y":[7.492,8.339,1.767,4.035,6.715,1.078,9.803,10.167,2.137,6.292,1.09,2.039,0.43,8.775,1.333,5.242,2.659,10.686,4.943,0.324,3.667,7.331,1.969,8.704,1.329,4.373,9.543,1.485,3.668,8.937,3.509,3.768,1.055,3.705,0.446,7.128,0.999,2.941,6.918,10.737,6.672,8.676,2.336,1.139,1.205,2.499,5.805,1.086,5.687],"z":[1428,1050,2370,194,734,2150,679,1420,1388,759,1672,641,1949,1150,1370,20,15,608,627,994,1979,608,1255,159,1457,355,793,2465,1275,636,394,656,1790,411,2363,111,1822,885,574,965,437,330,440,1156,935,461,788,1506,633],"text":["Tokyo","Shanghai","Mumbai","Karachi","Delhi","Manila","Moscow","Seoul","Sao Paulo","Istanbul","Lagos","Mexico","Jakarta","New York","Kinshasa","Cairo","Lima","Beijing","London","Bogota","Dhaka","Lahore","Rio de Janeiro","Baghdad","Bangkok","Santiago","Toronto","Rangoon","Sydney","Saint Petersburg","Los Angeles","Melbourne","Abidjan","Casablanca","Singapore","Riyadh","Ho Chi Minh City","Cape Town","Berlin","Montreal","Madrid","Kabul","Luanda","Addis Abeba","Nairobi","Dakar","Rome","Santo Domingo","Paris"],"type":"scatter3d","mode":"text","marker":{"color":"rgba(255,127,14,1)","size":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],"sizemode":"area","line":{"color":"rgba(255,127,14,1)"}},"textfont":{"size":10},"error_y":{"color":"rgba(255,127,14,1)","width":10},"error_x":{"color":"rgba(255,127,14,1)","width":10},"line":{"color":"rgba(255,127,14,1)","width":10},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>La position des points sur l’écran représente la projection du nuage en trois dimensions sur un graphique en deux dimensions. En faisant la rotation du graphique, cette projection change même si la valeur des points demeure la même pour les trois variables. Certaines rotations permettent de mieux différencier les points que d’autres, même si aucune ne reproduit parfaitement les distances entre tous les points. Mathématiquement, ces rotations sont une transformation des variables originales en un nouvel espace en trois dimensions composé de la largeur, de la hauteur et de la profondeur de l’écran; la variation selon cette troisième dimension (profondeur) est bien sûr cachée dans la visualisation.</p>
 <p>Considérons le cas extrême où l’on a trois variables <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span> et <span class="math inline">\(z\)</span> et qu’une d’entre elles est parfaitement prédite par les deux autres (collinéarité parfaite), par exemple <span class="math inline">\(z = 2x - 5y\)</span>. L’ensemble des points est situé sur un seul plan, mais les axes de ce plan correspondent à une combinaison linéaire des variables originales. Une rotation permettrait d’aligner ce plan avec les deux premières dimensions de la visualisation (largeur et hauteur). Dans ce cas, puisque les données ne varient pas dans la troisième dimension, la projection représente parfaitement la variation des données originales.</p>
-<div id="htmlwidget-c3823f98801df8880b3f" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c3823f98801df8880b3f">{"x":{"visdat":{"1984ec6e23":["function () ","plotlyVisDat"]},"cur_data":"1984ec6e23","attrs":{"1984ec6e23":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","size":1,"inherit":true},"1984ec6e23.1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"x"},"yaxis":{"title":"y"},"zaxis":{"title":"z"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[-1.21676782852413,-0.38484191973245,-0.0020275124657424,0.0781493418518983,-1.52345845797746,-0.628913147775892,1.03055869446875,-0.837417985654862,-0.108193353708965,0.197539248769764,-0.349681357985816,0.995507406545255,-0.425666597241691,-0.154129602988335,-0.340977109284144,0.121327993928005,1.54791971871385,0.331959631200392,2.55684543403503,0.922559805334119,-0.337118664811867,0.0467468756585474,1.63647535077002,1.90009106225772,0.00487976520108421,0.629436010744478,-1.08090242660371,-0.357373519163967,-0.225527381436878,0.385500933546647,0.856195301163185,-0.0945153379180547,-0.753861436940349,-0.224580254449715,0.411488138305488,-0.566160247325228,-1.1080000377738,-0.463585049370458,0.522833648083796,-0.375531438487688,1.33372758861475,-0.566799027557544,0.623190822240257,0.739566671591614,-2.2824071690723,0.597413823261678,-1.55055009656926,-1.86966183907347,-0.186402259331083,-0.957986553716378,1.83048017841204,0.111774256841093,-0.755366749258637,0.790707708859392,-0.575497921425891,1.40329450066308,0.720383437138196,0.875735961195073,-1.79013884592312,-1.04972043073113,1.35706970771101,-0.872257894850014,-0.228867738323889,-0.478411526313821,0.0469078315547106,-0.337301463010518,0.246630379575189,-0.215336135649148,1.26172787759811,-0.778210922727769,-2.11430117652017,1.72101466471965,-0.369121475315158,-0.295907970754035,0.622300523630637,-0.437270244051458,0.905401611597984,-0.0412487429285033,1.69124662684021,0.398440404481885,-1.01264318817656,-1.55792377567185,-0.634363408940658,0.793485457964339,0.653982802169777,-0.67886921762861,0.676985197721527,-1.72696246889524,0.42417601894265,0.634623231687356,0.163338365650428,-0.117100872853722,-1.20457036400508,1.27447848966301,-0.267396456320821,-1.0158120696569,0.198718713587252,-1.45618258505497,0.156156082813403,0.341763979124765],"y":[0.680860463076144,-0.72895133161784,1.27079952303301,-1.65648652334842,-2.1997620410698,-0.0274227444916557,-0.44984602298204,-0.571103294467408,1.34436578388758,-1.91751496147806,0.0471069752267473,-0.415539945109513,1.05191385377258,1.0207701985957,-0.504330091549893,1.88126869738222,1.68373065346992,0.92868870104302,0.870330468888661,-0.531849794975228,1.85216643107376,-0.585619076792819,0.912069259516836,-0.210828740638127,1.10497175042178,-1.06995254896798,0.715586641912111,1.25493795329225,-0.24218861062899,0.193598659229884,-1.26583288436644,0.498852761738408,-1.57856913701808,0.295629578239337,0.0626245982168598,-1.41475444916284,0.725135039682719,-0.186115140627056,-1.79977695906214,0.162781136745989,0.583584295720104,0.0367209086227595,-0.348755237179466,0.372059252289536,-0.242409084317031,0.416893234251502,-0.619241313972935,-0.319959127772434,-1.42679026138185,-2.51629016449042,0.506256006409368,2.21215670681565,0.864805072111069,-2.29830660164053,-0.564012973093804,0.815154060475146,-0.483629547554301,-1.8100174987364,-0.374632974900898,0.622877664992162,0.784624982097113,0.0753100144051935,1.30980850225651,0.497869353372584,-0.732607713310735,0.551000455058889,0.454460861649889,2.12384811707174,-0.34716489625471,1.1002790870042,0.513760083350593,-0.113553814328086,-1.00369839055116,-2.14910187286822,-0.443329743715982,-0.382787254031646,-1.59005203380693,0.538791316621154,-1.24087808750671,0.197683942603811,-0.292253597798126,-0.0385264053516048,-0.0625601884314694,-0.468961960747959,0.765264386007238,0.321332651767084,-0.39077398432238,-1.39473258416074,0.0418613104902942,-0.573954632546888,0.0471362759462331,0.673753539957118,-0.566698141601014,-0.0444974326882849,0.172876479151388,0.729379247061036,1.90899776206429,1.58083943938756,-0.111490545901197,1.76249661490948],"z":[-5.83783797242898,2.8750728186243,-6.35805264009656,8.43873130044588,7.95189328939408,-1.1207125730935,4.31034750384771,1.18068050102732,-6.93821562685585,9.98265330492984,-0.934897592105369,4.06871453863808,-6.1109024633463,-5.41211019895516,1.83969623918118,-9.16368749905511,-5.32281382992189,-3.97952424281432,0.762038523626751,4.50436858554438,-9.93506948499253,3.02158913528119,-1.28739559604413,4.85432582770608,-5.51509922170674,6.60863476632886,-5.73973806276798,-6.9894368047892,0.759888290271196,-0.196991429056125,8.04155502415855,-2.68329448452815,6.38512281120969,-1.92730840009611,0.509853285526677,5.94145175116373,-5.8416752739612,0.00340560439436544,10.0445520914783,-1.56496856070532,-0.250466301371028,-1.31720259822889,2.99015783037784,-0.38116291826445,-3.35276891655945,-0.889638524734157,-0.00489362327384857,-2.13952803928477,6.76114678824707,10.6654777150193,1.12968032477724,-10.8372350203961,-5.83475885907262,13.0729484259214,1.66906902261724,-1.26918130104956,3.8589146120479,10.8015594160721,-1.70711281734174,-5.21382918642308,-1.20898549506355,-2.121065861726,-7.00677798793032,-3.44616981949056,3.7568542296631,-3.42960520131548,-1.77904354909906,-11.049912856657,4.25928023646977,-7.05781728047655,-6.79740276979331,4.00979840107973,4.28024900212548,10.153693422833,3.46124976584118,1.03939578205532,9.76106339223062,-2.77645406896278,9.58688369121398,-0.191538904055286,-0.564018387362491,-2.92321552458568,-0.955925875723969,3.93178071966848,-2.51835632569664,-2.96440169409264,3.30784031705495,3.51973798301322,0.639045485433829,4.13901962610915,0.0909953515696913,-3.60296944549303,0.424349979994913,2.77144414276744,-1.39917530839858,-5.67852037461898,-9.14755138314696,-10.8165623670477,0.869764895132789,-8.12895511629788],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[55],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":55},"error_y":{"color":"rgba(31,119,180,1)","width":55},"error_x":{"color":"rgba(31,119,180,1)","width":55},"line":{"color":"rgba(31,119,180,1)","width":55},"frame":null},{"colorbar":{"title":"z<br />z","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0782760531585063","rgba(72,31,109,1)"],["0.167785658471411","rgba(68,58,129,1)"],["0.198340548278871","rgba(65,67,133,1)"],["0.218160869645152","rgba(63,73,136,1)"],["0.236025603333364","rgba(61,78,138,1)"],["0.313583991635724","rgba(52,99,141,1)"],["0.336674367345814","rgba(49,105,142,1)"],["0.369375121507966","rgba(47,112,142,1)"],["0.388037221693722","rgba(45,117,142,1)"],["0.404888571050868","rgba(44,121,142,1)"],["0.418767594314592","rgba(42,124,142,1)"],["0.444976162698885","rgba(38,130,142,1)"],["0.45808024683441","rgba(38,133,141,1)"],["0.483220466907567","rgba(37,140,140,1)"],["0.50027667267492","rgba(37,144,140,1)"],["0.534331684158341","rgba(34,153,138,1)"],["0.584809704968465","rgba(39,165,133,1)"],["0.614864132748141","rgba(45,171,129,1)"],["0.627827338792287","rgba(47,174,127,1)"],["0.640772697744454","rgba(49,177,125,1)"],["0.728550831260994","rgba(89,195,104,1)"],["0.803774886440775","rgba(128,209,81,1)"],["0.874138741370851","rgba(172,220,52,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[-1.21676782852413,-0.38484191973245,-0.0020275124657424,0.0781493418518983,-1.52345845797746,-0.628913147775892,1.03055869446875,-0.837417985654862,-0.108193353708965,0.197539248769764,-0.349681357985816,0.995507406545255,-0.425666597241691,-0.154129602988335,-0.340977109284144,0.121327993928005,1.54791971871385,0.331959631200392,2.55684543403503,0.922559805334119,-0.337118664811867,0.0467468756585474,1.63647535077002,1.90009106225772,0.00487976520108421,0.629436010744478,-1.08090242660371,-0.357373519163967,-0.225527381436878,0.385500933546647,0.856195301163185,-0.0945153379180547,-0.753861436940349,-0.224580254449715,0.411488138305488,-0.566160247325228,-1.1080000377738,-0.463585049370458,0.522833648083796,-0.375531438487688,1.33372758861475,-0.566799027557544,0.623190822240257,0.739566671591614,-2.2824071690723,0.597413823261678,-1.55055009656926,-1.86966183907347,-0.186402259331083,-0.957986553716378,1.83048017841204,0.111774256841093,-0.755366749258637,0.790707708859392,-0.575497921425891,1.40329450066308,0.720383437138196,0.875735961195073,-1.79013884592312,-1.04972043073113,1.35706970771101,-0.872257894850014,-0.228867738323889,-0.478411526313821,0.0469078315547106,-0.337301463010518,0.246630379575189,-0.215336135649148,1.26172787759811,-0.778210922727769,-2.11430117652017,1.72101466471965,-0.369121475315158,-0.295907970754035,0.622300523630637,-0.437270244051458,0.905401611597984,-0.0412487429285033,1.69124662684021,0.398440404481885,-1.01264318817656,-1.55792377567185,-0.634363408940658,0.793485457964339,0.653982802169777,-0.67886921762861,0.676985197721527,-1.72696246889524,0.42417601894265,0.634623231687356,0.163338365650428,-0.117100872853722,-1.20457036400508,1.27447848966301,-0.267396456320821,-1.0158120696569,0.198718713587252,-1.45618258505497,0.156156082813403,0.341763979124765],"y":[0.680860463076144,-0.72895133161784,1.27079952303301,-1.65648652334842,-2.1997620410698,-0.0274227444916557,-0.44984602298204,-0.571103294467408,1.34436578388758,-1.91751496147806,0.0471069752267473,-0.415539945109513,1.05191385377258,1.0207701985957,-0.504330091549893,1.88126869738222,1.68373065346992,0.92868870104302,0.870330468888661,-0.531849794975228,1.85216643107376,-0.585619076792819,0.912069259516836,-0.210828740638127,1.10497175042178,-1.06995254896798,0.715586641912111,1.25493795329225,-0.24218861062899,0.193598659229884,-1.26583288436644,0.498852761738408,-1.57856913701808,0.295629578239337,0.0626245982168598,-1.41475444916284,0.725135039682719,-0.186115140627056,-1.79977695906214,0.162781136745989,0.583584295720104,0.0367209086227595,-0.348755237179466,0.372059252289536,-0.242409084317031,0.416893234251502,-0.619241313972935,-0.319959127772434,-1.42679026138185,-2.51629016449042,0.506256006409368,2.21215670681565,0.864805072111069,-2.29830660164053,-0.564012973093804,0.815154060475146,-0.483629547554301,-1.8100174987364,-0.374632974900898,0.622877664992162,0.784624982097113,0.0753100144051935,1.30980850225651,0.497869353372584,-0.732607713310735,0.551000455058889,0.454460861649889,2.12384811707174,-0.34716489625471,1.1002790870042,0.513760083350593,-0.113553814328086,-1.00369839055116,-2.14910187286822,-0.443329743715982,-0.382787254031646,-1.59005203380693,0.538791316621154,-1.24087808750671,0.197683942603811,-0.292253597798126,-0.0385264053516048,-0.0625601884314694,-0.468961960747959,0.765264386007238,0.321332651767084,-0.39077398432238,-1.39473258416074,0.0418613104902942,-0.573954632546888,0.0471362759462331,0.673753539957118,-0.566698141601014,-0.0444974326882849,0.172876479151388,0.729379247061036,1.90899776206429,1.58083943938756,-0.111490545901197,1.76249661490948],"z":[-5.83783797242898,2.8750728186243,-6.35805264009656,8.43873130044588,7.95189328939408,-1.1207125730935,4.31034750384771,1.18068050102732,-6.93821562685585,9.98265330492984,-0.934897592105369,4.06871453863808,-6.1109024633463,-5.41211019895516,1.83969623918118,-9.16368749905511,-5.32281382992189,-3.97952424281432,0.762038523626751,4.50436858554438,-9.93506948499253,3.02158913528119,-1.28739559604413,4.85432582770608,-5.51509922170674,6.60863476632886,-5.73973806276798,-6.9894368047892,0.759888290271196,-0.196991429056125,8.04155502415855,-2.68329448452815,6.38512281120969,-1.92730840009611,0.509853285526677,5.94145175116373,-5.8416752739612,0.00340560439436544,10.0445520914783,-1.56496856070532,-0.250466301371028,-1.31720259822889,2.99015783037784,-0.38116291826445,-3.35276891655945,-0.889638524734157,-0.00489362327384857,-2.13952803928477,6.76114678824707,10.6654777150193,1.12968032477724,-10.8372350203961,-5.83475885907262,13.0729484259214,1.66906902261724,-1.26918130104956,3.8589146120479,10.8015594160721,-1.70711281734174,-5.21382918642308,-1.20898549506355,-2.121065861726,-7.00677798793032,-3.44616981949056,3.7568542296631,-3.42960520131548,-1.77904354909906,-11.049912856657,4.25928023646977,-7.05781728047655,-6.79740276979331,4.00979840107973,4.28024900212548,10.153693422833,3.46124976584118,1.03939578205532,9.76106339223062,-2.77645406896278,9.58688369121398,-0.191538904055286,-0.564018387362491,-2.92321552458568,-0.955925875723969,3.93178071966848,-2.51835632569664,-2.96440169409264,3.30784031705495,3.51973798301322,0.639045485433829,4.13901962610915,0.0909953515696913,-3.60296944549303,0.424349979994913,2.77144414276744,-1.39917530839858,-5.67852037461898,-9.14755138314696,-10.8165623670477,0.869764895132789,-8.12895511629788],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":[]}</script>
+<div id="htmlwidget-c922381bf411baf4320e" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c922381bf411baf4320e">{"x":{"visdat":{"34c8846fb":["function () ","plotlyVisDat"]},"cur_data":"34c8846fb","attrs":{"34c8846fb":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","size":1,"inherit":true},"34c8846fb.1":{"x":{},"y":{},"z":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"x"},"yaxis":{"title":"y"},"zaxis":{"title":"z"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[0.456004251461611,1.61145685153952,-0.730980773183441,0.231073952064573,0.795946391144329,-0.251902631174414,0.525556496753512,-0.827180476097837,-0.779469132820872,1.7997439652791,-2.7674867076026,-0.184102941467471,-0.899142458466286,-1.26720308142477,-0.593568469903897,-1.0169320959849,-2.22721821383237,-0.617086645251709,-0.410179742498181,0.377420996140038,0.504690861364843,0.155090151375763,0.262244057966649,-0.533504945320474,-1.20424600433921,-0.753502894002833,2.33916362248864,1.72615549783956,1.00360201202896,1.5920051546169,1.30662420665533,-1.59756870832432,1.35949303534447,-1.48192288907663,0.0304845805113442,1.07753700141314,-0.11772917626608,-0.354020612078655,0.491451118236212,-1.82501154264901,0.981042750679459,1.18123046961184,0.138819382502882,0.0652158817685454,-0.897112025916583,1.22329057525762,0.803630254910188,0.102185938018809,1.09941274023123,-0.453249194803141,1.02048606087251,0.407435994333532,0.574853799914152,1.73093490264166,-0.288182332934035,-0.571213331735791,0.718036162627137,-0.186101325570523,-1.3738924315582,2.22737758218919,-0.512896254526699,-0.944044869166738,0.32252968374536,-0.212474918150763,1.10493086520534,-0.366288746585981,-0.345690306968896,-0.0585167980241752,0.327532506360118,-0.663027135676695,2.01142318540907,-0.0624255254316011,-0.212332303629159,0.219376017414626,-0.40718586816035,0.624379394958226,-0.512049786581004,1.54260304996309,-0.486167489134633,-0.448763281891685,-0.517118656376686,-0.285834451752997,0.93967472896931,-1.13724430171552,-0.627507188125873,-0.0399214262290959,0.965506819281517,0.741645010866189,-0.265034182755625,0.192339111495642,0.144851133448343,-0.445243329306228,-1.44039184668975,-0.139084728623035,-1.36680648745911,-1.04760187272139,0.650331019959814,-1.82257200426475,-0.072857674699395,0.103747256996397],"y":[0.975588835654151,0.697155703435416,1.12764123882195,-0.378465689756029,1.83679987482271,0.520306260361006,-2.19180683022199,0.543798721501896,-2.07976965073102,1.50884701177411,0.00135070163999288,0.347365865541501,-1.01878726583848,-0.135362182827971,0.674440971771254,0.848590500037095,0.609620941115412,1.04627324053914,1.53155730076158,0.67578829464669,-0.323604006530382,-2.21388435537766,0.238109429753821,0.266991287599491,0.662196115266888,-0.260218579017546,-0.518832719463183,0.884945169476085,-0.0789768820902634,-0.0187601237466072,0.231473285106074,-0.0673131940130142,0.451795477638946,0.376707004981934,-0.0690883589634879,-0.760413335319872,1.70257964811911,0.119066750507975,-1.92136091900834,-0.30784268967235,0.603015537766237,-0.0366618477297541,0.837802683641347,0.308089899641739,-1.23279409583518,0.0151327006595507,0.10143710754667,-1.13814193895381,-1.02964008489699,-1.08038002420183,1.68202015311838,0.675155299448841,0.0207461703852105,-0.697050102080781,0.143394444957527,0.454280301688957,0.361379071508114,1.5244298824918,0.758284999179946,2.09176880333353,0.510450616837148,-0.328058635538377,0.681992079299119,-1.34181857384279,1.31269756778513,0.86699733745629,0.617728591958942,0.4172374100415,1.62210268222881,0.0797817696827155,0.286960786040993,0.547384773621496,-2.21014247939717,0.82453033236816,-0.614310756227312,-0.475467837467803,1.90989308369067,0.804943729638001,0.407913443335623,-1.10312384812159,0.786975446873814,0.999555648974753,-0.849130324906935,-0.108918517267294,-1.90348586326129,0.23715586738233,1.05014645690116,1.04176900917322,-0.662572010179021,0.398383378688861,0.264788685926646,0.331972576981288,0.874766088758459,-0.35643706391867,-0.976581920479048,-0.218163134370988,1.31162774577809,0.61651855484512,-0.537377686966886,0.745566603350613],"z":[-3.96593567534753,-0.262864814098046,-7.10016774047663,2.35447635290929,-7.59210659182487,-3.10533656415386,12.010147144617,-4.37335455970516,8.83990998801334,-3.94474712831237,-5.54172692340516,-2.10503521064245,3.29565141225985,-1.85759524870969,-4.55934179866406,-6.27681669215528,-7.5025411332418,-6.46553949319911,-8.47814598880427,-2.62409948095337,2.6274017553816,11.3796020796398,-0.666059032835805,-2.4019663286384,-5.71947258501286,-0.205912892917935,7.2724908422932,-0.972414851701311,2.40208843450924,3.27781092796683,1.45588198778029,-2.85857144658356,0.460008682494216,-4.84738080306292,0.406410955840128,5.95714067942564,-8.74835659312772,-1.30337497669718,10.5897068315141,-2.11080963693627,-1.05299218747227,2.54577017787246,-3.91137465320097,-1.41001773467161,4.36974642734271,2.3709176472175,1.10007497208703,5.89508157080666,7.3470259049474,4.49540173140285,-6.3691286438469,-2.56090450857714,1.04597674790225,6.94712031568722,-1.29333689065571,-3.41382817191637,-0.370823032286295,-7.99435206360005,-6.53920985901613,-6.00408885228926,-3.57804559323914,-0.247796560641588,-2.76490102900487,6.28414303291244,-4.35362610851497,-5.06756418045341,-3.7800235737325,-2.20322064625585,-7.45544839842384,-1.72496311976697,2.58804244061318,-2.86177491897068,10.6260477897275,-3.68389962701155,2.25718204481586,3.62609797725547,-10.5735649916153,-0.939512548263819,-3.01190219494738,4.61809267682459,-4.96911454712244,-5.56944714837976,6.1250010824733,-1.72989601709457,8.26241494005472,-1.26562218936984,-3.31971864594276,-3.72555502413371,2.78279168538386,-1.60723867045302,-1.03424116273654,-2.5503495435189,-7.25461413717179,1.50401586234728,2.14929662747701,-1.00438807358784,-5.25747668897083,-6.7277367827551,2.54117308543564,-3.52033850276027],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":55},"error_y":{"color":"rgba(31,119,180,1)","width":55},"error_x":{"color":"rgba(31,119,180,1)","width":55},"line":{"color":"rgba(31,119,180,1)","width":55},"frame":null},{"colorbar":{"title":"z<br />z","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[0.456004251461611,1.61145685153952,-0.730980773183441,0.231073952064573,0.795946391144329,-0.251902631174414,0.525556496753512,-0.827180476097837,-0.779469132820872,1.7997439652791,-2.7674867076026,-0.184102941467471,-0.899142458466286,-1.26720308142477,-0.593568469903897,-1.0169320959849,-2.22721821383237,-0.617086645251709,-0.410179742498181,0.377420996140038,0.504690861364843,0.155090151375763,0.262244057966649,-0.533504945320474,-1.20424600433921,-0.753502894002833,2.33916362248864,1.72615549783956,1.00360201202896,1.5920051546169,1.30662420665533,-1.59756870832432,1.35949303534447,-1.48192288907663,0.0304845805113442,1.07753700141314,-0.11772917626608,-0.354020612078655,0.491451118236212,-1.82501154264901,0.981042750679459,1.18123046961184,0.138819382502882,0.0652158817685454,-0.897112025916583,1.22329057525762,0.803630254910188,0.102185938018809,1.09941274023123,-0.453249194803141,1.02048606087251,0.407435994333532,0.574853799914152,1.73093490264166,-0.288182332934035,-0.571213331735791,0.718036162627137,-0.186101325570523,-1.3738924315582,2.22737758218919,-0.512896254526699,-0.944044869166738,0.32252968374536,-0.212474918150763,1.10493086520534,-0.366288746585981,-0.345690306968896,-0.0585167980241752,0.327532506360118,-0.663027135676695,2.01142318540907,-0.0624255254316011,-0.212332303629159,0.219376017414626,-0.40718586816035,0.624379394958226,-0.512049786581004,1.54260304996309,-0.486167489134633,-0.448763281891685,-0.517118656376686,-0.285834451752997,0.93967472896931,-1.13724430171552,-0.627507188125873,-0.0399214262290959,0.965506819281517,0.741645010866189,-0.265034182755625,0.192339111495642,0.144851133448343,-0.445243329306228,-1.44039184668975,-0.139084728623035,-1.36680648745911,-1.04760187272139,0.650331019959814,-1.82257200426475,-0.072857674699395,0.103747256996397],"y":[0.975588835654151,0.697155703435416,1.12764123882195,-0.378465689756029,1.83679987482271,0.520306260361006,-2.19180683022199,0.543798721501896,-2.07976965073102,1.50884701177411,0.00135070163999288,0.347365865541501,-1.01878726583848,-0.135362182827971,0.674440971771254,0.848590500037095,0.609620941115412,1.04627324053914,1.53155730076158,0.67578829464669,-0.323604006530382,-2.21388435537766,0.238109429753821,0.266991287599491,0.662196115266888,-0.260218579017546,-0.518832719463183,0.884945169476085,-0.0789768820902634,-0.0187601237466072,0.231473285106074,-0.0673131940130142,0.451795477638946,0.376707004981934,-0.0690883589634879,-0.760413335319872,1.70257964811911,0.119066750507975,-1.92136091900834,-0.30784268967235,0.603015537766237,-0.0366618477297541,0.837802683641347,0.308089899641739,-1.23279409583518,0.0151327006595507,0.10143710754667,-1.13814193895381,-1.02964008489699,-1.08038002420183,1.68202015311838,0.675155299448841,0.0207461703852105,-0.697050102080781,0.143394444957527,0.454280301688957,0.361379071508114,1.5244298824918,0.758284999179946,2.09176880333353,0.510450616837148,-0.328058635538377,0.681992079299119,-1.34181857384279,1.31269756778513,0.86699733745629,0.617728591958942,0.4172374100415,1.62210268222881,0.0797817696827155,0.286960786040993,0.547384773621496,-2.21014247939717,0.82453033236816,-0.614310756227312,-0.475467837467803,1.90989308369067,0.804943729638001,0.407913443335623,-1.10312384812159,0.786975446873814,0.999555648974753,-0.849130324906935,-0.108918517267294,-1.90348586326129,0.23715586738233,1.05014645690116,1.04176900917322,-0.662572010179021,0.398383378688861,0.264788685926646,0.331972576981288,0.874766088758459,-0.35643706391867,-0.976581920479048,-0.218163134370988,1.31162774577809,0.61651855484512,-0.537377686966886,0.745566603350613],"z":[-3.96593567534753,-0.262864814098046,-7.10016774047663,2.35447635290929,-7.59210659182487,-3.10533656415386,12.010147144617,-4.37335455970516,8.83990998801334,-3.94474712831237,-5.54172692340516,-2.10503521064245,3.29565141225985,-1.85759524870969,-4.55934179866406,-6.27681669215528,-7.5025411332418,-6.46553949319911,-8.47814598880427,-2.62409948095337,2.6274017553816,11.3796020796398,-0.666059032835805,-2.4019663286384,-5.71947258501286,-0.205912892917935,7.2724908422932,-0.972414851701311,2.40208843450924,3.27781092796683,1.45588198778029,-2.85857144658356,0.460008682494216,-4.84738080306292,0.406410955840128,5.95714067942564,-8.74835659312772,-1.30337497669718,10.5897068315141,-2.11080963693627,-1.05299218747227,2.54577017787246,-3.91137465320097,-1.41001773467161,4.36974642734271,2.3709176472175,1.10007497208703,5.89508157080666,7.3470259049474,4.49540173140285,-6.3691286438469,-2.56090450857714,1.04597674790225,6.94712031568722,-1.29333689065571,-3.41382817191637,-0.370823032286295,-7.99435206360005,-6.53920985901613,-6.00408885228926,-3.57804559323914,-0.247796560641588,-2.76490102900487,6.28414303291244,-4.35362610851497,-5.06756418045341,-3.7800235737325,-2.20322064625585,-7.45544839842384,-1.72496311976697,2.58804244061318,-2.86177491897068,10.6260477897275,-3.68389962701155,2.25718204481586,3.62609797725547,-10.5735649916153,-0.939512548263819,-3.01190219494738,4.61809267682459,-4.96911454712244,-5.56944714837976,6.1250010824733,-1.72989601709457,8.26241494005472,-1.26562218936984,-3.31971864594276,-3.72555502413371,2.78279168538386,-1.60723867045302,-1.03424116273654,-2.5503495435189,-7.25461413717179,1.50401586234728,2.14929662747701,-1.00438807358784,-5.25747668897083,-6.7277367827551,2.54117308543564,-3.52033850276027],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>Il est rare que des variables soient parfaitement collinéaires, donc la réduction de la dimensionnalité sera toujours associée à une perte d’information; le but de l’ordination est de choisir judicieusement les nouveaux axes afin de minimiser la variation des données dans les dimensions qui seront éliminées, ou de façon équivalente, maximiser la variation “expliquée” par les axes retenus.</p>
 </div>
 <div id="fonctionnement-de-lanalyse-en-composantes-principales" class="section level2">
@@ -429,14 +387,14 @@ round(head(clim_norm), 2) # Afficher seulement 2 décimales</code></pre>
 <pre class="r"><code>clim_acp &lt;- prcomp(clim_norm)
 summary(clim_acp)</code></pre>
 <pre><code>## Importance of components:
-##                           PC1    PC2    PC3     PC4     PC5     PC6
-## Standard deviation     1.9785 1.5741 0.9774 0.90767 0.75003 0.46655
-## Proportion of Variance 0.4349 0.2753 0.1061 0.09154 0.06251 0.02418
-## Cumulative Proportion  0.4349 0.7102 0.8164 0.90792 0.97042 0.99461
-##                            PC7     PC8     PC9
-## Standard deviation     0.20003 0.08141 0.04355
-## Proportion of Variance 0.00445 0.00074 0.00021
-## Cumulative Proportion  0.99905 0.99979 1.00000</code></pre>
+##                           PC1    PC2    PC3     PC4     PC5     PC6     PC7
+## Standard deviation     1.9785 1.5741 0.9774 0.90767 0.75003 0.46655 0.20003
+## Proportion of Variance 0.4349 0.2753 0.1061 0.09154 0.06251 0.02418 0.00445
+## Cumulative Proportion  0.4349 0.7102 0.8164 0.90792 0.97042 0.99461 0.99905
+##                            PC8     PC9
+## Standard deviation     0.08141 0.04355
+## Proportion of Variance 0.00074 0.00021
+## Cumulative Proportion  0.99979 1.00000</code></pre>
 <p>Le sommaire du résultat de l’ACP indique d’abord l’écart-type de chacune des 9 composantes principales (rotation des variables originales). Ces valeurs sont aussi enregistrées dans l’élément <code>sdev</code> du résultat (<code>clim_acp$sdev</code>). Les deux rangées suivantes indiquent le rapport entre la variance d’une composante et la variance totale (somme des variances des 9 variables), puis la proportion cumulative.</p>
 <p>Les variances associées à chaque composante principale peuvent être visualiées avec la fonction <code>screeplot</code>.</p>
 <pre class="r"><code>screeplot(clim_acp)</code></pre>
@@ -502,14 +460,14 @@ summary(clim_acp)</code></pre>
 <p>D’autres critères sont basés sur des tests statistiques plus précis, tels que ceux évalués dans l’article de Peres-Neto et al. (2005)</p>
 <p>En pratique, des tests d’hypothèse formels sont rarement nécessaires. Pour une analyse de données exploratoire, on visualise toujours les deux premières composantes, puis on peut inspecter les suivantes si elles contribuent à une portion jugée non négligeable de la variance et qu’elles sont facilement interprétables. Pour l’utilisation des composantes principales dans une régression (voir ci-dessous), les méthodes de sélection de modèles peuvent nous guider sur le nombre de composantes principales à conserver dans la régression elle-même.</p>
 </div>
-<div id="acp-et-regression" class="section level2">
+<div id="acp-et-régression" class="section level2">
 <h2>ACP et régression</h2>
 <p>Tel que mentionné plus haut, il est difficile d’estimer les paramètres d’une régression si les prédicteurs potentiels sont nombreux et corrélés. En transformant ces prédicteurs en un nombre plus réduit de variables non-corrélées, l’ACP peut résoudre ces deux problèmes.</p>
 <p>Le principal inconvénient à cette approche (ACP suivie d’une régression en fonction des composantes principales) est que les effets sont généralement plus difficiles à interpréter en fonction des variables originales, surtout si plusieurs variables contribuent de façon substantielle à chaque axe.</p>
 <p>Dans certaines études, le but principal est de prédire la réponse et on s’intéresse peu à l’effet des prédicteurs individuels. Par exemple, considérons un projet visant à identifier les espèces dominantes d’une forêt à partir d’images de télédétection hyperspectrales contenant des données de réflectance pour des centaines de longueurs d’onde. Dans ce cas, les méthodes multivariées comme l’ACP sont utilisées pour réduire ce spectre de réflectance en un plus petit nombre de composantes orthogonales.</p>
 </div>
 </div>
-<div id="classification-hierarchique-ascendante" class="section level1">
+<div id="classification-hiérarchique-ascendante" class="section level1">
 <h1>Classification hiérarchique ascendante</h1>
 <p>La classification hiérarchique ascendante vise à créer des groupes d’observations semblables selon une série de variables. Ce nom vient du fait qu’on commence avec les observations individuelles, qui sont regroupées progressivement jusqu’à ce qu’on obtienne un seul groupe. La structure résultante est un arbre ou <em>dendrogramme</em> montrant les relations de proximité pour l’ensemble des observations.</p>
 <div id="matrice-de-distance" class="section level2">
@@ -533,16 +491,16 @@ d_{n1} &amp; d_{n2} &amp; ... &amp; d_{n(n-1)} &amp; 0
 <p>Dans R, la fonction <code>dist</code> calcule la matrice de distance entre les rangées d’une matrice de données numériques. Cette fonction utilise la distance euclidienne par défaut.</p>
 <p>Comme dans le cas de l’ACP, il est recommandé de normaliser les variables avant de calculer la matrice de distance, afin de les placer sur une échelle comparable.</p>
 </div>
-<div id="algorithme-de-classification-hierarchique-ascendante" class="section level2">
+<div id="algorithme-de-classification-hiérarchique-ascendante" class="section level2">
 <h2>Algorithme de classification hiérarchique ascendante</h2>
 <p>Supposons qu’on ait la matrice de distance suivante entre 4 observations.</p>
 <p><span class="math display">\[
-\begin{array}
-&amp;&amp; A &amp; B &amp; C \\
+\begin{matrix}
+&amp; A &amp; B &amp; C \\
 B &amp; 11 \\
 C &amp; 13 &amp; 6 \\ 
 D &amp; 7 &amp; 11 &amp; 9 
-\end{array}
+\end{matrix}
 \]</span></p>
 <ol style="list-style-type: decimal">
 <li><p>L’algorithme regroupe d’abord les deux observations les plus rapprochées, soit B et C (distance de 6).</p></li>
@@ -550,18 +508,18 @@ D &amp; 7 &amp; 11 &amp; 9
 </ol>
 <p>Comment détermine-t-on la distance du nouveau groupe à partir des distances précédentes? Différentes règles sont possibles. Pour l’instant, utilisons une règle où la distance d’un nouveau groupe à une observation existante est la moyenne des distances entre chaque membre du groupe et l’observation.</p>
 <p><span class="math display">\[
-\begin{array}
-&amp; &amp; A &amp; BC \\
+\begin{matrix}
+&amp; A &amp; BC \\
 BC &amp; 12 &amp; \\
 D &amp; 7 &amp; 10 
-\end{array}
+\end{matrix}
 \]</span></p>
 <ol start="3" style="list-style-type: decimal">
 <li>À partir de ce moment, le nouveau groupe (BC) est traité comme une observation individuelle. Il suffit ensuite de répéter les étapes 1 et 2 jusqu’à ce qu’il n’y ait que deux groupes, qui sont joints à la dernière étape.</li>
 </ol>
 <p>Dans l’exemple, la prochaine étape serait de regrouper A et D (distance de 7). Finalement, on joint AD et BC à une distance de 11 (moyenne de 10 et 12).</p>
 </div>
-<div id="classification-hierarchique-avec-r" class="section level2">
+<div id="classification-hiérarchique-avec-r" class="section level2">
 <h2>Classification hiérarchique avec R</h2>
 <p>La fonction <code>hclust</code> permet d’effectuer une classification hiérarchique ascendante. Voici la classification pour le tableau de 9 variables climatiques pour 49 grandes villes. Nous calculons d’abord la matrice de distance, puis effectuons le regroupement avec la méthode “average” (les différentes méthodes seront présentées plus loin).</p>
 <pre class="r"><code>clim_dist &lt;- dist(clim_norm)
@@ -589,7 +547,7 @@ plot(clim_ch_max)</code></pre>
 plot(clim_ch_ward)</code></pre>
 <p><img src="13-Analyses_multivariees_Partie1_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
-<div id="extraire-des-groupes-dune-classification-hierarchique" class="section level2">
+<div id="extraire-des-groupes-dune-classification-hiérarchique" class="section level2">
 <h2>Extraire des groupes d’une classification hiérarchique</h2>
 <p>La classification hiérarchique définit un nombre différent de groupes le long du dendrogramme. La fonction <code>cutree</code> permet de “couper” le dendrogramme (1) à une certaine hauteur en spécifiant l’argument <em>h</em> ou (2) pour obtenir un certain nombre de groupes en spécifiant l’argument <em>k</em>. Cette fonction renvoie un vecteur indiquant l’indice du groupe correspondant à chaque observation, dans le même ordre que la matrice de données.</p>
 <p>Utilisons donc cette méthode pour extraire les trois grands groupes du dernier dendrogramme (critère de Ward):</p>
@@ -598,7 +556,7 @@ head(groupes)</code></pre>
 <pre><code>##    Tokyo Shanghai   Mumbai  Karachi    Delhi   Manila 
 ##        1        1        2        3        3        2</code></pre>
 </div>
-<div id="comparer-les-groupes-a-lordination" class="section level2">
+<div id="comparer-les-groupes-à-lordination" class="section level2">
 <h2>Comparer les groupes à l’ordination</h2>
 <p>Nous allons finalement représenter les groupes obtenus par classification hiérarchique sur le graphique des deux premiers axes de l’ACP. Tout d’abord, nous créons un nouveau tableau en rattachant les deux premières composantes principales et le vecteur des indices de groupes, qui doit être spécifié comme facteur.</p>
 <pre class="r"><code>ord_groupes &lt;- data.frame(clim_acp$x[, 1:2], groupe_ward = as.factor(groupes))
@@ -624,7 +582,7 @@ ggplot(ord_groupes, aes(x = PC1, y = PC2, color = groupe_max)) +
 <p>Outre la décision de placer Singapour dans un groupe à part ou non, les différences entre les deux méthodes se retrouvent surtout aux endroits où les groupes se chevauchent. D’après le graphique, il est assez clair que la distribution des villes le long des axes climatiques est graduelle plutôt que de former quelques groupes bien séparés. Dans ce cas, l’ordination constitue une meilleure façon de condenser l’information sur les différences entre les climats des différentes villes.</p>
 </div>
 </div>
-<div id="resume" class="section level1">
+<div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
 <li><p>Les analyses multivariées servent à décrire et expliquer la distribution conjointe de plusieurs variables.</p></li>
@@ -634,7 +592,7 @@ ggplot(ord_groupes, aes(x = PC1, y = PC2, color = groupe_max)) +
 <li><p>Les méthodes de regroupement visent à classer les observations multivariées dans un petit nombre de groupes d’observations les plus similaires possibles. La classification hiérarchique ascendante effectue un regroupement graduel à partir des observations individuelles et en fonction de différentes règles qui définissent la distance entre groupes. Cette classification produit un dendrogramme.</p></li>
 </ul>
 </div>
-<div id="references" class="section level1">
+<div id="références" class="section level1">
 <h1>Références</h1>
 <p><strong>Manuels</strong></p>
 <ul>
@@ -670,6 +628,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
