@@ -276,7 +276,7 @@ head(Wheat)</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li><p>Estimez les paramètres d’un modèle linéaire incluant les effets additifs de l’engrais et de l’humidité sur le rendement. Est-il correct d’ignorer le groupement des mesures par plateau? Justifiez votre réponse à partir d’un graphique des résidus par plateau.</p></li>
 <li><p>Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu’un effet aléatoire représentant la structure groupée des données. Pour chacun des deux effets fixes (engrais et humidité), comment l’erreur-type des estimés change-t-elle par rapport au modèle sans effet aléatoire en (a)? Expliquez ces différences en fonction de la structure de l’expérience.</p></li>
-<li><p>À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) ne montrent aucune tendance résiduelle et suivent une distribution normale.</p></li>
+<li><p>À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) ne montrent aucune tendance résiduelle et s’ils suivent une distribution normale.</p></li>
 <li><p>Calculez la corrélation intra-classe pour le modèle mixte en (b). Quelle est l’interprétation mathématique de cette valeur?</p></li>
 </ol>
 </div>
@@ -297,9 +297,9 @@ head(Spruce)</code></pre>
 <li>Puisque la croissance n’est pas linéaire dans le temps, nous transformons le nombre de jours en facteurs, ce qui permettra d’estimer indépendamment la croissance à chaque point dans le temps.</li>
 </ol>
 <pre class="r"><code>Spruce$days &lt;- as.factor(Spruce$days)</code></pre>
-<p>Estimez les paramètres du modèle linéaire de <code>logSize</code> en fonction du nombre de jours écoulé et répondez aux questions suivantes: (i) Comment interprétez-vous l’ordonnée à l’origine de ce modèle? (ii) Quelle est la variation moyenne de <code>logSize</code> entre le jour 152 et le jour 201 et quel est son écart-type?</p>
+<p>Estimez les paramètres du modèle linéaire de <code>logSize</code> en fonction du nombre de jours écoulé et répondez aux questions suivantes: (i) Comment interprétez-vous l’ordonnée à l’origine de ce modèle? (ii) Quelle est la variation moyenne de <code>logSize</code> entre le jour 152 et le jour 201 et quel est son erreur-type?</p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li><p>Ajustez maintenant un modèle mixte qui tient compte du fait qu’il s’agit de mesures répétées sur les mêmes arbres et répondez aux questions suivantes (<em>Note</em>: Ignorez la placette <code>plot</code> pour l’instant.) (i) Comment interprétez-vous l’écart-type de l’effet aléatoire et l’écart-type résiduel? (ii) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d’échantillonnage afin d’estimer une courbe de croissance?</p></li>
+<li><p>Ajustez maintenant un modèle mixte qui tient compte du fait qu’il s’agit de mesures répétées sur les mêmes arbres et répondez aux questions suivantes (<em>Note</em>: Ignorez la placette <code>plot</code> pour l’instant.) (i) Pour ce modèle, que représentent l’écart-type de l’effet aléatoire et l’écart-type résiduel, respectivement? (ii) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d’échantillonnage afin d’estimer une courbe de croissance?</p></li>
 <li><p>Quelle est la corrélation intra-classe pour le modèle en (b)? Selon ce résultat, est-ce que la variation de taille parmi les arbres à un moment donné de l’expérience est due davantage (i) aux différences de taille entre les arbres au premier jour 152 ou (ii) à la variation aléatoire de croissance d’un arbre à l’autre pour chaque période de temps?</p></li>
 <li><p>Ajoutez au modèle en (b) un effet aléatoire de la placette <code>plot</code>. Selon ce modèle, est-ce que la taille des arbres diffère de façon marquée entre les placettes?</p></li>
 </ol>

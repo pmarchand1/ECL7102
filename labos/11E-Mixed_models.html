@@ -277,7 +277,7 @@ head(Wheat)</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li><p>Estimate the parameters of a linear model including the additive effects of fertilizer and moisture on yield. Is it correct to ignore the grouping of the measurements per tray? Justify your answer from a plot of residuals.</p></li>
 <li><p>Now fit a mixed model that includes the same fixed effects, as well as a random effect representing the grouped data structure. For each of the two fixed effects (fertilizer and moisture), how does the standard error of the coefficients vary compared with the model without random effects in (a)? Explain these differences in terms of the experimental design.</p></li>
-<li><p>From appropriate diagnostic plots, check if the mixed model residuals in (b) show no residual pattern and follow a normal distribution.</p></li>
+<li><p>From appropriate diagnostic plots, check if the mixed model residuals in (b) show no residual pattern and if they follow a normal distribution.</p></li>
 <li><p>Calculate the intra-class correlation for the mixed model in (b). What is the mathematical interpretation of this value?</p></li>
 </ol>
 </div>
@@ -300,7 +300,7 @@ head(Spruce)</code></pre>
 <pre class="r"><code>Spruce$days &lt;- as.factor(Spruce$days)</code></pre>
 <p>Estimate the parameters of a linear model of <code>logSize</code> as a function of the number of days, then answer the following questions: (i) How do you interpret the Intercept of that model? (ii) What is the mean variation of <code>logSize</code> between day 152 and day 201 and what is its standard error?</p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li><p>Now fit a mixed model that takes into account that these are repeated measurements on the same trees (<em>Note</em>: Ignore the plot for now.) and answer the following questions: (i) How do you interpret the standard deviation of the random effect and the residual standard deviation? (ii) Based on these results, why is it beneficial to measure the same trees on each sampling day to estimate a growth curve?</p></li>
+<li><p>Now fit a mixed model that takes into account that these are repeated measurements on the same trees (<em>Note</em>: Ignore the plot for now.) and answer the following questions: (i) What do the standard deviation of the random effect and the residual standard deviation represent, respectively? (ii) Based on these results, why is it beneficial to measure the same trees on each sampling day to estimate a growth curve?</p></li>
 <li><p>What is the intra-class correlation for the model in (b)? Based on this result, is the variation in size among trees at any point in the experiment due more to (i) initial differences in size between trees (on day 152) or (ii) the random variation in growth between trees for each time period?</p></li>
 <li><p>Add to the model in (b) a random effect for the plot. According to this model, does tree size differ significantly between plots?</p></li>
 </ol>

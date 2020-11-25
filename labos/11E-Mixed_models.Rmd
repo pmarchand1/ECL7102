@@ -26,7 +26,7 @@ head(Wheat)
 
 (b) Now fit a mixed model that includes the same fixed effects, as well as a random effect representing the grouped data structure. For each of the two fixed effects (fertilizer and moisture), how does the standard error of the coefficients vary compared with the model without random effects in (a)? Explain these differences in terms of the experimental design.
 
-(c) From appropriate diagnostic plots, check if the mixed model residuals in (b) show no residual pattern and follow a normal distribution.
+(c) From appropriate diagnostic plots, check if the mixed model residuals in (b) show no residual pattern and if they follow a normal distribution.
 
 (d) Calculate the intra-class correlation for the mixed model in (b). What is the mathematical interpretation of this value?
 
@@ -48,7 +48,7 @@ Spruce$days <- as.factor(Spruce$days)
 
 Estimate the parameters of a linear model of `logSize` as a function of the number of days, then answer the following questions: (i) How do you interpret the Intercept of that model? (ii) What is the mean variation of `logSize` between day 152 and day 201 and what is its standard error?
 
-(b) Now fit a mixed model that takes into account that these are repeated measurements on the same trees (*Note*: Ignore the plot for now.) and answer the following questions: (i) How do you interpret the standard deviation of the random effect and the residual standard deviation? (ii) Based on these results, why is it beneficial to measure the same trees on each sampling day to estimate a growth curve?
+(b) Now fit a mixed model that takes into account that these are repeated measurements on the same trees (*Note*: Ignore the plot for now.) and answer the following questions: (i) What do the standard deviation of the random effect and the residual standard deviation represent, respectively? (ii) Based on these results, why is it beneficial to measure the same trees on each sampling day to estimate a growth curve?
 
 (c) What is the intra-class correlation for the model in (b)? Based on this result, is the variation in size among trees at any point in the experiment due more to (i) initial differences in size between trees (on day 152) or (ii) the random variation in growth between trees for each time period?
 

@@ -27,7 +27,7 @@ head(Wheat)
 
 (b) Ajustez maintenant un modèle mixte qui inclut les mêmes effets fixes, ainsi qu'un effet aléatoire représentant la structure groupée des données. Pour chacun des deux effets fixes (engrais et humidité), comment l'erreur-type des estimés change-t-elle par rapport au modèle sans effet aléatoire en (a)? Expliquez ces différences en fonction de la structure de l'expérience. 
 
-(c) À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) ne montrent aucune tendance résiduelle et suivent une distribution normale.
+(c) À partir de graphiques de diagnostic appropriés, vérifiez si les résidus du modèle mixte en (b) ne montrent aucune tendance résiduelle et s'ils suivent une distribution normale.
 
 (d) Calculez la corrélation intra-classe pour le modèle mixte en (b). Quelle est l'interprétation mathématique de cette valeur?
 
@@ -47,9 +47,9 @@ head(Spruce)
 Spruce$days <- as.factor(Spruce$days)
 ```
 
-Estimez les paramètres du modèle linéaire de `logSize` en fonction du nombre de jours écoulé et répondez aux questions suivantes: (i) Comment interprétez-vous l'ordonnée à l'origine de ce modèle? (ii) Quelle est la variation moyenne de `logSize` entre le jour 152 et le jour 201 et quel est son écart-type?
+Estimez les paramètres du modèle linéaire de `logSize` en fonction du nombre de jours écoulé et répondez aux questions suivantes: (i) Comment interprétez-vous l'ordonnée à l'origine de ce modèle? (ii) Quelle est la variation moyenne de `logSize` entre le jour 152 et le jour 201 et quel est son erreur-type?
 
-(b) Ajustez maintenant un modèle mixte qui tient compte du fait qu'il s'agit de mesures répétées sur les mêmes arbres et répondez aux questions suivantes (*Note*: Ignorez la placette `plot` pour l'instant.) (i) Comment interprétez-vous l'écart-type de l'effet aléatoire et l'écart-type résiduel? (ii) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d'échantillonnage afin d'estimer une courbe de croissance?
+(b) Ajustez maintenant un modèle mixte qui tient compte du fait qu'il s'agit de mesures répétées sur les mêmes arbres et répondez aux questions suivantes (*Note*: Ignorez la placette `plot` pour l'instant.) (i) Pour ce modèle, que représentent l'écart-type de l'effet aléatoire et l'écart-type résiduel, respectivement? (ii) Selon ces résultats, pourquoi est-il avantageux de mesurer les mêmes arbres à chaque jour d'échantillonnage afin d'estimer une courbe de croissance?
 
 (c) Quelle est la corrélation intra-classe pour le modèle en (b)? Selon ce résultat, est-ce que la variation de taille parmi les arbres à un moment donné de l'expérience est due davantage (i) aux différences de taille entre les arbres au premier jour 152 ou (ii) à la variation aléatoire de croissance d'un arbre à l'autre pour chaque période de temps?
 
