@@ -1,33 +1,29 @@
 ---
 title: "Modèles linéaires mixtes, partie 2"
-date: "<br/>25 novembre 2019"
+date: "23 novembre 2020"
 output: 
   xaringan::moon_reader:
-    css: ["metropolis", "metropolis-fonts", "styles-xar.css"]
+    css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
     lib_dir: libs
     nature:
+      ratio: "16:9"
       highlightStyle: github
+      highlightLines: true
       countIncrementalSlides: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.dim = c(6, 4))
-library(dplyr)
-library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      fig.dim = c(8, 5))
+library(tidyverse)
 library(cowplot)
+theme_set(
+  theme_cowplot(font_size = 18) +
+    theme(panel.background = element_rect(fill = "#fafafa"),
+          plot.background = element_rect(fill = "#fafafa"))
+)
+set.seed(7102)
 ```
-
-# Question éclair
-
-Vous comparez la concentration en carbone du sol sous des semis de deux essences (sapin et tremble) sur 10 sites, 5 sites qui ont subi une coupe totale et 5 qui ont subi une coupe partielle. Pour chacun des sites, vous prélevez 6 échantillons de sol sous chacune des deux essences.
-
-- À partir du modèle de base: `C_sol ~ essence + type_coupe`, devriez-vous ajouter un effet fixe ou aléatoire pour le site?
-
---
-
-- Après avoir ajouté un effet aléatoire pour le site, votre estimé de la différence entre les essences devient plus précis, mais l'estimé de la différence entre les types de coupe devient moins précis. Comment expliquer ce résultat?
-
----
 
 # Rappel
 
@@ -35,7 +31,7 @@ Vous comparez la concentration en carbone du sol sous des semis de deux essences
 
 --
 
-- Si on ignore la structure groupée des données, résidus ne sont pas indépendants, donc surestimation de la précision des inférences.
+- Si on ignore la structure groupée des données, les résidus ne sont pas indépendants, donc surestimation de la précision des inférences.
 
 --
 
@@ -155,13 +151,13 @@ Pour quels groupes d'observations la variation de la réponse serait-elle corré
 
 - les observations prises sur le même arbre d'une année à l'autre;
 - les observations de deux arbres prises la même année; et
-- les observations prises sur des arbres de la même espèce.
+- les observations prises sur des arbres du même site.
 
 ---
 
 # Équation du modèle
 
-- Croissance $y_k$ de l'arbre $i$ de l'espèce $j$ lors de l'année $t$:
+- Croissance $y_k$ de l'arbre $i$ au site $j$ lors de l'année $t$:
 
 $$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j[k]} + \xi_{i[k]} + \tau_{t[k]} + \epsilon_k$$
 
@@ -169,7 +165,7 @@ $$y_k = \gamma_0 + \gamma_1 u_{1j[k]} + \beta_1 x_{1k} + \beta_2 x_{2k} + \nu_{j
 
 - Formule dans R:
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 croissance ~ pente + DHP + age + (1 | site) + (1 | id_arbre) + (1 | annee)
 ```
 
@@ -189,13 +185,13 @@ croissance ~ pente + DHP + age + (1 | site) + (1 | id_arbre) + (1 | annee)
 
 - Pour indiquer à R que l'effet A est niché dans l'effet B, on écrit par exemple `(1 | B/A)`. Dans ce cas-ci, la formule pourrait être ré-écrite:
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 croissance ~ pente + DHP + age + (1 | site / id_arbre) + (1 | annee)
 ```
 
 --
 
-- Si les valeurs d'`id_arbre` ne sont pas répétées d'une espèce à l'autre, il n'est pas nécessaire de préciser les effets nichés.
+- Si les valeurs d'`id_arbre` ne sont pas répétées d'un site à l'autre, il n'est pas nécessaire de préciser les effets nichés.
 
 --
 

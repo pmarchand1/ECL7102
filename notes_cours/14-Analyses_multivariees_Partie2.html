@@ -501,14 +501,14 @@ head(dune.env)</code></pre>
 ## 
 ## Terms added sequentially (first to last)
 ## 
-##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)   
-## A1          1    0.7230 0.72295  5.2038 0.16817  0.003 **
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.006 **
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.024 * 
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.968   
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.464   
-## Residuals   7    0.9725 0.13893         0.22621          
-## Total      19    4.2990                 1.00000          
+##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
+## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.005 ** 
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.026 *  
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.978    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.466    
+## Residuals   7    0.9725 0.13893         0.22621           
+## Total      19    4.2990                 1.00000           
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Comme pour l’ANOVA univariée, cette méthode considère les variables dans l’ordre donné: <em>Moisture</em> donne la fraction de la distance expliquée après avoir tenu compte de l’effet de <em>A1</em>, <em>Management</em> la fraction expliquée après avoir tenu compte de <em>A1</em> et <em>Moisture</em>, etc.</p>
@@ -527,7 +527,7 @@ envf</code></pre>
 ## ***VECTORS
 ## 
 ##       Dim1    Dim2     r2 Pr(&gt;r)  
-## A1 0.98847 0.15139 0.3845  0.019 *
+## A1 0.98847 0.15139 0.3845  0.012 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -583,26 +583,25 @@ plot(envf)</code></pre>
 <p>L’<strong>analyse de redondance</strong> (ADR) est équivalente à une analyse en composantes principales réalisée non pas sur la réponse multivariée originale <span class="math inline">\(Y\)</span>, mais plutôt sur <span class="math inline">\(\hat{Y}\)</span>, soit la partie de la réponse expliquée par des prédicteurs donnés.</p>
 <p>Pour appliquer l’analyse de redondance au tableau de données <code>dune</code>, nous effectuons d’abord une transformation de Hellinger, tel que vu dans la première section de ce cours, puis nous appelons la fonction <code>rda</code> pour modéliser la composition en fonction des variables <em>A1</em> et <em>Management</em>. Comme pour <code>adonis</code>, le tableau de la réponse multivariée apparaît à gauche de la formule.</p>
 <pre class="r"><code>dune_hel &lt;- decostand(dune, method = &quot;hellinger&quot;)
-dune_hel &lt;- scale(dune_hel)
 rda_dune &lt;- rda(dune_hel ~ A1 + Management, dune.env)
 rda_dune</code></pre>
 <pre><code>## Call: rda(formula = dune_hel ~ A1 + Management, data = dune.env)
 ## 
 ##               Inertia Proportion Rank
-## Total         30.0000     1.0000     
-## Constrained   10.8492     0.3616    4
-## Unconstrained 19.1508     0.6384   15
+## Total          0.5559     1.0000     
+## Constrained    0.2144     0.3856    4
+## Unconstrained  0.3415     0.6144   15
 ## Inertia is variance 
 ## 
 ## Eigenvalues for constrained axes:
-##  RDA1  RDA2  RDA3  RDA4 
-## 4.395 3.404 1.755 1.295 
+##    RDA1    RDA2    RDA3    RDA4 
+## 0.09737 0.07311 0.02666 0.01723 
 ## 
 ## Eigenvalues for unconstrained axes:
-##   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9  PC10  PC11  PC12  PC13 
-## 4.302 3.120 2.343 1.965 1.667 1.414 1.029 0.947 0.784 0.625 0.368 0.277 0.133 
-##  PC14  PC15 
-## 0.119 0.056</code></pre>
+##     PC1     PC2     PC3     PC4     PC5     PC6     PC7     PC8     PC9    PC10 
+## 0.09850 0.05596 0.04252 0.03909 0.02511 0.01979 0.01577 0.01340 0.00947 0.00791 
+##    PC11    PC12    PC13    PC14    PC15 
+## 0.00584 0.00305 0.00274 0.00170 0.00067</code></pre>
 <p>La régression linéaire effectuée en première étape de l’ADR compte ici 4 prédicteurs (1 pour <em>A1</em> et 3 pour le facteur à 4 niveaux <em>Management</em>). Dans ce cas, puisque la matrice <span class="math inline">\(\hat{Y}\)</span> est une combinaison linéaire des prédicteurs, elle ne peut avoir que 4 composantes principales. La résultat de l’ADR nomme ces 4 composantes “axes contraints” (RDA1 à RDA4). L’ADR effectue aussi une ACP séparée pour les résidus de la régression (<span class="math inline">\(Y\)</span> - <span class="math inline">\(\hat{Y}\)</span>); cette ACP résulte en 15 axes non contraints pour les 15 degrés de liberté résiduels.</p>
 <p>Le graphique d’une ADR est appelé diagramme de triple projection (<em>triplot</em>), car il représente à la fois les observations (sites), les variables de réponse (espèce) et les prédicteurs (conditions environnementales). Notez que puisque l’ADR est basée sur l’ACP, les espèces devraient être représentées par des vecteurs ici (comme le prédicteur numérique A1), mais les flèches sont omises par <em>vegan</em> pour éviter de surcharger le graphique; le nom des espèces est placé à la position de la pointe de chaque vecteur.</p>
 <pre class="r"><code>plot(rda_dune)</code></pre>

@@ -358,7 +358,6 @@ To perform redundancy analysis on the `dune` data, we first perform a Hellinger 
 
 ```{r}
 dune_hel <- decostand(dune, method = "hellinger")
-dune_hel <- scale(dune_hel)
 rda_dune <- rda(dune_hel ~ A1 + Management, dune.env)
 rda_dune
 ```

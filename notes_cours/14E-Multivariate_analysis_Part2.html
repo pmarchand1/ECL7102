@@ -504,10 +504,10 @@ head(dune.env)</code></pre>
 ## 
 ##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
 ## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.006 ** 
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.035 *  
-## Use         2    0.0921 0.04606  0.3315 0.02143  0.978    
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.453    
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.011 *  
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.047 *  
+## Use         2    0.0921 0.04606  0.3315 0.02143  0.975    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.473    
 ## Residuals   7    0.9725 0.13893         0.22621           
 ## Total      19    4.2990                 1.00000           
 ## ---
@@ -527,8 +527,8 @@ envf</code></pre>
 <pre><code>## 
 ## ***VECTORS
 ## 
-##       Dim1    Dim2     r2 Pr(&gt;r)  
-## A1 0.98847 0.15139 0.3845  0.013 *
+##       Dim1    Dim2     r2 Pr(&gt;r)   
+## A1 0.98847 0.15139 0.3845  0.007 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free
@@ -584,26 +584,25 @@ plot(envf)</code></pre>
 <p><strong>Redundancy analysis</strong> (RDA) is equivalent to a principal component analysis performed not on the original multivariate response <span class="math inline">\(Y\)</span>, but rather on <span class="math inline">\(\hat{Y}\)</span>, which is the part of the response explained by the given predictors.</p>
 <p>To perform redundancy analysis on the <code>dune</code> data, we first perform a Hellinger transformation, as seen in the first section of this class, then we call the<code>rda</code> function to model the composition based on variables <em>A1</em> and <em>Management</em>. As in <code>adonis</code>, the multivariate response data appears to the left of the formula.</p>
 <pre class="r"><code>dune_hel &lt;- decostand(dune, method = &quot;hellinger&quot;)
-dune_hel &lt;- scale(dune_hel)
 rda_dune &lt;- rda(dune_hel ~ A1 + Management, dune.env)
 rda_dune</code></pre>
 <pre><code>## Call: rda(formula = dune_hel ~ A1 + Management, data = dune.env)
 ## 
 ##               Inertia Proportion Rank
-## Total         30.0000     1.0000     
-## Constrained   10.8492     0.3616    4
-## Unconstrained 19.1508     0.6384   15
+## Total          0.5559     1.0000     
+## Constrained    0.2144     0.3856    4
+## Unconstrained  0.3415     0.6144   15
 ## Inertia is variance 
 ## 
 ## Eigenvalues for constrained axes:
-##  RDA1  RDA2  RDA3  RDA4 
-## 4.395 3.404 1.755 1.295 
+##    RDA1    RDA2    RDA3    RDA4 
+## 0.09737 0.07311 0.02666 0.01723 
 ## 
 ## Eigenvalues for unconstrained axes:
-##   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9  PC10  PC11  PC12  PC13 
-## 4.302 3.120 2.343 1.965 1.667 1.414 1.029 0.947 0.784 0.625 0.368 0.277 0.133 
-##  PC14  PC15 
-## 0.119 0.056</code></pre>
+##     PC1     PC2     PC3     PC4     PC5     PC6     PC7     PC8     PC9    PC10 
+## 0.09850 0.05596 0.04252 0.03909 0.02511 0.01979 0.01577 0.01340 0.00947 0.00791 
+##    PC11    PC12    PC13    PC14    PC15 
+## 0.00584 0.00305 0.00274 0.00170 0.00067</code></pre>
 <p>The linear regression carried out in the first step of the RDA has 4 predictors here (1 for <em>A1</em> and 3 for the four-level factor <em>Management</em>). In this case, since the matrix <span class="math inline">\(\hat{Y}\)</span> is a linear combination of the predictors, it can only have 4 principal components. The result of the RDA names these 4 components “constrained axes” (RDA1 to RDA4). RDA also performs a separate PCA for regression residuals (<span class="math inline">\(Y\)</span> - <span class="math inline">\(\hat{Y}\)</span>); that PCA results in 15 unconstrained axes for the 15 residual degrees of freedom.</p>
 <p>The graph of a RDA is called a triplot because it represents observations (sites), response variables (species) and predictors (environmental conditions). Note that since RDA is based on PCA, species should be represented by vectors here (like the A1 numerical predictor), but the arrows are omitted by <em>vegan</em> to avoid crowding the graph; the species name is placed where the end of the arrow would be.</p>
 <pre class="r"><code>plot(rda_dune)</code></pre>
