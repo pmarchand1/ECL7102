@@ -309,7 +309,7 @@ $$\chi_{ij} =  \frac{f_{ij} - \hat{f_{ij}}}{\sqrt{\hat{f_{ij}}}}$$
 
 --
 
-- Des méthodes existent pour rectifier l'effet d'un seul gradient (*detrended correspondance analaysis* ou DCA), mais elles ne sont pas recommandées en général. 
+- Des méthodes existent pour rectifier l'effet d'un seul gradient (*detrended correspondance analysis* ou DCA), mais elles ne sont pas recommandées en général. 
 
 
 ---
@@ -434,7 +434,7 @@ head(dune.env)
 
 # Superposer des variables à l'ordination
 
-- Pour *A1*, le résultat indique la magnitude et la direction de l'effet d'une augmentation de cette variable sur les deux axes du NMDS (donc un vecteur).
+- Pour *A1*, le résultat indique la magnitude et la direction de l'effet d'une augmentation de cette variable sur les deux axes de la PCoA (donc un vecteur).
 
 - Pour *Management*, le résultat indique la position moyenne (centroïde) des sites de chaque catégorie.
 
@@ -534,7 +534,7 @@ $$
 
 --
 
-- La PCoA transforme la matrice de distance pour produire des axes principaux, tandis que le NMDS déplace les points dans un nombre de dimensions choisis au hasard afin de s'approcher le plus possible des distances réelles.
+- La PCoA transforme la matrice de distance pour produire des axes principaux, tandis que le NMDS déplace les points dans un nombre de dimensions choisi au départ afin de s'approcher le plus possible des distances réelles.
 
 --
 
@@ -560,7 +560,7 @@ Fonctions du package *vegan*
 Fonctions du package *vegan* (suite)
 
 - `rda`: Effectue une ACP (si appelée sans prédicteurs) ou une analyse de redondance.
-- `cca` Effectue une analyse de correspondance (si appelée sans prédicteurs) ou une analyse caononique des correspondances.
+- `cca` Effectue une analyse de correspondance (si appelée sans prédicteurs) ou une analyse canonique des correspondances.
 - `wcmdscale`: Effectue une analyse en coordonnées principales (PCoA). 
 - `metaMDS`: Effectue un positionnement multidimensionnel non-métrique (NMDS).
 
