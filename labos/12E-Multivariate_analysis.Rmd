@@ -1,7 +1,13 @@
 ---
 title: "Multivariate analysis"
-date: "December 11, 2019"
-output: pdf_document
+date: "December 9, 2020"
+output: 
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
 ---
 
 ## 1. Composition of mineral springs

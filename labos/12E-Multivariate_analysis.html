@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-12-09" />
+
+<title>Multivariate analysis</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Multivariate analysis</h1>
+<h4 class="date">December 9, 2020</h4>
+
+</div>
+
+
+<div id="composition-of-mineral-springs" class="section level2">
+<h2>1. Composition of mineral springs</h2>
+<p>The <code>springs.csv</code> dataset contains data from a study by Tanaskovic et al. (2012) on the physicochemical properties (temperature, pH, electrical conductivity) and ion concentrations of mineral springs in Serbia.</p>
+<pre class="r"><code>sources &lt;- read.csv(&quot;springs.csv&quot;)
+str(sources)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    30 obs. of  14 variables:
+##  $ waterSource: chr  &quot;Kanjiza&quot; &quot;Junakovic&quot; &quot;Koviljaka&quot; &quot;Selters&quot; ...
+##  $ tempCels   : num  45 25 25 48 14.4 33 25 39.1 43 35 ...
+##  $ pH         : num  7.7 7.3 6.6 7 7.5 7.4 7.2 7.6 7.5 7 ...
+##  $ elecCond   : int  3770 5100 677 2219 1100 722 440 265 248 324 ...
+##  $ totSolid   : num  4.173 6.2 0.641 2.119 1.1 ...
+##  $ Ca         : num  5.6 24 120 60 56 60 50 62 74 102 ...
+##  $ Mg         : num  3.8 24 36.6 18 48.8 67 61 14 17 32 ...
+##  $ Na         : num  1157 476 200 2280 226 ...
+##  $ K          : num  7.9 4 22.2 30 3.5 7.1 1.5 1.2 8 2.5 ...
+##  $ Cl         : num  56.8 369 89 1560 198.8 ...
+##  $ SO4        : num  2 2 55 2 82 90 15 40 20 18 ...
+##  $ HCO3       : num  2904 829 890 3360 573 ...
+##  $ SiO2       : num  36.7 25 18 20 22 10 20 18 18 25 ...
+##  $ geoStruct  : int  1 1 1 1 1 2 2 2 2 2 ...</code></pre>
+<p>We first look at the 8 columns ranging from <em>Ca</em> to <em>SiO2</em>, which represent the concentration of calcium, magnesium, potassium, chloride, sulfate, bicarbonate and silicate ions (in this order), all measured in mg / L.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Since these 8 variables have the same units, it is not necessary to standardize them before performing multivariate analyzes. However, we will apply a logarithmic transformation to these data. Inspect the data and describe why this transformation is useful here.</li>
+</ol>
+<p><em>Note</em>: If a data frame consists only of numeric variables, you can apply the <code>log</code> function to the array to take the logarithm of all variables at once.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Conduct a principal component analysis of the transformed concentrations. What do you notice about the contributions of the variables on the first axis (PC1)? Is there a general property (not related to a particular variable) that distinguishes samples with negative and positive values on that axis?</p></li>
+<li><p>Create a biplot for the 2nd and 3rd principal components. Which variables have the greatest effect on each of these axes? From this plot, give an example of a pair of ions whose concentrations are highly positively correlated, and of another pair whose concentrations are negatively correlated.</p></li>
+<li><p>The <code>geoStruct</code> variable in the original data frame is a categorical variable representing the geological type of the site. How could you check if a principal component varies significantly between sites of different geological types? Perform this test separately for the PC1 and PC2 components and determine the nature of the significant differences, if any.</p></li>
+<li><p>Create a scatterplot of the components PC1 and PC2 that also indicates the geological type for each site.</p></li>
+</ol>
+</div>
+<div id="composition-of-arctic-sediments" class="section level2">
+<h2>2. Composition of Arctic sediments</h2>
+<p>The <code>arctic.csv</code> dataset, from a study by Martinez et al. (2009), contains data on the composition of samples at different depths (<code>depth</code>, unspecified units) of a sediment core from the Arctic Ocean. For each sample, the columns <em>Al</em> to <em>P</em> indicate the percentage of the mass of the sample corresponding to that element.</p>
+<pre class="r"><code>arctic &lt;- read.csv(&quot;arctic.csv&quot;)
+head(arctic)</code></pre>
+<pre><code>##    sampleID depth   Al    Ti   Fe    Mn   Ca   Mg   Na    K     P
+## 1 4C-01H-1W  0.20 8.34 0.520 5.34 0.286 4.04 1.71 1.86 2.15 0.085
+## 2 4C-01H-2W  2.36 7.56 0.539 5.75 0.307 0.50 1.48 1.85 2.07 0.084
+## 3 4C-02H-2W  5.62 7.84 0.468 4.67 0.149 0.46 1.13 1.70 1.90 0.075
+## 4 3A-01H-4W  8.52 8.58 0.503 5.06 0.288 0.50 1.17 1.85 2.08 0.093
+## 5 4C-03H-3W 12.41 7.46 0.494 5.06 0.089 0.42 1.15 1.84 2.10 0.093
+## 6 2A-05X-2W 20.83 8.49 0.520 6.21 0.097 0.40 1.13 1.74 1.99 0.127</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li><p>Again, since the variables are on the same scale (% mass), there is no need to standardize them. Conduct a PCA with the original variables and another one with the standardized variables, then compare the biplots. Explain how the choice to standardize or not affects the importance of different elements on the results of the PCA.</p></li>
+<li><p>From the standardized variables, create a hierarchical clustering using the complete linkage method and another using Ward’s method. Overlay the classification into (i) 2 groups and (ii) 4 groups obtained by each method to the results of the PCA for these same data. Did you obtain different groups between the two methods? Do the resulting classifications look good relative to the principal component coordinates?</p></li>
+</ol>
+<p><em>Note</em>: For the 4-group classification, inspect up to four principal components to evaluate the classification. (This is not a general rule, only a suggestion for this problem.)</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Graph the variation of the first two principal components as a function of depth, then graph the group membership of the 4-group classification (according to either method) as a function of depth. Do these two methods detect significant changes in sediment composition along the core?</li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

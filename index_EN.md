@@ -34,5 +34,6 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 9. [Logistic regression](labos/9E-Logistic_regression.html) ([PDF](labos/9E-Logistic_regression.pdf)) 
 10. [Poisson regression (solutions)](labos/10RE-Poisson_regression.html) ([PDF](labos/10RE-Poisson_regression.pdf)) - Data [1](labos/stream_composition.csv) [2](labos/salamander.csv)
 11. [Mixed models](labos/11E-Mixed_models.html) ([PDF](labos/11E-Mixed_models.pdf))
+12. [Multivariate analysis](labos/12E-Multivariate_analysis.html) ([PDF](labos/12E-Multivariate_analysis.pdf)) - Data [1](labos/springs.csv) [2](labos/arctic.csv)
 
 
