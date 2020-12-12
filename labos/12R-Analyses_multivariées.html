@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Analyses multivariées</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Analyses multivariées</h1>
+<h4 class="date">9 décembre 2020</h4>
+
+</div>
+
+
+<div id="composition-de-sources-minérales" class="section level2">
+<h2>1. Composition de sources minérales</h2>
+<p>Le fichier <code>springs.csv</code> contient des données tirées d’une étude de Tanaskovic et al. (2012) sur les propriétés physico-chimiques (température, pH, conductivité électrique) et la concentration d’ions de 30 sources minérales de Serbie.</p>
+<pre class="r"><code>sources &lt;- read.csv(&quot;springs.csv&quot;)
+str(sources)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    30 obs. of  14 variables:
+##  $ waterSource: chr  &quot;Kanjiza&quot; &quot;Junakovic&quot; &quot;Koviljaka&quot; &quot;Selters&quot; ...
+##  $ tempCels   : num  45 25 25 48 14.4 33 25 39.1 43 35 ...
+##  $ pH         : num  7.7 7.3 6.6 7 7.5 7.4 7.2 7.6 7.5 7 ...
+##  $ elecCond   : int  3770 5100 677 2219 1100 722 440 265 248 324 ...
+##  $ totSolid   : num  4.173 6.2 0.641 2.119 1.1 ...
+##  $ Ca         : num  5.6 24 120 60 56 60 50 62 74 102 ...
+##  $ Mg         : num  3.8 24 36.6 18 48.8 67 61 14 17 32 ...
+##  $ Na         : num  1157 476 200 2280 226 ...
+##  $ K          : num  7.9 4 22.2 30 3.5 7.1 1.5 1.2 8 2.5 ...
+##  $ Cl         : num  56.8 369 89 1560 198.8 ...
+##  $ SO4        : num  2 2 55 2 82 90 15 40 20 18 ...
+##  $ HCO3       : num  2904 829 890 3360 573 ...
+##  $ SiO2       : num  36.7 25 18 20 22 10 20 18 18 25 ...
+##  $ geoStruct  : int  1 1 1 1 1 2 2 2 2 2 ...</code></pre>
+<p>Nous nous intéressons d’abord aux 8 colonnes allant de <em>Ca</em> à <em>SiO2</em>, qui représentent dans l’ordre la concentration d’ions calcium, magnésium, potassium, chlorure, sulfate, bicarbonate et silicate, toutes mesurées en mg/L.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Puisque ces 8 variables ont les mêmes unités, il n’est pas nécessaire de les normaliser avant d’effectuer des analyses multivariées. Toutefois, nous appliquerons une transformation logarithmique à ces données. En inspectant les données, déterminez pourquoi cette transformation est utile ici.</li>
+</ol>
+<p><em>Note</em>: Si un tableau de données est composé uniquement de variables numériques, vous pouvez appliquer la fonction <code>log</code> au tableau pour prendre le logarithme de toutes les variables d’un coup.</p>
+<p><strong>Réponse</strong></p>
+<p>Les variables de concentration prennent toujours des valeurs positives et leur distribution est asymétrique, avec des valeurs extrêmes d’un seul côté (grandes concentrations).</p>
+<p>Par exemple, voici les histogrammes pour le Na et le Cl comparés à leur logarithme présentées soit avec la fonction <em>hist</em> ou avec <em>ggplot</em> :</p>
+<p><em>Avec hist</em></p>
+<pre class="r"><code>par(mfrow=c(2,2)) #partitionne la fenetre 2 lignes et 2 colonnes  pour afficher les 4 graphiques ensemble.
+hist(sources$Na)
+hist(sources$Cl)
+hist(log(sources$Na))
+hist(log(sources$Cl))</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><em>Avec ggplot</em></p>
+<pre class="r"><code>library(ggplot2)
+library(cowplot) # package qui associé à ggplot permet d&#39;améliorer la présentation des graphiques
+pNa &lt;- ggplot(sources, aes(x = Na)) + geom_histogram(binwidth = 200)
+pCl &lt;- ggplot(sources, aes(x = Cl)) + geom_histogram(binwidth = 200)
+plNa &lt;- ggplot(sources, aes(x = log(Na))) + geom_histogram(binwidth = 0.5)
+plCl &lt;- ggplot(sources, aes(x = log(Cl))) + geom_histogram(binwidth = 0.5)
+
+plot_grid(pNa, pCl, plNa, plCl) # une fonction du package cowplot pour afficher les graphiques ensemble avec ggplot</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Réalisez une analyse en composantes principales des concentrations transformées. Que remarquez-vous au sujet des contributions des variables sur le premier axe (PC1)? Est-ce qu’il y a une propriété générale (non reliée à une variable en particulier) qui distingue les échantillons avec des valeurs négatives et positives sur cet axe?</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>log_conc &lt;- log(sources[, 6:13]) # Tableau des logarithmes des concentrations
+
+conc_acp &lt;- prcomp(log_conc)
+biplot(conc_acp)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Les 8 variables ont un effet positif sur PC1. Ainsi, PC1 distingue les sources avec une grande concentration totale d’ions minéraux (valeurs positives) de celles avec peu d’ions minéraux (valeurs négatives).</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Réalisez un diagramme de double projection (<em>biplot</em>) pour les composantes principales 2 et 3. Quelles variables ont le plus grand effet sur chacun de ces axes? D’après ce diagramme, donnez un exemple de paire d’ions dont les concentrations sont fortement corrélées positivement, et d’une autre paire dont les concentrations sont négativement corrélées.</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>biplot(conc_acp, choices = c(2, 3))</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>La composante PC2 est surtout affectée par les ions Mg, Ca et SO4 (négativement) et par Na (positivement). SO4 a un effet négatif important sur PC3, avec des effets moindres de Na (négatif), Ca et Mg (positifs).</p>
+<p>Les concentrations de Ca et Mg sont corrélées positivement (flèches dans la même direction), même chose pour Na et Cl. La corrélation entre Mg ou Ca d’une part, et Na ou Cl d’autre part est négative car les flèches pointent dans des directions opposées. On pourrait aussi dire que SO4 et HCO3 sont négativement corrélés.</p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>La variable <code>geoStruct</code> du tableau de données original est une variable catégorielle représentant le type géologique du site. Comment pourriez-vous vérifier si une composante principale varie significativement entre les sites de différents types géologiques? Réalisez ce test séparément pour les composantes PC1 et PC2 et déterminez la nature des différences significatives s’il y a lieu.</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<p><em>Option 1</em>: ANOVA pour PC1 et PC2 séparément</p>
+<p>D’abord, nous ajoutons les deux premières composantes au tableau de données original et convertissons <code>geoStruct</code> en facteur.</p>
+<pre class="r"><code>sources &lt;- cbind(sources, conc_acp$x[, 1:2])
+sources$geoStruct &lt;- as.factor(sources$geoStruct)</code></pre>
+<p>Nous pouvons réaliser une ANOVA avec PC1 ou PC2 comme réponse.</p>
+<pre class="r"><code>aov_PC1 &lt;- aov(PC1 ~ geoStruct, sources)
+summary(aov_PC1)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
+## geoStruct    3  66.09  22.030   3.824 0.0215 *
+## Residuals   26 149.78   5.761                 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>aov_PC2 &lt;- aov(PC2 ~ geoStruct, sources) 
+summary(aov_PC2)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+## geoStruct    3  33.13  11.042   4.791 0.00868 **
+## Residuals   26  59.92   2.305                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Nous utilisons finalement le test de Tukey pour déterminer entre quels groupes il y a une différence significative (avec <span class="math inline">\(\alpha = 0.05\)</span>).</p>
+<pre class="r"><code>TukeyHSD(aov_PC1)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = PC1 ~ geoStruct, data = sources)
+## 
+## $geoStruct
+##           diff          lwr      upr     p adj
+## 2-1 -2.9321262 -7.096491177 1.232239 0.2399046
+## 3-1 -2.0340041 -5.464418350 1.396410 0.3818629
+## 4-1  1.1857497 -2.801326174 5.172826 0.8464238
+## 3-2  0.8981221 -2.532292130 4.328536 0.8889405
+## 4-2  4.1178759  0.130800046 8.104952 0.0410571
+## 4-3  3.2197538  0.006876504 6.432631 0.0493670</code></pre>
+<pre class="r"><code>TukeyHSD(aov_PC2)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = PC2 ~ geoStruct, data = sources)
+## 
+## $geoStruct
+##            diff        lwr        upr     p adj
+## 2-1 -3.53591092 -6.1697988 -0.9020231 0.0055074
+## 3-1 -1.25304765 -3.4227245  0.9166292 0.4046265
+## 4-1 -1.20851299 -3.7302686  1.3132426 0.5621738
+## 3-2  2.28286328  0.1131864  4.4525402 0.0364862
+## 4-2  2.32739793 -0.1943577  4.8491536 0.0781915
+## 4-3  0.04453465 -1.9875539  2.0766232 0.9999198</code></pre>
+<p>D’après ces résultats, le type 4 a une valeur de PC1 plus grande que 2 et 3, tandis que le type 2 a une valeur de PC2 plus petite que 1 et 4 (car la différence 2-1 est négative et 4-2 est positive).</p>
+<p><em>Option 2</em>: Avec <code>envfit</code></p>
+<p>La fonction <code>envfit</code> du package <em>vegan</em> permet de tester si geoStruct a un effet significatif sur les deux premières composantes de l’ordination (au lieu de les tester séparément avec l’ANOVA). Dans ce cas, il faut refaire l’ACP avec la fonction <code>rda</code> du package <em>vegan</em> pour pouvoir utiliser <code>envfit</code>:</p>
+<pre class="r"><code>library(vegan)
+library(dplyr)
+
+conc_acp2 &lt;- rda(log_conc)
+
+conc_envf &lt;- envfit(conc_acp2, select(sources, geoStruct))
+conc_envf</code></pre>
+<pre><code>## 
+## ***FACTORS:
+## 
+## Centroids:
+##                PC1     PC2
+## geoStruct1  0.3743  0.6723
+## geoStruct2 -0.5397 -1.0067
+## geoStruct3 -0.2598  0.0773
+## geoStruct4  0.7440  0.0984
+## 
+## Goodness of fit:
+##               r2 Pr(&gt;r)   
+## geoStruct 0.3311  0.002 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Permutation: free
+## Number of permutations: 999</code></pre>
+<pre class="r"><code>biplot(conc_acp2)
+plot(conc_envf)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Le résultat est conforme à celui obtenu par l’autre méthode: le type 4 a une valeur de PC1 plus grande que 2 et 3, tandis que le type 2 a une valeur de PC2 plus petite que 1 et 4. (Il y aurait un équivalent du test de Tukey pour les données multivariées, mais nous ne le voyons pas dans ce cours.)</p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Créez un nuage de points des composantes PC1 et PC2 qui indique aussi le type géologique pour chaque site.</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>ggplot(sources, aes(x = PC1, y = PC2, color = geoStruct)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="composition-de-sédiments-arctiques" class="section level2">
+<h2>2. Composition de sédiments arctiques</h2>
+<p>Le fichier <code>arctic.csv</code>, tiré d’une étude de Martinez et al. (2009), contient des données sur la composition d’échantillons provenant de différentes profondeurs (<code>depth</code>, unités non-spécifiées) d’une carotte de sédiments de l’océan Arctique. Pour chaque échantillon, les colonnes <em>Al</em> à <em>P</em> indiquent le pourcentage de la masse de l’échantillon correspondant à cet élément.</p>
+<pre class="r"><code>arctic &lt;- read.csv(&quot;arctic.csv&quot;)
+head(arctic)</code></pre>
+<pre><code>##    sampleID depth   Al    Ti   Fe    Mn   Ca   Mg   Na    K     P
+## 1 4C-01H-1W  0.20 8.34 0.520 5.34 0.286 4.04 1.71 1.86 2.15 0.085
+## 2 4C-01H-2W  2.36 7.56 0.539 5.75 0.307 0.50 1.48 1.85 2.07 0.084
+## 3 4C-02H-2W  5.62 7.84 0.468 4.67 0.149 0.46 1.13 1.70 1.90 0.075
+## 4 3A-01H-4W  8.52 8.58 0.503 5.06 0.288 0.50 1.17 1.85 2.08 0.093
+## 5 4C-03H-3W 12.41 7.46 0.494 5.06 0.089 0.42 1.15 1.84 2.10 0.093
+## 6 2A-05X-2W 20.83 8.49 0.520 6.21 0.097 0.40 1.13 1.74 1.99 0.127</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Encore une fois, puisque les variables sont sur la même échelle (% de masse), il n’est pas nécessaire de les normaliser. Réalisez une ACP avec les variables originales et une autre avec les variables normalisées, puis comparez les diagrammes de double projection. Expliquez comment le choix de normaliser ou non affecte l’importance de différents éléments sur les résultats de l’ACP.</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<pre class="r"><code>comp &lt;- arctic[, -(1:2)] # seulement les variables de composition
+comp_norm &lt;- scale(comp)
+
+comp_acp &lt;- prcomp(comp)
+comp_norm_acp &lt;- prcomp(comp_norm)
+
+biplot(comp_acp)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>biplot(comp_norm_acp)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
+<p>Dans la version non-normalisée, les deux éléments les plus prévalents (Al et Fe) dominent l’ordination. La normalisation donne donc plus d’importance aux éléments plus rares. Si les variables ont toutes les mêmes unités, la normalisation est optionnelle et dépend de notre objectif. Si on a des elements rares qu’on veut aussi mettre en évidence dans l’analyse, il est bien de normaliser.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>À partir des variables normalisées, créez une classification hiérarchique à partir de la méthode du saut maximum et une autre à partir de la méthode de Ward. Superposez la classification en (i) 2 groupes et (ii) 4 groupes obtenue par chaque méthode aux résultats de l’ACP pour ces mêmes données. Est-ce que les groupes obtenus différent entre les deux méthodes? Est-ce que ces classifications semblent bonnes par rapport aux coordonnées de l’ACP?</li>
+</ol>
+<p><em>Note</em>: Pour la classification en quatre groupes, regardez jusqu’à 4 composantes principales pour juger la classification. (Ce n’est pas une règle générale, seulement une suggestion pour ce problème.)</p>
+<p><strong>Réponse</strong></p>
+<p>On réalise d’abord les deux regroupements, puis on extrait une classification en 2 et 4 groupes.</p>
+<pre class="r"><code>comp_dist &lt;- dist(comp_norm)
+cl_ward &lt;- hclust(comp_dist, method = &quot;ward.D2&quot;)
+cl_max &lt;- hclust(comp_dist, method = &quot;complete&quot;) # saut maximum
+
+# Extraire les groupes et placer dans le tableau de données principal
+arctic$ward_2grp &lt;- as.factor(cutree(cl_ward, k = 2))
+arctic$ward_4grp &lt;- as.factor(cutree(cl_ward, k = 4))
+arctic$max_2grp &lt;- as.factor(cutree(cl_max, k = 2))
+arctic$max_4grp &lt;- as.factor(cutree(cl_max, k = 4))
+
+# Placer les composantes principales dans le même tableau
+arctic &lt;- cbind(arctic, comp_norm_acp$x)</code></pre>
+<p>Les classifications en 2 groupes diffèrent et celle avec la méthode de Ward permet de mieux diviser les données selon les deux premiers axes.</p>
+<pre class="r"><code>ggplot(arctic, aes(x = PC1, y = PC2, color = ward_2grp)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(arctic, aes(x = PC1, y = PC2, color = max_2grp)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+<p>La classification en 4 groupes est la même pour les deux méthodes.</p>
+<pre class="r"><code>ggplot(arctic, aes(x = PC1, y = PC2, color = ward_4grp)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(arctic, aes(x = PC1, y = PC2, color = max_4grp)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-15-2.png" width="672" /></p>
+<p>La séparation entre les groupes 2 et 3 est surtout visible sur l’axe PC4.</p>
+<pre class="r"><code>ggplot(arctic, aes(x = PC1, y = PC4, color = ward_4grp)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>Autre option de presention si on veut en seul graphique:</p>
+<pre class="r"><code>w2 &lt;- ggplot(arctic, aes(x= PC1, y=PC2, color=ward_2grp)) + geom_point()
+max2 &lt;- ggplot(arctic, aes(x= PC1, y=PC2, color=max_2grp)) + geom_point()
+w4 &lt;- ggplot(arctic, aes(x= PC1, y=PC2, color=ward_4grp)) + geom_point()
+max4 &lt;- ggplot(arctic, aes(x= PC1, y=PC2, color=max_4grp)) + geom_point()
+
+plot_grid(w2, max2,w4 ,max4)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Représentez graphiquement la variation des deux premières composantes principales en fonction de la profondeur (<code>depth</code>), puis l’appartenance aux groupes de la classification à 4 groupes (selon l’une ou l’autre méthode) en fonction de la profondeur. Est-ce que ces deux méthodes permettent de détecter des changements importants de composition du sédiment le long de la carotte?</li>
+</ol>
+<p><strong>Réponse</strong></p>
+<p>Variation des deux premières composantes principales en fonction de la profondeur (<code>depth</code>).</p>
+<pre class="r"><code>ggplot(arctic, aes(x = depth)) +
+    geom_point(aes(y = PC1), color = &quot;red&quot;) +
+    geom_line(aes(y = PC1), color = &quot;red&quot;) +
+    geom_point(aes(y = PC2), color = &quot;blue&quot;) +
+    geom_line(aes(y = PC2), color = &quot;blue&quot;)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>La première composante principale (PC1) indique un changement de composition plus marqué que PC2, en comparant les profondeurs entre 200 et 350 (environ) comparé au reste du profil.</p>
+<p><em>Note</em>: On aurait aussi pu utiliser <code>envfit</code> et <code>ordisurf</code> avec le package <em>vegan</em>.</p>
+<pre class="r"><code># Refaire l&#39;ACP avec la fonction rda
+comp_acp2 &lt;- rda(comp_norm)
+
+comp_envf &lt;- envfit(comp_acp2, arctic$depth) 
+
+# Ordisurf est préférable pour représenter une relation non-linéaire entre la variable et les deux premiers axes PC1 et PC2
+ords &lt;- ordisurf(comp_acp2, arctic$depth)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code># superposer le graphique d&#39;ordisurf (doit être en premier) et envfit
+plot(ords)
+plot(comp_envf)</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+<p>Les lignes de contour n’étant pas parallèles et également espacées, l’effet de la profondeur ne semble pas être vraiment linéaire sur les axes PC1 et PC2. C’est aussi ce que montraient nos graphiques plus haut.</p>
+<p>Classification en 4 groupes (Ward) selon la profondeur.</p>
+<pre class="r"><code>ggplot(arctic, aes(x = depth, y = ward_4grp)) +
+    geom_point()</code></pre>
+<p><img src="12R-Analyses_multivariées_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>La première composante principale (PC1) ainsi que la classification indiquent toutes deux un changement de composition pour une profondeur entre 200 et 350 (environ) comparé au reste du profil. Les deux composantes principales et la classification montrent que l’échantillon le moins profond se démarque aussi des autres.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

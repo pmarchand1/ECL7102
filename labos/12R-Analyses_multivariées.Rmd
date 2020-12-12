@@ -1,0 +1,285 @@
+---
+title: "Analyses multivariées"
+date: "9 décembre 2020"
+output: 
+    html_document:
+        self_contained: false
+        lib_dir: libs
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(ggplot2)
+```
+
+
+## 1. Composition de sources minérales
+
+Le fichier `springs.csv` contient des données tirées d'une étude de Tanaskovic et al. (2012) sur les propriétés physico-chimiques (température, pH, conductivité électrique) et la concentration d'ions de 30 sources minérales de Serbie.
+
+```{r}
+sources <- read.csv("springs.csv")
+str(sources)
+```
+
+Nous nous intéressons d'abord aux 8 colonnes allant de *Ca* à *SiO2*, qui représentent dans l'ordre la concentration d'ions calcium, magnésium, potassium, chlorure, sulfate, bicarbonate et silicate, toutes mesurées en mg/L. 
+
+
+a) Puisque ces 8 variables ont les mêmes unités, il n'est pas nécessaire de les normaliser avant d'effectuer des analyses multivariées. Toutefois, nous appliquerons une transformation logarithmique à ces données. En inspectant les données, déterminez pourquoi cette transformation est utile ici.
+
+*Note*: Si un tableau de données est composé uniquement de variables numériques, vous pouvez appliquer la fonction `log` au tableau pour prendre le logarithme de toutes les variables d'un coup.   
+
+**Réponse**
+
+Les variables de concentration prennent toujours des valeurs positives et leur distribution est asymétrique, avec des valeurs extrêmes d'un seul côté (grandes concentrations).
+
+Par exemple, voici les histogrammes pour le Na et le Cl comparés à leur logarithme présentées soit avec la fonction *hist* ou avec *ggplot* : 
+
+*Avec hist*
+
+```{r}
+par(mfrow=c(2,2)) #partitionne la fenetre 2 lignes et 2 colonnes  pour afficher les 4 graphiques ensemble.
+hist(sources$Na)
+hist(sources$Cl)
+hist(log(sources$Na))
+hist(log(sources$Cl))
+```
+
+*Avec ggplot*
+
+```{r echo=TRUE}
+library(ggplot2)
+library(cowplot) # package qui associé à ggplot permet d'améliorer la présentation des graphiques
+pNa <- ggplot(sources, aes(x = Na)) + geom_histogram(binwidth = 200)
+pCl <- ggplot(sources, aes(x = Cl)) + geom_histogram(binwidth = 200)
+plNa <- ggplot(sources, aes(x = log(Na))) + geom_histogram(binwidth = 0.5)
+plCl <- ggplot(sources, aes(x = log(Cl))) + geom_histogram(binwidth = 0.5)
+
+plot_grid(pNa, pCl, plNa, plCl) # une fonction du package cowplot pour afficher les graphiques ensemble avec ggplot
+```
+
+
+b) Réalisez une analyse en composantes principales des concentrations transformées. Que remarquez-vous au sujet des contributions des variables sur le premier axe (PC1)? Est-ce qu'il y a une propriété générale (non reliée à une variable en particulier) qui distingue les échantillons avec des valeurs négatives et positives sur cet axe?
+
+**Réponse**
+
+```{r}
+log_conc <- log(sources[, 6:13]) # Tableau des logarithmes des concentrations
+
+conc_acp <- prcomp(log_conc)
+biplot(conc_acp)
+```
+
+Les 8 variables ont un effet positif sur PC1. Ainsi, PC1 distingue les sources avec une grande concentration totale d'ions minéraux (valeurs positives) de celles avec peu d'ions minéraux (valeurs négatives).
+
+
+c) Réalisez un diagramme de double projection (*biplot*) pour les composantes principales 2 et 3. Quelles variables ont le plus grand effet sur chacun de ces axes? D'après ce diagramme, donnez un exemple de paire d'ions dont les concentrations sont fortement corrélées positivement, et d'une autre paire dont les concentrations sont négativement corrélées.
+
+**Réponse**
+
+```{r}
+biplot(conc_acp, choices = c(2, 3))
+```
+
+La composante PC2 est surtout affectée par les ions Mg, Ca et SO4 (négativement) et par Na (positivement). SO4 a un effet négatif important sur PC3, avec des effets moindres de Na (négatif), Ca et Mg (positifs).
+
+Les concentrations de Ca et Mg sont corrélées positivement (flèches dans la même direction), même chose pour Na et Cl. La corrélation entre Mg ou Ca d'une part, et Na ou Cl d'autre part est négative car les flèches pointent dans des directions opposées. On pourrait aussi dire que SO4 et HCO3 sont négativement corrélés.
+
+
+d) La variable `geoStruct` du tableau de données original est une variable catégorielle représentant le type géologique du site. Comment pourriez-vous vérifier si une composante principale varie significativement entre les sites de différents types géologiques? Réalisez ce test séparément pour les composantes PC1 et PC2 et déterminez la nature des différences significatives s'il y a lieu.
+
+**Réponse**
+
+*Option 1*: ANOVA pour PC1 et PC2 séparément
+
+D'abord, nous ajoutons les deux premières composantes au tableau de données original et convertissons `geoStruct` en facteur.
+
+```{r}
+sources <- cbind(sources, conc_acp$x[, 1:2])
+sources$geoStruct <- as.factor(sources$geoStruct)
+```
+
+Nous pouvons réaliser une ANOVA avec PC1 ou PC2 comme réponse.
+
+```{r}
+aov_PC1 <- aov(PC1 ~ geoStruct, sources)
+summary(aov_PC1)
+aov_PC2 <- aov(PC2 ~ geoStruct, sources) 
+summary(aov_PC2)
+```
+
+Nous utilisons finalement le test de Tukey pour déterminer entre quels groupes il y a une différence significative (avec $\alpha = 0.05$).
+
+```{r}
+TukeyHSD(aov_PC1)
+TukeyHSD(aov_PC2)
+```
+
+D'après ces résultats, le type 4 a une valeur de PC1 plus grande que 2 et 3, tandis que le type 2 a une valeur de PC2 plus petite que 1 et 4 (car la différence 2-1 est négative et 4-2 est positive).
+
+*Option 2*: Avec `envfit`
+
+La fonction `envfit` du package *vegan* permet de tester si geoStruct a un effet significatif sur les deux premières composantes de l’ordination (au lieu de les tester séparément avec l'ANOVA). Dans ce cas, il faut refaire l’ACP avec la fonction `rda` du package *vegan* pour pouvoir utiliser `envfit`:
+
+```{r}
+library(vegan)
+library(dplyr)
+
+conc_acp2 <- rda(log_conc)
+
+conc_envf <- envfit(conc_acp2, select(sources, geoStruct))
+conc_envf
+
+biplot(conc_acp2)
+plot(conc_envf)
+```
+
+Le résultat est conforme à celui obtenu par l'autre méthode: le type 4 a une valeur de PC1 plus grande que 2 et 3, tandis que le type 2 a une valeur de PC2 plus petite que 1 et 4. (Il y aurait un équivalent du test de Tukey pour les données multivariées, mais nous ne le voyons pas dans ce cours.)
+
+e) Créez un nuage de points des composantes PC1 et PC2 qui indique aussi le type géologique pour chaque site.
+
+**Réponse**
+
+```{r}
+ggplot(sources, aes(x = PC1, y = PC2, color = geoStruct)) +
+    geom_point()
+```
+
+
+## 2. Composition de sédiments arctiques
+
+Le fichier `arctic.csv`, tiré d'une étude de Martinez et al. (2009), contient des données sur la composition d'échantillons provenant de différentes profondeurs (`depth`, unités non-spécifiées) d'une carotte de sédiments de l'océan Arctique. Pour chaque échantillon, les colonnes *Al* à *P* indiquent le pourcentage de la masse de l'échantillon correspondant à cet élément.
+
+```{r}
+arctic <- read.csv("arctic.csv")
+head(arctic)
+```
+
+
+a) Encore une fois, puisque les variables sont sur la même échelle (% de masse), il n'est pas nécessaire de les normaliser. Réalisez une ACP avec les variables originales et une autre avec les variables normalisées, puis comparez les diagrammes de double projection. Expliquez comment le choix de normaliser ou non affecte l'importance de différents éléments sur les résultats de l'ACP.
+
+**Réponse**
+
+```{r}
+comp <- arctic[, -(1:2)] # seulement les variables de composition
+comp_norm <- scale(comp)
+
+comp_acp <- prcomp(comp)
+comp_norm_acp <- prcomp(comp_norm)
+
+biplot(comp_acp)
+biplot(comp_norm_acp)
+```
+
+Dans la version non-normalisée, les deux éléments les plus prévalents (Al et Fe) dominent l'ordination. La normalisation donne donc plus d'importance aux éléments plus rares. Si les variables ont toutes les mêmes unités, la normalisation est optionnelle et dépend de notre objectif. Si on a des elements rares qu'on veut aussi mettre en évidence dans l'analyse, il est bien de normaliser.
+
+
+b) À partir des variables normalisées, créez une classification hiérarchique à partir de la méthode du saut maximum et une autre à partir de la méthode de Ward. Superposez la classification en (i) 2 groupes et (ii) 4 groupes obtenue par chaque méthode aux résultats de l'ACP pour ces mêmes données. Est-ce que les groupes obtenus différent entre les deux méthodes? Est-ce que ces classifications semblent bonnes par rapport aux coordonnées de l'ACP?
+
+*Note*: Pour la classification en quatre groupes, regardez jusqu'à 4 composantes principales pour juger la classification. (Ce n'est pas une règle générale, seulement une suggestion pour ce problème.)
+
+**Réponse**
+
+On réalise d'abord les deux regroupements, puis on extrait une classification en 2 et 4 groupes.
+
+```{r}
+comp_dist <- dist(comp_norm)
+cl_ward <- hclust(comp_dist, method = "ward.D2")
+cl_max <- hclust(comp_dist, method = "complete") # saut maximum
+
+# Extraire les groupes et placer dans le tableau de données principal
+arctic$ward_2grp <- as.factor(cutree(cl_ward, k = 2))
+arctic$ward_4grp <- as.factor(cutree(cl_ward, k = 4))
+arctic$max_2grp <- as.factor(cutree(cl_max, k = 2))
+arctic$max_4grp <- as.factor(cutree(cl_max, k = 4))
+
+# Placer les composantes principales dans le même tableau
+arctic <- cbind(arctic, comp_norm_acp$x)
+```
+
+Les classifications en 2 groupes diffèrent et celle avec la méthode de Ward permet de mieux diviser les données selon les deux premiers axes.
+
+```{r}
+ggplot(arctic, aes(x = PC1, y = PC2, color = ward_2grp)) +
+    geom_point()
+
+ggplot(arctic, aes(x = PC1, y = PC2, color = max_2grp)) +
+    geom_point()
+```
+
+La classification en 4 groupes est la même pour les deux méthodes.
+
+```{r}
+ggplot(arctic, aes(x = PC1, y = PC2, color = ward_4grp)) +
+    geom_point()
+
+ggplot(arctic, aes(x = PC1, y = PC2, color = max_4grp)) +
+    geom_point()
+```
+
+La séparation entre les groupes 2 et 3 est surtout visible sur l'axe PC4.
+
+```{r}
+ggplot(arctic, aes(x = PC1, y = PC4, color = ward_4grp)) +
+    geom_point()
+```
+
+Autre option de presention si on veut en seul graphique:
+
+```{r}
+w2 <- ggplot(arctic, aes(x= PC1, y=PC2, color=ward_2grp)) + geom_point()
+max2 <- ggplot(arctic, aes(x= PC1, y=PC2, color=max_2grp)) + geom_point()
+w4 <- ggplot(arctic, aes(x= PC1, y=PC2, color=ward_4grp)) + geom_point()
+max4 <- ggplot(arctic, aes(x= PC1, y=PC2, color=max_4grp)) + geom_point()
+
+plot_grid(w2, max2,w4 ,max4)
+```
+
+
+c) Représentez graphiquement la variation des deux premières composantes principales en fonction de la profondeur (`depth`), puis l'appartenance aux groupes de la classification à 4 groupes (selon l'une ou l'autre méthode) en fonction de la profondeur. Est-ce que ces deux méthodes permettent de détecter des changements importants de composition du sédiment le long de la carotte?
+
+**Réponse**
+
+Variation des deux premières composantes principales en fonction de la profondeur (`depth`).
+
+```{r}
+ggplot(arctic, aes(x = depth)) +
+    geom_point(aes(y = PC1), color = "red") +
+    geom_line(aes(y = PC1), color = "red") +
+    geom_point(aes(y = PC2), color = "blue") +
+    geom_line(aes(y = PC2), color = "blue")
+```
+
+La première composante principale (PC1) indique un changement de composition plus marqué que PC2, en comparant les profondeurs entre 200 et 350 (environ) comparé au reste du profil.
+
+*Note*: On aurait aussi pu utiliser `envfit` et `ordisurf` avec le package *vegan*.
+
+```{r}
+# Refaire l'ACP avec la fonction rda
+comp_acp2 <- rda(comp_norm)
+
+comp_envf <- envfit(comp_acp2, arctic$depth) 
+
+# Ordisurf est préférable pour représenter une relation non-linéaire entre la variable et les deux premiers axes PC1 et PC2
+ords <- ordisurf(comp_acp2, arctic$depth)
+
+# superposer le graphique d'ordisurf (doit être en premier) et envfit
+plot(ords)
+plot(comp_envf)
+
+```
+
+Les lignes de contour n'étant pas parallèles et également espacées, l’effet de la profondeur ne semble pas être vraiment
+linéaire sur les axes PC1 et PC2. C'est aussi ce que montraient nos graphiques plus haut.
+
+Classification en 4 groupes (Ward) selon la profondeur.
+
+```{r}
+ggplot(arctic, aes(x = depth, y = ward_4grp)) +
+    geom_point()
+```
+
+La première composante principale (PC1) ainsi que la classification indiquent toutes deux un changement de composition pour une profondeur entre 200 et 350 (environ) comparé au reste du profil. Les deux composantes principales et la classification montrent que l'échantillon le moins profond se démarque aussi des autres. 
