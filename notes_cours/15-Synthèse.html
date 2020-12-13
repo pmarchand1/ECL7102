@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -292,9 +257,9 @@ div.tocify {
 </div>
 
 
-<div id="plans-dechantillonnage-et-dexperience" class="section level2">
+<div id="plans-déchantillonnage-et-dexpérience" class="section level2">
 <h2>Plans d’échantillonnage et d’expérience</h2>
-<div id="echantillonnage" class="section level3">
+<div id="échantillonnage" class="section level3">
 <h3>Échantillonnage</h3>
 <ul>
 <li>Aléatoire simple: chaque individu a la même probabilité d’être échantillonné</li>
@@ -303,7 +268,7 @@ div.tocify {
 <li>Par grappe: échantilonner des groupes d’individus, prendre soit tous les individus d’un groupe, soit un échantillon aléatoire simple par groupe (multistade)</li>
 </ul>
 </div>
-<div id="plan-dexperience" class="section level3">
+<div id="plan-dexpérience" class="section level3">
 <h3>Plan d’expérience</h3>
 <ul>
 <li>Groupe témoin</li>
@@ -320,9 +285,9 @@ div.tocify {
 <h3>Exemples</h3>
 <table>
 <colgroup>
-<col width="2%" />
-<col width="56%" />
-<col width="41%" />
+<col width="14%" />
+<col width="49%" />
+<col width="36%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -350,18 +315,18 @@ div.tocify {
 </tbody>
 </table>
 </div>
-<div id="points-cles-sur-les-tests-dhypothese" class="section level3">
+<div id="points-clés-sur-les-tests-dhypothèse" class="section level3">
 <h3>Points clés sur les tests d’hypothèse</h3>
 <ul>
 <li><p>Le seuil de signification est la probabilité de rejeter l’hypothèse nulle lorsqu’elle est vraie.</p></li>
 <li><p>Il faut choisir un test et un seuil de signification <em>avant</em> d’analyser les résultats.</p></li>
 <li><p>Si on effectue plusieurs test dans une expérience, la probabilité de rejeter par erreur une des hypothèses nulles augmente (problème des comparaisons multiples).</p></li>
-<li><p>La puissance d’un test est la probabilité de rejeter l’hypothèse nulle si elle est fausse. Plus l’effet à détecter est faible par rapport à la variance de la réponse (faible ratio signal/bruit), puis <span class="math inline">\(n\)</span> doit être élevée pour avoir la même puissance.</p></li>
+<li><p>La puissance d’un test est la probabilité de rejeter l’hypothèse nulle si elle est fausse. Plus l’effet à détecter est faible par rapport à la variance de la réponse (faible ratio signal/bruit), puis <span class="math inline">\(n\)</span> doit être élevé pour avoir la même puissance.</p></li>
 <li><p>Avec un <span class="math inline">\(n\)</span> suffisamment grand, même un très petit effet sera jugé statistiquement significatif; cela ne signifie pas que l’effet est important.</p></li>
 </ul>
 </div>
 </div>
-<div id="estimation-de-parametres" class="section level2">
+<div id="estimation-de-paramètres" class="section level2">
 <h2>Estimation de paramètres</h2>
 <ul>
 <li><p>Biais: écart systématique entre l’estimé d’un paramètre et sa valeur exacte.</p></li>
@@ -373,7 +338,7 @@ div.tocify {
 <li><p>Relation entre intervalle de confiance et test d’hypothèse: l’hypothèse <span class="math inline">\(\theta = \theta_0\)</span> peut être rejetée à un seuil <span class="math inline">\(\alpha\)</span> si l’intervalle de confiance à <span class="math inline">\(100\%(1 - \alpha)\)</span> de <span class="math inline">\(\hat{\theta}\)</span> n’inclut pas <span class="math inline">\(\theta_0\)</span>.</p></li>
 </ul>
 </div>
-<div id="test-de-differences-entre-groupes" class="section level2">
+<div id="test-de-différences-entre-groupes" class="section level2">
 <h2>Test de différences entre groupes</h2>
 <p><img src="../images/synthese_anova.png" /></p>
 <div id="suppositions-de-lanova" class="section level3">
@@ -387,11 +352,11 @@ div.tocify {
 <p>Avec seulement 2 groupes, le test <span class="math inline">\(t\)</span> permet des variances inégales.</p>
 </div>
 </div>
-<div id="modeles-de-regression" class="section level2">
+<div id="modèles-de-régression" class="section level2">
 <h2>Modèles de régression</h2>
 <p><img src="../images/synthese_regression.png" /></p>
 <p><em>Types de modèles en gris non vus dans ce cours.</em></p>
-<div id="suppositions-du-modele-de-regression-lineaire" class="section level3">
+<div id="suppositions-du-modèle-de-régression-linéaire" class="section level3">
 <h3>Suppositions du modèle de régression linéaire</h3>
 <ol style="list-style-type: decimal">
 <li>Effet linéaire et additif des prédicteurs sur la réponse
@@ -414,9 +379,9 @@ div.tocify {
 <p><em>Modèles en italique non vus dans ce cours.</em></p>
 </div>
 </div>
-<div id="interpreter-les-coefficients-dune-regression" class="section level2">
+<div id="interpréter-les-coefficients-dune-régression" class="section level2">
 <h2>Interpréter les coefficients d’une régression</h2>
-<div id="regression-lineaire-sans-interaction" class="section level3">
+<div id="régression-linéaire-sans-interaction" class="section level3">
 <h3>Régression linéaire sans interaction</h3>
 <p><span class="math display">\[ y \sim w + x + z \]</span></p>
 <p><span class="math inline">\(y\)</span> est la réponse numérique, <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> sont des prédicteurs numériques, <span class="math inline">\(z\)</span> est un facteur avec codage de traitement (défaut dans R) et trois niveaux: A (référence), B et C.</p>
@@ -429,7 +394,7 @@ div.tocify {
 <li><em>zC</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux C et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constant.</li>
 </ul>
 </div>
-<div id="interaction-entre-un-predicteur-numerique-et-un-facteur" class="section level3">
+<div id="interaction-entre-un-prédicteur-numérique-et-un-facteur" class="section level3">
 <h3>Interaction entre un prédicteur numérique et un facteur</h3>
 <p><span class="math display">\[ y \sim x * z \]</span></p>
 <p>Coefficients estimés:</p>
@@ -442,7 +407,7 @@ div.tocify {
 <li><em>x:zC</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = C.</li>
 </ul>
 </div>
-<div id="interaction-entre-deux-predicteurs-numeriques" class="section level3">
+<div id="interaction-entre-deux-prédicteurs-numériques" class="section level3">
 <h3>Interaction entre deux prédicteurs numériques</h3>
 <p><span class="math display">\[ y \sim w * x \]</span></p>
 <p>Coefficients estimés:</p>
@@ -453,7 +418,7 @@ div.tocify {
 <li><em>w:x</em>: Effet sur la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> d’une augmentation unitaire de <span class="math inline">\(w\)</span>, <em>OU</em> effet sur la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(w\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> (deux interprétations équivalentes).</li>
 </ul>
 </div>
-<div id="modeles-lineaires-generalises" class="section level3">
+<div id="modèles-linéaires-généralisés" class="section level3">
 <h3>Modèles linéaires généralisés</h3>
 <ul>
 <li><p>Dans ces modèles, la moyenne de <span class="math inline">\(y\)</span> n’est pas égale à la combinaison linéaire des prédicteurs <span class="math inline">\(\eta\)</span>, mais à une transformation de <span class="math inline">\(\eta\)</span> selon une <em>fonction de lien</em>.</p></li>
@@ -464,7 +429,7 @@ div.tocify {
 </ul></li>
 </ul>
 </div>
-<div id="normalisation-des-predicteurs-numeriques" class="section level3">
+<div id="normalisation-des-prédicteurs-numériques" class="section level3">
 <h3>Normalisation des prédicteurs numériques</h3>
 <ul>
 <li>Normaliser un prédicteur en soustrayant la moyenne et en divisant par l’écart-type.</li>
@@ -476,7 +441,7 @@ div.tocify {
 </ul>
 </div>
 </div>
-<div id="selection-de-modeles" class="section level2">
+<div id="sélection-de-modèles" class="section level2">
 <h2>Sélection de modèles</h2>
 <ul>
 <li><p>Choix entre modèles de différentes complexités: compromis entre sous-ajustement et surajustement.</p></li>
@@ -484,7 +449,7 @@ div.tocify {
 <li><p>Surajustement: le modèle reproduit très bien les données utilisées pour son ajustement, mais performe moins bien sur de nouvelles données.</p></li>
 <li><p>En l’absence de données indépendantes pour évaluer le pouvoir prédictif de différents modèles, on peut l’estimer avec l’AIC (et ses variantes).</p></li>
 </ul>
-<div id="points-cles-pour-la-selection-de-modeles" class="section level3">
+<div id="points-clés-pour-la-sélection-de-modèles" class="section level3">
 <h3>Points clés pour la sélection de modèles</h3>
 <ul>
 <li><p>Comparer selon la même variable réponse et les mêmes observations.</p></li>
@@ -492,7 +457,7 @@ div.tocify {
 <li><p>Si plusieurs modèles sont plausibles, la moyenne pondérée de leurs prédictions est souvent meilleure que les prédictions du meilleur modèle.</p></li>
 </ul>
 </div>
-<div id="collinearite" class="section level3">
+<div id="collinéarité" class="section level3">
 <h3>Collinéarité</h3>
 <ul>
 <li><p>Problème où deux ou plusieurs prédicteurs sont fortement corrélés.</p></li>
@@ -524,6 +489,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

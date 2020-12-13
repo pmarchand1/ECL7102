@@ -54,7 +54,7 @@ library(cowplot)
 
 - Si on effectue plusieurs test dans une expérience, la probabilité de rejeter par erreur une des hypothèses nulles augmente (problème des comparaisons multiples).
 
-- La puissance d'un test est la probabilité de rejeter l'hypothèse nulle si elle est fausse. Plus l'effet à détecter est faible par rapport à la variance de la réponse (faible ratio signal/bruit), puis $n$ doit être élevée pour avoir la même puissance.
+- La puissance d'un test est la probabilité de rejeter l'hypothèse nulle si elle est fausse. Plus l'effet à détecter est faible par rapport à la variance de la réponse (faible ratio signal/bruit), puis $n$ doit être élevé pour avoir la même puissance.
 
 - Avec un $n$ suffisamment grand, même un très petit effet sera jugé statistiquement significatif; cela ne signifie pas que l'effet est important.
 

@@ -19,6 +19,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 12. [Mixed models - Part 2](notes_cours/12E-Mixed_models_Part2.html) ([PDF](notes_cours/12E-Mixed_models_Part2.pdf)) - [Data](donnees/radon.csv)
 13. [Multivariate analysis - Part 1](notes_cours/13E-Multivariate_analysis_Part1.html) ([PDF](notes_cours/13E-Multivariate_analysis_Part1.pdf)) - [Data](donnees/cities_climate.csv)
 14. [Multivariate analysis - Part 2](notes_cours/14E-Multivariate_analysis_Part2.html) ([PDF](notes_cours/14E-Multivariate_analysis_Part2.pdf))
+15. [Course synthesis](notes_cours/15E-Synthesis.html) ([PDF](notes_cours/15E-Synthesis.pdf))
 
 
 ## Labs
