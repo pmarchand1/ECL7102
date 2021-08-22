@@ -1,6 +1,6 @@
 ---
 title: "Statistiques descriptives et représentations graphiques"
-date: "31 août 2020"
+date: "30 août 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]

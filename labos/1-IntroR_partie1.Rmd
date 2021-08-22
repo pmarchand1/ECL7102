@@ -1,8 +1,7 @@
 ---
 title: "Introduction à R - Partie 1"
-date: "2 septembre 2020"
+date: "1 septembre 2021"
 output:
-    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs

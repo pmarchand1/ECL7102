@@ -1,6 +1,6 @@
 ---
 title: "Descriptive statistics and graphics"
-date: "<br/>August 31, 2020"
+date: "<br/>August 30, 2021"
 output:
     html_document:
         self_contained: false

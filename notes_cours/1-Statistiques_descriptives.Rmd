@@ -1,6 +1,6 @@
 ---
 title: "Statistiques descriptives et représentations graphiques"
-date: "<br/>31 août 2020"
+date: "<br/>30 août 2021"
 output:
     html_document:
         self_contained: false
