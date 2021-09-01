@@ -1,6 +1,6 @@
 ---
-title: "Sampling and parameter estimation"
-date: "<br/>Sept. 8, 2020"
+title: "Parameter estimation, sampling and experiment design"
+date: "<br/>September 7, 2021"
 output:
     html_document:
         self_contained: false
@@ -20,15 +20,26 @@ set.seed(7102)
 
 # Objectives
 
+*Estimation*
+
 - Estimate the mean and variance of a population from a sample.
 
 - Define the bias and standard error of an estimator.
 
 - Calculate the properties of an estimator by simulation.
 
+*Sampling methods*
+
 - Describe the advantages and disadvantages of different sampling methods.
 
 - Choose a sampling method according to the characteristics of the population to be studied.
+
+*Experiment design*
+
+- Know the important elements to consider when planning experiments.
+
+- Describe the principle and utility of a block experiment.
+
 
 
 # Statistics, parameters and estimators
@@ -367,6 +378,83 @@ In this class, we have seen some general sampling strategies. Other methods exis
 For example, in animal ecology, individuals are mobile and often difficult to detect. Methods such as site occupancy estimation and capture-mark-recapture have been developed to account for the inability to detect all individuals in a single visit to a site.
 
 
+# Experiment design
+
+While it is not always possible to manipulate the variables of a system in a controlled experiment, it remains the surest way to isolate a cause-and-effect relationship between two variables.
+
+For example, suppose we want to determine the effect of temperature on the growth of black spruce seedlings. We could measure seedling growth along a north-south temperature gradient. However, other important variables will also change along this gradient, including the length of the day. If we try rather to measure the growth of seedlings of the same population in warmer and colder years, our results would be influenced by other variables, such as precipitation, which also vary from year to year.
+
+Thus, experimental manipulation aims to eliminate the effect of other variables that might be *confounded* with the effect we want to measure.
+
+In this example, a possible experiment would be to grow seedlings from the same population in temperature-controlled chambers, keeping the other variables constant (e.g. light, moisture, soil type). To manipulate the temperature of the air, it is necessary here to create an artificial environment, but other types of experiments can be carried out in a natural environment, as we will see in the next examples.
+
+## Exercise
+
+a) After changing the composition of fertilizer applied to several corn fields in one region, agronomists note that the average yield is significantly higher than last year in the same fields. Do these results convince you that the new fertilizer is superior?
+
+b) To compare the effect of two soil preparation methods on forest regeneration after logging, you measure average seedling growth in two logging areas, one where method 1 was applied and the other where method 2 was applied. Is it useful to delimit several plots on each area to increase the size of your sample?
+
+## Principles of experiment design
+
+In this section, a **treatment** is an experimental manipulation, for which we want to measure the effect on a **response** variable. Different treatment options or treatment intensities can be tested in the same experiment (for example, the effect of several soil types, or different soil moisture levels, on growth).
+
+In biology, it is expected that individuals will respond differently to a treatment. Thus, we are generally interested in estimating the average effect of a treatment from the responses measured on a group of individuals. Today, we focus on general principles of experiment design. In the next few weeks, we will discuss statistical methods to estimate the effect of treatments.
+
+The main objective of experiment design is to isolate the effect of interest while controlling for other sources of variation. Here are some useful principles in line with this main objective.
+
+### Control group
+
+To ensure that the treatment is the cause of the response observed in the treated individuals, it is necessary to compare this response to that of an untreated control group, placed under the same environmental conditions. Sometimes it is necessary to establish more than one control group.
+
+For example, suppose we want to measure the effect of a herbivore insect on seedling growth and survival in a forest environment. To do this, we cover some of the seedlings with a mesh net small enough to exclude the desired insect. In this case, the treatment is the exclusion of the insect. However, to verify that the net does not itself have an effect on the measured response, two control groups could be defined: one without a net, and the other with a mesh net slightly larger than the insect.
+
+The state of a system before the treatment is rarely a good control, as we saw in part (a) of the exercise above, because the system is affected by other variables that change from one period to the other. If you want to compare a site before and after a treatment, it is better to follow a control site during the same period. This type of plan is known by the acronym BACI ( before-after-control-impact) and is used in particular for studies of the impact of anthropogenic disturbances on ecosystems. In this case, a change in time observed on the disturbed site, but not on the control site, constitutes a better proof of impact.
+
+When treatments serve to compare the effect of different levels of a variable (eg low, medium or high pH), the concept of a control does not apply.
+
+In the following test, we consider the absence of treatment as a treatment; for example, the expression "each treatment" also includes the control.
+
+### Random assignment
+
+Simple random sampling, as we saw earlier, gives each individual the same probability of being part of the sample.
+
+In an experimental setting, the random assignment of different treatments (including the absence of treatment) gives each individual the same chance of getting one or the other treatment. As with random sampling, the goal is to eliminate sources of bias.
+
+Ideally, the only source of systematic difference between the two groups should be the treatment applied. If another factor consistently varied between the control and treated groups, the effect of this factor would be confounded with that of the treatment.
+
+In a context of random assignment, it is possible to obtain by chance an association between the treatment and another characteristic of the population; this probability is greater when the sample size is small. Block design (see below) is one way to address this problem for a limited number of confounding factors.
+
+### Replication
+
+In principle, random assignment makes it possible to estimate without bias the effect of a treatment for the population where the experiment is carried out. However, in order to check whether the effect is generalized to several sites, it is useful to create several replicates of the experimental design.
+
+If the replicates of a treatment are more similar to each other than those of the other treatments, they cannot be considered independent observations. In ecology, this type of **pseudoreplication** is often due to a proximity of sites in space. For example, in part (b) of the previous exercise, the delineation of several plots on the control site and the treated site does not constitute an independent replication.
+
+### Blocking
+
+Random assignment of treatments is intended to ensure that individuals receiving one treatment or another have, on average, similar characteristics. With a large enough sample, we can control the effect of other variables affecting the response, without even knowing what these variables are.
+
+We may also be known in advance that certain characteristics of individuals could influence their response to treatment. In this case, it is better to group the individuals into more homogeneous *blocks* and randomly assign the various treatments within each block.
+
+For an experiment with a single treatment and a control group, pairs of similar individuals may constitute a block. For example, suppose we want to test the effectiveness of a chemical compound to prevent defoliation of trembling aspen by forest tent caterpillar. In this species, each tree can give birth to several clones. In this case, we can choose pairs of clones and for each pair, apply the treatment to one of the two clones chosen at random. Thus, we eliminate genetic variation as a source of difference that can be confused with the effect of treatment.
+
+## Randomized complete block designs
+
+In a randomized complete block design, individuals are divided into blocks and each of the treatments is randomly assigned to an equal number of individuals per block.
+
+Example: We plant maples from different populations in a single plot and want to measure the effect of a change in soil pH on their productivity. We apply three treatments: + pH (T1), - pH (T2), and control (C). Trees in the same population are closer genetically and can share particular adaptations. We therefore define blocks for each original population and randomly assign 1/3 of the individuals in each block to C, 1/3 to T1 and 1/3 to T2, as shown in the following diagram. (For simplicity, only 3 trees are shown by population.)
+
+![](../images/blocs_pop.PNG)
+
+As mentioned in the replication section, environmental conditions are generally more similar for two points closer together than two points farther apart. In this case, to avoid confounding local environmental conditions with the effect of a treatment, it is advantageous to disperse the treatments in space, especially if there is a known environmental gradient (slope, proximity to water, etc.). In the diagram below, the trees are organized in blocks along the gradient axis.
+
+![](../images/blocs_grad.PNG)
+
+When the blocks are organized according to a spatial gradient, the individuals in the same block must be close together so that the environmental conditions are homogeneous, but not so close that the treatments "contaminate" adjacent individuals. 
+
+We will learn how to analyze data from blocked experimental designs in the class on analysis of variance (ANOVA).
+
+
 # Summary
 
 - An estimator is biased when its mean over all possible samples differs from the value of the parameter to be estimated.
@@ -383,7 +471,4 @@ In addition to simple random sampling, there are other techniques that may be mo
 
 - adaptive sampling to estimate the abundance of a rare species.
 
-
-
-
-
+When designing an experiment, it is important to randomly assign treatments to the different experimental units (e.g. individuals or sites). It can be advantageous to group similar units into blocks so that all treatments are represented in each block (with random assignment within the blocks).

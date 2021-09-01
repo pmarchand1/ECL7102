@@ -253,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Introduction à R - Partie 2</h1>
-<h4 class="date">9 septembre 2020</h4>
+<h4 class="date">8 septembre 2021</h4>
 
 </div>
 
@@ -294,18 +294,18 @@ div.tocify {
 <p>Le jeu de données <code>msleep</code> inclus avec <em>ggplot2</em> comporte des données sur le sommeil de 83 espèces de mammifères.</p>
 <pre class="r"><code>msleep</code></pre>
 <pre><code>## # A tibble: 83 x 11
-##    name  genus vore  order conservation sleep_total sleep_rem sleep_cycle awake
-##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
-##  1 Chee~ Acin~ carni Carn~ lc                  12.1      NA        NA      11.9
-##  2 Owl ~ Aotus omni  Prim~ &lt;NA&gt;                17         1.8      NA       7  
-##  3 Moun~ Aplo~ herbi Rode~ nt                  14.4       2.4      NA       9.6
-##  4 Grea~ Blar~ omni  Sori~ lc                  14.9       2.3       0.133   9.1
-##  5 Cow   Bos   herbi Arti~ domesticated         4         0.7       0.667  20  
-##  6 Thre~ Brad~ herbi Pilo~ &lt;NA&gt;                14.4       2.2       0.767   9.6
-##  7 Nort~ Call~ carni Carn~ vu                   8.7       1.4       0.383  15.3
-##  8 Vesp~ Calo~ &lt;NA&gt;  Rode~ &lt;NA&gt;                 7        NA        NA      17  
-##  9 Dog   Canis carni Carn~ domesticated        10.1       2.9       0.333  13.9
-## 10 Roe ~ Capr~ herbi Arti~ lc                   3        NA        NA      21  
+##    name   genus vore  order conservation sleep_total sleep_rem sleep_cycle awake
+##    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+##  1 Cheet~ Acin~ carni Carn~ lc                  12.1      NA        NA      11.9
+##  2 Owl m~ Aotus omni  Prim~ &lt;NA&gt;                17         1.8      NA       7  
+##  3 Mount~ Aplo~ herbi Rode~ nt                  14.4       2.4      NA       9.6
+##  4 Great~ Blar~ omni  Sori~ lc                  14.9       2.3       0.133   9.1
+##  5 Cow    Bos   herbi Arti~ domesticated         4         0.7       0.667  20  
+##  6 Three~ Brad~ herbi Pilo~ &lt;NA&gt;                14.4       2.2       0.767   9.6
+##  7 North~ Call~ carni Carn~ vu                   8.7       1.4       0.383  15.3
+##  8 Vespe~ Calo~ &lt;NA&gt;  Rode~ &lt;NA&gt;                 7        NA        NA      17  
+##  9 Dog    Canis carni Carn~ domesticated        10.1       2.9       0.333  13.9
+## 10 Roe d~ Capr~ herbi Arti~ lc                   3        NA        NA      21  
 ## # ... with 73 more rows, and 2 more variables: brainwt &lt;dbl&gt;, bodywt &lt;dbl&gt;</code></pre>
 <p>Entrez le code suivant pour produire un nuage de points montrant le nombre d’heures de la phase REM (<em>sleep_rem</em>) en fonction du nombre total d’heures de sommeil.</p>
 <pre class="r"><code>ggplot(data = msleep, mapping = aes(x = sleep_total, y = sleep_rem)) +
@@ -608,7 +608,6 @@ head(kejim_dhp_mm)</code></pre>
 <p>Ces deux fonctions sont souvent utilisées ensemble: <code>group_by</code> divise un tableau de données en groupes selon la valeur d’une ou plusieurs variables et <code>summarize</code> calcule une ou plusieurs quantités sommaires pour chaque groupe. L’exemple suivant calcule la moyenne et l’écart-type du DHP par espèce.</p>
 <pre class="r"><code>group_by(kejim, espece) %&gt;%
     summarize(moyDHP = mean(dhp), etDHP = sd(dhp))</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 13 x 3
 ##    espece moyDHP etDHP
 ##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;
@@ -798,7 +797,6 @@ head(kejim2014)</code></pre>
 <pre class="r"><code>group_by(kejim, espece) %&gt;%
     summarize(maxDHP = max(dhp)) %&gt;%
     arrange(desc(maxDHP))</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 13 x 2
 ##    espece maxDHP
 ##    &lt;chr&gt;   &lt;dbl&gt;

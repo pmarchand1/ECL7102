@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Échantillonnage et estimation de paramètres</title>
+    <title>Estimation, échantillonnage et expériences</title>
     <meta charset="utf-8" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
@@ -12,8 +12,8 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Échantillonnage et estimation de paramètres
-### 8 septembre 2020
+# Estimation, échantillonnage et expériences
+### 7 septembre 2021
 
 ---
 
@@ -22,17 +22,31 @@ class: center, middle, inverse, title-slide
 
 # Objectifs
 
+## Estimation
+
 - Estimer la moyenne et la variance d'une population à partir d'un échantillon.
 
 - Définir le biais et l'erreur-type d'un estimateur.
 
 --
 
+## Échantillonnage
+
 - Calculer les propriétés d'un estimateur en simulant l'échantillonnage.
 
 - Décrire les avantages et inconvénients de différentes méthodes d'échantillonnage.
 
 - Choisir une méthode d'échantillonnage en fonction des caractéristiques de la population à étudier.
+
+---
+
+# Objectifs
+
+## Plans expérimentaux
+
+- Connaître les éléments importants à considérer lors de la planification d'expériences.
+
+- Décrire le principe et l'intérêt d'une expérience par blocs.
 
 ---
 
@@ -493,6 +507,137 @@ On divise la population ou l'aire d'étude en grappes et on choisit aléatoireme
 
 ---
 
+class: center, inverse, middle
+
+# Plans expérimentaux
+
+---
+
+# Exemple
+
+Supposons que nous souhaitons déterminer l'effet de la température sur la croissance des semis d'épinette noire. 
+
+- Est-ce suffisant de mesurer la croissance de semis le long d'un gradient de température nord-sud, ou en alternative, de mesurer la croissance des semis d'une même population lors d'années plus chaudes ou plus froides?
+
+--
+
+- Dans une étude d'observation, d'autres variables peuvent varier avec celle qui nous intéresse, donc leurs effets sont *confondus*.
+
+--
+
+- La manipulation expérimentale vise à isoler l'effet causal d'une variable. 
+
+Ex.: Faire croître les semis dans des chambres à température contrôlée, en gardant les autres variables constantes (ex.: lumière, humidité, type de sol).
+
+---
+
+# Exercice
+
+a) Après avoir modifié la composition de l'engrais appliqué à plusieurs champs de maïs dans une région, des agronomes notent que le rendement moyen est significativement supérieur à celui de l'an dernier dans les mêmes champs. Ces résultats vous convainquent-ils que le nouvel engrais est supérieur?
+
+b) Pour comparer l'effet de deux méthodes de préparation du sol sur la regénération d'une forêt après coupe, vous mesurez la croissance moyenne de semis sur deux parterres de coupe, un où a été appliquée la méthode 1 et l'autre où a été appliquée la méthode 2. Est-il utile de délimiter plusieurs parcelles sur chaque parterre afin d'augmenter la taille de votre échantillon?
+
+---
+
+# Traitement et réponse
+
+- Le **traitement** est une manipulation expérimentale dont on veut mesurer l'effet sur une variable **réponse**. 
+
+- On peut tester différentes options ou intensités de traitement dans la même expérience (ex.: effet de plusieurs types de sols, ou de différents taux d'humidité du sol, sur la croissance).
+
+- Si la réponse à un traitement varie d'un individu à un autre, on s'intéresse à estimer l'effet moyen du traitement à partir des réponses mesurées sur un groupe d'individus. 
+
+---
+
+# Groupe témoin
+
+- Comparer la réponse chez les individus traitées à celle d'un groupe non-traité placé dans les mêmes conditions.
+
+--
+
+- Dans certains cas, le concept de témoin ne s'applique pas, comme lorsque l'on souhaite comparer les réponses pour différents niveaux d'une variable (ex.: pH bas, moyen ou élevé).
+
+--
+
+- Il est parfois nécessaire d'établir plus d'un groupe témoin.
+
+---
+
+# Groupe témoin
+
+- L'état d'un système avant le traitement est rarement un bon témoin, car le système est affecté par d'autres variables qui changent d'une période à l'autre. 
+
+--
+
+- Pour comparer un site avant et après un traitement, on peut faire le suivi d'un site témoin durant la même période (plan BACI, pour *before-after-control-impact*). 
+
+- Un changement dans le temps observé sur le site perturbé, mais pas sur le site témoin, constitue une meilleure preuve d'impact du traitement.
+
+---
+
+# Assignation aléatoire
+
+- L'assignation aléatoire des différents traitements donne à chaque individu la même chance d'obtenir l'un ou l'autre des traitements.
+
+- Idéalement, la seule source de différence systématique entre les deux groupes devrait être le traitement appliqué. 
+
+--
+
+- Une association entre le traitement et une autre caractéristique de la population peut se produire par hasard; cette probabilité est plus grande lorsque l'échantillon est petit.
+
+---
+
+# Réplication
+
+- Afin de vérifier si l'effet se généralise à plusieurs sites, il est utile d'effectuer plusieurs réplicats du dispositif expérimental.
+
+--
+
+- Si les réplicats d'un traitement sont plus semblables entre eux qu'avec ceux des autres traitements, ils ne peuvent pas être considérés comme des observations indépendantes (*pseudoréplication*).
+
+- En écologie, cela peut se produire si les sites recevant le même traitement sont concentrés dans l'espace.
+
+---
+
+# Expériences par blocs
+
+- Si on sait d'avance que certaines caractéristiques des individus influenceront leur réponse au traitement, on peut regrouper les individus par *blocs* plus homogènes et assigner aléatoirement les traitements dans chaque bloc.
+
+--
+
+- Avec deux traitement (ou un traitement et témoin) à comparer, des paires d'individus semblables peuvent constituer un bloc. 
+
+---
+
+# Blocs complets aléatoires
+
+Les individus sont divisés en blocs et chacun des traitements est assigné de façon aléatoire à un nombre égal d'individus par bloc.
+
+--
+
+Par exemple, si on veut mesurer l'effet d'une variation du pH du sol sur la productivité d'érables provenant de différentes populations, on peut définir chaque population d'origine comme un bloc.
+
+![](../images/blocs_pop.PNG)
+
+---
+
+# Blocs complets aléatoires
+
+Pour éviter de confondre les conditions environnementales locales avec l'effet d'un traitement, il est avantageux de disperser les traitements dans l'espace, surtout s'il y a un gradient environnemental connu (pente, proximité de l'eau, etc.). 
+
+--
+
+![](../images/blocs_grad.PNG)
+
+---
+
+# Blocs complets aléatoires
+
+Lorsque les blocs sont organisés d'après un gradient spatial, les individus d'un même bloc doivent être assez rapprochés pour que les conditions environnementales soient homogènes, mais pas tant que les traitements "contaminent" les individus adjacents. 
+
+---
+
+
 # Résumé
 
 - Un estimateur est biaisé lorsque sa moyenne sur l'ensemble des échantillons possibles diffère de la valeur du paramètre à estimer. 
@@ -512,6 +657,14 @@ En plus de l'échantillonnage aléatoire simple, il existe d'autres techniques q
 - l'échantillonnage par grappe ou multi-stade s'il faut pour des raisons pratiques échantillonner les individus en groupes rapprochés;
 
 - l'échantillonnage adaptatif pour estimer l'abondance d'une espèce rare.
+
+---
+
+# Résumé
+
+- Dans l'élaboration d'un plan d'expérience, il est important d'assigner de façon aléatoire les traitements entre les unités expérimentales (ex.: individus ou sites). 
+
+- Il peut être avantageux de grouper les unités expérimentales plus semblables en blocs afin que tous les traitements soit représentés dans chaque bloc (avec assignation aléatoire à l'intérieur des blocs).
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -11,7 +11,7 @@
 
 
 
-<title>Échantillonnage et estimation de paramètres</title>
+<title>Estimation, échantillonnage et expériences</title>
 
 <script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -252,20 +252,29 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Échantillonnage et estimation de paramètres</h1>
-<h4 class="date"><br/>8 septembre 2020</h4>
+<h1 class="title toc-ignore">Estimation, échantillonnage et expériences</h1>
+<h4 class="date"><br/>7 septembre 2021</h4>
 
 </div>
 
 
 <div id="objectifs" class="section level1">
 <h1>Objectifs</h1>
+<p><em>Estimation</em></p>
 <ul>
 <li><p>Estimer la moyenne et la variance d’une population à partir d’un échantillon.</p></li>
 <li><p>Définir le biais et l’erreur-type d’un estimateur.</p></li>
 <li><p>Calculer les propriétés d’un estimateur en simulant l’échantillonnage.</p></li>
+</ul>
+<p><em>Méthodes d’échantillonnage</em></p>
+<ul>
 <li><p>Décrire les avantages et inconvénients de différentes méthodes d’échantillonnage.</p></li>
 <li><p>Choisir une méthode d’échantillonnage en fonction des caractéristiques de la population à étudier.</p></li>
+</ul>
+<p><em>Plans expérimentaux</em></p>
+<ul>
+<li><p>Connaître les éléments importants à considérer lors de la planification d’expériences.</p></li>
+<li><p>Décrire le principe et l’intérêt d’une expérience par blocs.</p></li>
 </ul>
 </div>
 <div id="statistiques-paramètres-et-estimateurs" class="section level1">
@@ -530,6 +539,62 @@ replicate(5, mean(sample(dhp, 20)))  </code></pre>
 <p>Par exemple, en écologie animale, les individus sont mobiles et souvent difficiles à détecter. Des méthodes comme l’estimation d’occupation des sites et la capture-marquage-recapture ont été développées pour tenir compte de l’impossibilité de détecter tous les individus lors d’une seule visite à un site.</p>
 </div>
 </div>
+<div id="plans-expérimentaux" class="section level1">
+<h1>Plans expérimentaux</h1>
+<p>S’il n’est pas toujours possible de manipuler les variables d’un système dans une expérience contrôlée, cela demeure la façon la plus sure d’isoler une relation de cause à effet entre deux variables.</p>
+<p>Par exemple, supposons que nous souhaitons déterminer l’effet de la température sur la croissance des semis d’épinette noire. Nous pourrions mesurer la croissance de semis le long d’un gradient de température nord-sud. Toutefois, d’autres variables importantes vont aussi changer le long de ce gradient, notamment la longueur de la journée. Si nous essayions plutôt de mesurer la croissance des semis d’une même population lors d’années plus chaudes et plus froides, nos résultats seraient influencés par d’autres variables, comme la précipitation, qui varient aussi d’année en année.</p>
+<p>Ainsi, la manipulation expérimentale vise à éliminer l’effet d’autres variables qui pourraient être <em>confondus</em> avec l’effet qu’on souhaite mesurer.</p>
+<p>Dans cet exemple, une manipulation expérimentale possible serait de faire croître des semis provenant de la même population dans des chambres à température contrôlée, en gardant les autres variables constantes (ex.: lumière, humidité, type de sol). Pour manipuler la température de l’air, il est ici nécessaire de créer un milieu artificiel, mais d’autres types de manipulations expérimentales peuvent être réalisées en milieu naturel, comme nous verrons dans les prochains exemples.</p>
+<div id="exercice-1" class="section level2">
+<h2>Exercice</h2>
+<ol style="list-style-type: lower-alpha">
+<li><p>Après avoir modifié la composition de l’engrais appliqué à plusieurs champs de maïs dans une région, des agronomes notent que le rendement moyen est significativement supérieur à celui de l’an dernier dans les mêmes champs. Ces résultats vous convainquent-ils que le nouvel engrais est supérieur?</p></li>
+<li><p>Pour comparer l’effet de deux méthodes de préparation du sol sur la regénération d’une forêt après coupe, vous mesurez la croissance moyenne de semis sur deux parterres de coupe, un où a été appliquée la méthode 1 et l’autre où a été appliquée la méthode 2. Est-il utile de délimiter plusieurs parcelles sur chaque parterre afin d’augmenter la taille de votre échantillon?</p></li>
+</ol>
+</div>
+<div id="principes-de-la-planification-dexpériences" class="section level2">
+<h2>Principes de la planification d’expériences</h2>
+<p>Dans cette section, le <strong>traitement</strong> est une manipulation expérimentale dont on veut mesurer l’effet sur une variable <strong>réponse</strong>. On peut tester différentes options ou intensités de traitement dans la même expérience (par exemple, l’effet de plusieurs types de sols, ou de différents taux d’humidité du sol, sur la croissance).</p>
+<p>En biologie, on s’attend à ce que la réponse à un traitement varie d’un individu à un autre. Ainsi, on s’intéresse généralement à estimer l’effet moyen du traitement à partir des réponses mesurées sur un groupe d’individus. Aujourd’hui, nous présentons seulement les principes de la planification d’expérience. Dans les prochaines semaines, nous discuterons des méthodes statistiques pour estimer l’effet des traitements.</p>
+<p>En bref, un bon plan d’expérience vise à isoler l’effet de la variable étudiée tout en contrôlant les autres sources de variation. Voici quelques principes utiles en lien avec cet objectif.</p>
+<div id="groupe-témoin" class="section level3">
+<h3>Groupe témoin</h3>
+<p>Pour s’assurer que le traitement est bien la cause de la réponse observée chez les individus traités, il faut comparer cette réponse à celle d’un groupe témoin (ou contrôle) non-traité, placé dans les mêmes conditions environnementales. Parfois, il est nécessaire d’étabir plus d’un groupe témoin.</p>
+<p>Par exemple, supposons qu’on souhaite mesurer l’effet d’un insecte herbivore sur la croissance et la survie de semis en milieu forestier. Pour ce faire, nous couvrons certains des semis d’un filet à mailles assez petites pour exclure l’insecte voulu. Dans ce cas, le traitement est l’exclusion de l’insecte. Toutefois, pour vérifier que le filet n’a pas lui-même un effet sur la réponse mesurée, on pourrait définir deux groupes témoin: un sans filet, et l’autre où on utilise un filet à mailles un peu plus grandes que l’insecte.</p>
+<p>L’état d’un système avant le traitement est rarement un bon témoin, comme nous avons vu dans la partie (a) de l’exercice ci-dessus, car le système est affecté par d’autres variables qui changent d’une période à l’autre. Si on veut comparer un site avant et après un traitement, il est donc préférable de faire le suivi d’un site témoin durant la même période. Ce type de plan est connu sous l’acronyme BACI (<em>before-after-control-impact</em>) et est notamment utilisé pour les études d’impact de perturbations anthropiques sur les écosystèmes. Dans ce cas, un changement dans le temps observé sur le site perturbé, mais pas sur le site témoin, constitue une meilleure preuve d’impact.</p>
+<p>Lorsque les traitements visent à comparer l’effet de différents niveaux d’une variable (ex.: pH bas, moyen ou élevé), le concept de témoin ne s’applique pas.</p>
+<p>Dans le texte qui suit, nous considérons l’absence de traitement comme un traitement; par exemple, l’expression “chaque traitement” inclut également le témoin.</p>
+</div>
+<div id="assignation-aléatoire" class="section level3">
+<h3>Assignation aléatoire</h3>
+<p>L’échantillonnage aléatoire simple, comme nous l’avons vu plus tôt, donne à chaque individu la même probabilité de faire partie de l’échantillon.</p>
+<p>Dans un contexte expérimental, l’assignation aléatoire des différents traitements (incluant l’absence de traitement) donne à chaque individu la même chance d’obtenir l’un ou l’autre des traitements. Comme pour l’échantillonnage aléatoire, le but est d’éliminer les sources de biais.</p>
+<p>Idéalement, la seule source de différence systématique entre les deux groupes devrait être le traitement appliqué. Si un autre facteur variait systématiquement entre le groupe témoin et le groupe traité, l’effet de ce facteur serait confondu avec celui du traitement.</p>
+<p>Dans un contexte d’assignation aléatoire, il est possible d’obtenir par (mal)chance une association entre le traitement et une autre caractéristique de la population; cette probabilité est plus grande lorsque l’échantillon est petit. L’expérience par blocs (voir ci-dessous) est une façon de remédier à ce problème pour un nombre restreint de facteurs confondants.</p>
+</div>
+<div id="réplication" class="section level3">
+<h3>Réplication</h3>
+<p>En principe, l’assignation aléatoire permet d’estimer sans biais l’effet d’un traitement pour la population où l’expérience est réalisée. Toutefois, afin de vérifier si l’effet se généralise à plusieurs sites, il est utile d’effectuer plusieurs réplicats du dispositif expérimental.</p>
+<p>Si les individus ou sites recevant un même traitement sont plus semblables entre eux et plus différents de ceux recevant les autres traitements, ils ne peuvent pas être considérés comme des observations indépendantes. En écologie, ce type de <strong>pseudoréplication</strong> est souvent dû à une proximité des sites dans l’espace. Par exemple, dans la partie (b) de l’exercice précédemment, la délimitation de plusieurs parcelles sur le site témoin et le site traité ne constitue pas une réplication indépendante.</p>
+</div>
+<div id="expériences-par-blocs" class="section level3">
+<h3>Expériences par blocs</h3>
+<p>L’assignation aléatoire des traitements vise à assurer que les groupes d’individus recevant un traitement ou l’autre possèdent, en moyenne, des caractéristiques semblables. Avec un échantillon assez grand, on peut donc contrôler l’effet d’autres variables affectant la réponse, sans même connaître ces variables.</p>
+<p>Il arrive aussi qu’on sache d’avance que certaines caractéristiques des individus puissent influencer leur réponse au traitement. Dans ce cas, il est préférable de regrouper les individus en <em>blocs</em> plus homogènes et assigner aléatoirement les divers traitement dans chaque bloc.</p>
+<p>Pour une expérience avec un seul traitement et un groupe témoin, des paires d’individus semblables peuvent constituer un bloc. Par exemple, supposons que nous voulons tester l’efficacité d’un nouveau composé pour prévenir la défoliation du peuplier faux-tremble par la livrée des forêts. Chez cette espèce, chaque arbre peut donner naissance à plusieurs clones. Dans ce cas, nous pouvons choisir des paires de clones et pour chaque paire, appliquer le traitement à un des deux clones choisis au hasard. Ainsi, nous éliminons la variation génétique comme source de différence pouvant être confondue à l’effet du traitement.</p>
+</div>
+</div>
+<div id="plan-dexpérience-à-blocs-complets-aléatoires" class="section level2">
+<h2>Plan d’expérience à blocs complets aléatoires</h2>
+<p>Dans une expérience à blocs complets aléatoires, les individus sont divisés en blocs et chacun des traitements est assigné de façon aléatoire à un nombre égal d’individus par bloc.</p>
+<p>Exemple: Nous plantons dans une même placette des érables provenant de diverses populations et souhaitons mesurer l’effet d’une variation du pH du sol sur leur productivité. Nous appliquons trois traitements: + pH (T1), - pH (T2), et témoin (C). Les arbres d’une même population sont plus proches génétiquement et peuvent partager certaines adaptations. Nous définissons donc des blocs pour chaque population d’origine et assignons aléatoirement 1/3 des individus de chaque population à C, 1/3 à T1 et 1/3 à T2, tel que montré dans le schéma suivant. (Pour simplifier, seulement trois arbres sont illustrés par population.)</p>
+<p><img src="../images/blocs_pop.PNG" /></p>
+<p>Comme nous avons mentionné dans la section sur la réplication, les conditions environnementales sont généralement plus semblables pour deux points rapprochés que deux points plus éloignés l’un de l’autre. Dans ce cas, pour éviter de confondre les conditions environnementales locales avec l’effet d’un traitement, il est avantageux de disperser les traitements dans l’espace, surtout s’il y a un gradient environnemental connu (pente, proximité de l’eau, etc.). Dans le schéma ci-dessous, les arbres sont organisés en blocs le long de l’axe du gradient.</p>
+<p><img src="../images/blocs_grad.PNG" /></p>
+<p>Lorsque les blocs sont organisés d’après un gradient spatial, les individus d’un même bloc doivent être assez rapprochés pour que les conditions environnementales soient homogènes, mais pas tant que les traitements “contaminent” les individus adjacents.</p>
+<p>Nous verrons comment analyser les données d’expériences par blocs dans le cours sur l’analyse de variance (ANOVA).</p>
+</div>
+</div>
 <div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
@@ -543,6 +608,7 @@ replicate(5, mean(sample(dhp, 20)))  </code></pre>
 <li><p>l’échantillonnage par grappe ou multi-stade s’il faut pour des raisons pratiques échantillonner les individus en groupes rapprochés;</p></li>
 <li><p>l’échantillonnage adaptatif pour estimer l’abondance d’une espèce rare.</p></li>
 </ul>
+<p>Dans l’élaboration d’un plan d’expérience, il est important d’assigner de façon aléatoire les traitements entre les unités expérimentales (ex.: individus ou sites). Il peut être avantageux de grouper les unités expérimentales plus semblables en blocs afin que tous les traitements soit représentés dans chaque bloc (avec assignation aléatoire à l’intérieur des blocs).</p>
 </div>
 
 
