@@ -1,8 +1,7 @@
 ---
 title: "Statistical models and confidence intervals"
-date: "<br/>Sept. 14, 2020"
+date: "<br/>September 13, 2021"
 output:
-    pdf_document:
     html_document:
         self_contained: false
         lib_dir: libs
