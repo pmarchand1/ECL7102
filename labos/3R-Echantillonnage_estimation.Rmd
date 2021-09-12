@@ -1,6 +1,6 @@
 ---
 title: "Échantillonnage et estimation de paramètres"
-date: "16 septembre 2020"
+date: "15 septembre 2021"
 output:
     html_document:
         self_contained: false
@@ -171,37 +171,8 @@ ggplot(fl_stat, aes(x = species, y = moy, ymin = ic_min, ymax = ic_max)) +
     geom_pointrange()
 ```
 
-## 2. DHP moyen des espèces échantillonnées au Parc national de Kejimkujik
 
-En vous basant sur le code écrit au dernier exercice, produisez un graphique du DHP moyen avec l'intervalle de confiance à 95% pour chaque espèce dans le tableau de données du fichier `cours1_kejimkujik.csv`.
-
-**Solution**
-
-```{r, warning = FALSE, message = FALSE}
-kejim <- read.csv("cours1_kejimkujik.csv")
-
-kejim_stats <- group_by(kejim, espece) %>%
-    summarize(moy = mean(dhp), ec_type = sd(dhp), n = n()) %>%
-    mutate(err_type = ec_type / sqrt(n),
-           ic_min = moy + qt(0.025, df = n - 1) * err_type, 
-           ic_max = moy + qt(0.975, df = n - 1) * err_type)
-
-ggplot(kejim_stats, aes(x = espece, y = moy, ymin = ic_min, ymax = ic_max)) +
-    geom_pointrange()
-```
-
-Ensuite, à partir des données et du graphique, répondez aux questions suivantes.
-
-a) Quel est l'intervalle de confiance du DHP moyen pour le pin blanc (*PIST*)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?
-
-**IC: 20.1 à 25.3 cm, en regardant la ligne de l'espèce PIST dans le tableau de données `kejim_stats`. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l'intervalle de confiance autour de la moyenne de l'échantillon contiendrait la moyenne du DHP de la population, dans les autres 5% des cas les intervalles ne contiendraient pas la moyenne de la population.**
-
-b) Si l'échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?
-
-**D'après le graphique, il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu'il faudrait plus de données pour départager les deux espèces.**
-
-
-## 3. Simulation d'échantillonnage stratifié
+## 2. Simulation d'échantillonnage stratifié
 
 Pour cet exercice, nous comparerons l'échantillonnage simple et stratifié à partir d'échantillons simulés du tableau de données `penguins`. Voici la distribution des longueurs de nageoires pour chaque espèce dans le tableau de données original. Notez que nous avons créé un nouveau tableau `fl` qui contient seulement les individus où la longueur de nageoire a été mesurée.
 

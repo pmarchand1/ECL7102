@@ -1,6 +1,6 @@
 ---
 title: "Sampling and parameter estimation"
-date: "September 16, 2020"
+date: "September 15, 2021"
 output:
     html_document:
         self_contained: false
@@ -123,18 +123,7 @@ e) Create two new columns in `fl_stat` containing the minimum` ic_min` and the m
 f) Finally, use the `geom_pointrange` graph type of *ggplot2* to visualize the confidence interval for each species. This type of graph requires the specification of `y` (central point), `ymin` (minimum of range) and `ymax` (maximum of range) in the `aes` function.
 
 
-## 2. Mean DBH of species sampled at Kejimkujik National Park
-
-Based on the code written in the last exercise, produce a graph of the mean DBH with the 95% confidence interval for all species in the data frame from the file `cours1_kejimkujik.csv`.
-
-Then, from the data and graph, answer the following questions.
-
-a) What is the confidence interval of the mean DBH for white pine (*PIST*)? Assuming that the sampled individuals are representative of the population on this site, how do you interpret this interval?
-
-b) If the sample is representative of each species, can it be easily determined which species has the smallest mean DBH, or which has the highest mean DBH, in this population?
-
-
-## 3. Stratified sampling simulation
+## 2. Stratified sampling simulation
 
 For this exercise, we will compare simple and stratified sampling using simulated samples from the `penguins` dataset. Here is the distribution of flipper lengths for each species in the original data frame. Note that we have created a new `fl` table that contains only those individuals where flipper length was measured.
 

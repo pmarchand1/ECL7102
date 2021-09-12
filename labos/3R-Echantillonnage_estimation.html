@@ -253,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Échantillonnage et estimation de paramètres</h1>
-<h4 class="date">16 septembre 2020</h4>
+<h4 class="date">15 septembre 2021</h4>
 
 </div>
 
@@ -404,38 +404,13 @@ fl_stat</code></pre>
     geom_pointrange()</code></pre>
 <p><img src="3R-Echantillonnage_estimation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
-<div id="dhp-moyen-des-espèces-échantillonnées-au-parc-national-de-kejimkujik" class="section level2">
-<h2>2. DHP moyen des espèces échantillonnées au Parc national de Kejimkujik</h2>
-<p>En vous basant sur le code écrit au dernier exercice, produisez un graphique du DHP moyen avec l’intervalle de confiance à 95% pour chaque espèce dans le tableau de données du fichier <code>cours1_kejimkujik.csv</code>.</p>
-<p><strong>Solution</strong></p>
-<pre class="r"><code>kejim &lt;- read.csv(&quot;cours1_kejimkujik.csv&quot;)
-
-kejim_stats &lt;- group_by(kejim, espece) %&gt;%
-    summarize(moy = mean(dhp), ec_type = sd(dhp), n = n()) %&gt;%
-    mutate(err_type = ec_type / sqrt(n),
-           ic_min = moy + qt(0.025, df = n - 1) * err_type, 
-           ic_max = moy + qt(0.975, df = n - 1) * err_type)
-
-ggplot(kejim_stats, aes(x = espece, y = moy, ymin = ic_min, ymax = ic_max)) +
-    geom_pointrange()</code></pre>
-<p><img src="3R-Echantillonnage_estimation_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Ensuite, à partir des données et du graphique, répondez aux questions suivantes.</p>
-<ol style="list-style-type: lower-alpha">
-<li>Quel est l’intervalle de confiance du DHP moyen pour le pin blanc (<em>PIST</em>)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?</li>
-</ol>
-<p><strong>IC: 20.1 à 25.3 cm, en regardant la ligne de l’espèce PIST dans le tableau de données <code>kejim_stats</code>. En échantillonnant ce nombre de pins blancs (131) dans cette population à plusieurs reprises, dans 95% des cas l’intervalle de confiance autour de la moyenne de l’échantillon contiendrait la moyenne du DHP de la population, dans les autres 5% des cas les intervalles ne contiendraient pas la moyenne de la population.</strong></p>
-<ol start="2" style="list-style-type: lower-alpha">
-<li>Si l’échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?</li>
-</ol>
-<p><strong>D’après le graphique, il y a deux espèces candidates pour le plus petit DHP moyen (ABBA et ACPE) et deux candidates pour le plus grand DHP moyen (BEAL et POTR). Cependant, les intervalles de confiance se chevauchent, montrant qu’il faudrait plus de données pour départager les deux espèces.</strong></p>
-</div>
 <div id="simulation-déchantillonnage-stratifié" class="section level2">
-<h2>3. Simulation d’échantillonnage stratifié</h2>
+<h2>2. Simulation d’échantillonnage stratifié</h2>
 <p>Pour cet exercice, nous comparerons l’échantillonnage simple et stratifié à partir d’échantillons simulés du tableau de données <code>penguins</code>. Voici la distribution des longueurs de nageoires pour chaque espèce dans le tableau de données original. Notez que nous avons créé un nouveau tableau <code>fl</code> qui contient seulement les individus où la longueur de nageoire a été mesurée.</p>
 <pre class="r"><code>fl &lt;- filter(penguins, !is.na(flipper_length_mm))
 ggplot(fl, aes(x = species, y = flipper_length_mm)) + 
     geom_boxplot()</code></pre>
-<p><img src="3R-Echantillonnage_estimation_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="3R-Echantillonnage_estimation_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Dans <em>dplyr</em>, la fonction <code>sample_n(tab, n)</code> retourne un tableau de données contenant <code>n</code> observations choisies au hasard du tableau <code>tab</code>. On peut aussi l’utiliser avec <code>group_by</code> pour choisir <code>n</code> observations par groupe.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Créez deux fonctions <code>fl_alea</code> et <code>fl_strat</code>. La première fonction choisit 30 observations au hasard de <code>fl</code>, puis retourne la moyenne de <code>flipper_length_mm</code> pour ces observations. La deuxième choisit 10 observations au hasard de chacune des trois espèces, plus retourne la moyenne de <code>flipper_length_mm</code> (globale, pas par espèce). Assurez-vous que chacune des deux fonctions retourne un vecteur de longueur 1.</li>

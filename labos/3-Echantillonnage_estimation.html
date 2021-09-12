@@ -253,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Échantillonnage et estimation de paramètres</h1>
-<h4 class="date">16 septembre 2020</h4>
+<h4 class="date">15 septembre 2021</h4>
 
 </div>
 
@@ -358,17 +358,8 @@ head(penguins)</code></pre>
 <li><p>Finalement, utilisez le type de graphique <code>geom_pointrange</code> (intervalle de points) de <em>ggplot2</em> pour visualiser l’intervalle de confiance pour chaque espèce. Ce type de graphique demande la spécification de <code>y</code> (point central), <code>ymin</code> (minimum de l’intervalle) et <code>ymax</code> (maximum de l’intervalle) dans la fonction <code>aes</code>.</p></li>
 </ol>
 </div>
-<div id="dhp-moyen-des-espèces-échantillonnées-au-parc-national-de-kejimkujik" class="section level2">
-<h2>2. DHP moyen des espèces échantillonnées au Parc national de Kejimkujik</h2>
-<p>En vous basant sur le code écrit au dernier exercice, produisez un graphique du DHP moyen avec l’intervalle de confiance à 95% pour chaque espèce dans le tableau de données du fichier <code>cours1_kejimkujik.csv</code>.</p>
-<p>Ensuite, à partir des données et du graphique, répondez aux questions suivantes.</p>
-<ol style="list-style-type: lower-alpha">
-<li><p>Quel est l’intervalle de confiance du DHP moyen pour le pin blanc (<em>PIST</em>)? En supposant que les individus échantillonés sont représentatifs de la population sur ce site, comment interprétez-vous cet intervalle?</p></li>
-<li><p>Si l’échantillon est représentatif de chaque espèce, peut-on déterminer facilement quelle espèce possède le plus petit DHP moyen, ou laquelle possède le plus grand DHP moyen, dans cette population?</p></li>
-</ol>
-</div>
 <div id="simulation-déchantillonnage-stratifié" class="section level2">
-<h2>3. Simulation d’échantillonnage stratifié</h2>
+<h2>2. Simulation d’échantillonnage stratifié</h2>
 <p>Pour cet exercice, nous comparerons l’échantillonnage simple et stratifié à partir d’échantillons simulés du tableau de données <code>penguins</code>. Voici la distribution des longueurs de nageoires pour chaque espèce dans le tableau de données original. Notez que nous avons créé un nouveau tableau <code>fl</code> qui contient seulement les individus où la longueur de nageoire a été mesurée.</p>
 <pre class="r"><code>fl &lt;- filter(penguins, !is.na(flipper_length_mm))
 ggplot(fl, aes(x = species, y = flipper_length_mm)) + 
