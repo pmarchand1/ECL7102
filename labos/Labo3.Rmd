@@ -1,0 +1,129 @@
+---
+title: "Labo 3"
+author: "Votre nom ici"
+date: "15/09/2021"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Laboratoire 3: Échantillonnage et estimation de paramètres
+
+## Exercice 1
+
+### Question 1.a
+
+Il faut avoir installé le package *palmerpenguins* avec la commande install.packages("palmerpenguins"). Une fois les packages installés, il n'est plus utile de garder le code d'installation des packages.
+```{r}
+library(palmerpenguins)
+data(penguins)
+head(penguins)
+```
+
+
+C'est l'argument **color** qui permet d'afficher des points de différentes couleurs lorsqu'on utilise *geom_point()*. On utilisait l'argument **fill** lorsqu'on voulait colorer des histogrammes.
+```{r}
+library(ggplot2)
+library(dplyr)
+
+ggplot(penguins, aes(x=flipper_length_mm, y= bill_length_mm, color=species)) +
+  geom_point()
+```
+
+### Question 1.b 
+Les quantités nécéssaires pour calculer les intervalles de confiance (IC) sont :
+
+- la moyenne, 
+- l’erreur-type (qui dépend de l’écart-type et du nombre d’observations) et 
+- les probabilités de la distribution t à p = 0.025 et p = 0.975.
+
+### Question 1.c
+Depuis le tableau de données *penguins*, on doit d'abord enlever les lignes où il y a une valeur manquante dans la colonne *flipper_length_mm*. On utilise ensuite *group_by* pour grouper le tableau par espèce et calculer les différentes quantités que nous avons besoin grâce à la fonction *summarize*. L'écart type se calcule avec la fonction *sd*. On calcule l'erreur type dans *mutate* apres le *summarize* car nous avons besoin de l'écart-type et du nombre d'observations calculer précédemment dans le *summarize*. 
+
+```{r}
+f1_stat <- penguins %>% 
+  filter(!is.na(flipper_length_mm)) %>%
+  group_by(species) %>%
+  summarize(n=n(), moy = mean(flipper_length_mm),
+            ecart_type = sd(flipper_length_mm)) %>%
+  mutate(err_type = ecart_type / sqrt(n))
+
+f1_stat
+```
+
+### Question 1.d
+Pour la borne inférieure, on utilise p=0.025, et pour la borne supérieur on utilise p=0.975, avec n-1 degrès de liberté. 
+
+### Question 1.e
+On utilise *mutate* pour créer deux nouvelles colonnes dans le tableau, la borne inférieur et supérieur de l'IC. ic_min sera la borne inférieure et ic_max sera la borne supérieur. La formule de l'IC se trouve à la page 19 du cours 3 dans la partie "Intervalle de confiance d’une moyenne". 
+```{r}
+f1_stat <- f1_stat %>%
+  mutate(ic_min = moy + qt(0.025, df = n-1)*err_type,
+         ic_max = moy + qt(0.975, df = n-1)*err_type)
+```
+
+
+### Question 1.f
+```{r}
+ggplot(f1_stat, aes(x=species, y=moy, ymin=ic_min, ymax=ic_max)) +
+  geom_pointrange()
+```
+
+
+
+## Exercice 2 
+
+```{r}
+f1 <- filter(penguins, !is.na(flipper_length_mm))
+
+ggplot(f1, aes(x=species, y= flipper_length_mm)) + geom_boxplot()
+```
+
+### Question 2.a
+Pour le fonctionnement des fonction sur R voir le premier laboratoire. Pour obtenir le résultat de la fonction, on appelle la fonction sans spécifier de paramètres dans la fonction puisque nous en n'avons pas mis lorsque nous avons créé la fonction. 
+```{r}
+#Méthode d'échantillonnage aléatoire
+fl_alea <- function() {
+  samp<-sample_n(f1, 30)
+  mean(samp$flipper_length_mm)
+}
+
+fl_alea()
+
+#Méthode d'échantillonnage stratifié
+fl_strat <- function(){
+  samp <- f1 %>% group_by(species) %>%
+    sample_n(10)
+  mean(samp$flipper_length_mm)
+}
+
+fl_strat()
+```
+Si vous relancez plusieurs fois la même fonction alors vous avez un résultat différent, c'est normal puisqu'à chaque exécution de la fonction les observations pour calculer la moyenne sont choisies **aléatoirement**.
+
+
+### Question 2.b
+La fonction replicate permet de stocker le résultat d'une fonction qu'on lance un certain nombre de fois, ici 1000 fois. 
+```{r}
+rep_alea <- replicate(1000, fl_alea())
+rep_strat <- replicate(1000, fl_strat())
+```
+
+
+### Question 2.c
+L’écart-type de la moyenne stratifiée (écart-type de rep_strat) est environ 2 fois plus faible
+que celle de la moyenne aléatoire (écart-type de rep_alea), soit 1.2 vs 2.4. Cela est dû au
+fait que la longueur des nageoires est plus variable entre les espèces qu’entre individus d’une
+même espèce.
+```{r}
+sd(rep_alea)
+sd(rep_strat)
+```
+
+
+
+
+
+
