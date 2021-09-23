@@ -1,6 +1,6 @@
 ---
 title: "Chi-squared test and ANOVA"
-date: "<br/>September 28, 2020"
+date: "<br/>September 27, 2021"
 output:
     html_document:
         self_contained: false

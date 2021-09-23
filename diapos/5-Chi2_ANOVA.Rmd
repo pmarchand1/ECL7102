@@ -1,6 +1,6 @@
 ---
 title: "Tableaux de contingence et ANOVA"
-date: "28 septembre 2020"
+date: "27 septembre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
@@ -222,7 +222,7 @@ suit une distribution $\chi^2$ avec $(r - 1) \times (c - 1)$ degrés de liberté
 
 ---
 
-class: inverse, middle
+class: center, inverse, middle
 
 # Analyse de la variance (ANOVA)
 
