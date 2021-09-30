@@ -1,6 +1,6 @@
 ---
 title: "Simple linear regression"
-date: "<br/>October 5, 2020"
+date: "<br/>October 4, 2021"
 output:
     html_document:
         self_contained: false

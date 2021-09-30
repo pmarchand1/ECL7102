@@ -1,6 +1,6 @@
 ---
 title: "Régression linéaire simple"
-date: "5 octobre 2020"
+date: "4 octobre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
@@ -52,15 +52,15 @@ Modèles qui représentent la relation mathématique entre une variable *répons
 
 | Date| Sujet |
 |------------|---------------------|
-| 5 octobre | Régression linéaire simple |
-| 14 octobre <sup>*</sup> | Régression linéaire multiple |
-| 19 octobre | *Congé* |
-| 26 octobre | Sélection de modèles |
-| 2 novembre | Régression logistique |
-| 9 novembre | Régression de Poisson |
-| 16 et 23 novembre | Modèles mixtes |
+| 4 octobre | Régression linéaire simple |
+| 12 octobre <sup>*</sup> | Régression linéaire multiple |
+| 18 octobre | *Congé* |
+| 25 octobre | Sélection de modèles |
+| 1 novembre | Régression logistique |
+| 8 novembre | Régression de Poisson |
+| 15 et 22 novembre | Modèles mixtes |
 
-<sup>*</sup> Remplace la période de laboratoire
+<sup>*</sup> Cours le mardi en raison du congé le lundi
 
 ---
 

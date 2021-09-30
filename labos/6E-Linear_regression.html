@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2021-10-06" />
 
 <title>Simple linear regression</title>
 
@@ -254,12 +254,12 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Simple linear regression</h1>
-<h4 class="date">October 7, 2020</h4>
+<h4 class="date">October 6, 2021</h4>
 
 </div>
 
 
-<p>Answers for this lab must be submitted before <strong>October 14th at 5pm on Moodle</strong>. In your answer for each question, please include the R code used (if applicable) and the results obtained.</p>
+<p>Answers for this lab must be submitted before <strong>October 13th at 5pm on Moodle</strong>. In your answer for each question, please include the R code used (if applicable) and the results obtained.</p>
 <div id="growth-of-a-pine-species" class="section level2">
 <h2>1. Growth of a pine species</h2>
 <p>The <code>Loblolly</code> data frame included with R indicates the height in feet (<em>height</em>) measured at six values of age (3 to 25 years) for 14 individuals of the species <em>Pinus taeda</em>. Each individual is indicated by a different value in the <em>Seed</em> column.</p>
@@ -273,7 +273,7 @@ div.tocify {
 ## 71  60.92  25  301</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li><p>Estimate and interpret the parameters of a linear model of height versus age for these pines. Does the intercept make biological sense for this model?</p></li>
-<li><p>Make a scatterplot of the residuals of the model in (a), obtained with the `residuals’ function, as a function of the tree (<em>Seed</em>). Based on this result, which assumption of linear regression could be invalid here?</p></li>
+<li><p>Add a new column in the data frame containing the residuals of the model in (a), obtained with the <code>residuals</code> function, then make a scatterplot of those residuals as a function of the tree (<em>Seed</em>). Based on this result, which assumption of linear regression could be invalid here?</p></li>
 <li><p>From the diagnostic graphs of the model in (a), indicate whether the assumptions of linearity, equality of variances and normality appear to be met.</p></li>
 <li><p>Explain how each of the unmet assumptions identified in (b) and (c) affects the validity of the model’s conclusions. In other words, how might the model’s estimates and predictions differ from reality?</p></li>
 </ol>
