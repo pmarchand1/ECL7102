@@ -1,6 +1,6 @@
 ---
 title: "Multiple linear regression"
-date: "<br/>October 14, 2020"
+date: "<br/>October 12, 2021"
 output:
     html_document:
         self_contained: false

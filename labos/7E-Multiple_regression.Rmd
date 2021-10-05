@@ -1,6 +1,6 @@
 ---
 title: "Multiple linear regression"
-date: "October 16, 2020"
+date: "October 13, 2021"
 output: 
     html_document:
         self_contained: false
@@ -10,7 +10,7 @@ output:
         toc_float: true
 ---
 
-Answers for this lab must be submitted before **October 28th at 5pm on Moodle**. In your answer for each question, please include the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **October 27th at 5pm on Moodle**. In your answer for each question, please include the R code used (if applicable) and the results obtained.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)

@@ -1,6 +1,6 @@
 ---
 title: "Régression linéaire multiple"
-date: "<br/>14 octobre 2020"
+date: "<br/>12 octobre 2021"
 output:
     html_document:
         self_contained: false

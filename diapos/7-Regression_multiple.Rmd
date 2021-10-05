@@ -1,6 +1,6 @@
 ---
 title: "Régression linéaire multiple"
-date: "14 octobre 2020"
+date: "12 octobre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]

@@ -11,6 +11,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 4. [Hypothesis testing](notes_cours/4E-Hypothesis_testing.html) ([PDF](notes_cours/4E-Hypothesis_testing.pdf))
 5. [Chi-squared test and ANOVA](notes_cours/5E-Chi2_ANOVA.html) ([PDF](notes_cours/5E-Chi2_ANOVA.pdf))
 6. [Simple linear regression](notes_cours/6E-Linear_regression.html) ([PDF](notes_cours/6E-Linear_regression.pdf)) - [Data](donnees/plant_growth_rate.csv)
+7. [Multiple linear regression](notes_cours/7E-Multiple_regression.html) ([PDF](notes_cours/7E-Multiple_regression.pdf)) - Data [1](donnees/compensation.csv) [2](donnees/growth.csv) [3](donnees/antibiot.csv)
 
 
 ## Labs
@@ -21,3 +22,4 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 4. [Hypothesis testing](labos/4E-Tests_mean.html) ([PDF](labos/4E-Tests_mean.pdf)) - Data [1](labos/gardens.csv) [2](labos/nconc.csv)
 5. [Chi-squared test and ANOVA (solutions)](labos/5RE-Chi2_ANOVA.html) ([PDF](labos/5RE-Chi2_ANOVA.pdf))
 6. [Simple linear regression](labos/6E-Linear_regression.html) ([PDF](labos/6E-Linear_regression.pdf)) - [Data](labos/britain_species.csv)
+7. [Multiple linear regression](labos/7E-Multiple_regression.html) ([PDF](labos/7E-Multiple_regression.pdf)) - Data [1](labos/sablefish.csv) [2](labos/sardinella.csv)
