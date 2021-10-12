@@ -50,4 +50,4 @@ a) Estimate the additive effects of environment and weight on the oxygen consump
 
 b) Repeat the model in (a) with a standardized version of the predictor *log_weight* (*norm_weight*). What is the interpretation of the coefficients now?
 
-c) Repeat the model in (b) by adding the interaction between the weight (standardized) and the environment. Is this interaction meaningful? What is the interpretation of the coefficients?
+c) Repeat the model in (b) by adding the interaction between the weight (standardized) and the environment. What is the interpretation of the coefficients? Is the interaction significant?
