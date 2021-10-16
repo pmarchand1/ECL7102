@@ -1,6 +1,6 @@
 ---
 title: "Model evaluation and selection"
-date: "<br/>October 26, 2020"
+date: "<br/>October 25, 2021"
 output:
     html_document:
         self_contained: false
@@ -56,6 +56,8 @@ vif(mod_hills)
 ```
 
 The VIF is equal to $1 / (1 - R^2)$, where $R^2$ is the coefficient of determination of a linear model of the predictor considered as a function of all the others. For example, if one of the predictors can be determined from the value of the others with a $R^2 $ of 0.9, VIF = 10. When the VIF of some predictors exceeds 10, it is recommended to eliminate one of the redundant predictors.
+
+Note that this statistic is called the variance inflation factor as it estimates the factor by which the variance of the coefficient estimate is multiplied, compared to the case where the predictor is not correlated with others. For example, if the VIF associated with a predictor is 9, the variance of its estimated coefficient is 9 times larger (and its square root, the standard error, is 3 times larger) than if the predictor were not correlated with others.
 
 ## Example
 
@@ -427,7 +429,7 @@ Note that the interval provided is a confidence interval, not a prediction inter
 
 # Summary
 
-- The variance inflation factor (VIF) indicates whether the value of a predictor is strongly correlated with that of the other predictors. A high VIF makes it difficult to estimate coefficients for correlated predictors.
+- The variance inflation factor (VIF) indicates whether the value of a predictor is strongly correlated with that of the other predictors. A high VIF reduces the precision of the estimated coefficients for correlated predictors.
 
 - The selection between several models with different levels of complexity requires a compromise between bias (underfitting) and variance (overfitting).
 

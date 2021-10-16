@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-10-26" />
+<meta name="date" content="2021-10-25" />
 
 <title>Model evaluation and selection</title>
 
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Model evaluation and selection</h1>
-<h4 class="date"><br/>October 26, 2020</h4>
+<h4 class="date"><br/>October 25, 2021</h4>
 
 </div>
 
@@ -289,6 +289,7 @@ vif(mod_hills)</code></pre>
 <pre><code>##     dist    climb 
 ## 1.740812 1.740812</code></pre>
 <p>The VIF is equal to <span class="math inline">\(1 / (1 - R^2)\)</span>, where <span class="math inline">\(R^2\)</span> is the coefficient of determination of a linear model of the predictor considered as a function of all the others. For example, if one of the predictors can be determined from the value of the others with a $R^2 $ of 0.9, VIF = 10. When the VIF of some predictors exceeds 10, it is recommended to eliminate one of the redundant predictors.</p>
+<p>Note that this statistic is called the variance inflation factor as it estimates the factor by which the variance of the coefficient estimate is multiplied, compared to the case where the predictor is not correlated with others. For example, if the VIF associated with a predictor is 9, the variance of its estimated coefficient is 9 times larger (and its square root, the standard error, is 3 times larger) than if the predictor were not correlated with others.</p>
 <div id="example" class="section level2">
 <h2>Example</h2>
 <p>The <code>msleep</code> data frame included with the <em>ggplot</em> package contains sleep data for different mammal species. We choose three columns corresponding to total sleep time, body weight and brain weight.</p>
@@ -650,7 +651,7 @@ iles_nouv</code></pre>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <ul>
-<li><p>The variance inflation factor (VIF) indicates whether the value of a predictor is strongly correlated with that of the other predictors. A high VIF makes it difficult to estimate coefficients for correlated predictors.</p></li>
+<li><p>The variance inflation factor (VIF) indicates whether the value of a predictor is strongly correlated with that of the other predictors. A high VIF reduces the precision of the estimated coefficients for correlated predictors.</p></li>
 <li><p>The selection between several models with different levels of complexity requires a compromise between bias (underfitting) and variance (overfitting).</p></li>
 <li><p>To estimate the goodness of fit of a model, it is useful to compare its predictions to new observations, different from those used to estimate the parameters of the model.</p></li>
 <li><p>The AIC (or AICc, for small samples) is based on the likelihood of the model, with a penalty for models with a larger number of parameters.</p></li>

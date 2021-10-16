@@ -13,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 # Évaluation et sélection de modèles
-### 26 octobre 2020
+### 25 octobre 2021
 
 ---
 
@@ -56,6 +56,10 @@ class: center, middle, inverse, title-slide
 --
 
 - Exemple: si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un `\(R^2\)` de 0.9, VIF = 10. 
+
+--
+
+- Le VIF estime par quel facteur la variance du coefficient d'un prédicteur se trouve multipliée, par rapport au cas où il ne serait pas corrélé aux autres.
 
 --
 
@@ -550,7 +554,7 @@ $$ \hat{y} = \sum_{i = 1}^m w_i \hat{y_i} $$
 
 --
 
-- Un VIF élevé rend difficile l'estimation des coefficients pour les prédicteurs corrélés.
+- Un VIF élevé réduit la précision des estimés des coefficients pour les prédicteurs corrélés.
 
 ---
 

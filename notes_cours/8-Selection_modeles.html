@@ -253,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Évaluation et sélection de modèles</h1>
-<h4 class="date"><br/>26 octobre 2020</h4>
+<h4 class="date"><br/>25 octobre 2021</h4>
 
 </div>
 
@@ -288,6 +288,7 @@ vif(mod_hills)</code></pre>
 <pre><code>##     dist    climb 
 ## 1.740812 1.740812</code></pre>
 <p>Le VIF est égal à <span class="math inline">\(1 / (1 - R^2)\)</span>, où <span class="math inline">\(R^2\)</span> est le coefficient de détermination d’un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un <span class="math inline">\(R^2\)</span> de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d’éliminer un des prédicteurs redondants.</p>
+<p>L’origine du terme vient du fait que le VIF estime par quel facteur la variance du coefficient estimé se trouve multipliée, par rapport au cas où les prédicteurs ne sont pas corrélés. Autrement dit, si le VIF associé à un prédicteur est de 9, la variance du coefficient estimé est 9 fois plus élevée (et sa racine carrée, soit l’erreur-type, est 3 fois plus élevée) que si ce prédicteur n’était pas corrélé aux autres.</p>
 <div id="exemple" class="section level2">
 <h2>Exemple</h2>
 <p>Le tableau de données <code>msleep</code> inclus avec le package <em>ggplot</em>, contient des données sur le sommeil de différentes espèces de mammifères. Nous choisissons trois colonnes correspondant au temps de sommeil total (<em>sleep_total</em>), au poids de l’animal (<em>bodywt</em>) et au poids de son cerveau (<em>brainwt</em>).</p>
@@ -649,7 +650,7 @@ iles_nouv</code></pre>
 <div id="résumé" class="section level1">
 <h1>Résumé</h1>
 <ul>
-<li><p>Le facteur d’inflation de la variance (VIF) indique si la valeur d’un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé rend difficile l’estimation des coefficients pour les prédicteurs corrélés.</p></li>
+<li><p>Le facteur d’inflation de la variance (VIF) indique si la valeur d’un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé réduit la précision des coefficients estimés pour les prédicteurs corrélés.</p></li>
 <li><p>Le choix entre plusieurs modèles avec différents niveaux de complexité requiert un compromis entre le biais (sous-ajustement) et la variance (surajustement).</p></li>
 <li><p>Pour estimer la qualité d’un modèle, il est utile de comparer ses prédictions à de nouvelles observations, différentes de celles utilisées pour estimer les paramètres du modèle.</p></li>
 <li><p>L’AIC (ou l’AICc, pour de petits échantillons) est basé sur la vraisemblance du modèle, avec une pénalité pour les modèles comprenant un plus grand nombre de paramètres.</p></li>

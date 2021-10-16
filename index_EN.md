@@ -12,6 +12,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 5. [Chi-squared test and ANOVA](notes_cours/5E-Chi2_ANOVA.html) ([PDF](notes_cours/5E-Chi2_ANOVA.pdf))
 6. [Simple linear regression](notes_cours/6E-Linear_regression.html) ([PDF](notes_cours/6E-Linear_regression.pdf)) - [Data](donnees/plant_growth_rate.csv)
 7. [Multiple linear regression](notes_cours/7E-Multiple_regression.html) ([PDF](notes_cours/7E-Multiple_regression.pdf)) - Data [1](donnees/compensation.csv) [2](donnees/growth.csv) [3](donnees/antibiot.csv)
+8. [Model evaluation and selection](notes_cours/8E-Model_selection.html) ([PDF](notes_cours/8E-Model_selection.pdf)) - [Data](labos/britain_species.csv)
 
 
 ## Labs
@@ -23,3 +24,4 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 5. [Chi-squared test and ANOVA (solutions)](labos/5RE-Chi2_ANOVA.html) ([PDF](labos/5RE-Chi2_ANOVA.pdf))
 6. [Simple linear regression](labos/6E-Linear_regression.html) ([PDF](labos/6E-Linear_regression.pdf)) - [Data](labos/britain_species.csv)
 7. [Multiple linear regression](labos/7E-Multiple_regression.html) ([PDF](labos/7E-Multiple_regression.pdf)) - Data [1](labos/sablefish.csv) [2](labos/sardinella.csv)
+8. [Model selection](labos/8E-Model_selection.html) ([PDF](labos/8E-Model_selection.pdf)) - Data [1](labos/environment.csv) [2(a)](labos/migration.csv) [2(c)](labos/migr_test.csv)

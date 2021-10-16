@@ -1,6 +1,6 @@
 ---
 title: "Évaluation et sélection de modèles"
-date: "<br/>26 octobre 2020"
+date: "<br/>25 octobre 2021"
 output:
     html_document:
         self_contained: false
@@ -56,6 +56,8 @@ vif(mod_hills)
 ```
 
 Le VIF est égal à $1 / (1 - R^2)$, où $R^2$ est le coefficient de détermination d'un modèle linéaire du prédicteur considéré en fonction de tous les autres. Par exemple, si un des prédicteurs peut être déterminé à partir de la valeur des autres avec un $R^2$ de 0.9, VIF = 10. Lorsque le VIF de certains prédicteurs dépasse 10, il est recommandé d'éliminer un des prédicteurs redondants.
+
+L'origine du terme vient du fait que le VIF estime par quel facteur la variance du coefficient estimé se trouve multipliée, par rapport au cas où les prédicteurs ne sont pas corrélés. Autrement dit, si le VIF associé à un prédicteur est de 9, la variance du coefficient estimé est 9 fois plus élevée (et sa racine carrée, soit l'erreur-type, est 3 fois plus élevée) que si ce prédicteur n'était pas corrélé aux autres.
 
 ## Exemple
 
@@ -428,7 +430,7 @@ Notez que l'intervalle fourni est un intervalle de confiance, pas un intervalle 
 
 # Résumé
 
-- Le facteur d'inflation de la variance (VIF) indique si la valeur d'un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé rend difficile l'estimation des coefficients pour les prédicteurs corrélés.
+- Le facteur d'inflation de la variance (VIF) indique si la valeur d'un prédicteur est fortement corrélée à celles des autres prédicteurs. Un VIF élevé réduit la précision des coefficients estimés pour les prédicteurs corrélés.
 
 - Le choix entre plusieurs modèles avec différents niveaux de complexité requiert un compromis entre le biais (sous-ajustement) et la variance (surajustement).
 
