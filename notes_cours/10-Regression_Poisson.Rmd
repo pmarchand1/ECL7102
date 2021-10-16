@@ -1,6 +1,6 @@
 ---
 title: "Régression de Poisson"
-date: "<br/>9 novembre 2020"
+date: "<br/>8 novembre 2021"
 output:
     html_document:
         self_contained: false
@@ -320,14 +320,14 @@ Dans ce cas, la surdispersion n'est pas significative, il n'est donc pas nécess
 
 ## Exemple de données surdispersées
 
-Le tableau de données [galapagos.csv](../donnees/galapagos.csv) donne le nombre d'espèces de tortues (`Species`) et le nombre d'espèces endémiques (`Endemics`) pour différentes îles de l'archipel des Galapagos en fonction de leur superficie (`Area`), de leur altitude moyenne (`Elevation`), de la superficie de l'île la plus près (`Adjacent`), de la distance à l'île la plus près (`Nearest`) et de la distance à l'île de Santa Cruz (`Scruz`).
+Le tableau de données [galapagos.csv](../donnees/galapagos.csv) donne le nombre d'espèces de plantes (`Species`) et le nombre d'espèces endémiques (`Endemics`) pour différentes îles de l'archipel des Galapagos en fonction de leur superficie (`Area`), de leur altitude moyenne (`Elevation`), de la superficie de l'île la plus près (`Adjacent`), de la distance à l'île la plus près (`Nearest`) et de la distance à l'île de Santa Cruz (`Scruz`).
 
 ```{r}
 glp <- read.csv("../donnees/galapagos.csv")
 str(glp)
 ```
 
-Supposons que nous voulons déterminer comment le nombre d'espèces de tortues endémiques (celles présentent sur une seule île) varie en fonction des prédicteurs `Area`, `Elevation`, `Nearest` et `Adjacent`. Puisque chacun de ces prédicteurs est distribué de façon très asymétrique (voir l'exemple ci-dessous pour la superficie), nous utiliserons le logarithme de chaque prédicteur.
+Supposons que nous voulons déterminer comment le nombre d'espèces de plantes endémiques (celles présentent sur une seule île) varie en fonction des prédicteurs `Area`, `Elevation`, `Nearest` et `Adjacent`. Puisque chacun de ces prédicteurs est distribué de façon très asymétrique (voir l'exemple ci-dessous pour la superficie), nous utiliserons le logarithme de chaque prédicteur.
 
 ```{r, fig.dim = c(6, 3), echo = FALSE}
 p1 <- ggplot(glp, aes(x = Area, y = log(Endemics))) +

@@ -13,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 # Régression de Poisson
-### 9 novembre 2020
+### 8 novembre 2021
 
 ---
 
@@ -272,7 +272,7 @@ $$ \hat{c} = \frac{\chi^2}{df_{res}} $$
 
 # Exemple de données surdispersées
 
-Nombre d'espèces de tortues et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
+Nombre d'espèces de plantes et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
 
 
 ```
@@ -352,6 +352,14 @@ mod_comp &lt;- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = g
 
 ```r
 library(AICcmodavg)
+```
+
+```
+## Warning: no function found corresponding to methods exports from 'raster' for:
+## 'wkt'
+```
+
+```r
 disp &lt;- c_hat(mod_comp)
 disp
 ```

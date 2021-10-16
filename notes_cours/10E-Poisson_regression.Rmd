@@ -1,6 +1,6 @@
 ---
 title: "Poisson regression"
-date: "<br/>November 9, 2020"
+date: "<br/>November 8, 2021"
 output:
     html_document:
         self_contained: false
@@ -321,14 +321,14 @@ In this case, the overdispersion is not significant, so it is not necessary to a
 
 ## Overdispersed data example
 
-The [galapagos.csv](../donnees/galapagos.csv) dataset gives the number of tortoise species (`Species`) and the number of endemic species (`Endemics`) for different islands in the Galapagos according to their area, their mean elevation, the area of the nearest island (`Adjacent`), the distance to the nearest island (`Nearest`) and the distance to Santa Cruz island (`Scruz`).
+The [galapagos.csv](../donnees/galapagos.csv) dataset gives the number of plant species (`Species`) and the number of endemic species (`Endemics`) for different islands in the Galapagos according to their area, their mean elevation, the area of the nearest island (`Adjacent`), the distance to the nearest island (`Nearest`) and the distance to Santa Cruz island (`Scruz`).
 
 ```{r}
 glp <- read.csv("../donnees/galapagos.csv")
 str(glp)
 ```
 
-Suppose we want to determine how the number of endemic tortoise species (those present on a single island) varies according to the predictors `Area`, `Elevation`, `Nearest` and `Adjacent`. Since each of these predictors is distributed very asymmetrically (see the example below for area), we will use the logarithm of each predictor.
+Suppose we want to determine how the number of endemic plant species (those present on a single island) varies according to the predictors `Area`, `Elevation`, `Nearest` and `Adjacent`. Since each of these predictors is distributed very asymmetrically (see the example below for area), we will use the logarithm of each predictor.
 
 ```{r, fig.dim = c(6, 3), echo = FALSE}
 p1 <- ggplot(glp, aes(x = Area, y = log(Endemics))) +

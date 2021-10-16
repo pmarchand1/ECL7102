@@ -1,6 +1,6 @@
 ---
 title: "Régression de Poisson"
-date: "9 novembre 2020"
+date: "8 novembre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
@@ -303,7 +303,7 @@ $$ \hat{c} = \frac{\chi^2}{df_{res}} $$
 
 # Exemple de données surdispersées
 
-Nombre d'espèces de tortues et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
+Nombre d'espèces de plantes et d'espèces endémiques pour différentes îles de l'archipel des Galapagos.
 
 ```{r}
 glp <- read.csv("../donnees/galapagos.csv")

@@ -1,6 +1,6 @@
 ---
 title: "Régression logistique"
-date: "2 novembre 2020"
+date: "1 novembre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]

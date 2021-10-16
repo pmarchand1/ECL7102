@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-11-09" />
+<meta name="date" content="2021-11-08" />
 
 <title>Poisson regression</title>
 
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Poisson regression</h1>
-<h4 class="date"><br/>November 9, 2020</h4>
+<h4 class="date"><br/>November 8, 2021</h4>
 
 </div>
 
@@ -577,7 +577,7 @@ chisq/mod_sp$df.residual</code></pre>
 </div>
 <div id="overdispersed-data-example" class="section level2">
 <h2>Overdispersed data example</h2>
-<p>The <a href="../donnees/galapagos.csv">galapagos.csv</a> dataset gives the number of tortoise species (<code>Species</code>) and the number of endemic species (<code>Endemics</code>) for different islands in the Galapagos according to their area, their mean elevation, the area of the nearest island (<code>Adjacent</code>), the distance to the nearest island (<code>Nearest</code>) and the distance to Santa Cruz island (<code>Scruz</code>).</p>
+<p>The <a href="../donnees/galapagos.csv">galapagos.csv</a> dataset gives the number of plant species (<code>Species</code>) and the number of endemic species (<code>Endemics</code>) for different islands in the Galapagos according to their area, their mean elevation, the area of the nearest island (<code>Adjacent</code>), the distance to the nearest island (<code>Nearest</code>) and the distance to Santa Cruz island (<code>Scruz</code>).</p>
 <pre class="r"><code>glp &lt;- read.csv(&quot;../donnees/galapagos.csv&quot;)
 str(glp)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    30 obs. of  8 variables:
@@ -589,7 +589,7 @@ str(glp)</code></pre>
 ##  $ Nearest  : num  0.6 0.6 2.8 1.9 1.9 8 6 34.1 0.4 2.6 ...
 ##  $ Scruz    : num  0.6 26.3 58.7 47.4 1.9 ...
 ##  $ Adjacent : num  1.84 572.33 0.78 0.18 903.82 ...</code></pre>
-<p>Suppose we want to determine how the number of endemic tortoise species (those present on a single island) varies according to the predictors <code>Area</code>, <code>Elevation</code>, <code>Nearest</code> and <code>Adjacent</code>. Since each of these predictors is distributed very asymmetrically (see the example below for area), we will use the logarithm of each predictor.</p>
+<p>Suppose we want to determine how the number of endemic plant species (those present on a single island) varies according to the predictors <code>Area</code>, <code>Elevation</code>, <code>Nearest</code> and <code>Adjacent</code>. Since each of these predictors is distributed very asymmetrically (see the example below for area), we will use the logarithm of each predictor.</p>
 <p><img src="10E-Poisson_regression_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
 <p>We fit the following model in R. Note that the response is <code>Endemics</code> and not <code>log(Endemics)</code>, because the log link is included in the <code>glm</code> model with Poisson distribution.</p>
 <pre class="r"><code>mod_glp &lt;- glm(Endemics ~ log(Area) + log(Elevation) + log(Nearest) + log(Adjacent), 
@@ -713,9 +713,10 @@ mod_area_near &lt;- glm(Endemics ~ log(Area) + log(Nearest), data = glp, family 
 mod_area_adj &lt;- glm(Endemics ~ log(Area) + log(Adjacent), data = glp, family = poisson)
 mod_comp &lt;- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp, family = poisson)</code></pre>
 <p>Note that we use the <code>poisson</code> family rather than <code>quasipoisson</code>; we will let the model selection function apply the correction. The dispersion parameter of the complete model can be calculated with the <code>c_hat</code> function of <em>AICcmodavg</em>. (This value differs a bit from the one above because we have removed the <code>Elevation</code> predictor.)</p>
-<pre class="r"><code>library(AICcmodavg)
-
-disp &lt;- c_hat(mod_comp)
+<pre class="r"><code>library(AICcmodavg)</code></pre>
+<pre><code>## Warning: no function found corresponding to methods exports from &#39;raster&#39; for:
+## &#39;wkt&#39;</code></pre>
+<pre class="r"><code>disp &lt;- c_hat(mod_comp)
 disp</code></pre>
 <pre><code>## &#39;c-hat&#39; 3.56 (method: pearson estimator)</code></pre>
 <p>Here is the QAICc table for these models:</p>

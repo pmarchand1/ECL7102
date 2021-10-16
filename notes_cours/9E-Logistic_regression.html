@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-11-02" />
+<meta name="date" content="2021-11-01" />
 
 <title>Logistic regression</title>
 
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Logistic regression</h1>
-<h4 class="date"><br/>November 2, 2020</h4>
+<h4 class="date"><br/>November 1, 2021</h4>
 
 </div>
 
@@ -553,7 +553,6 @@ summary(mod_snails2)</code></pre>
 <p>Why do we have such high coefficients and standard errors? Let’s look at the average number of dead snails for each of the values of the <code>Exposure</code> variable.</p>
 <pre class="r"><code>group_by(snails, Exposure) %&gt;%
     summarize(mean(Deaths))</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 4 x 2
 ##   Exposure `mean(Deaths)`
 ##      &lt;int&gt;          &lt;dbl&gt;

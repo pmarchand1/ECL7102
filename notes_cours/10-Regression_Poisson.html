@@ -253,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Régression de Poisson</h1>
-<h4 class="date"><br/>9 novembre 2020</h4>
+<h4 class="date"><br/>8 novembre 2021</h4>
 
 </div>
 
@@ -576,7 +576,7 @@ chisq/mod_sp$df.residual</code></pre>
 </div>
 <div id="exemple-de-données-surdispersées" class="section level2">
 <h2>Exemple de données surdispersées</h2>
-<p>Le tableau de données <a href="../donnees/galapagos.csv">galapagos.csv</a> donne le nombre d’espèces de tortues (<code>Species</code>) et le nombre d’espèces endémiques (<code>Endemics</code>) pour différentes îles de l’archipel des Galapagos en fonction de leur superficie (<code>Area</code>), de leur altitude moyenne (<code>Elevation</code>), de la superficie de l’île la plus près (<code>Adjacent</code>), de la distance à l’île la plus près (<code>Nearest</code>) et de la distance à l’île de Santa Cruz (<code>Scruz</code>).</p>
+<p>Le tableau de données <a href="../donnees/galapagos.csv">galapagos.csv</a> donne le nombre d’espèces de plantes (<code>Species</code>) et le nombre d’espèces endémiques (<code>Endemics</code>) pour différentes îles de l’archipel des Galapagos en fonction de leur superficie (<code>Area</code>), de leur altitude moyenne (<code>Elevation</code>), de la superficie de l’île la plus près (<code>Adjacent</code>), de la distance à l’île la plus près (<code>Nearest</code>) et de la distance à l’île de Santa Cruz (<code>Scruz</code>).</p>
 <pre class="r"><code>glp &lt;- read.csv(&quot;../donnees/galapagos.csv&quot;)
 str(glp)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    30 obs. of  8 variables:
@@ -588,7 +588,7 @@ str(glp)</code></pre>
 ##  $ Nearest  : num  0.6 0.6 2.8 1.9 1.9 8 6 34.1 0.4 2.6 ...
 ##  $ Scruz    : num  0.6 26.3 58.7 47.4 1.9 ...
 ##  $ Adjacent : num  1.84 572.33 0.78 0.18 903.82 ...</code></pre>
-<p>Supposons que nous voulons déterminer comment le nombre d’espèces de tortues endémiques (celles présentent sur une seule île) varie en fonction des prédicteurs <code>Area</code>, <code>Elevation</code>, <code>Nearest</code> et <code>Adjacent</code>. Puisque chacun de ces prédicteurs est distribué de façon très asymétrique (voir l’exemple ci-dessous pour la superficie), nous utiliserons le logarithme de chaque prédicteur.</p>
+<p>Supposons que nous voulons déterminer comment le nombre d’espèces de plantes endémiques (celles présentent sur une seule île) varie en fonction des prédicteurs <code>Area</code>, <code>Elevation</code>, <code>Nearest</code> et <code>Adjacent</code>. Puisque chacun de ces prédicteurs est distribué de façon très asymétrique (voir l’exemple ci-dessous pour la superficie), nous utiliserons le logarithme de chaque prédicteur.</p>
 <p><img src="10-Regression_Poisson_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
 <p>Nous ajustons le modèle suivant dans R. Notez que la réponse est <code>Endemics</code> et non <code>log(Endemics)</code>, car le lien log est inclus dans le modèle <code>glm</code> avec distribution de Poisson.</p>
 <pre class="r"><code>mod_glp &lt;- glm(Endemics ~ log(Area) + log(Elevation) + log(Nearest) + log(Adjacent), 
@@ -712,9 +712,10 @@ mod_area_near &lt;- glm(Endemics ~ log(Area) + log(Nearest), data = glp, family 
 mod_area_adj &lt;- glm(Endemics ~ log(Area) + log(Adjacent), data = glp, family = poisson)
 mod_comp &lt;- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp, family = poisson)</code></pre>
 <p>Remarquez que nous utilisons la famille <code>poisson</code> plutôt que <code>quasipoisson</code>; nous laisserons la fonction de sélection de modèles appliquer la correction. Le paramètre de dispersion du modèle complet peut être calculé avec la fonction <code>c_hat</code> de <em>AICcmodavg</em>. (Cette valeur diffère un peu de celle obtenue plus haut, car nous avons retranché le prédicteur <code>Elevation</code>.)</p>
-<pre class="r"><code>library(AICcmodavg)
-
-disp &lt;- c_hat(mod_comp)
+<pre class="r"><code>library(AICcmodavg)</code></pre>
+<pre><code>## Warning: no function found corresponding to methods exports from &#39;raster&#39; for:
+## &#39;wkt&#39;</code></pre>
+<pre class="r"><code>disp &lt;- c_hat(mod_comp)
 disp</code></pre>
 <pre><code>## &#39;c-hat&#39; 3.56 (method: pearson estimator)</code></pre>
 <p>Voici le tableau du QAICc pour ces modèles:</p>
