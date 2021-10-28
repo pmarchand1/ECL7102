@@ -10,7 +10,7 @@ output:
         toc_float: true
 ---
 
-Answers for this lab must be submitted before **November 10th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **November 17th at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 
 ## 1. Wells data revisited
