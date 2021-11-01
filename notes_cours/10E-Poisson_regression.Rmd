@@ -416,7 +416,7 @@ mod_comp <- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp,
 
 Note that we use the `poisson` family rather than `quasipoisson`; we will let the model selection function apply the correction. The dispersion parameter of the complete model can be calculated with the `c_hat` function of *AICcmodavg*. (This value differs a bit from the one above because we have removed the `Elevation` predictor.)
 
-```{r}
+```{r, warning = FALSE}
 library(AICcmodavg)
 
 disp <- c_hat(mod_comp)

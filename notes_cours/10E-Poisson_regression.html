@@ -713,10 +713,9 @@ mod_area_near &lt;- glm(Endemics ~ log(Area) + log(Nearest), data = glp, family 
 mod_area_adj &lt;- glm(Endemics ~ log(Area) + log(Adjacent), data = glp, family = poisson)
 mod_comp &lt;- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp, family = poisson)</code></pre>
 <p>Note that we use the <code>poisson</code> family rather than <code>quasipoisson</code>; we will let the model selection function apply the correction. The dispersion parameter of the complete model can be calculated with the <code>c_hat</code> function of <em>AICcmodavg</em>. (This value differs a bit from the one above because we have removed the <code>Elevation</code> predictor.)</p>
-<pre class="r"><code>library(AICcmodavg)</code></pre>
-<pre><code>## Warning: no function found corresponding to methods exports from &#39;raster&#39; for:
-## &#39;wkt&#39;</code></pre>
-<pre class="r"><code>disp &lt;- c_hat(mod_comp)
+<pre class="r"><code>library(AICcmodavg)
+
+disp &lt;- c_hat(mod_comp)
 disp</code></pre>
 <pre><code>## &#39;c-hat&#39; 3.56 (method: pearson estimator)</code></pre>
 <p>Here is the QAICc table for these models:</p>

@@ -371,7 +371,7 @@ mod_comp <- glm(Endemics ~ log(Area) + log(Nearest) + log(Adjacent), data = glp,
 
 --
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, warning = FALSE}
 library(AICcmodavg)
 disp <- c_hat(mod_comp)
 disp
