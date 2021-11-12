@@ -1,6 +1,6 @@
 ---
 title: "Modèles mixtes"
-date: "18 novembre 2020"
+date: "17 novembre 2021"
 output: 
     html_document:
         self_contained: false
@@ -10,7 +10,7 @@ output:
         toc_float: true
 ---
 
-Ce laboratoire doit être remis le **2 décembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
+Ce laboratoire doit être remis le **1 décembre à 17h sur Moodle**. Dans votre réponse pour chaque question, veuillez inclure une copie du code R utilisé (s'il y a lieu) et des résultats obtenus. 
 
 
 ## 1. Rendement du blé en fonction de l'engrais et de l'humidité du sol

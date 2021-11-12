@@ -1,6 +1,6 @@
 ---
 title: "Linear mixed models, part 1"
-date: "<br/>November 16, 2020"
+date: "<br/>November 15, 2021"
 output:
     html_document:
         self_contained: false
@@ -144,7 +144,7 @@ summary(mod2_inter)
 
 The adjusted $R^2$ increased to 0.82, but this model has 17 adjustable parameters for only 45 observations. According to the AICc, the model without interaction is the best compromise between complexity and good fit.
 
-```{r}
+```{r, warning = FALSE}
 library(AICcmodavg)
 aictab(list(mod1 = mod1, mod2 = mod2, mod2_inter = mod2_inter))
 ```

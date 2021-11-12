@@ -15,6 +15,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 8. [Évaluation et sélection de modèles](notes_cours/8-Selection_modeles.html) ([PDF](notes_cours/8-Selection_modeles.pdf)) - [Données](labos/britain_species.csv)
 9. [Régression logistique](notes_cours/9-Regression_logistique.html) ([PDF](notes_cours/9-Regression_logistique.pdf))
 10. [Régression de Poisson](notes_cours/10-Regression_Poisson.html) ([PDF](notes_cours/10-Regression_Poisson.pdf)) - Données [1](donnees/species.csv) [2](donnees/galapagos.csv)
+11. [Modèles mixtes - Partie 1](notes_cours/11-Modeles_mixtes_Partie1.html) ([PDF](notes_cours/11-Modeles_mixtes_Partie1.pdf)) - [Données](donnees/rikz.csv)
 
 
 ## Laboratoires
@@ -28,4 +29,5 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 7. [Régression linéaire multiple](labos/7-Regression_multiple.html) ([PDF](labos/7-Regression_multiple.pdf)) - Données [1](labos/sablefish.csv) [2](labos/sardinella.csv)
 8. [Sélection de modèles (solutions)](labos/8R-Selection_modeles.html) ([PDF](labos/8R-Selection_modeles.pdf)) - Données [1](labos/environment.csv) [2(a)](labos/migration.csv) [2(c)](labos/migr_test.csv)
 9. [Régression logistique](labos/9-Regression_logistique.html) ([PDF](labos/9-Regression_logistique.pdf))
-10. [Régression de Poisson](labos/10-Regression_Poisson.html) ([PDF](labos/10-Regression_Poisson.pdf)) - Données [1](labos/stream_composition.csv) [2](labos/salamander.csv)
+10. [Régression de Poisson (solutions)](labos/10R-Regression_Poisson.html) ([PDF](labos/10R-Regression_Poisson.pdf)) - Données [1](labos/stream_composition.csv) [2](labos/salamander.csv)
+11. [Modèles mixtes](labos/11-Modeles_mixtes.html) ([PDF](labos/11-Modeles_mixtes.pdf))

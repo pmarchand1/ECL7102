@@ -1,6 +1,6 @@
 ---
 title: "Mixed models"
-date: "November 18, 2020"
+date: "November 17, 2021"
 output: 
     html_document:
         self_contained: false
@@ -10,7 +10,7 @@ output:
         toc_float: true
 ---
 
-Answers for this lab must be submitted before **December 2nd at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
+Answers for this lab must be submitted before **December 1st at 5pm on Moodle**. In your answer for each question, please include a copy of the R code used (if applicable) and the results obtained.
 
 ## 1. Wheat yield as a function of fertilizer and soil moisture
 
