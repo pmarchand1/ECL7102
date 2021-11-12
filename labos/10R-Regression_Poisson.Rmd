@@ -1,6 +1,5 @@
 ---
-title: "Régression de Poisson"
-date: "11 novembre 2020"
+title: "Régression de Poisson - Solutions"
 output: 
     html_document:
         self_contained: false
@@ -175,7 +174,7 @@ summary(mod_sal2)
 
 L'effet de l'âge du peuplement est presque zéro et non significatif. Comparons les deux modèles avec le QAIC.
 
-```{r}
+```{r, warning = FALSE}
 library(AICcmodavg)
 disp <- c_hat(mod_sal2)
 aictab(list(cover = mod_sal, cover_age = mod_sal2), c.hat = disp)
