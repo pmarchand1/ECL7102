@@ -1,6 +1,6 @@
 ---
 title: "Linear mixed models, part 2"
-date: "<br/>November 23, 2020"
+date: "<br/>November 22, 2021"
 output:
     html_document:
         self_contained: false

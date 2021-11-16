@@ -253,7 +253,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Modèles linéaires mixtes, partie 2</h1>
-<h4 class="date"><br/>23 novembre 2020</h4>
+<h4 class="date"><br/>22 novembre 2021</h4>
 
 </div>
 
@@ -335,7 +335,7 @@ summary(mm_radon)</code></pre>
 <pre class="r"><code>comtes &lt;- group_by(radon, county, log_uranium) %&gt;%
     summarize(n = n()) %&gt;%
     ungroup()</code></pre>
-<pre><code>## `summarise()` regrouping output by &#39;county&#39; (override with `.groups` argument)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;county&#39;. You can override using the `.groups` argument.</code></pre>
 <p>Voici le graphique des prédictions:</p>
 <pre class="r"><code>comtes$floor &lt;- 0 # sous-sol
 comtes$mm_pred &lt;- predict(mm_radon, comtes)

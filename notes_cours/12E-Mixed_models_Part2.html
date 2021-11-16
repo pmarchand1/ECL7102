@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-11-23" />
+<meta name="date" content="2021-11-22" />
 
 <title>Linear mixed models, part 2</title>
 
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Linear mixed models, part 2</h1>
-<h4 class="date"><br/>November 23, 2020</h4>
+<h4 class="date"><br/>November 22, 2021</h4>
 
 </div>
 
@@ -336,7 +336,7 @@ summary(mm_radon)</code></pre>
 <pre class="r"><code>comtes &lt;- group_by(radon, county, log_uranium) %&gt;%
     summarize(n = n()) %&gt;%
     ungroup()</code></pre>
-<pre><code>## `summarise()` regrouping output by &#39;county&#39; (override with `.groups` argument)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;county&#39;. You can override using the `.groups` argument.</code></pre>
 <p>Here is the graph of county-level predicted values:</p>
 <pre class="r"><code>comtes$floor &lt;- 0 # basement
 comtes$mm_pred &lt;- predict(mm_radon, comtes)

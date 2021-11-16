@@ -1,6 +1,6 @@
 ---
 title: "Modèles linéaires mixtes, partie 2"
-date: "23 novembre 2020"
+date: "22 novembre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]
