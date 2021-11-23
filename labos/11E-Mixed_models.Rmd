@@ -52,5 +52,5 @@ Estimate the parameters of a linear model of `logSize` as a function of the numb
 
 (c) What is the intra-class correlation for the model in (b)? Based on this result, is the variation in size among trees at any point in the experiment due more to (i) initial differences in size between trees (on day 152) or (ii) the random variation in growth between trees for each time period?
 
-(d) Add to the model in (b) a random effect for the plot. According to this model, does tree size differ significantly between plots?
+(d) Add to the model in (b) a random effect for the plot. According to this model, does tree size differ in a major way between plots?
 
