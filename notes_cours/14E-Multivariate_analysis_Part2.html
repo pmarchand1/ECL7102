@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2020-12-07" />
+<meta name="date" content="2021-12-06" />
 
 <title>Multivariate analysis, Part 2</title>
 
@@ -254,7 +254,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Multivariate analysis, Part 2</h1>
-<h4 class="date"><br/>December 7, 2020</h4>
+<h4 class="date"><br/>December 6, 2021</h4>
 
 </div>
 
@@ -504,10 +504,10 @@ head(dune.env)</code></pre>
 ## 
 ##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)    
 ## A1          1    0.7230 0.72295  5.2038 0.16817  0.001 ***
-## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.011 *  
-## Management  3    0.9036 0.30121  2.1681 0.21019  0.047 *  
+## Moisture    3    1.1871 0.39569  2.8482 0.27613  0.008 ** 
+## Management  3    0.9036 0.30121  2.1681 0.21019  0.024 *  
 ## Use         2    0.0921 0.04606  0.3315 0.02143  0.975    
-## Manure      3    0.4208 0.14026  1.0096 0.09787  0.473    
+## Manure      3    0.4208 0.14026  1.0096 0.09787  0.470    
 ## Residuals   7    0.9725 0.13893         0.22621           
 ## Total      19    4.2990                 1.00000           
 ## ---
@@ -527,8 +527,8 @@ envf</code></pre>
 <pre><code>## 
 ## ***VECTORS
 ## 
-##       Dim1    Dim2     r2 Pr(&gt;r)   
-## A1 0.98847 0.15139 0.3845  0.007 **
+##       Dim1    Dim2     r2 Pr(&gt;r)  
+## A1 0.98847 0.15139 0.3845  0.015 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## Permutation: free

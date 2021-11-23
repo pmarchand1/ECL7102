@@ -1,6 +1,6 @@
 ---
 title: "Analyses multivariées, Partie 2"
-date: "7 décembre 2020"
+date: "6 décembre 2021"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolis", "metropolis-fonts", "styles-xar.css"]

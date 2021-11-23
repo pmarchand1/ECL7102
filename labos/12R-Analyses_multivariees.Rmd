@@ -1,6 +1,5 @@
 ---
-title: "Analyses multivariées"
-date: "9 décembre 2020"
+title: "Analyses multivariées - Solutions"
 output: 
     html_document:
         self_contained: false

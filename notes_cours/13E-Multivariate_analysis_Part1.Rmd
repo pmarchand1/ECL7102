@@ -1,6 +1,6 @@
 ---
 title: "Multivariate analysis, Part 1"
-date: "<br/>November 30, 2020"
+date: "<br/>November 29, 2021"
 output:
     html_document:
         self_contained: false
@@ -8,6 +8,7 @@ output:
         theme: spacelab
         toc: true
         toc_float: true
+always_allow_html: yes
 ---
 
 ```{r setup, include=FALSE}
