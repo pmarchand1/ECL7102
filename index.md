@@ -19,6 +19,7 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 12. [Modèles mixtes - Partie 2](notes_cours/12-Modeles_mixtes_Partie2.html) ([PDF](notes_cours/12-Modeles_mixtes_Partie2.pdf)) - [Données](donnees/radon.csv)
 13. [Analyses multivariées - Partie 1](notes_cours/13-Analyses_multivariees_Partie1.html) ([PDF](notes_cours/13-Analyses_multivariees_Partie1.pdf)) - [Données](donnees/cities_climate.csv)
 14. [Analyses multivariées - Partie 2](notes_cours/14-Analyses_multivariees_Partie2.html) ([PDF](notes_cours/14-Analyses_multivariees_Partie2.pdf))
+15. [Synthèse du cours](notes_cours/15-Synthèse.html) ([PDF](notes_cours/15-Synthèse.pdf))
 
 
 ## Laboratoires
@@ -34,4 +35,4 @@ title: ECL7102 - Analyses et modélisation des données écologiques
 9. [Régression logistique](labos/9-Regression_logistique.html) ([PDF](labos/9-Regression_logistique.pdf))
 10. [Régression de Poisson (solutions)](labos/10R-Regression_Poisson.html) ([PDF](labos/10R-Regression_Poisson.pdf)) - Données [1](labos/stream_composition.csv) [2](labos/salamander.csv)
 11. [Modèles mixtes](labos/11-Modeles_mixtes.html) ([PDF](labos/11-Modeles_mixtes.pdf))
-12. [Analyses multivariées](labos/12-Analyses_multivariees.html) ([PDF](labos/12-Analyses_multivariees.pdf)) - Données [1](labos/springs.csv) [2](labos/arctic.csv)
+12. [Analyses multivariées (solutions)](labos/12R-Analyses_multivariées.html) ([PDF](labos/12R-Analyses_multivariées.pdf)) - Données [1](labos/springs.csv) [2](labos/arctic.csv)

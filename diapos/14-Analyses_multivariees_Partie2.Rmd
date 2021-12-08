@@ -551,7 +551,7 @@ $$
 Fonctions du package *vegan*
 
 - `vegdist`: Calcule différentes mesures de distance entre les rangées d'une matrice.
-- `decostand`: Calcule une tranformation des données d'une matrice.
+- `decostand`: Calcule une transformation des données d'une matrice.
 
 ---
 
