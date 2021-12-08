@@ -390,8 +390,8 @@ div.tocify {
 <li><em>(Intercept)</em>: Valeur moyenne de la réponse lorsque tous les prédicteurs sont à leur niveau de référence (0 pour les prédicteurs numériques).</li>
 <li><em>w</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(w\)</span> si <span class="math inline">\(x\)</span> et <span class="math inline">\(z\)</span> restent constants.</li>
 <li><em>x</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(w\)</span> et <span class="math inline">\(z\)</span> restent constants.</li>
-<li><em>zB</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux B et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constant.</li>
-<li><em>zC</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux C et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constant.</li>
+<li><em>zB</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux B et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constants.</li>
+<li><em>zC</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux C et A de <span class="math inline">\(z\)</span>, si <span class="math inline">\(w\)</span> et <span class="math inline">\(x\)</span> restent constants.</li>
 </ul>
 </div>
 <div id="interaction-entre-un-prédicteur-numérique-et-un-facteur" class="section level3">
@@ -403,9 +403,10 @@ div.tocify {
 <li><em>x</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = A.</li>
 <li><em>zB</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux B et A de <span class="math inline">\(z\)</span> si <span class="math inline">\(x\)</span> = 0.</li>
 <li><em>zC</em>: Différence de <span class="math inline">\(y\)</span> entre les niveaux C et A de <span class="math inline">\(z\)</span> si <span class="math inline">\(x\)</span> = 0.</li>
-<li><em>x:zB</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = B.</li>
-<li><em>x:zC</em>: Effet sur <span class="math inline">\(y\)</span> d’une augmentation unitaire de <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = C.</li>
+<li><em>x:zB</em>: Différence entre la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = B et cette pente si <span class="math inline">\(z\)</span> = A.</li>
+<li><em>x:zC</em>: Différence entre la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = C et cette pente si <span class="math inline">\(z\)</span> = A.</li>
 </ul>
+<p>Autrement dit, il faut additionner les coefficients <em>x</em> et <em>x:zB</em> pour obtenir la pente de <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> si <span class="math inline">\(z\)</span> = B.</p>
 </div>
 <div id="interaction-entre-deux-prédicteurs-numériques" class="section level3">
 <h3>Interaction entre deux prédicteurs numériques</h3>

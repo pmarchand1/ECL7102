@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -148,6 +147,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -160,48 +160,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -215,6 +176,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -250,8 +217,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -320,9 +285,9 @@ div.tocify {
 <h3>Examples</h3>
 <table>
 <colgroup>
-<col width="2%" />
-<col width="56%" />
-<col width="41%" />
+<col width="11%" />
+<col width="50%" />
+<col width="37%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -438,9 +403,10 @@ div.tocify {
 <li><em>x</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = A.</li>
 <li><em>zB</em>: Difference of <span class="math inline">\(y\)</span> between levels B and A of <span class="math inline">\(z\)</span> if <span class="math inline">\(x\)</span> = 0.</li>
 <li><em>zC</em>: Difference of <span class="math inline">\(y\)</span> between levels C and A of <span class="math inline">\(z\)</span> if <span class="math inline">\(x\)</span> = 0.</li>
-<li><em>x:zB</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = B.</li>
-<li><em>x:zC</em>: Effect on <span class="math inline">\(y\)</span> of a unit increase of <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = C.</li>
+<li><em>x:zB</em>: Difference between the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = B and that slope if <span class="math inline">\(z\)</span> = A.</li>
+<li><em>x:zC</em>: Difference between the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = C and that slope if <span class="math inline">\(z\)</span> = A.</li>
 </ul>
+<p>In other words, to get the slope of <span class="math inline">\(y\)</span> vs. <span class="math inline">\(x\)</span> if <span class="math inline">\(z\)</span> = B, we must add the coefficients <em>x</em> and <em>x:zB</em>.</p>
 </div>
 <div id="interaction-of-two-numerical-predictors" class="section level3">
 <h3>Interaction of two numerical predictors</h3>
@@ -523,6 +489,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

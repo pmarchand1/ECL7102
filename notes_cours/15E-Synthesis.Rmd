@@ -136,8 +136,10 @@ Estimated coefficients:
 - *x*: Effect on $y$ of a unit increase of $x$ if $z$ = A.
 - *zB*: Difference of $y$ between levels B and A of $z$ if $x$ = 0.
 - *zC*: Difference of $y$ between levels C and A of $z$ if $x$ = 0.
-- *x:zB*: Effect on $y$ of a unit increase of $x$ if $z$ = B.
-- *x:zC*: Effect on $y$ of a unit increase of $x$ if $z$ = C.
+- *x:zB*: Difference between the slope of $y$ vs. $x$ if $z$ = B and that slope if $z$ = A.
+- *x:zC*: Difference between the slope of $y$ vs. $x$ if $z$ = C and that slope if $z$ = A.
+
+In other words, to get the slope of $y$ vs. $x$ if $z$ = B, we must add the coefficients *x* and *x:zB*.
 
 ### Interaction of two numerical predictors
 

@@ -123,8 +123,8 @@ Coefficients estimés:
 - *(Intercept)*: Valeur moyenne de la réponse lorsque tous les prédicteurs sont à leur niveau de référence (0 pour les prédicteurs numériques).
 - *w*: Effet sur $y$ d'une augmentation unitaire de $w$ si $x$ et $z$ restent constants.
 - *x*: Effet sur $y$ d'une augmentation unitaire de $x$ si $w$ et $z$ restent constants.
-- *zB*: Différence de $y$ entre les niveaux B et A de $z$, si $w$ et $x$ restent constant.
-- *zC*: Différence de $y$ entre les niveaux C et A de $z$, si $w$ et $x$ restent constant.
+- *zB*: Différence de $y$ entre les niveaux B et A de $z$, si $w$ et $x$ restent constants.
+- *zC*: Différence de $y$ entre les niveaux C et A de $z$, si $w$ et $x$ restent constants.
 
 ### Interaction entre un prédicteur numérique et un facteur
 
@@ -136,8 +136,10 @@ Coefficients estimés:
 - *x*: Effet sur $y$ d'une augmentation unitaire de $x$ si $z$ = A.
 - *zB*: Différence de $y$ entre les niveaux B et A de $z$ si $x$ = 0.
 - *zC*: Différence de $y$ entre les niveaux C et A de $z$ si $x$ = 0.
-- *x:zB*: Effet sur $y$ d'une augmentation unitaire de $x$ si $z$ = B.
-- *x:zC*: Effet sur $y$ d'une augmentation unitaire de $x$ si $z$ = C.
+- *x:zB*: Différence entre la pente de $y$ vs. $x$ si $z$ = B et cette pente si $z$ = A.
+- *x:zC*: Différence entre la pente de $y$ vs. $x$ si $z$ = C et cette pente si $z$ = A.
+
+Autrement dit, il faut additionner les coefficients *x* et *x:zB* pour obtenir la pente de $y$ vs. $x$ si $z$ = B.
 
 ### Interaction entre deux prédicteurs numériques
 
